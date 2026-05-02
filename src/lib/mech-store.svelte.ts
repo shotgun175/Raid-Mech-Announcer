@@ -27,8 +27,9 @@ function loadSettings(): MechSettings {
 }
 
 export const mechStore = (() => {
-  let raids = $state<Gate[]>(loadRaids());
-  let selectedGateId = $state<string>(loadRaids()[0]?.id ?? "");
+  const initialRaids = loadRaids();
+  let raids = $state<Gate[]>(initialRaids);
+  let selectedGateId = $state<string>(initialRaids[0]?.id ?? "");
   let liveGateId = $state<string | null>(null);
   let liveBar = $state<number | null>(null);
   let liveTotalBars = $state<number | null>(null);
