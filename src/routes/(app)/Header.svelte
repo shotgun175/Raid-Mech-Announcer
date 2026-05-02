@@ -90,6 +90,10 @@
         {@render route("Uploading", "/upload")}
         {@render route("Changelog", "/changelog")}
         {@render route("Settings", "/settings")}
+        <div class="mx-4 my-2 h-px bg-neutral-700"></div>
+        {@render route("Mech Editor", "/mech-editor")}
+        {@render route("Overlay Preview", "/overlay-preview")}
+        {@render route("Mech Settings", "/mech-settings")}
       </div>
       <div class="m-2 h-px bg-neutral-700"></div>
 
