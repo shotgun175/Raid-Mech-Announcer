@@ -76,3 +76,10 @@
     </div>
   {/if}
 </div>
+
+<style>
+  @keyframes mech-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.4); }
+  }
+</style>
