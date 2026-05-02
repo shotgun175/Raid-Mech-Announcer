@@ -1,5 +1,6 @@
 import { Peer, type DataConnection } from "peerjs";
 import { mechStore } from "./mech-store.svelte";
+import type { BossStatusData } from "./mech-types";
 
 export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
 
