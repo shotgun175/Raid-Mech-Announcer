@@ -14,7 +14,7 @@
 
   const statusLabel = $derived(
     peerState.status === "connected"
-      ? `Live · ${(mechStore as any).liveBossName ?? "connected"}`
+      ? `Live · ${mechStore.liveBossName ?? "connected"}`
       : peerState.status === "connecting" ? "Connecting…"
       : peerState.status === "error" ? (peerState.errorMsg ?? "Error")
       : "Not connected"

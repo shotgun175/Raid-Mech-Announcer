@@ -37,3 +37,13 @@ export interface MechSettings {
   alwaysOnTop: boolean;
   clickThrough: boolean;
 }
+
+export interface BossStatusData {
+  name: string;
+  isDead: boolean;
+  currentHp: number;
+  maxHp: number;
+  currentShield: number;
+  totalBars: number;
+  currentBars: number;
+}

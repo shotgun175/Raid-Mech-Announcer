@@ -3,15 +3,7 @@ import { mechStore } from "./mech-store.svelte";
 
 export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
 
-export interface BossStatusData {
-  name: string;
-  isDead: boolean;
-  currentHp: number;
-  maxHp: number;
-  currentShield: number;
-  totalBars: number;
-  currentBars: number;
-}
+export type { BossStatusData } from "./mech-types";
 
 export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
