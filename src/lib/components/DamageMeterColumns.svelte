@@ -1,0 +1,466 @@
+<script module lang="ts">
+  import type { LogColumn } from "$lib/column";
+  import type { EncounterState } from "$lib/encounter.svelte.js";
+  import { EntityState } from "$lib/entity.svelte.js";
+  import { EntityType } from "$lib/types";
+  import { abbreviateNumber, abbreviateNumberSplit, customRound } from "$lib/utils";
+  import { badTooltip, damageValue, fadTooltip, percentValue } from "./Snippets.svelte";
+
+  export { unbuffedDamageTooltip, unbuffedDpsTooltip };
+
+  export const logColumns: LogColumn<EncounterState, EntityState>[] = [
+    // Dead for
+    {
+      show(enc) {
+        if (!enc.curSettings.deathTime) return false;
+        return enc.anyDead;
+      },
+      headerText: "Dead",
+      headerTooltip: "Dead for",
+      value: deadFor,
+      valueTooltip: null
+    },
+
+    // Number of deaths
+    {
+      show(enc) {
+        if (!enc.curSettings.deathTime) return false;
+        return enc.multipleDeaths;
+      },
+      headerText: "Deaths",
+      headerTooltip: "Death Count",
+      value: deaths,
+      valueTooltip: null,
+      width: "w-14"
+    },
+
+    // Incapacitation time
+    {
+      show(enc) {
+        if (!enc.curSettings.incapacitatedTime) return false;
+        return enc.anyPlayerIncapacitated;
+      },
+      headerText: "INCAP",
+      headerTooltip: "Time spent in the air, on the floor, or affected by crowd control effects.",
+      value: incap,
+      valueTooltip: incapTooltip
+    },
+
+    // Damage dealt
+    {
+      show(enc) {
+        return enc.curSettings.damage;
+      },
+      headerText: "DMG",
+      headerTooltip: "Damage Dealt",
+      value: damage,
+      valueTooltip: damageTooltip,
+      width: "w-15"
+    },
+
+    // Unbuffed damage dealt
+    {
+      show(enc) {
+        if (!enc.curSettings.unbuffedDamage) return false;
+        return enc.anyUnbuffedDamage || enc.anyRdpsContributions;
+      },
+      headerText: "uDMG",
+      headerTooltip: "Unbuffed Damage Dealt (damage dealt excluding buffs or debuffs from the support)",
+      value: unbuffedDamage,
+      valueTooltip: unbuffedDamageTooltip,
+      width: "w-15"
+    },
+
+    // Damage per second
+    {
+      show(enc) {
+        return enc.curSettings.dps;
+      },
+      headerText: "DPS",
+      headerTooltip: "Damage per second",
+      value: dps,
+      valueTooltip: dpsTooltip,
+      width: "w-14"
+    },
+
+    // Unbuffed damage per second
+    {
+      show(enc) {
+        if (!enc.curSettings.unbuffedDps) return false;
+        return enc.anyUnbuffedDamage || enc.anyRdpsContributions;
+      },
+      headerText: "uDPS",
+      headerTooltip: "Unbuffed Damage per second (DPS excluding buffs or debuffs from the support)",
+      value: unbuffedDps,
+      valueTooltip: unbuffedDpsTooltip,
+      width: "w-14"
+    },
+
+    // Support contribution percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.supportContrib) return false;
+        return enc.anyRdpsContributions;
+      },
+      headerText: "Con%",
+      headerTooltip: "Support's % contribution to total party damage via buffs",
+      value: supportContribPct,
+      valueTooltip: supportContribTooltip
+    },
+
+    // Damage percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.damagePercent) return false;
+        return !enc.isSolo;
+      },
+      headerText: "D%",
+      headerTooltip: "Damage %",
+      value: damagePct,
+      valueTooltip: null
+    },
+
+    // Crit rate
+    {
+      show(enc) {
+        return enc.curSettings.critRate;
+      },
+      headerText: "CRIT",
+      headerTooltip: "Crit %",
+      value: critPct,
+      valueTooltip: null
+    },
+
+    // Crit damage percentage
+    {
+      show(enc) {
+        return enc.curSettings.critDmg;
+      },
+      headerText: "CDMG",
+      headerTooltip: "% Damage that Crit",
+      value: critDmgPct,
+      valueTooltip: null,
+      width: "w-14"
+    },
+
+    // Front attack percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.frontAtk) return false;
+        return !enc.curSettings.positionalDmgPercent && enc.anyFrontAtk;
+      },
+      headerText: "F.A",
+      headerTooltip: "Front Attack %",
+      value: faPct,
+      valueTooltip: null
+    },
+
+    // Front attack damage percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.frontAtk) return false;
+        return enc.curSettings.positionalDmgPercent && enc.anyFrontAtk;
+      },
+      headerText: "F.AD%",
+      headerTooltip: "Front Attack Damage %",
+      value: fadPct,
+      valueTooltip: fadTooltip,
+      width: "w-14"
+    },
+
+    // Back attack percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.backAtk) return false;
+        return !enc.curSettings.positionalDmgPercent && enc.anyBackAtk;
+      },
+      headerText: "B.A",
+      headerTooltip: "Back Attack %",
+      value: baPct,
+      valueTooltip: null
+    },
+
+    // Back attack damage percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.backAtk) return false;
+        return enc.curSettings.positionalDmgPercent && enc.anyBackAtk;
+      },
+      headerText: "B.AD%",
+      headerTooltip: "Back Attack Damage %",
+      value: badPct,
+      valueTooltip: badTooltip,
+      width: "w-14"
+    },
+
+    // Support buff percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.percentBuffBySup) return false;
+        return enc.anySupportBuff;
+      },
+      headerText: "Buff%",
+      headerTooltip: "% Damage buffed by Support Atk. Power buff",
+      value: buffPct,
+      valueTooltip: null
+    },
+
+    // Brand percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.percentBrand) return false;
+        return enc.anySupportBrand;
+      },
+      headerText: "B%",
+      headerTooltip: "% Damage buffed by Brand",
+      value: brandPct,
+      valueTooltip: null
+    },
+
+    // Identity percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.percentIdentityBySup) return false;
+        return enc.anySupportIdentity;
+      },
+      headerText: "Iden%",
+      headerTooltip: "% Damage buffed by Support Identity",
+      value: identityPct,
+      valueTooltip: null
+    },
+
+    // Hat percentage
+    {
+      show(enc) {
+        if (!enc.curSettings.percentHatBySup) return false;
+        return enc.anySupportHat;
+      },
+      headerText: "T%",
+      headerTooltip: "% Damage buffed by Support Hyper Awakening Skill (T Skill)",
+      value: hatPct,
+      valueTooltip: null
+    },
+
+    // Stagger
+    {
+      show(enc) {
+        return enc.curSettings.stagger && enc.anyStagger;
+      },
+      headerText: "STAG",
+      headerTooltip: "Total Stagger Damage",
+      value: stagger,
+      valueTooltip: staggerTooltip
+    },
+
+    // Counters
+    {
+      show(enc) {
+        return enc.curSettings.counters;
+      },
+      headerText: "CTR",
+      headerTooltip: "Counters",
+      value: counters,
+      valueTooltip: null,
+      width: "w-10"
+    }
+  ];
+</script>
+
+{#snippet deadFor(state: EntityState)}
+  {#if state.entity.isDead}
+    {state.deadFor}
+  {/if}
+{/snippet}
+
+{#snippet deaths(state: EntityState)}
+  {#if state.entity.damageStats.deaths > 0}
+    {state.entity.damageStats.deaths}
+  {:else}
+    -
+  {/if}
+{/snippet}
+
+{#snippet incap(state: EntityState)}
+  {#if state.entity.entityType === EntityType.ESTHER}
+    -
+  {:else}
+    {(state.incapacitatedTimeMs.total / 1000).toFixed(1)}s
+  {/if}
+{/snippet}
+
+{#snippet incapTooltip(state: EntityState)}
+  {#if state.entity.entityType === EntityType.ESTHER}
+    N/A
+  {:else}
+    {@const { knockDown, cc } = state.incapacitatedTimeMs}
+    <div class="-mx-px flex flex-col space-y-1 py-px text-xs font-normal">
+      <span class="text-gray-300">Knockdowns: {(knockDown / 1000).toFixed(1)}s</span>
+      <span class="text-gray-300">Crowd control: {(cc / 1000).toFixed(1)}s</span>
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet damage(state: EntityState)}
+  {@render damageValue(state.damageDealtString)}
+{/snippet}
+
+{#snippet damageTooltip(state: EntityState)}
+  {state.damageDealt.toLocaleString()}
+{/snippet}
+
+{#snippet dps(state: EntityState)}
+  {@render damageValue(state.dpsString)}
+{/snippet}
+
+{#snippet dpsTooltip(state: EntityState)}
+  {state.dps.toLocaleString()}
+{/snippet}
+
+{#snippet damagePct(state: EntityState)}
+  {@render percentValue(state.damagePercentage)}
+{/snippet}
+
+{#snippet critPct(state: EntityState)}
+  {@render percentValue(state.critPercentage)}
+{/snippet}
+
+{#snippet critDmgPct(state: EntityState)}
+  {@render percentValue(state.critDmgPercentage)}
+{/snippet}
+
+{#snippet faPct(state: EntityState)}
+  {@render percentValue(state.faPercentage)}
+{/snippet}
+
+{#snippet fadPct(state: EntityState)}
+  {@render percentValue(state.fadPercentage)}
+{/snippet}
+
+{#snippet baPct(state: EntityState)}
+  {@render percentValue(state.baPercentage)}
+{/snippet}
+
+{#snippet badPct(state: EntityState)}
+  {@render percentValue(state.badPercentage)}
+{/snippet}
+
+{#snippet buffPct(state: EntityState)}
+  {@render percentValue(
+    customRound((state.entity.damageStats.buffedBySupport / state.damageDealtWithoutSpecialOrHa) * 100)
+  )}
+{/snippet}
+
+{#snippet brandPct(state: EntityState)}
+  {@render percentValue(
+    customRound((state.entity.damageStats.debuffedBySupport / state.damageDealtWithoutSpecialOrHa) * 100)
+  )}
+{/snippet}
+
+{#snippet identityPct(state: EntityState)}
+  {@render percentValue(
+    customRound((state.entity.damageStats.buffedByIdentity / state.damageDealtWithoutSpecialOrHa) * 100)
+  )}
+{/snippet}
+
+{#snippet hatPct(state: EntityState)}
+  {@render percentValue(
+    customRound(((state.entity.damageStats.buffedByHat ?? 0) / state.damageDealtWithoutSpecial) * 100)
+  )}
+{/snippet}
+
+{#snippet counters(state: EntityState)}
+  {#if state.entity.entityType === EntityType.ESTHER}
+    -
+  {:else}
+    {state.entity.skillStats.counters}
+  {/if}
+{/snippet}
+
+{#snippet stagger(state: EntityState)}
+  {#if state.entity.damageStats.stagger > 0}
+    {@render damageValue(abbreviateNumberSplit(state.entity.damageStats.stagger))}
+  {:else}
+    -
+  {/if}
+{/snippet}
+
+{#snippet staggerTooltip(state: EntityState)}
+  {state.entity.damageStats.stagger ? state.entity.damageStats.stagger.toLocaleString() : "N/A"}
+{/snippet}
+
+{#snippet unbuffedDamage(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    {@render damageValue(state.totalDamageBuffedString)}
+  {:else if !state.anyUnbuffedDamage}
+    -
+  {:else}
+    {@render damageValue(abbreviateNumberSplit(state.entity.damageStats.unbuffedDamage))}
+  {/if}
+{/snippet}
+
+{#snippet unbuffedDamageTooltip(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    <div class="-mx-px flex flex-col space-y-1 py-px text-xs font-normal">
+      <span class="text-gray-300">Total Damage Buffed: {abbreviateNumber(state.totalDamageBuffed, 2)}</span>
+    </div>
+  {:else if !state.anyUnbuffedDamage}
+    N/A
+  {:else}
+    {@const unbuffed = state.entity.damageStats.unbuffedDamage}
+    {@const buffed = state.damageDealt - unbuffed}
+    <div class="-mx-px flex flex-col space-y-1 py-px text-xs font-normal">
+      <span class="text-gray-300">Base: {abbreviateNumber(unbuffed, 2)}</span>
+      <span class="text-gray-300">Buffed: {abbreviateNumber(buffed, 2)}</span>
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet unbuffedDps(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    {@render damageValue(state.totalDpsBuffedString)}
+  {:else if !state.anyUnbuffedDamage}
+    -
+  {:else}
+    {@render damageValue(abbreviateNumberSplit(state.unbuffedDps))}
+  {/if}
+{/snippet}
+
+{#snippet unbuffedDpsTooltip(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    <div class="-mx-px flex flex-col space-y-1 py-px text-xs font-normal">
+      <span class="text-gray-300">Buff DPS: {abbreviateNumber(state.totalDpsBuffed, 2)}</span>
+    </div>
+  {:else if !state.anyUnbuffedDamage}
+    N/A
+  {:else}
+    {@const unbuffed = state.unbuffedDps}
+    {@const buffed = state.dps - unbuffed}
+    <div class="-mx-px flex flex-col space-y-1 py-px text-xs font-normal">
+      <span class="text-gray-300">Base: {abbreviateNumber(unbuffed, 2)}</span>
+      <span class="text-gray-300">Buffed: {abbreviateNumber(buffed, 2)}</span>
+      {#if state.dps > 0}
+        <span class="text-gray-300">Contribution: {((buffed / state.dps) * 100).toFixed(1)}%</span>
+      {/if}
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet supportContribPct(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    {@render percentValue(customRound(state.supportContribPercent))}
+  {:else if state.anyUnbuffedDamage}
+    {@const buffed = state.damageDealt - state.entity.damageStats.unbuffedDamage}
+    {@render percentValue(customRound((buffed / state.damageDealt) * 100))}
+  {:else}
+    -
+  {/if}
+{/snippet}
+
+{#snippet supportContribTooltip(state: EntityState)}
+  {#if state.hasRdpsContributions}
+    The support contributed {customRound(state.supportContribPercent)}% damage to the party
+  {:else if state.anyUnbuffedDamage}
+    {@const buffed = state.damageDealt - state.entity.damageStats.unbuffedDamage}
+    The support contributed {customRound((buffed / state.damageDealt) * 100)}% of the damage
+  {/if}
+{/snippet}

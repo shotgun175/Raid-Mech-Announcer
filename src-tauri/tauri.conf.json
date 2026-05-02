@@ -1,0 +1,95 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:5173",
+    "features": []
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "category": "Utility",
+    "copyright": "GNU General Public License v3.0",
+    "resources": [
+      "meter-data/*.json"
+    ],
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "longDescription": "Raid Mech Announcer - Raid mechanic overlay and DPS meter for Lost Ark.",
+    "shortDescription": "Raid Mech Announcer",
+    "licenseFile": "../LICENSE"
+  },
+  "productName": "Raid Mech Announcer",
+  "version": "0.1.0",
+  "identifier": "com.shotgun175.raid-mech-announcer",
+  "plugins": {
+    "updater": {
+      "pubkey": "",
+      "endpoints": [
+        ""
+      ]
+    }
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Meter | Raid Mech Announcer",
+        "userAgent": "Raid Mech Announcer",
+        "url": "live",
+        "fullscreen": false,
+        "width": 500,
+        "height": 350,
+        "resizable": true,
+        "shadow": false,
+        "decorations": false,
+        "transparent": true,
+        "minWidth": 400,
+        "minHeight": 120,
+        "alwaysOnTop": true,
+        "visible": false,
+        "focus": false,
+        "useHttpsScheme": true
+      },
+      {
+        "label": "logs",
+        "title": "Raid Mech Announcer",
+        "userAgent": "Raid Mech Announcer",
+        "url": "logs",
+        "minWidth": 650,
+        "minHeight": 300,
+        "width": 800,
+        "height": 500,
+        "decorations": true,
+        "dragDropEnabled": false,
+        "visible": false,
+        "useHttpsScheme": true
+      },
+      {
+        "label": "mini",
+        "title": "mini | Raid Mech Announcer",
+        "userAgent": "Raid Mech Announcer",
+        "url": "mini",
+        "fullscreen": false,
+        "width": 1280,
+        "height": 200,
+        "resizable": true,
+        "shadow": false,
+        "decorations": false,
+        "transparent": true,
+        "minWidth": 1280,
+        "minHeight": 200,
+        "alwaysOnTop": true,
+        "visible": false,
+        "focus": false,
+        "useHttpsScheme": true
+      }
+    ],
+    "security": {
+      "csp": "default-src *; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src * ipc: http://ipc.localhost"
+    }
+  }
+}
