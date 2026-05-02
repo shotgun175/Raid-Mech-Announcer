@@ -40,7 +40,7 @@
 <div style="border-top: 1px solid #262626; padding: 10px 14px; flex-shrink: 0;">
   <!-- Status row -->
   <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-    <div style="width: 7px; height: 7px; border-radius: 50%; background: {statusColor}; box-shadow: 0 0 6px {statusColor}; {peerState.status === 'connected' ? 'animation: mech-pulse 2s ease-in-out infinite;' : ''}" />
+    <div style="width: 7px; height: 7px; border-radius: 50%; background: {statusColor}; box-shadow: 0 0 6px {statusColor}; {peerState.status === 'connected' ? 'animation: mech-pulse 2s ease-in-out infinite;' : ''}"></div>
     <span style="font-size: 10.5px; color: {peerState.status === 'error' ? '#f87171' : '#a3a3a3'}; font-weight: {peerState.status === 'connected' ? 600 : 400}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">{statusLabel}</span>
     {#if peerState.isConnected}
       <button
