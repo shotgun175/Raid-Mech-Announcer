@@ -78,7 +78,7 @@
   {:else}
     {#if pasteAttempted}
       <span
-        style="font-size: 11px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; color: {input
+        style="font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; color: {input
           ? '#64748b'
           : '#f87171'};"
         title={input || "Nothing on clipboard"}
