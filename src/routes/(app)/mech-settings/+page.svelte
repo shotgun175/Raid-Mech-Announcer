@@ -319,8 +319,8 @@
       {#if currentTab === "Announcements"}
         <!-- TIMING section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Timing</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Timing</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         <!-- HP Trigger Lead Time -->
@@ -373,8 +373,8 @@
 
         <!-- VOICE section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Voice</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Voice</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         <!-- Volume -->
@@ -474,8 +474,8 @@
       {:else if currentTab === "Discord"}
         <!-- CONNECTION section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Connection</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Connection</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -506,8 +506,8 @@
 
         <!-- PREVIEW section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Preview</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Preview</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         <div class="rounded-md border border-neutral-700 bg-neutral-800/60 p-4">
@@ -532,8 +532,8 @@
       {:else if currentTab === "Overlay"}
         <!-- WINDOW section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Window</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Window</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         <!-- Opacity -->
@@ -580,8 +580,8 @@
 
         <!-- DISPLAY section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Display</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Display</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
 
         {@render checkField(
@@ -601,8 +601,8 @@
       {:else if currentTab === "General"}
         <!-- APPEARANCE -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Appearance</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Appearance</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
         <div class="flex flex-col gap-2">
           <div class="text-sm font-semibold">Color Theme</div>
@@ -615,8 +615,8 @@
 
         <!-- SCALING -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Scaling</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Scaling</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
         <div class="flex items-center gap-3">
           <select
@@ -651,8 +651,8 @@
 
         <!-- DATA SOURCE -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Data Source</span>
-          <div class="h-px flex-1 bg-neutral-700"></div>
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Data Source</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
         </div>
         <div class="mt-2 flex items-center gap-2 text-xs text-neutral-400">
           <span class="font-medium text-neutral-300">Game data:</span>
