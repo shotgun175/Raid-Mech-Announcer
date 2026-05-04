@@ -104,7 +104,6 @@ class Settings {
 
 export const defaultSettings: AppSettings = {
   general: {
-
     showNames: true,
     showGearScore: true,
     hideNames: false,

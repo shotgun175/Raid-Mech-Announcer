@@ -45,21 +45,22 @@
       <div
         style="position: absolute; inset: 0; background: {barColor}; opacity: 0.78; width: {pct}%; transition: width 0.3s, background 0.3s;"
       ></div>
+      <!-- Text row: flex so gate / boss / bar count never collide -->
       <div
-        style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
+        style="position: absolute; inset: 0; display: flex; align-items: center; padding: 0 9px; gap: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
       >
-        <span>{bossName}</span>
-        <span style="font-family: ui-monospace, monospace; font-weight: 600;">{pct.toFixed(1)}%</span>
-      </div>
-      <div
-        style="position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 12px; font-family: ui-monospace, monospace; color: white; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
-      >
-        {currentBar}×
-      </div>
-      <div
-        style="position: absolute; left: 9px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #38bdf8; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
-      >
-        {gateName}
+        <span
+          style="font-size: 11px; color: var(--color-accent-500); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%; flex-shrink: 0;"
+          >{gateName}</span
+        >
+        <span
+          style="flex: 1; min-width: 0; text-align: center; font-size: 13px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+          >{bossName}</span
+        >
+        <span
+          style="font-size: 12px; font-family: ui-monospace, monospace; color: white; font-weight: 600; white-space: nowrap; flex-shrink: 0;"
+          >{pct.toFixed(1)}%&nbsp;·&nbsp;{currentBar}×</span
+        >
       </div>
       {#each mechanics.filter((m) => m.hpBar != null && m.hpBar <= currentBar) as m (m.id)}
         {@const ms = SEVERITY[m.severity]}
