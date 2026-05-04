@@ -44,9 +44,6 @@
     )
   );
 
-  let draggedRaid = $state<string | null>(null);
-  let dragOverRaid = $state<string | null>(null);
-
   const {
     elements: { trigger, portalled, overlay, content, title, close },
     states: { open }
@@ -124,57 +121,23 @@
   <!-- Raid groups -->
   <div style="flex: 1; overflow-y: auto;">
     {#each raidNames as raidName (raidName)}
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div
-        draggable="true"
-        ondragstart={(e) => {
-          draggedRaid = raidName;
-          e.dataTransfer!.effectAllowed = "move";
-        }}
-        ondragend={() => {
-          draggedRaid = null;
-          dragOverRaid = null;
-        }}
-        ondragover={(e) => {
-          e.preventDefault();
-          e.dataTransfer!.dropEffect = "move";
-          dragOverRaid = raidName;
-        }}
-        ondragleave={(e) => {
-          if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) dragOverRaid = null;
-        }}
-        ondrop={(e) => {
-          e.preventDefault();
-          if (draggedRaid && draggedRaid !== raidName) mechStore.reorderRaid(draggedRaid, raidName);
-          draggedRaid = null;
-          dragOverRaid = null;
-        }}
-        style="opacity: {draggedRaid === raidName ? 0.4 : 1}; border-top: 2px solid {dragOverRaid === raidName &&
-        draggedRaid !== raidName
-          ? 'rgba(56,189,248,0.6)'
-          : 'transparent'}; transition: border-color 0.1s;"
-      >
-        <div
-          style="padding: 8px 10px 2px; display: flex; align-items: center; justify-content: space-between; cursor: grab; user-select: none;"
-        >
+      <div>
+        <div style="padding: 8px 10px 2px; display: flex; align-items: center; justify-content: space-between;">
           <div
             style="font-size: 10px; color: #525252; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
           >
             {raidName}
           </div>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <div style="color: #3a3a3a; font-size: 13px; line-height: 1;" title="Drag to reorder">⠿</div>
-            <button
-              onclick={(e) => {
-                e.stopPropagation();
-                mechStore.removeRaid(raidName);
-              }}
-              title="Remove raid"
-              style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
-              onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
-              onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
-            >
-          </div>
+          <button
+            onclick={(e) => {
+              e.stopPropagation();
+              mechStore.removeRaid(raidName);
+            }}
+            title="Remove raid"
+            style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
+            onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
+            onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+          >
         </div>
         {#each raidsByName[raidName] as gate (gate.id)}
           {@const sel = gate.id === mechStore.selectedGateId}
