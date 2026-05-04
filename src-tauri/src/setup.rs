@@ -94,7 +94,14 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
                     }
                 }
             } else {
-                app_handle.updater().unwrap().check().await
+                match app_handle.updater_builder().and_then(|b| b.build()) {
+                    Ok(updater) => updater.check().await,
+                    Err(e) => {
+                        warn!("updater plugin not available — skipping update check: {e}");
+                        update_checked.store(true, Ordering::Relaxed);
+                        return;
+                    }
+                }
             };
 
             match check_result {
