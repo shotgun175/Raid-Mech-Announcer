@@ -81,10 +81,6 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
                 settings.set_focus()?;
             }
         }
-        TrayCommand::StartLoa => {
-            let shell_manager = app_handle.state::<ShellManager>();
-            shell_manager.start_loa_process();
-        }
     }
 
     Ok(())

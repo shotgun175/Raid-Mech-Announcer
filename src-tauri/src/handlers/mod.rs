@@ -17,8 +17,6 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         save_settings,
         get_settings,
         set_clickthrough,
-        check_loa_running,
-        start_loa_process,
         remove_driver,
         unload_driver,
         get_loa_meter_data_path,
@@ -77,16 +75,6 @@ pub async fn remove_driver(shell_manager: State<'_, ShellManager>) -> Result<()>
 pub async fn unload_driver(shell_manager: State<'_, ShellManager>) -> Result<()> {
     shell_manager.unload_driver().await;
     Ok(())
-}
-
-#[command]
-pub fn check_loa_running(shell_manager: State<ShellManager>) -> bool {
-    shell_manager.check_loa_running()
-}
-
-#[command]
-pub fn start_loa_process(shell_manager: State<ShellManager>) {
-    shell_manager.start_loa_process();
 }
 
 #[command]

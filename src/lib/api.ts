@@ -2,11 +2,9 @@ import { invoke } from "@tauri-apps/api/core";
 import { relaunch } from "@tauri-apps/plugin-process";
 import type { AppSettings } from "./settings";
 
-export const checkLoaRunning = (): Promise<boolean> => invoke("check_loa_running");
 export const setClickthrough = (set: boolean): Promise<void> => invoke("set_clickthrough", { set });
 export const saveSettings = (settings: AppSettings): Promise<void> => invoke("save_settings", { settings });
 export const getSettings = (): Promise<AppSettings> => invoke("get_settings");
-export const startLoaProcess = (): Promise<void> => invoke("start_loa_process");
 export const listTtsVoices = (): Promise<string[]> => invoke("list_tts_voices");
 export const getLOAMeterDataPath = (): Promise<string | null> => invoke("get_loa_meter_data_path");
 export const toggleOverlayWindow = (): Promise<void> => invoke("toggle_overlay_window");

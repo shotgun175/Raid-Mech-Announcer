@@ -12,7 +12,6 @@ pub struct Settings {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct GeneralSettings {
-    pub start_loa_on_start: bool,
     pub low_performance_mode: bool,
     #[serde(default = "default_true")]
     pub auto_iface: bool,
