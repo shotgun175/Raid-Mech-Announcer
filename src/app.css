@@ -62,7 +62,7 @@
     @apply text-sm text-white;
   }
 
-  [data-view="logs"] {
+  [data-view="settings"] {
     *::-webkit-scrollbar {
       @apply right-0! block! size-2! bg-neutral-800!;
     }

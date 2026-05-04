@@ -8,7 +8,7 @@ export type Shortcut = {
 };
 export const shortcuts: Record<string, Shortcut> = {
   hideMeter: {
-    name: "Hide Meter",
+    name: "Hide Overlay",
     action: () => toggleOverlayWindow()
   },
   disableClickthrough: {

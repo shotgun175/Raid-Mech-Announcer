@@ -15,7 +15,7 @@
     const documentElement = document.documentElement;
     const general = settings.app.general;
 
-    if (currentWindow.label === "logs") {
+    if (currentWindow.label === "settings") {
       const fontSize = scaleMap[general.logScale] ?? "medium";
       documentElement.style.setProperty("--font-size", fontSize);
     } else {
