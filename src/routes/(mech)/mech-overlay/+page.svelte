@@ -12,6 +12,7 @@
   import { setClickthrough } from "$lib/api";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+  import { LogicalSize } from "@tauri-apps/api/window";
   import { onDestroy, onMount } from "svelte";
 
   // Live data received via Tauri IPC events from the app window
@@ -30,6 +31,7 @@
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
   let announceTimer: ReturnType<typeof setTimeout> | null = null;
   let lastFiredKey = new Set<string>();
+  let contentEl = $state<HTMLElement | null>(null);
   const unlisteners: UnlistenFn[] = [];
 
   // Apply click-through state to this window whenever the setting changes
@@ -92,6 +94,31 @@
   $effect(() => {
     gateId;
     lastFiredKey = new Set();
+  });
+
+  // Auto-resize to content when a gate loads. Fires once per gate — ResizeObserver
+  // disconnects after the first measurement so it doesn't fight manual resizes mid-fight.
+  $effect(() => {
+    if (!gate || !contentEl) return;
+    const el = contentEl;
+    const ro = new ResizeObserver(() => {
+      const { width, height } = el.getBoundingClientRect();
+      if (width === 0 || height === 0) return;
+      getCurrentWebviewWindow()
+        .setSize(new LogicalSize(Math.ceil(width) + 48, Math.ceil(height) + 32))
+        .catch(() => {});
+      ro.disconnect();
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
+
+  // Reset to compact waiting size when the fight ends.
+  $effect(() => {
+    if (gate) return;
+    getCurrentWebviewWindow()
+      .setSize(new LogicalSize(360, 90))
+      .catch(() => {});
   });
 
   onMount(async () => {
@@ -166,6 +193,7 @@
 {:else if gate}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
+    bind:this={contentEl}
     onmousedown={startDrag}
     class="absolute top-4 left-1/2 -translate-x-1/2 select-none"
     style="z-index: 10; cursor: {clickThrough ? 'default' : 'grab'};"
