@@ -64,7 +64,7 @@
   const selStyle =
     "width: 100%; background: #262626; border: 1px solid #262626; border-radius: 4px; padding: 7px 10px; color: #fafafa; font-size: 13px; outline: none; font-family: inherit;";
   const fieldLabel =
-    "font-size: 10px; color: #a3a3a3; margin-bottom: 5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;";
+    "font-size: 12px; color: #a3a3a3; margin-bottom: 5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;";
 
   function saveRaid() {
     if (!form.raid.trim() || !form.boss.trim()) return;
@@ -98,20 +98,20 @@
   <!-- Header + buttons -->
   <div style="padding: 8px 10px; border-bottom: 1px solid #262626; flex-shrink: 0;">
     <div
-      style="font-size: 10px; color: #a3a3a3; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;"
+      style="font-size: 12px; color: #a3a3a3; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;"
     >
       Raids & Gates
     </div>
     <div style="display: flex; flex-direction: column; gap: 4px;">
       <button
         onclick={() => (showImport = true)}
-        style="width: 100%; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3); border-radius: 4px; padding: 4px 6px; color: #4ade80; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;"
+        style="width: 100%; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3); border-radius: 4px; padding: 4px 6px; color: #4ade80; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
       >
         ⬇ Import Raids
       </button>
       <button
         use:melt={$trigger}
-        style="width: 100%; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 4px 6px; color: #38bdf8; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;"
+        style="width: 100%; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 4px 6px; color: #38bdf8; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
       >
         + Add Raid
       </button>
@@ -124,7 +124,7 @@
       <div>
         <div style="padding: 8px 10px 2px; display: flex; align-items: center; justify-content: space-between;">
           <div
-            style="font-size: 10px; color: #8a8a8a; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
+            style="font-size: 12px; color: #8a8a8a; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
           >
             {raidName}
           </div>
@@ -177,12 +177,12 @@
               <span>{gateLabel(gate.gate)}</span>
               {#if isLive}
                 <span
-                  style="font-size: 8px; font-weight: 800; color: #4ade80; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); border-radius: 3px; padding: 1px 5px; letter-spacing: 0.08em; animation: mech-pulse 2s ease-in-out infinite;"
+                  style="font-size: 12px; font-weight: 800; color: #4ade80; background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); border-radius: 3px; padding: 1px 5px; letter-spacing: 0.08em; animation: mech-pulse 2s ease-in-out infinite;"
                   >LIVE</span
                 >
               {/if}
             </div>
-            <span style="font-size: 10px; color: #8a8a8a; font-family: ui-monospace, monospace; flex-shrink: 0;"
+            <span style="font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; flex-shrink: 0;"
               >{gate.mechanics.length}</span
             >
           </div>
@@ -201,7 +201,7 @@
         ? 'rgba(248,113,113,0.4)'
         : '#1f1f1f'}; border-radius: 4px; padding: 4px 6px; color: {confirmReset
         ? '#f87171'
-        : '#3a3a3a'}; cursor: pointer; font-size: 10px; font-weight: 600; font-family: inherit; transition: all 0.15s;"
+        : '#3a3a3a'}; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.15s;"
     >
       {confirmReset ? "⚠ Confirm Reset?" : "↺ Reset to Defaults"}
     </button>

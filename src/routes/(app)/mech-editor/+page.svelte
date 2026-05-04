@@ -84,7 +84,7 @@
         </div>
         <div style="text-align: right; flex-shrink: 0;">
           <div
-            style="font-size: 10px; color: #8a8a8a; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;"
+            style="font-size: 12px; color: #8a8a8a; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;"
           >
             Total HP
           </div>
@@ -93,7 +93,7 @@
           >
             {gate.totalBars}
           </div>
-          <div style="font-size: 10px; color: #8a8a8a;">bars</div>
+          <div style="font-size: 12px; color: #8a8a8a;">bars</div>
         </div>
       </div>
 
@@ -103,7 +103,7 @@
       >
         <HPTimeline mechanics={gate.mechanics} totalBars={gate.totalBars} currentBar={simBar} />
         <div
-          style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
+          style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
         >
           <span style="letter-spacing: 0.08em; text-transform: uppercase;">Simulate HP</span>
           <input
@@ -118,14 +118,14 @@
           />
           <span style="color: {isLive ? '#4ade80' : '#38bdf8'}; min-width: 80px; text-align: right;">
             {simBar}× / {gate.totalBars}×
-            {#if isLive}<span style="font-size: 9px; color: #4ade80; margin-left: 3px;">LIVE</span>{/if}
+            {#if isLive}<span style="font-size: 12px; color: #4ade80; margin-left: 3px;">LIVE</span>{/if}
           </span>
         </div>
       </div>
 
       <!-- Table header -->
       <div
-        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 9.5px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 12px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
       >
         <div>HP Bar</div>
         <div>Ph</div>
@@ -135,7 +135,7 @@
         <div style="text-align: right;">
           <button
             onclick={openAdd}
-            style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 3px; padding: 3px 9px; color: #38bdf8; cursor: pointer; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;"
+            style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 3px; padding: 3px 9px; color: #38bdf8; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;"
             >+ ADD</button
           >
         </div>

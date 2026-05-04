@@ -56,7 +56,7 @@
           : 1}; box-shadow: {!drained ? `0 0 5px ${sev.color}` : 'none'};"
       ></div>
       <div
-        style="font-size: 9px; font-family: ui-monospace, monospace; color: {drained
+        style="font-size: 12px; font-family: ui-monospace, monospace; color: {drained
           ? '#8a8a8a'
           : sev.color}; opacity: {drained
           ? 0.55
@@ -79,7 +79,7 @@
           : `0 0 4px ${pc}`};"
       ></div>
       <div
-        style="font-size: 8px; font-family: ui-monospace, monospace; color: {pc}; opacity: {drained
+        style="font-size: 12px; font-family: ui-monospace, monospace; color: {pc}; opacity: {drained
           ? 0.4
           : 0.9}; font-weight: 800; transform: translateX(-50%); white-space: nowrap; margin-top: 1px;"
       >
@@ -95,11 +95,11 @@
 
   <!-- Axis labels -->
   <span
-    style="position: absolute; left: 2px; bottom: 0; font-size: 9px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
+    style="position: absolute; left: 2px; bottom: 0; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
     >{totalBars}× <span style="opacity: 0.5;">MAX</span></span
   >
   <span
-    style="position: absolute; right: 2px; bottom: 0; font-size: 9px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
+    style="position: absolute; right: 2px; bottom: 0; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
     ><span style="opacity: 0.5;">DEAD</span> 0×</span
   >
 </div>

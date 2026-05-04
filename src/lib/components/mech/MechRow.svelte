@@ -41,7 +41,7 @@
       : '#fafafa'};"
   >
     {#if mech.hpBar != null}
-      {mech.hpBar}<span style="font-size: 9px; color: #8a8a8a; font-weight: 400; margin-left: 2px;">×</span>
+      {mech.hpBar}<span style="font-size: 12px; color: #8a8a8a; font-weight: 400; margin-left: 2px;">×</span>
     {:else}
       <span style="font-size: 12px; color: #fbbf24;">⏱ {formatTimer(mech.timerSecs)}</span>
     {/if}
@@ -51,7 +51,7 @@
   <div>
     {#if phaseColor}
       <div
-        style="width: 19px; height: 19px; border-radius: 3px; background: {phaseColor}20; border: 1px solid {phaseColor}60; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: {phaseColor}; font-family: ui-monospace, monospace;"
+        style="width: 19px; height: 19px; border-radius: 3px; background: {phaseColor}20; border: 1px solid {phaseColor}60; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: {phaseColor}; font-family: ui-monospace, monospace;"
       >
         P{mech.phase}
       </div>
@@ -67,14 +67,14 @@
           : '#fafafa'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{mech.name}</span
       >
       {#if isNext}
-        <span style="font-size: 9px; color: #38bdf8; font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
+        <span style="font-size: 12px; color: #38bdf8; font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
           >▶ NEXT</span
         >
       {/if}
     </div>
     {#if mech.notes}
       <div
-        style="font-size: 11px; color: #a3a3a3; line-height: 1.4; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+        style="font-size: 12px; color: #a3a3a3; line-height: 1.4; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
       >
         {mech.notes}
       </div>
@@ -86,7 +86,7 @@
 
   <!-- Repeat + TTS -->
   <div
-    style="font-size: 11px; color: #a3a3a3; display: flex; gap: 6px; align-items: center; font-family: ui-monospace, monospace;"
+    style="font-size: 12px; color: #a3a3a3; display: flex; gap: 6px; align-items: center; font-family: ui-monospace, monospace;"
   >
     {#if mech.repeatSecs}
       <span style="color: #a78bfa;">↻{formatTimer(mech.repeatSecs)}</span>
