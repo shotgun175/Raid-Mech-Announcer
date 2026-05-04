@@ -1,8 +1,0 @@
-
-> raid-mech-announcer@0.1.0 check
-> svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
-
-1777906134714 START "c:\\Users\\Valluru\\Documents\\Bharat\\Claude Projects\\Raid Mech Announcer"
-1777906134716 ERROR "src\\lib\\components\\Toast.svelte" 19:25 "This comparison appears to be unintentional because the types '\"/(mech)\" | \"/(app)\" | \"/\" | \"/(app)/changelog\" | \"/(app)/mech-editor\" | \"/(mech)/mech-overlay\" | \"/(app)/mech-settings\" | null' and '\"/(live)/live\"' have no overlap."
-1777906134716 ERROR "src\\lib\\components\\Toaster.svelte" 26:25 "This comparison appears to be unintentional because the types '\"/(mech)\" | \"/(app)\" | \"/\" | \"/(app)/changelog\" | \"/(app)/mech-editor\" | \"/(mech)/mech-overlay\" | \"/(app)/mech-settings\" | null' and '\"/(live)/live\"' have no overlap."
-1777906134716 COMPLETED 619 FILES 2 ERRORS 0 WARNINGS 2 FILES_WITH_PROBLEMS

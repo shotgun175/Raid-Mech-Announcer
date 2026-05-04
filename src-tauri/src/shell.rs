@@ -4,30 +4,14 @@ use tauri::AppHandle;
 use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_shell::ShellExt;
 
-use crate::{
-    constants::{GAME_EXE_NAME, STEAM_GAME_URL},
-    context::AppContext,
-};
+use crate::constants::{GAME_EXE_NAME, STEAM_GAME_URL};
 
 #[derive(Debug)]
-pub struct ShellManager(AppHandle, AppContext);
+pub struct ShellManager(AppHandle);
 
 impl ShellManager {
-    pub fn new(shell: AppHandle, context: AppContext) -> Self {
-        Self(shell, context)
-    }
-
-    pub fn open_db_path(&self) {
-        let path = &self.1.current_dir;
-        info!("open_db_path: {}", path.display());
-
-        if let Err(err) = self
-            .0
-            .opener()
-            .open_path(path.to_str().unwrap(), None::<String>)
-        {
-            error!("Failed to open database path: {err}");
-        }
+    pub fn new(shell: AppHandle) -> Self {
+        Self(shell)
     }
 
     pub fn start_loa_process(&self) {
@@ -47,12 +31,10 @@ impl ShellManager {
             RefreshKind::nothing().with_processes(ProcessRefreshKind::nothing().without_tasks()),
         );
 
-        let process_name = GAME_EXE_NAME;
-
         system
             .processes()
             .values()
-            .any(|p| p.name().eq_ignore_ascii_case(process_name))
+            .any(|p| p.name().eq_ignore_ascii_case(GAME_EXE_NAME))
     }
 
     pub async fn remove_driver(&self) {
@@ -106,8 +88,8 @@ impl ShellManager {
                         info!("Driver stopped successfully");
                     } else {
                         let code = output.status.code().unwrap_or(-1);
-                        // ignore error if driver is not running
-                        if matches!(code, 1060 | 1062) {
+                        // ignore: 5 = access denied (no admin), 1060/1062 = not installed/already stopped
+                        if matches!(code, 5 | 1060 | 1062) {
                             return;
                         }
                         warn!("Failed to stop driver. Exit code: {code} - stdout: {stdout}");
