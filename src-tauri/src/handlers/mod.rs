@@ -17,7 +17,6 @@ mod models;
 pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
     Box::new(generate_handler![
         toggle_overlay_window,
-        open_url,
         save_settings,
         get_settings,
         disable_blur,
@@ -52,11 +51,6 @@ pub fn toggle_overlay_window(app: AppHandle) -> Result<()> {
     }
 
     Ok(())
-}
-
-#[command]
-pub fn open_url(_app_handle: AppHandle, url: String) {
-    info!("open_url called: {}", url);
 }
 
 #[command]

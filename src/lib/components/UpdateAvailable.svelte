@@ -3,7 +3,7 @@
   import { createDialog, melt } from "@melt-ui/svelte";
   import { fade } from "svelte/transition";
   import { markdown } from "./Markdown.svelte";
-  import { installBetaUpdate, relaunchApp } from "$lib/api";
+  import { relaunchApp } from "$lib/api";
 
   const {
     elements: { portalled, overlay, content, title, description },
@@ -32,15 +32,7 @@
         </div>
       {/if}
       <div class="flex items-center py-2">
-        <button
-          class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0"
-          onclick={async () => {
-            if (updateInfo.isBeta) {
-              await installBetaUpdate();
-            }
-            await relaunchApp();
-          }}
-        >
+        <button class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0" onclick={relaunchApp}>
           <span>Update Now</span>
         </button>
       </div>
