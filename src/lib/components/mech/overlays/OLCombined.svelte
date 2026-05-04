@@ -3,7 +3,7 @@
   import MechBadge from "../MechBadge.svelte";
   import { upcomingFrom, hpBarColor, type OverlayProps } from "./_shared";
 
-  let { mechanics, currentBar, totalBars, gateName, bossName = "" }: OverlayProps = $props();
+  let { mechanics, currentBar, totalBars, bossName = "" }: OverlayProps = $props();
 
   const upcoming = $derived(upcomingFrom(mechanics, currentBar).slice(0, 4));
   const next = $derived(upcoming[0] ?? null);
@@ -45,20 +45,16 @@
       <div
         style="position: absolute; inset: 0; background: {barColor}; opacity: 0.78; width: {pct}%; transition: width 0.3s, background 0.3s;"
       ></div>
-      <!-- Text row: flex so gate / boss / bar count never collide -->
+      <!-- Text row: boss name left, HP right -->
       <div
-        style="position: absolute; inset: 0; display: flex; align-items: center; padding: 0 9px; gap: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
+        style="position: absolute; inset: 0; display: flex; align-items: center; padding: 0 9px; gap: 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.9);"
       >
         <span
-          style="font-size: 11px; color: var(--color-accent-500); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%; flex-shrink: 0;"
-          >{gateName}</span
-        >
-        <span
-          style="flex: 1; min-width: 0; text-align: center; font-size: 13px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+          style="flex: 1; min-width: 0; font-size: 13px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
           >{bossName}</span
         >
         <span
-          style="font-size: 12px; font-family: ui-monospace, monospace; color: white; font-weight: 600; white-space: nowrap; flex-shrink: 0;"
+          style="font-size: 12px; font-family: ui-monospace, monospace; color: white; font-weight: 600; white-space: nowrap; flex-shrink: 0; opacity: 0.85;"
           >{pct.toFixed(1)}%&nbsp;·&nbsp;{currentBar}×</span
         >
       </div>

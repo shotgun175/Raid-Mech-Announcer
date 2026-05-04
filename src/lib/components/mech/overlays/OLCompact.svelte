@@ -2,7 +2,7 @@
   import { PHASE_COLORS, SEVERITY, formatTimer } from "$lib/mech-constants";
   import { upcomingFrom, hpBarColor, type OverlayProps } from "./_shared";
 
-  let { mechanics, currentBar, totalBars, gateName }: OverlayProps = $props();
+  let { mechanics, currentBar, totalBars, bossName = "" }: OverlayProps = $props();
   const upcoming = $derived(upcomingFrom(mechanics, currentBar).slice(0, 3));
   const barColor = $derived(hpBarColor(currentBar, totalBars));
 </script>
@@ -24,8 +24,8 @@
       style="padding: 6px 12px; background: rgba(10,10,10,0.5); border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;"
     >
       <span
-        style="font-size: 12px; color: #38bdf8; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;"
-        >{gateName}</span
+        style="font-size: 12px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;"
+        >{bossName}</span
       >
       <span style="font-size: 13px; font-family: ui-monospace, monospace; color: #fafafa; font-weight: 600;"
         >{currentBar}<span style="color: #525252; font-weight: 400;">×</span></span

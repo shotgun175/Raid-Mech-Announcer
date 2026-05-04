@@ -269,9 +269,9 @@
         {#if variant === "combined"}
           <OLCombined mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
         {:else if variant === "compact"}
-          <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} />
+          <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
         {:else if variant === "hud"}
-          <OLHudStrip mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} />
+          <OLHudStrip mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
         {:else if variant === "card"}
           <OLCardStack mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} />
         {:else}

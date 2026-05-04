@@ -3,7 +3,7 @@
   import MechBadge from "../MechBadge.svelte";
   import { upcomingFrom, hpBarColor, type OverlayProps } from "./_shared";
 
-  let { mechanics, currentBar, totalBars, gateName }: OverlayProps = $props();
+  let { mechanics, currentBar, totalBars, bossName = "" }: OverlayProps = $props();
   const next = $derived(upcomingFrom(mechanics, currentBar)[0] ?? null);
   const sev = $derived(next ? SEVERITY[next.severity] : null);
   const barColor = $derived(hpBarColor(currentBar, totalBars));
@@ -18,9 +18,14 @@
         100}%; transition: width 0.3s;"
     ></div>
     <div
-      style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
+      style="position: absolute; inset: 0; display: flex; align-items: center; padding: 0 9px; gap: 8px; font-size: 13px; color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
     >
-      {gateName} · <span style="font-family: ui-monospace, monospace; margin-left: 4px;">{currentBar}/{totalBars}</span>
+      <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+        >{bossName}</span
+      >
+      <span style="font-family: ui-monospace, monospace; font-size: 12px; flex-shrink: 0; opacity: 0.85;"
+        >{currentBar}/{totalBars}</span
+      >
     </div>
     {#if next && sev}
       <div
