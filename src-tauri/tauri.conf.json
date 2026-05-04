@@ -44,20 +44,6 @@
         "focus": false,
         "skipTaskbar": false,
         "useHttpsScheme": true
-      },
-      {
-        "label": "logs",
-        "title": "Raid Mech Announcer",
-        "userAgent": "Raid Mech Announcer",
-        "url": "logs",
-        "minWidth": 650,
-        "minHeight": 300,
-        "width": 800,
-        "height": 500,
-        "decorations": true,
-        "dragDropEnabled": false,
-        "visible": false,
-        "useHttpsScheme": true
       }
     ],
     "security": {
