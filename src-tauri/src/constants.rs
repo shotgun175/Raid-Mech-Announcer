@@ -6,11 +6,8 @@ use window_vibrancy::Color;
 
 pub const WINDOW_MS: i64 = 5_000;
 pub const WINDOW_S: i64 = 5;
-pub const DB_VERSION: i32 = 5;
 pub const METER_WINDOW_LABEL: &str = "main";
 pub const LOGS_WINDOW_LABEL: &str = "logs";
-pub const DATABASE_PATH: &str = "encounters.db";
-pub const MIGRATIONS_PATH: &str = "migrations.tar";
 pub const SETTINGS_PATH: &str = "settings.json";
 pub const LOCAL_PLAYERS_PATH: &str = "local_players.json";
 pub const REGION_PATH: &str = "current_region";

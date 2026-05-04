@@ -7,7 +7,6 @@ mod background;
 mod constants;
 mod context;
 mod data;
-mod database;
 mod handlers;
 #[cfg(feature = "meter-core")]
 mod live;
@@ -25,7 +24,6 @@ use crate::app::autostart::AutoLaunchManager;
 use crate::constants::*;
 use crate::context::AppContext;
 use crate::data::AssetPreloader;
-use crate::database::Database;
 use crate::handlers::generate_handlers;
 use crate::misc::load_windivert;
 use crate::settings::SettingsManager;
@@ -52,9 +50,6 @@ async fn main() -> Result<()> {
         .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
     log::info!("meter-data source: {}", meter_data_dir.display());
     AssetPreloader::new(&meter_data_dir).expect("could not load meter-data from LOA Logs");
-    let database = Database::new(context.database_path.clone(), &context.version)
-        .expect("error setting up database: {}");
-    let repository = database.create_repository();
     let auto_launch_manager = AutoLaunchManager::new(&package_info.name, &context.app_path);
 
     let handle = Handle::current();
@@ -63,8 +58,6 @@ async fn main() -> Result<()> {
     tauri::Builder::default()
         .manage(auto_launch_manager)
         .manage(context)
-        .manage(database)
-        .manage(repository)
         .manage(settings_manager)
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

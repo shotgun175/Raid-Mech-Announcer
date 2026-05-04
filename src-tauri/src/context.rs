@@ -12,8 +12,6 @@ pub struct AppContext {
     pub app_path: PathBuf,
     pub current_dir: PathBuf,
     pub settings_path: PathBuf,
-    pub database_path: PathBuf,
-    pub migrations_path: PathBuf,
     pub local_player_path: PathBuf,
     pub region_file_path: PathBuf,
 }
@@ -30,8 +28,6 @@ impl AppContext {
         let assets_path = current_dir.clone();
 
         let settings_path = current_dir.join(SETTINGS_PATH);
-        let database_path = current_dir.join(DATABASE_PATH);
-        let migrations_path = current_dir.join(MIGRATIONS_PATH);
         let local_player_path = assets_path.join(LOCAL_PLAYERS_PATH);
         let region_file_path = assets_path.join(REGION_PATH);
 
@@ -40,8 +36,6 @@ impl AppContext {
             app_path,
             current_dir,
             settings_path,
-            database_path,
-            migrations_path,
             local_player_path,
             region_file_path,
         })
