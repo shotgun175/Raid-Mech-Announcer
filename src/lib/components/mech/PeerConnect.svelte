@@ -107,7 +107,8 @@
       style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px; padding: 6px 10px; border-radius: 6px; background: #1a1a1a; border: 1px solid #333333; font-size: 11px;"
     >
       <span style="color: #737373; flex-shrink: 0;">Last fight:</span>
-      <span style="color: #d4d4d4; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
+      <span
+        style="color: #d4d4d4; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
         >{lastFight.difficulty} · {lastFight.boss}</span
       >
       {#if lastFight.cleared}

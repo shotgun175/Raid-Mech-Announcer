@@ -24,7 +24,7 @@
 </script>
 
 <div
-  class="fixed right-0 bottom-0 top-auto z-50 m-4 flex flex-col items-end gap-2 {settings.app.general.accentColor}"
+  class="fixed top-auto right-0 bottom-0 z-50 m-4 flex flex-col items-end gap-2 {settings.app.general.accentColor}"
   use:portal
 >
   {#each $toasts as toast (toast.id)}
