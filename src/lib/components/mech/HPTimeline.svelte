@@ -90,7 +90,7 @@
 
   <!-- Drain edge pointer (sky-400 glow line at currentBar position) -->
   <div
-    style="position: absolute; left: {drainPct}%; top: 8px; width: 2px; height: 20px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"
+    style="position: absolute; left: {drainPct}%; top: 8px; width: 2px; height: 20px; background: var(--color-accent-500); box-shadow: 0 0 8px var(--color-accent-500);"
   ></div>
 
   <!-- Axis labels: DEAD on left, MAX on right — bar drains right→left -->

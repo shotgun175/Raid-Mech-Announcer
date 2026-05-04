@@ -111,7 +111,7 @@
       </button>
       <button
         use:melt={$trigger}
-        style="width: 100%; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 4px 6px; color: #38bdf8; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
+        style="width: 100%; background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 4px; padding: 4px 6px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
       >
         + Add Raid
       </button>
@@ -150,13 +150,17 @@
             onkeydown={(e) => e.key === "Enter" && mechStore.selectGate(gate.id)}
             style="
               width: 100%; text-align: left; padding: 8px 14px 8px 20px; cursor: pointer;
-              background: {sel ? 'rgba(56,189,248,0.1)' : isLive ? 'rgba(74,222,128,0.05)' : 'transparent'};
+              background: {sel
+              ? 'color-mix(in oklch, var(--color-accent-500) 10%, transparent)'
+              : isLive
+                ? 'rgba(74,222,128,0.05)'
+                : 'transparent'};
               border-left: {sel
-              ? '2px solid #38bdf8'
+              ? '2px solid var(--color-accent-500)'
               : isLive
                 ? '2px solid rgba(74,222,128,0.4)'
                 : '2px solid transparent'};
-              color: {sel ? '#38bdf8' : '#a3a3a3'}; font-size: 12.5px; font-weight: {sel ? 600 : 400};
+              color: {sel ? 'var(--color-accent-500)' : '#a3a3a3'}; font-size: 12.5px; font-weight: {sel ? 600 : 400};
               display: flex; justify-content: space-between; align-items: center;
               transition: background 0.15s, color 0.15s; font-family: inherit;
             "
@@ -269,7 +273,7 @@
           <input
             type="checkbox"
             bind:checked={form.tauntable}
-            style="accent-color: #38bdf8; width: 13px; height: 13px;"
+            style="accent-color: var(--color-accent-500); width: 13px; height: 13px;"
           />
           Tauntable
         </label>
@@ -286,11 +290,11 @@
           onclick={saveRaid}
           disabled={!form.raid.trim() || !form.boss.trim()}
           style="background: {form.raid.trim() && form.boss.trim()
-            ? 'rgba(56,189,248,0.1)'
+            ? 'color-mix(in oklch, var(--color-accent-500) 10%, transparent)'
             : '#1a1a1a'}; border: 1px solid {form.raid.trim() && form.boss.trim()
-            ? 'rgba(56,189,248,0.3)'
+            ? 'color-mix(in oklch, var(--color-accent-500) 30%, transparent)'
             : '#262626'}; border-radius: 4px; padding: 7px 14px; color: {form.raid.trim() && form.boss.trim()
-            ? '#38bdf8'
+            ? 'var(--color-accent-500)'
             : '#8a8a8a'}; cursor: {form.raid.trim() && form.boss.trim()
             ? 'pointer'
             : 'not-allowed'}; font-size: 12.5px; font-weight: 600; font-family: inherit; opacity: {form.raid.trim() &&
