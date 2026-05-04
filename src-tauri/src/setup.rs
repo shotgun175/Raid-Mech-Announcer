@@ -8,13 +8,12 @@ use std::{
 
 use log::*;
 use tauri::{App, AppHandle, Manager};
-use tauri_plugin_updater::UpdaterExt;
 
 #[cfg(not(debug_assertions))]
 use crate::app;
 use crate::{
     background::{BackgroundWorker, BackgroundWorkerArgs},
-    constants::{BETA_ENDPOINT, DEFAULT_PORT},
+    constants::DEFAULT_PORT,
     context::AppContext,
     settings::*,
     shell::ShellManager,
@@ -39,8 +38,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
 
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
-    let is_beta = settings.as_ref().map(|s| s.general.beta_channel).unwrap_or(false);
-    let update_checked: Arc<AtomicBool> = check_updates(app_handle, is_beta);
+    let update_checked: Arc<AtomicBool> = check_updates(app_handle);
 
     let mut background = BackgroundWorker::new(app_handle.clone());
 
@@ -66,7 +64,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
+fn check_updates(app_handle: &AppHandle) -> Arc<AtomicBool> {
     let update_checked = Arc::new(AtomicBool::new(false));
 
     {
@@ -74,54 +72,12 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
         let app_handle = app_handle.clone();
 
         let check_update = async move {
-            // unload driver regardless in case of leftover windivert from other apps?
             let shell_manager = app_handle.state::<ShellManager>();
             shell_manager.unload_driver().await;
 
-            let check_result = if is_beta {
-                if BETA_ENDPOINT.is_empty() {
-                    warn!("beta channel enabled but BETA_ENDPOINT is not configured — skipping update check");
-                    update_checked.store(true, Ordering::Relaxed);
-                    return;
-                }
-                let beta_url = url::Url::parse(BETA_ENDPOINT).expect("beta endpoint URL is valid");
-                match app_handle.updater_builder().endpoints(vec![beta_url]).and_then(|b| b.build()) {
-                    Ok(updater) => updater.check().await,
-                    Err(e) => {
-                        warn!("failed to build beta updater: {e}");
-                        update_checked.store(true, Ordering::Relaxed);
-                        return;
-                    }
-                }
-            } else {
-                match app_handle.updater_builder().build() {
-                    Ok(updater) => updater.check().await,
-                    Err(e) => {
-                        warn!("updater plugin not available — skipping update check: {e}");
-                        update_checked.store(true, Ordering::Relaxed);
-                        return;
-                    }
-                }
-            };
-
-            match check_result {
-                #[cfg(not(debug_assertions))]
-                Ok(Some(update)) => {
-                    info!("update available, downloading update: v{}", update.version);
-                    shell_manager.remove_driver().await;
-                    if let Err(e) = update.download_and_install(|_, _| {}, || {}).await {
-                        error!("failed to download update: {}", e);
-                    }
-                }
-                Err(e) => {
-                    warn!("failed to get update: {e}");
-                    update_checked.store(true, Ordering::Relaxed);
-                }
-                _ => {
-                    info!("no update available");
-                    update_checked.store(true, Ordering::Relaxed);
-                }
-            }
+            // Updater plugin disabled — restore when tauri_plugin_updater is re-added to main.rs
+            warn!("updater plugin disabled — skipping update check");
+            update_checked.store(true, Ordering::Relaxed);
         };
 
         tauri::async_runtime::spawn(check_update);
