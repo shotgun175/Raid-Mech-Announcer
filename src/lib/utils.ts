@@ -1,36 +1,9 @@
 import { bossHpMap } from "$lib/constants/encounters";
 import { estherMap } from "$lib/constants/esthers";
 import { BossHpLog, type DamageStats, type Entity, type IdentityLogType, type IdentityLogTypeValue } from "$lib/types";
-import { writeImage } from "@tauri-apps/plugin-clipboard-manager";
-import html2canvas from "html2canvas-pro";
-import { checkBetaUpdate, writeLog } from "./api";
-import { addToast } from "./components/Toaster.svelte";
-import { screenshot, settings, updateInfo } from "./stores.svelte";
-import { screenshotError, screenshotSuccess } from "./utils/toasts";
+import { settings } from "./stores.svelte";
 
 export const LOA_BIBLE_URL = "https://lostark.bible";
-
-export async function takeScreenshot(div?: HTMLElement) {
-  if (!div) {
-    return;
-  }
-  screenshot.take();
-  setTimeout(async () => {
-    const canvas = await html2canvas(div, { useCORS: true, backgroundColor: "#27272A" });
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-      try {
-        await writeImage(await blob.arrayBuffer());
-        addToast(screenshotSuccess);
-      } catch (error) {
-        addToast(screenshotError);
-        await writeLog("failed to take screenshot: " + error);
-      } finally {
-        screenshot.done();
-      }
-    });
-  }, 100);
-}
 
 export async function checkForUpdate(_isBeta = false) {
   // TODO: re-enable when updater plugin is configured (see CLAUDE.md TODO list).

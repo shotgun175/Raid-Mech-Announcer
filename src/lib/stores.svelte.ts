@@ -1,10 +1,6 @@
 import { browser } from "$app/environment";
-import { invoke } from "@tauri-apps/api/core";
 import type { Update } from "@tauri-apps/plugin-updater";
-import { time } from "echarts/core";
 import MarkdownIt from "markdown-it";
-import { SvelteSet } from "svelte/reactivity";
-import { readable } from "svelte/store";
 import type { AppSettings } from "./settings";
 import { saveSettings } from "./api";
 
@@ -25,7 +21,6 @@ export const mergeSettings = (defaultSettings: any, storageSettings: any) => {
 
 class Settings {
   app = $state(defaultSettings);
-  sync = $state(syncSettings);
   classColors = $state<Record<string, string>>(defaultClassColors);
   version = $state("");
   lockUpdate = false;
@@ -65,17 +60,6 @@ class Settings {
         this.lockUpdate = false;
       };
 
-      const updateSyncSettings = (settings: string | null) => {
-        this.lockUpdate = true;
-        if (settings) {
-          try {
-            const syncSettings = JSON.parse(settings) as SyncSettings;
-            mergeSettings(this.sync, syncSettings);
-          } catch (e) {}
-        }
-        this.lockUpdate = false;
-      };
-
       const updateVersion = async (newVersion: string | null) => {
         this.lockUpdate = true;
         if (newVersion) {
@@ -86,7 +70,6 @@ class Settings {
 
       updateSettings(localStorage.getItem("appSettings"), true);
       updateClassColors(localStorage.getItem("classColors"));
-      updateSyncSettings(localStorage.getItem("syncSettings"));
       updateVersion(localStorage.getItem("version"));
 
       $effect.root(() => {
@@ -100,10 +83,6 @@ class Settings {
         });
         $effect(() => {
           if (this.lockUpdate) return;
-          localStorage.setItem("syncSettings", JSON.stringify(this.sync));
-        });
-        $effect(() => {
-          if (this.lockUpdate) return;
           localStorage.setItem("version", this.version);
         });
       });
@@ -114,43 +93,12 @@ class Settings {
         if (storageArea !== localStorage) return;
         if (key === "appSettings") updateSettings(newValue);
         else if (key === "classColors") updateClassColors(newValue);
-        else if (key === "syncSettings") updateSyncSettings(newValue);
         else if (key === "version") updateVersion(newValue);
         else return;
       });
     } else {
       console.warn("localStorage not available?");
     }
-  }
-}
-
-export type sortColumns = "id" | "my_dps" | "duration" | "unbuffed_dps";
-export type sortOrder = "asc" | "desc";
-
-export class EncounterFilter {
-  search = $state("");
-  page = $state(1);
-  bosses = $state(new SvelteSet<string>());
-  encounters = $state(new SvelteSet<string>());
-  favorite = $state(false);
-  cleared = $state(false);
-  difficulty = $state("");
-  sort: sortColumns = $state("id");
-  order: sortOrder = $state("desc");
-  localPlayer = $state("");
-  minDuration = $derived(settings.app.logs.minEncounterDuration);
-
-  reset() {
-    this.search = "";
-    this.page = 1;
-    this.bosses = new SvelteSet();
-    this.encounters = new SvelteSet();
-    this.favorite = false;
-    this.cleared = false;
-    this.difficulty = "";
-    this.sort = "id";
-    this.order = "desc";
-    this.localPlayer = "";
   }
 }
 
@@ -309,14 +257,6 @@ export const defaultSettings: AppSettings = {
   }
 };
 
-export type SyncSettings = typeof syncSettings;
-export const syncSettings = {
-  accessToken: "",
-  validToken: false,
-  auto: false,
-  visibility: "0"
-};
-
 export const defaultClassColors: Record<string, string> = {
   Local: "#FFC9ED",
   Berserker: "#ee2e48",
@@ -360,19 +300,6 @@ export class Misc {
   modifyingShortcuts = $state(false);
 }
 
-export class SyncProgress {
-  syncing = $state(false);
-  uploaded = $state(0);
-  total = $state(0);
-  message = $state("");
-  stop = $state(false);
-}
-
-export class SkillCastInfo {
-  skillId = $state(0);
-  cast = $state(0);
-}
-
 export class UpdateInfo {
   available = $state(false);
   isBeta = $state(false);
@@ -380,24 +307,7 @@ export class UpdateInfo {
 }
 
 export const settings = new Settings();
-export const encounterFilter = new EncounterFilter();
 export const misc = new Misc();
-export const syncProgress = new SyncProgress();
-export const focusedCast = new SkillCastInfo();
-export const screenshot = (() => {
-  let state = $state(false);
-  return {
-    get state() {
-      return state;
-    },
-    take() {
-      state = true;
-    },
-    done() {
-      state = false;
-    }
-  };
-})();
 export const updateInfo = new UpdateInfo();
 
 const md = new MarkdownIt({
