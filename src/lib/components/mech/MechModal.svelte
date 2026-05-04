@@ -159,7 +159,7 @@
           <div class="field-label">Repeat Interval (seconds)</div>
           <input type="number" style={inp} bind:value={form.repeatSecs} placeholder="e.g. 60" />
           {#if form.repeatSecs}
-            <div style="font-size: 10px; color: #525252; margin-top: 3px; font-family: ui-monospace, monospace;">
+            <div style="font-size: 10px; color: #8a8a8a; margin-top: 3px; font-family: ui-monospace, monospace;">
               Repeats every {formatTimer(parseInt(form.repeatSecs))} after first trigger
             </div>
           {/if}
@@ -172,7 +172,7 @@
           <div class="field-label">Timer (seconds from pull)</div>
           <input type="number" style={inp} bind:value={form.timerSecs} placeholder="e.g. 510 for 8:30" />
           {#if form.timerSecs}
-            <div style="font-size: 10px; color: #525252; margin-top: 3px; font-family: ui-monospace, monospace;">
+            <div style="font-size: 10px; color: #8a8a8a; margin-top: 3px; font-family: ui-monospace, monospace;">
               = {formatTimer(parseInt(form.timerSecs))} from pull
             </div>
           {/if}

@@ -176,7 +176,7 @@
     </div>
     <div style="margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
       <span
-        style="font-size: 10px; color: #525252; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; flex-shrink: 0;"
+        style="font-size: 10px; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; flex-shrink: 0;"
         >Simulate HP:</span
       >
       <input
@@ -289,7 +289,7 @@
       </div>
     {:else}
       <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center;">
-        <div style="font-size: 13px; color: #525252;">Select a gate in the Raid Editor to preview</div>
+        <div style="font-size: 13px; color: #8a8a8a;">Select a gate in the Raid Editor to preview</div>
       </div>
     {/if}
   </div>
@@ -298,7 +298,7 @@
   <div
     style="flex-shrink: 0; padding: 8px 16px; background: #0f0f0f; border-top: 1px solid #262626; display: flex; align-items: center; justify-content: center; gap: 6px;"
   >
-    <span style="font-size: 11px; color: #525252;"
+    <span style="font-size: 11px; color: #8a8a8a;"
       >Drag the widget to reposition · Use the slider or ▶ Play to simulate HP draining</span
     >
   </div>

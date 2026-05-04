@@ -77,14 +77,14 @@
               <MechBadge label={gate.weakness} color="#4ade80" small />
             {/if}
             {#if !gate.tauntable}
-              <MechBadge label="Not Tauntable" color="#525252" small />
+              <MechBadge label="Not Tauntable" color="#8a8a8a" small />
             {/if}
           </div>
           <div style="font-size: 17px; font-weight: 700; color: #fafafa;">{gate.boss}</div>
         </div>
         <div style="text-align: right; flex-shrink: 0;">
           <div
-            style="font-size: 10px; color: #525252; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;"
+            style="font-size: 10px; color: #8a8a8a; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;"
           >
             Total HP
           </div>
@@ -93,7 +93,7 @@
           >
             {gate.totalBars}
           </div>
-          <div style="font-size: 10px; color: #525252;">bars</div>
+          <div style="font-size: 10px; color: #8a8a8a;">bars</div>
         </div>
       </div>
 
@@ -103,7 +103,7 @@
       >
         <HPTimeline mechanics={gate.mechanics} totalBars={gate.totalBars} currentBar={simBar} />
         <div
-          style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #525252; font-family: ui-monospace, monospace; font-weight: 600;"
+          style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
         >
           <span style="letter-spacing: 0.08em; text-transform: uppercase;">Simulate HP</span>
           <input
@@ -144,7 +144,7 @@
       <!-- Mechanic rows -->
       <div style="flex: 1; overflow-y: auto;">
         {#if sorted.length === 0}
-          <div style="padding: 48px; text-align: center; color: #525252; font-size: 13px;">
+          <div style="padding: 48px; text-align: center; color: #8a8a8a; font-size: 13px;">
             No mechanics yet.<br />
             <button
               onclick={openAdd}

@@ -102,7 +102,7 @@
         ? 'rgba(56,189,248,0.5)'
         : '#333333'}; border-radius: 4px; padding: 3px 10px; color: {input.trim()
         ? '#7dd3fc'
-        : '#525252'}; cursor: {input.trim()
+        : '#8a8a8a'}; cursor: {input.trim()
         ? 'pointer'
         : 'not-allowed'}; font-size: 12px; font-weight: 600; flex-shrink: 0; white-space: nowrap; font-family: inherit;"
     >
