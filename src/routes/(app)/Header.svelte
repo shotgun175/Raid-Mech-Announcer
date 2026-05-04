@@ -10,7 +10,6 @@
   import { getVersion } from "@tauri-apps/api/app";
   import { onMount, type Snippet } from "svelte";
   import { fade, fly } from "svelte/transition";
-  import { checkLoaRunning, startLoaProcess } from "$lib/api";
 
   const { title, children }: { title: string; children?: Snippet } = $props();
 
@@ -24,23 +23,13 @@
   });
 
   let version = $state("");
-  let loaRunning = $state(false);
 
   onMount(() => {
     (async () => {
       version = await getVersion();
-      loaRunning = await checkLoaRunning();
     })();
-
-    const interval = setInterval(async () => {
-      if ($open) {
-        loaRunning = await checkLoaRunning();
-      }
-    }, 5000);
-    return () => clearInterval(interval);
   });
 
-  let starting = $state(false);
   let checking = $state(false);
 </script>
 
@@ -106,29 +95,6 @@
           <div>Discord</div>
           <IconDiscord class="size-4" />
         </a> -->
-      </div>
-      <div class="flex items-center gap-1 px-2 pt-1">
-        <button
-          class="flex items-center gap-2 rounded-md px-3 py-1 text-sm {loaRunning || starting
-            ? 'cursor-default text-neutral-300/80'
-            : 'hover:text-accent-500'}"
-          onclick={() => {
-            starting = true;
-            startLoaProcess();
-            setTimeout(() => {
-              starting = false;
-            }, 10000);
-          }}
-          disabled={loaRunning || starting}
-        >
-          {#if loaRunning}
-            Lost Ark is running
-          {:else if !loaRunning && starting}
-            starting...
-          {:else}
-            Start Lost Ark
-          {/if}
-        </button>
       </div>
       <!-- version + update button row -->
       <div class="mx-4 mt-auto mb-2 flex items-center justify-between px-1">

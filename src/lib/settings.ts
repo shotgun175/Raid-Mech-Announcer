@@ -33,7 +33,6 @@ export interface LogsBreakdown extends BreakdownBase {
 }
 
 export interface GeneralSettings {
-  startLoaOnStart: boolean;
   lowPerformanceMode: boolean;
   showNames: boolean;
   showGearScore: boolean;

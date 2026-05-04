@@ -1,10 +1,6 @@
 use log::*;
-use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::AppHandle;
-use tauri_plugin_opener::OpenerExt;
 use tauri_plugin_shell::ShellExt;
-
-use crate::constants::{GAME_EXE_NAME, STEAM_GAME_URL};
 
 #[derive(Debug)]
 pub struct ShellManager(AppHandle);
@@ -12,29 +8,6 @@ pub struct ShellManager(AppHandle);
 impl ShellManager {
     pub fn new(shell: AppHandle) -> Self {
         Self(shell)
-    }
-
-    pub fn start_loa_process(&self) {
-        if self.check_loa_running() {
-            return info!("lost ark already running");
-        }
-
-        info!("starting lost ark process...");
-
-        if let Err(err) = self.0.opener().open_path(STEAM_GAME_URL, None::<String>) {
-            error!("could not open lost ark: {err}");
-        }
-    }
-
-    pub fn check_loa_running(&self) -> bool {
-        let system = System::new_with_specifics(
-            RefreshKind::nothing().with_processes(ProcessRefreshKind::nothing().without_tasks()),
-        );
-
-        system
-            .processes()
-            .values()
-            .any(|p| p.name().eq_ignore_ascii_case(GAME_EXE_NAME))
     }
 
     pub async fn remove_driver(&self) {

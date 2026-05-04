@@ -20,9 +20,6 @@ pub enum TrayCommand {
     #[strum(props(label = "Hide Overlay"))]
     HideOverlay,
 
-    #[strum(props(label = "Start Lost Ark"))]
-    StartLoa,
-
     #[strum(props(label = "Reset Window"))]
     Reset,
 
@@ -58,8 +55,6 @@ pub fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
         .separator()
         .command(TrayCommand::ShowOverlay)
         .command(TrayCommand::HideOverlay)
-        .separator()
-        .command(TrayCommand::StartLoa)
         .separator()
         .command(TrayCommand::Reset)
         .separator()

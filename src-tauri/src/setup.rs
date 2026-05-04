@@ -32,7 +32,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
 
     let settings = settings_manager.read().expect("Could not read settings");
 
-    let port = initialize_windows_and_settings(app_handle, settings.as_ref(), &shell_manager);
+    let port = initialize_windows_and_settings(app_handle, settings.as_ref());
 
     app_handle.manage(shell_manager);
 
@@ -81,11 +81,7 @@ fn check_updates(app_handle: &AppHandle) -> Arc<AtomicBool> {
     update_checked
 }
 
-fn initialize_windows_and_settings(
-    app_handle: &AppHandle,
-    settings: Option<&Settings>,
-    shell_manager: &ShellManager,
-) -> u16 {
+fn initialize_windows_and_settings(app_handle: &AppHandle, settings: Option<&Settings>) -> u16 {
     let mut port = DEFAULT_PORT;
     let overlay_window = app_handle.get_overlay_window().unwrap();
 
@@ -108,10 +104,6 @@ fn initialize_windows_and_settings(
             port = settings.general.port;
         }
 
-        if settings.general.start_loa_on_start {
-            info!("auto launch game enabled");
-            shell_manager.start_loa_process();
-        }
     } else {
         overlay_window.show().unwrap();
     }
