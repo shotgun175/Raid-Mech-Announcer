@@ -151,7 +151,7 @@
     style="padding: 10px 16px; border-bottom: 1px solid #262626; background: rgba(23,23,23,0.7); display: flex; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap;"
   >
     <span
-      style="font-size: 10px; color: #a3a3a3; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+      style="font-size: 12px; color: #a3a3a3; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
       >Style</span
     >
     <div
@@ -168,7 +168,7 @@
             ? '#262626'
             : 'transparent'}; border: none; border-radius: 3px; padding: 4px 10px; color: {variant === v.id
             ? '#fafafa'
-            : '#a3a3a3'}; cursor: pointer; font-size: 11px; font-weight: {variant === v.id
+            : '#a3a3a3'}; cursor: pointer; font-size: 12px; font-weight: {variant === v.id
             ? 600
             : 400}; transition: all 0.15s; font-family: inherit;">{v.label}</button
         >
@@ -176,7 +176,7 @@
     </div>
     <div style="margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
       <span
-        style="font-size: 10px; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; flex-shrink: 0;"
+        style="font-size: 12px; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; flex-shrink: 0;"
         >Simulate HP:</span
       >
       <input
@@ -198,12 +198,12 @@
           : '#38bdf8'}; min-width: 60px; font-weight: 600; flex-shrink: 0;"
       >
         {simBar}/{gate?.totalBars ?? 300}{#if isLive}
-          <span style="font-size: 9px;">LIVE</span>{/if}
+          <span style="font-size: 12px;">LIVE</span>{/if}
       </span>
       {#if !isLive}
         <select
           bind:value={speed}
-          style="background: #262626; border: 1px solid #262626; border-radius: 3px; padding: 3px 6px; color: #fafafa; font-size: 11px; outline: none; font-family: inherit;"
+          style="background: #262626; border: 1px solid #262626; border-radius: 3px; padding: 3px 6px; color: #fafafa; font-size: 12px; outline: none; font-family: inherit;"
         >
           <option value={1}>1×</option>
           <option value={3}>3×</option>
@@ -215,11 +215,11 @@
             ? '#fb923c60'
             : 'rgba(56,189,248,0.3)'}; border-radius: 3px; padding: 4px 12px; color: {playing
             ? '#fb923c'
-            : '#38bdf8'}; cursor: pointer; font-size: 11px; font-weight: 700; font-family: inherit; flex-shrink: 0;"
+            : '#38bdf8'}; cursor: pointer; font-size: 12px; font-weight: 700; font-family: inherit; flex-shrink: 0;"
           >{playing ? "⏸ PAUSE" : _simBar <= 0 ? "↺ RESTART" : "▶ PLAY"}</button
         >
       {:else}
-        <span style="font-size: 11px; color: #4ade80; font-weight: 700; font-family: ui-monospace, monospace;"
+        <span style="font-size: 12px; color: #4ade80; font-weight: 700; font-family: ui-monospace, monospace;"
           >● LIVE</span
         >
       {/if}
@@ -236,7 +236,7 @@
         style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 340px; text-align: center;"
       >
         <div
-          style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 500;"
+          style="font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 500;"
         >
           {gate.boss.toUpperCase()}
         </div>
@@ -249,7 +249,7 @@
           ></div>
         </div>
         <div
-          style="font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 3px; font-family: ui-monospace, monospace;"
+          style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 3px; font-family: ui-monospace, monospace;"
         >
           {simBar} / {gate.totalBars} bars
         </div>
@@ -298,7 +298,7 @@
   <div
     style="flex-shrink: 0; padding: 8px 16px; background: #0f0f0f; border-top: 1px solid #262626; display: flex; align-items: center; justify-content: center; gap: 6px;"
   >
-    <span style="font-size: 11px; color: #8a8a8a;"
+    <span style="font-size: 12px; color: #8a8a8a;"
       >Drag the widget to reposition · Use the slider or ▶ Play to simulate HP draining</span
     >
   </div>

@@ -57,7 +57,7 @@
   };
 
   const btn =
-    "border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 11.5px; font-weight: 600; font-family: inherit; transition: opacity 0.15s;";
+    "border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: opacity 0.15s;";
 </script>
 
 <!-- Backdrop -->
@@ -78,7 +78,7 @@
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
         <div>
           <div style="font-size: 14px; font-weight: 700; color: #fafafa;">Import Raids</div>
-          <div style="font-size: 11px; color: #8a8a8a; margin-top: 2px;">
+          <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
             Select gates to add pre-built mechanic templates · newest first
           </div>
         </div>
@@ -114,17 +114,17 @@
               style="flex: 1; text-align: left; background: transparent; border: none; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; min-width: 0;"
             >
               <span
-                style="font-size: 9px; color: #8a8a8a; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
+                style="font-size: 12px; color: #8a8a8a; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
                   raidName
                 ]
                   ? 90
                   : 0}deg); flex-shrink: 0;">▶</span
               >
               <span
-                style="font-size: 11px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
+                style="font-size: 12px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
                 >{raidName}</span
               >
-              <span style="font-size: 10px; color: #404040; flex-shrink: 0;">{importedCount}/{gates.length} added</span>
+              <span style="font-size: 12px; color: #404040; flex-shrink: 0;">{importedCount}/{gates.length} added</span>
             </button>
             <!-- Raid-level actions -->
             <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 8px;">
@@ -169,7 +169,7 @@
                     <span style="font-size: 12.5px; font-weight: 600; color: {imported ? '#86efac' : '#e5e5e5'};"
                       >{gateLabel(entry.gate)}</span
                     >
-                    <span style="font-size: 10.5px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
+                    <span style="font-size: 12px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
                   </div>
                   {#if imported}
                     <button
@@ -190,7 +190,7 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 4px;">
                   {#each entry.mechanics as m}
                     <span
-                      style="font-size: 10px; color: {severityColor[m.severity]}; background: {m.severity === 'wipe'
+                      style="font-size: 12px; color: {severityColor[m.severity]}; background: {m.severity === 'wipe'
                         ? 'rgba(248,113,113,0.08)'
                         : m.severity === 'major'
                           ? 'rgba(251,146,60,0.08)'
