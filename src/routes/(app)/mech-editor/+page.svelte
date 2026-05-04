@@ -125,7 +125,7 @@
 
       <!-- Table header -->
       <div
-        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 9.5px; font-weight: 700; color: #525252; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 9.5px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
       >
         <div>HP Bar</div>
         <div>Ph</div>
