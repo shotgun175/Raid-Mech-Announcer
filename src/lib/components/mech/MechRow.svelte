@@ -24,7 +24,7 @@
   tabindex="0"
   style="
     display: grid;
-    grid-template-columns: 78px 32px 1fr 110px 86px 78px;
+    grid-template-columns: 78px 60px 1fr 110px 86px 78px;
     padding: 8px 14px;
     border-bottom: 1px solid #262626;
     background: {isNext ? 'rgba(56,189,248,0.06)' : hovered ? '#202020' : 'transparent'};
