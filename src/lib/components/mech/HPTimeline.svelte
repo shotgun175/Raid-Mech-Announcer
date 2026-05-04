@@ -100,6 +100,6 @@
   >
   <span
     style="position: absolute; right: 2px; bottom: 0; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600; opacity: 0.5;"
-    >MAX</span
+    >'{totalBars} MAX</span
   >
 </div>
