@@ -99,6 +99,9 @@ export interface CharacterInfo {
 
 export const getLocalCharacters = (): Promise<CharacterInfo[]> => invoke("get_local_characters");
 
+export const getLOAMeterDataPath = (): Promise<string | null> =>
+  invoke("get_loa_meter_data_path");
+
 export interface SyncArgs {
   encounter: number;
   upstream: string;

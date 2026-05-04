@@ -3,7 +3,6 @@ use error::*;
 use log::*;
 use tauri::ipc::Invoke;
 use tauri::{AppHandle, Emitter, Manager, State, command, generate_handler};
-use tauri_plugin_updater::UpdaterExt;
 use window_vibrancy::{apply_blur, clear_blur};
 
 use crate::app::autostart::{AutoLaunch, AutoLaunchManager};
@@ -52,10 +51,10 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         sync,
         remove_driver,
         unload_driver,
-        check_beta_update,
-        install_beta_update,
-        install_stable_update,
         get_local_characters,
+        crate::tts_cmd::speak_tts,
+        crate::tts_cmd::list_tts_voices,
+        get_loa_meter_data_path,
     ])
 }
 
@@ -162,20 +161,8 @@ pub fn delete_encounters(repository: State<Repository>, ids: Vec<i32>) -> Result
 }
 
 #[command]
-pub fn toggle_meter_window(app: AppHandle, settings_manager: State<SettingsManager>) -> Result<()> {
-    let settings = settings_manager
-        .read()
-        .ok()
-        .flatten()
-        .context("could not read settings")?;
-
-    let label = if settings.general.mini {
-        METER_MINI_WINDOW_LABEL
-    } else {
-        METER_WINDOW_LABEL
-    };
-
-    if let Some(meter) = app.get_webview_window(label) {
+pub fn toggle_meter_window(app: AppHandle) -> Result<()> {
+    if let Some(meter) = app.get_webview_window(METER_WINDOW_LABEL) {
         if meter.is_visible().unwrap() {
             // workaround for tauri not handling minimized state for windows without decorations
             if meter.is_minimized().unwrap() {
@@ -339,10 +326,6 @@ pub fn enable_aot(app_handle: AppHandle) -> Result<()> {
         meter_window.set_always_on_top(true)?;
     }
 
-    if let Some(mini_window) = app_handle.get_mini_window() {
-        mini_window.set_always_on_top(true)?;
-    }
-
     Ok(())
 }
 
@@ -350,10 +333,6 @@ pub fn enable_aot(app_handle: AppHandle) -> Result<()> {
 pub fn disable_aot(app_handle: AppHandle) -> Result<()> {
     if let Some(meter_window) = app_handle.get_meter_window() {
         meter_window.set_always_on_top(false)?;
-    }
-
-    if let Some(mini_window) = app_handle.get_mini_window() {
-        mini_window.set_always_on_top(false)?;
     }
 
     Ok(())
@@ -405,74 +384,14 @@ pub fn start_loa_process(shell_manager: State<ShellManager>) {
 
 #[command]
 pub fn write_log(message: String) {
-    info!("{}", message);
-}
-
-#[derive(serde::Serialize)]
-pub struct UpdateManifest {
-    version: String,
-    body: Option<String>,
+    info!("[frontend] {}", message);
 }
 
 #[command]
-pub async fn check_beta_update(app_handle: AppHandle) -> Result<Option<UpdateManifest>> {
-    let beta_url = url::Url::parse(BETA_ENDPOINT).map_err(anyhow::Error::new)?;
-    let updater = app_handle
-        .updater_builder()
-        .endpoints(vec![beta_url])
-        .and_then(|b| b.build())
-        .map_err(anyhow::Error::new)?;
-
-    match updater.check().await.map_err(anyhow::Error::new)? {
-        Some(update) => Ok(Some(UpdateManifest {
-            version: update.version.clone(),
-            body: update.body.clone(),
-        })),
-        None => Ok(None),
-    }
+pub fn get_loa_meter_data_path() -> Option<String> {
+    crate::app::loa_detect::find_loa_meter_data()
+        .map(|p| p.display().to_string())
 }
 
-#[command]
-pub async fn install_beta_update(app_handle: AppHandle) -> Result<()> {
-    let shell_manager = app_handle.state::<ShellManager>();
-    let beta_url = url::Url::parse(BETA_ENDPOINT).map_err(anyhow::Error::new)?;
-    let updater = app_handle
-        .updater_builder()
-        .endpoints(vec![beta_url])
-        .and_then(|b| b.build())
-        .map_err(anyhow::Error::new)?;
-
-    #[cfg(not(debug_assertions))]
-    if let Some(update) = updater.check().await.map_err(anyhow::Error::new)? {
-        info!("installing beta update: v{}", update.version);
-        shell_manager.remove_driver().await;
-        update
-            .download_and_install(|_, _| {}, || {})
-            .await
-            .map_err(anyhow::Error::new)?;
-    }
-
-    Ok(())
-}
-
-#[command]
-pub async fn install_stable_update(app_handle: AppHandle) -> Result<()> {
-    let shell_manager = app_handle.state::<ShellManager>();
-    let updater = app_handle
-        .updater_builder()
-        .version_comparator(|_current, _remote| true)
-        .build()
-        .map_err(anyhow::Error::new)?;
-
-    #[cfg(not(debug_assertions))]
-    if let Some(update) = updater.check().await.map_err(anyhow::Error::new)? {
-        info!("installing stable update: v{}", update.version);
-        shell_manager.remove_driver().await;
-        update
-            .download_and_install(|_, _| {}, || {})
-            .await
-            .map_err(anyhow::Error::new)?;
-    }
-
-    Ok(())
-}
+// Updater commands stubbed out — plugin disabled until endpoints are configured (see CLAUDE.md)
+// Re-enable by: restoring tauri_plugin_updater in main.rs + adding endpoints to tauri.conf.json
