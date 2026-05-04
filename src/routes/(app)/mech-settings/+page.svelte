@@ -620,21 +620,6 @@
         </div>
         <div class="flex items-center gap-3">
           <select
-            bind:value={settings.app.general.scale}
-            class="w-28 rounded-lg bg-neutral-700 px-2 py-1.5 text-sm outline-none focus:border-accent-500 focus:ring-1"
-          >
-            <option value="0">Small</option>
-            <option value="1">Normal</option>
-            <option value="2">Large</option>
-            <option value="3">Largest</option>
-          </select>
-          <div>
-            <div class="text-sm font-semibold">Overlay UI Scale</div>
-            <div class="text-xs text-neutral-400">Scales the live game overlay window</div>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <select
             bind:value={settings.app.general.logScale}
             class="w-28 rounded-lg bg-neutral-700 px-2 py-1.5 text-sm outline-none focus:border-accent-500 focus:ring-1"
           >
@@ -646,6 +631,21 @@
           <div>
             <div class="text-sm font-semibold">Settings UI Scale</div>
             <div class="text-xs text-neutral-400">Scales the settings and editor windows</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <select
+            bind:value={settings.app.general.scale}
+            class="w-28 rounded-lg bg-neutral-700 px-2 py-1.5 text-sm outline-none focus:border-accent-500 focus:ring-1"
+          >
+            <option value="0">Small</option>
+            <option value="1">Normal</option>
+            <option value="2">Large</option>
+            <option value="3">Largest</option>
+          </select>
+          <div>
+            <div class="text-sm font-semibold">Overlay UI Scale</div>
+            <div class="text-xs text-neutral-400">Scales the live game overlay window</div>
           </div>
         </div>
 

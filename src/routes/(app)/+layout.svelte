@@ -14,7 +14,7 @@
 
   let { children }: { children?: import("svelte").Snippet } = $props();
 
-  const scaleMap = [0.8, 1.0, 1.2, 1.4];
+  const scaleMap = [0.9, 1.0, 1.1, 1.2];
   const logScale = $derived(scaleMap[Number(settings.app.general.logScale ?? 1)] ?? 1.0);
 
   const LOA_LIVE_PREFIX = "https://live.lostark.bible/";
