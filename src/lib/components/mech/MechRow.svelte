@@ -28,7 +28,7 @@
     padding: 8px 14px;
     border-bottom: 1px solid #262626;
     background: {isNext ? 'rgba(56,189,248,0.06)' : hovered ? '#202020' : 'transparent'};
-    border-left: {isNext ? '2px solid #38bdf8' : '2px solid transparent'};
+    border-left: {isNext ? '2px solid var(--color-accent-500)' : '2px solid transparent'};
     opacity: {isPast ? 0.4 : 1};
     align-items: center;
     transition: background 0.15s;
@@ -37,7 +37,7 @@
   <!-- HP / Timer -->
   <div
     style="font-family: ui-monospace, monospace; font-size: 14px; font-weight: 700; color: {isNext
-      ? '#38bdf8'
+      ? 'var(--color-accent-500)'
       : '#fafafa'};"
   >
     {#if mech.hpBar != null}
@@ -63,11 +63,12 @@
     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
       <span
         style="font-weight: 600; font-size: 13px; color: {isNext
-          ? '#38bdf8'
+          ? 'var(--color-accent-500)'
           : '#fafafa'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{mech.name}</span
       >
       {#if isNext}
-        <span style="font-size: 12px; color: #38bdf8; font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
+        <span
+          style="font-size: 12px; color: var(--color-accent-500); font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
           >▶ NEXT</span
         >
       {/if}
@@ -92,7 +93,7 @@
       <span style="color: #a78bfa;">↻{formatTimer(mech.repeatSecs)}</span>
     {/if}
     {#if mech.ttsEnabled}
-      <span title="TTS enabled" style="color: #38bdf8;">🔊</span>
+      <span title="TTS enabled" style="color: var(--color-accent-500);">🔊</span>
     {/if}
   </div>
 

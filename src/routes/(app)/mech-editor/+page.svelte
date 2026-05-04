@@ -68,9 +68,9 @@
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
             <MechBadge
               label="Gate {gate.gate}"
-              color="#38bdf8"
-              bg="rgba(56,189,248,0.1)"
-              border="rgba(56,189,248,0.3)"
+              color="var(--color-accent-500)"
+              bg="color-mix(in oklch, var(--color-accent-500) 10%, transparent)"
+              border="color-mix(in oklch, var(--color-accent-500) 30%, transparent)"
               small
             />
             <MechBadge label={gate.bossType} color={bossTypeColor} small />
@@ -90,7 +90,7 @@
             Total HP
           </div>
           <div
-            style="font-size: 22px; font-weight: 700; font-family: ui-monospace, monospace; color: #38bdf8; line-height: 1.1;"
+            style="font-size: 22px; font-weight: 700; font-family: ui-monospace, monospace; color: var(--color-accent-500); line-height: 1.1;"
           >
             {gate.totalBars}
           </div>
@@ -116,9 +116,11 @@
             oninput={(e) => {
               if (!isLive) _manualBar = Number((e.target as HTMLInputElement).value);
             }}
-            style="flex: 1; accent-color: #38bdf8; height: 4px; {isLive ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+            style="flex: 1; accent-color: var(--color-accent-500); height: 4px; {isLive
+              ? 'opacity: 0.5; cursor: not-allowed;'
+              : ''}"
           />
-          <span style="color: {isLive ? '#4ade80' : '#38bdf8'}; min-width: 80px; text-align: right;">
+          <span style="color: {isLive ? '#4ade80' : 'var(--color-accent-500)'}; min-width: 80px; text-align: right;">
             {simBar}× / {gate.totalBars}×
             {#if isLive}<span style="font-size: 12px; color: #4ade80; margin-left: 3px;">LIVE</span>{/if}
           </span>
@@ -138,7 +140,7 @@
         <div style="text-align: right;">
           <button
             onclick={openAdd}
-            style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 3px; padding: 3px 9px; color: #38bdf8; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;"
+            style="background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 3px; padding: 3px 9px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;"
             >+ ADD</button
           >
         </div>
@@ -151,7 +153,7 @@
             No mechanics yet.<br />
             <button
               onclick={openAdd}
-              style="margin-top: 12px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 8px 16px; color: #38bdf8; cursor: pointer; font-size: 12px; font-family: inherit;"
+              style="margin-top: 12px; background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 4px; padding: 8px 16px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-family: inherit;"
               >+ Add First Mechanic</button
             >
           </div>
