@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 

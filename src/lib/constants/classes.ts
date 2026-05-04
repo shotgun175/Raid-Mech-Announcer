@@ -1,6 +1,4 @@
-import type { ClassMap } from "$lib/types";
-
-export const classesMap: ClassMap = {
+export const classesMap: Record<number, string> = {
   0: "Unknown",
   101: "Warrior (Male)",
   102: "Berserker",

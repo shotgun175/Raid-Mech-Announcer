@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::models::ArkPassiveData;
 use crate::models::Skill;
 use hashbrown::{HashMap, HashSet};

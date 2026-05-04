@@ -26,7 +26,7 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
     "Brelshaza G6": ["Phantom Legion Commander Brelshaza"]
   },
   Kayangel: {
-    "Kayangel G1": ["Tienis"],
+    "Kayangel G1": ["Tienis", "Celestial Sentinel"],
     "Kayangel G2": ["Prunya"],
     "Kayangel G3": ["Lauriel"]
   },
@@ -98,7 +98,9 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
   },
   "Final Act: Kazeros": {
     "Final Act: Kazeros G1": ["Abyss Lord Kazeros", "Abyssal Afterimage"],
-    "Final Act: Kazeros G2": ["Archdemon Kazeros", "Death Incarnate Kazeros"]
+    "Final Act: Kazeros G2-1": ["Archdemon Kazeros"],
+    "Final Act: Kazeros G2-2": ["God of Death Kazeros"],
+    "Final Act: Kazeros G2-3": ["Death Incarnate Kazeros"]
   },
   Serca: {
     "Serca G1": ["Witch of Agony, Serca"],
@@ -171,9 +173,12 @@ export const bossHpMap: Record<string, number> = {
   "Act 4: Covetous Master Echidna": 300,
   "Brelshaza, Ember in the Ashes": 450,
   "Armoche, Sentinel of the Abyss": 450,
-  "Abyss Lord Kazeros": 999,
-  "Archdemon Kazeros": 999,
-  "Death Incarnate Kazeros": 777
+  "Abyss Lord Kazeros": 1000,
+  "God of Death Kazeros": 650,
+  "Archdemon Kazeros": 950,
+  "Death Incarnate Kazeros": 300,
+  "Witch of Agony, Serca": 300,
+  "Corvus Tul Rak": 300
 };
 
 export const difficultyMap: Array<string> = [
@@ -208,5 +213,3 @@ export const bossList = [
   "Deskaluda",
   "Lumencaligo"
 ];
-
-export const bossHpBarColors = ["#D16F23", "#9F3930", "#582469", "#2B3A63", "#246977", "#798816", "#E7B826"];

@@ -10,6 +10,13 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 **/target/
 
+# Game data tables — loaded at runtime from LOA Logs installation (%LOCALAPPDATA%\LOA Logs\meter-data\)
+# Do not commit these; they go stale and are always present if LOA Logs is installed.
+src-tauri/meter-data/
+
+# Playwright MCP session logs
+.playwright-mcp/
+
 # https://github.com/tauri-apps/tauri/discussions/8323#discussioncomment-8984252
 src-tauri/gen/schemas
 

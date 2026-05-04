@@ -8,12 +8,12 @@ use std::{
 
 use log::*;
 use tauri::{App, AppHandle, Manager};
-use tauri_plugin_updater::UpdaterExt;
 
+#[cfg(not(debug_assertions))]
+use crate::app;
 use crate::{
-    app,
     background::{BackgroundWorker, BackgroundWorkerArgs},
-    constants::{BETA_ENDPOINT, DEFAULT_PORT},
+    constants::DEFAULT_PORT,
     context::AppContext,
     settings::*,
     shell::ShellManager,
@@ -27,19 +27,18 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     let app_handle = app.handle();
 
     let context = app.state::<AppContext>();
-    let shell_manger = ShellManager::new(app_handle.clone(), context.inner().clone());
+    let shell_manager = ShellManager::new(app_handle.clone());
     let settings_manager = app.state::<SettingsManager>();
 
     let settings = settings_manager.read().expect("Could not read settings");
 
-    let port = initialize_windows_and_settings(app_handle, settings.as_ref(), &shell_manger);
+    let port = initialize_windows_and_settings(app_handle, settings.as_ref(), &shell_manager);
 
-    app_handle.manage(shell_manger);
+    app_handle.manage(shell_manager);
 
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
-    let is_beta = settings.as_ref().map(|s| s.general.beta_channel).unwrap_or(false);
-    let update_checked: Arc<AtomicBool> = check_updates(app_handle, is_beta);
+    let update_checked: Arc<AtomicBool> = check_updates(app_handle);
 
     let mut background = BackgroundWorker::new(app_handle.clone());
 
@@ -53,15 +52,14 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     background.start(args)?;
     app_handle.manage(background);
 
-    // #[cfg(debug_assertions)]
-    // {
-    //     _logs_window.open_devtools();
-    // }
+    // Keep the watcher alive for the app's lifetime. Returns None if LOA Logs isn't installed.
+    let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());
+    app_handle.manage(std::sync::Mutex::new(log_watcher));
 
     Ok(())
 }
 
-fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
+fn check_updates(app_handle: &AppHandle) -> Arc<AtomicBool> {
     let update_checked = Arc::new(AtomicBool::new(false));
 
     {
@@ -69,42 +67,12 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
         let app_handle = app_handle.clone();
 
         let check_update = async move {
-            // unload driver regardless in case of leftover windivert from other apps?
             let shell_manager = app_handle.state::<ShellManager>();
             shell_manager.unload_driver().await;
 
-            let check_result = if is_beta {
-                let beta_url = url::Url::parse(BETA_ENDPOINT).expect("beta endpoint URL is valid");
-                match app_handle.updater_builder().endpoints(vec![beta_url]).and_then(|b| b.build()) {
-                    Ok(updater) => updater.check().await,
-                    Err(e) => {
-                        warn!("failed to build beta updater: {e}");
-                        update_checked.store(true, Ordering::Relaxed);
-                        return;
-                    }
-                }
-            } else {
-                app_handle.updater().unwrap().check().await
-            };
-
-            match check_result {
-                #[cfg(not(debug_assertions))]
-                Ok(Some(update)) => {
-                    info!("update available, downloading update: v{}", update.version);
-                    shell_manager.remove_driver().await;
-                    if let Err(e) = update.download_and_install(|_, _| {}, || {}).await {
-                        error!("failed to download update: {}", e);
-                    }
-                }
-                Err(e) => {
-                    warn!("failed to get update: {e}");
-                    update_checked.store(true, Ordering::Relaxed);
-                }
-                _ => {
-                    info!("no update available");
-                    update_checked.store(true, Ordering::Relaxed);
-                }
-            }
+            // Updater plugin disabled — restore when tauri_plugin_updater is re-added to main.rs
+            warn!("updater plugin disabled — skipping update check");
+            update_checked.store(true, Ordering::Relaxed);
         };
 
         tauri::async_runtime::spawn(check_update);
@@ -116,39 +84,24 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
 fn initialize_windows_and_settings(
     app_handle: &AppHandle,
     settings: Option<&Settings>,
-    shell_manger: &ShellManager,
+    shell_manager: &ShellManager,
 ) -> u16 {
     let mut port = DEFAULT_PORT;
-    let meter_window = app_handle.get_meter_window().unwrap();
-    let mini_window = app_handle.get_mini_window().unwrap();
-    let logs_window = app_handle.get_logs_window().unwrap();
+    let overlay_window = app_handle.get_overlay_window().unwrap();
 
     if let Some(settings) = settings {
         info!("settings loaded");
-        if settings.general.mini {
-            mini_window.restore_default_state();
-            mini_window.show().unwrap();
-        } else if !settings.general.hide_meter_on_start && !settings.general.mini {
-            meter_window.restore_default_state();
-            meter_window.show().unwrap();
+        if !settings.general.hide_meter_on_start {
+            overlay_window.restore_default_state();
+            overlay_window.show().unwrap();
         } else {
-            meter_window.hide().unwrap();
-            mini_window.hide().unwrap()
-        }
-
-        if !settings.general.hide_logs_on_start {
-            logs_window.restore_default_state();
-            logs_window.show().unwrap();
-        } else {
-            logs_window.hide().unwrap();
+            overlay_window.hide().unwrap();
         }
 
         if settings.general.always_on_top {
-            meter_window.set_always_on_top(true).unwrap();
-            mini_window.set_always_on_top(true).unwrap();
+            overlay_window.set_always_on_top(true).unwrap();
         } else {
-            meter_window.set_always_on_top(false).unwrap();
-            mini_window.set_always_on_top(false).unwrap();
+            overlay_window.set_always_on_top(false).unwrap();
         }
 
         if settings.general.auto_iface && settings.general.port > 0 {
@@ -157,11 +110,10 @@ fn initialize_windows_and_settings(
 
         if settings.general.start_loa_on_start {
             info!("auto launch game enabled");
-            shell_manger.start_loa_process();
+            shell_manager.start_loa_process();
         }
     } else {
-        meter_window.show().unwrap();
-        logs_window.show().unwrap();
+        overlay_window.show().unwrap();
     }
 
     port

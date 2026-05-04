@@ -24,7 +24,6 @@ pub struct GeneralSettings {
     #[serde(default = "default_true")]
     pub hide_meter_on_start: bool,
     pub hide_logs_on_start: bool,
-    pub mini: bool,
     pub beta_channel: bool,
     #[serde(flatten)]
     pub extra: Map<String, Value>,

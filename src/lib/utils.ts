@@ -1,65 +1,12 @@
 import { bossHpMap } from "$lib/constants/encounters";
-import { estherMap } from "$lib/constants/esthers";
-import { BossHpLog, type DamageStats, type Entity, type IdentityLogType, type IdentityLogTypeValue } from "$lib/types";
-import { writeImage } from "@tauri-apps/plugin-clipboard-manager";
-import { check as checkUpdate } from "@tauri-apps/plugin-updater";
-import html2canvas from "html2canvas-pro";
-import { checkBetaUpdate, writeLog } from "./api";
-import { addToast } from "./components/Toaster.svelte";
-import { screenshot, settings, updateInfo } from "./stores.svelte";
-import { screenshotError, screenshotSuccess } from "./utils/toasts";
 
 export const LOA_BIBLE_URL = "https://lostark.bible";
 
-export async function takeScreenshot(div?: HTMLElement) {
-  if (!div) {
-    return;
-  }
-  screenshot.take();
-  setTimeout(async () => {
-    const canvas = await html2canvas(div, { useCORS: true, backgroundColor: "#27272A" });
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-      try {
-        await writeImage(await blob.arrayBuffer());
-        addToast(screenshotSuccess);
-      } catch (error) {
-        addToast(screenshotError);
-        await writeLog("failed to take screenshot: " + error);
-      } finally {
-        screenshot.done();
-      }
-    });
-  }, 100);
-}
-
-export async function checkForUpdate(isBeta = false) {
-  try {
-    if (isBeta) {
-      const manifest = await checkBetaUpdate();
-      if (manifest) {
-        updateInfo.available = true;
-        updateInfo.isBeta = true;
-        updateInfo.manifest = { body: manifest.body };
-      } else {
-        updateInfo.available = false;
-      }
-      return updateInfo.available;
-    }
-
-    const manifest = await checkUpdate();
-    if (manifest !== null) {
-      updateInfo.available = true;
-      updateInfo.isBeta = false;
-      updateInfo.manifest = manifest;
-    } else {
-      updateInfo.available = false;
-    }
-
-    return updateInfo.available;
-  } catch (err) {
-    await writeLog(String(err));
-  }
+export async function checkForUpdate(_isBeta = false) {
+  // TODO: re-enable when updater plugin is configured (see CLAUDE.md TODO list).
+  // The tauri_plugin_updater Rust plugin is currently disabled to avoid a startup
+  // panic caused by an unconfigured endpoint. Calling it would crash the process.
+  return false;
 }
 
 export function tryParseInt(intString: string | number, defaultValue = 0) {
@@ -183,28 +130,6 @@ export function formatTimestampTime(timestampMs: number): string {
   });
 }
 
-export function fillMissingElapsedTimes(data: IdentityLogType): IdentityLogType {
-  const filledData: IdentityLogType = [];
-  let lastValue: IdentityLogTypeValue;
-
-  data.forEach((item, index) => {
-    const [elapsedTime, value] = item;
-
-    if (index > 0) {
-      const [prevElapsedTime] = data[index - 1];
-
-      for (let i = prevElapsedTime + 1; i < elapsedTime; i++) {
-        filledData.push([i, lastValue]);
-      }
-    }
-
-    filledData.push(item);
-    lastValue = value;
-  });
-
-  return filledData;
-}
-
 export function formatMinutes(minutesDecimal: number): string {
   // Convert minutes to seconds
   const totalSeconds = Math.round(minutesDecimal * 60);
@@ -223,55 +148,11 @@ export function formatMinutes(minutesDecimal: number): string {
   return result;
 }
 
-export function resampleData(data: Array<BossHpLog>, interval = 5, length: number) {
-  const resampledData: Array<BossHpLog> = [];
-  let last = null;
-  const lastTime = data[data.length - 1].time;
-
-  const dataMap = data.reduce((map, obj) => {
-    map.set(obj.time, obj);
-    return map;
-  }, new Map<number, BossHpLog>());
-
-  for (let i = 0; i < length; i++) {
-    const time = i * interval;
-    if (time > lastTime) {
-      break;
-    }
-    if (dataMap.has(time)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      last = dataMap.get(time)!;
-    } else if (last === null) {
-      continue;
-    }
-    resampledData.push(new BossHpLog(time, last.hp, last.p));
-  }
-
-  return resampledData;
-}
-
 export function timeToSeconds(time: string): number {
   const split = time.split(":");
   const minutes = +split[0];
   const seconds = +split[1];
   return minutes * 60 + seconds;
-}
-
-export function getRDamage(damageStats: DamageStats): number {
-  return (
-    damageStats.damageDealt -
-    damageStats.rdpsDamageReceivedSupport -
-    (damageStats.rdpsDamageReceived - damageStats.rdpsDamageReceivedSupport) +
-    damageStats.rdpsDamageGiven
-  );
-}
-
-export function getBaseDamage(damageStats: DamageStats): number {
-  return (
-    damageStats.damageDealt -
-    damageStats.rdpsDamageReceivedSupport -
-    (damageStats.rdpsDamageReceived - damageStats.rdpsDamageReceivedSupport)
-  );
 }
 
 export function getBossHpBars(boss: { name: string; maxHp: number; hpBars?: number }) {
@@ -280,7 +161,8 @@ export function getBossHpBars(boss: { name: string; maxHp: number; hpBars?: numb
     return boss.maxHp > 100_000_000_000 ? 420 : 250;
   }
   return bossHpMap[boss.name] ?? 1;
-} // shade rgb
+}
+
 /** Check if a name is valid */
 export const isNameValid = (value: unknown): value is string =>
   typeof value === "string" && value.length >= 2 && !/\d/.test(value);
@@ -291,45 +173,6 @@ export function removeUnknownHtmlTags(input: string) {
   input = input.replace(/<\$TABLE_SKILLFEATURE[^>]*\/>/g, "??");
   input = input.replace(/<\$[^<>]*?(?:<[^<>]*?>[^<>]*?)*?\/?>/g, "??");
   return input;
-}
-
-export function formatPlayerName(player: Entity): string {
-  let playerName = player.name;
-  const validName = isNameValid(playerName);
-  if (!validName || !settings.app.general.showNames) {
-    if (player.class) {
-      playerName = player.class;
-    } else {
-      playerName = "";
-    }
-  }
-  if (settings.app.general.hideNames) {
-    playerName = "";
-  }
-  if (settings.app.general.showGearScore && player.gearScore > 0) {
-    playerName = normalizeIlvl(player.gearScore) + " " + playerName;
-  }
-  if (player.isDead) {
-    playerName = "💀 " + playerName;
-  }
-
-  return playerName;
-}
-
-export function getSkillIcon(skillIcon: string): string {
-  return "/images/skills/" + (skillIcon !== "" ? skillIcon : "unknown.png");
-}
-
-export function getClassIcon(classId: number | string): string {
-  return "/images/classes/" + classId + ".png";
-}
-
-export function getEstherFromNpcId(npcId: number): string {
-  for (const esther of estherMap) {
-    if (esther.npcs.includes(npcId)) return esther.name;
-  }
-
-  return "Unknown";
 }
 
 // from https://stackoverflow.com/a/13542669/11934162

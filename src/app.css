@@ -3,8 +3,8 @@
 
 @import "tailwindcss";
 
-@plugin '@tailwindcss/typography';
-@plugin '@tailwindcss/forms';
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
 
 :root {
   --font-size: medium;
@@ -62,8 +62,7 @@
     @apply text-sm text-white;
   }
 
-  [data-view="logs"] {
-    
+  [data-view="settings"] {
     *::-webkit-scrollbar {
       @apply right-0! block! size-2! bg-neutral-800!;
     }
@@ -194,5 +193,17 @@
     --accent-700: theme(--color-orange-700);
     --accent-800: theme(--color-orange-800);
     --accent-900: theme(--color-orange-900);
+  }
+}
+
+@keyframes mech-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.4);
   }
 }

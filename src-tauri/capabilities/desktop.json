@@ -1,13 +1,11 @@
 {
   "identifier": "desktop-capability",
   "platforms": [
-    "windows",
-    "linux"
+    "windows"
   ],
   "windows": [
-    "logs",
-    "main",
-    "mini"
+    "settings",
+    "main"
   ],
   "permissions": [
     "core:default",
@@ -19,6 +17,9 @@
     "core:window:allow-unminimize",
     "core:window:allow-close",
     "core:window:allow-set-always-on-top",
+    "core:window:allow-set-size",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-write-image",
     "global-shortcut:allow-register",
     "global-shortcut:allow-unregister-all",
@@ -26,7 +27,6 @@
     "opener:allow-default-urls",
     "process:allow-restart",
     "shell:allow-open",
-    "shell:default",
-    "updater:default"
+    "shell:default"
   ]
 }

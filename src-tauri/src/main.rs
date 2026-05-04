@@ -2,14 +2,15 @@
 
 mod api;
 mod app;
+mod tts_cmd;
 mod background;
 mod constants;
 mod context;
 mod data;
-mod database;
 mod handlers;
 #[cfg(feature = "meter-core")]
 mod live;
+#[cfg(feature = "meter-core")]
 mod local;
 mod misc;
 mod models;
@@ -23,7 +24,6 @@ use crate::app::autostart::AutoLaunchManager;
 use crate::constants::*;
 use crate::context::AppContext;
 use crate::data::AssetPreloader;
-use crate::database::Database;
 use crate::handlers::generate_handlers;
 use crate::misc::load_windivert;
 use crate::settings::SettingsManager;
@@ -45,11 +45,11 @@ async fn main() -> Result<()> {
     let settings_manager =
         SettingsManager::new(context.settings_path.clone()).expect("could not create settings");
     load_windivert(&context.current_dir).expect("could not load windivert dependencies");
-    // load meter-data
-    AssetPreloader::new(&context.current_dir).expect("could not load meter-data");
-    let database = Database::new(context.database_path.clone(), &context.version)
-        .expect("error setting up database: {}");
-    let repository = database.create_repository();
+    // Load game data from LOA Logs installation — required, app cannot run without it.
+    let meter_data_dir = crate::app::loa_detect::find_loa_meter_data()
+        .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
+    log::info!("meter-data source: {}", meter_data_dir.display());
+    AssetPreloader::new(&meter_data_dir).expect("could not load meter-data from LOA Logs");
     let auto_launch_manager = AutoLaunchManager::new(&package_info.name, &context.app_path);
 
     let handle = Handle::current();
@@ -58,8 +58,6 @@ async fn main() -> Result<()> {
     tauri::Builder::default()
         .manage(auto_launch_manager)
         .manage(context)
-        .manage(database)
-        .manage(repository)
         .manage(settings_manager)
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
@@ -67,7 +65,8 @@ async fn main() -> Result<()> {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        // TODO: restore when updater endpoints are configured
+        // .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_window_state::Builder::new()
                 .with_state_flags(WINDOW_STATE_FLAGS)

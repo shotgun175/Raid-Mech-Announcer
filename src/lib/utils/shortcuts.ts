@@ -1,12 +1,4 @@
-import {
-  openMostRecentEncounter,
-  pauseRequest,
-  resetRequest,
-  saveRequest,
-  setClickthrough,
-  toggleWindow,
-  Window
-} from "$lib/api";
+import { setClickthrough, toggleOverlayWindow } from "$lib/api";
 import { misc, settings } from "$lib/stores.svelte";
 import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
 
@@ -16,28 +8,8 @@ export type Shortcut = {
 };
 export const shortcuts: Record<string, Shortcut> = {
   hideMeter: {
-    name: "Hide Meter",
-    action: () => toggleWindow(Window.Meter)
-  },
-  showLogs: {
-    name: "Show Logs",
-    action: () => toggleWindow(Window.Logs)
-  },
-  showLatestEncounter: {
-    name: "Show Latest Encounter",
-    action: () => openMostRecentEncounter()
-  },
-  resetSession: {
-    name: "Reset Session",
-    action: () => resetRequest()
-  },
-  pauseSession: {
-    name: "Pause Session",
-    action: () => pauseRequest()
-  },
-  manualSave: {
-    name: "Manual Save",
-    action: () => saveRequest()
+    name: "Hide Overlay",
+    action: () => toggleOverlayWindow()
   },
   disableClickthrough: {
     name: "Toggle Clickthrough",
@@ -62,5 +34,7 @@ export async function registerShortcuts() {
         });
       }
     }
-  } catch {}
+  } catch (e) {
+    console.warn("shortcut registration failed:", e);
+  }
 }
