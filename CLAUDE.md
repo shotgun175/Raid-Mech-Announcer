@@ -30,7 +30,7 @@ The app has two primary surfaces:
 - **Desktop shell**: Tauri v2, Rust edition 2024 (min 1.90)
 - **Backend**: Rust + Tokio async (no database — all user data in WebView2 localStorage)
 - **Node**: ≥ 24.0.0 / npm ≥ 11.0.0
-- **Formatter**: Prettier (tabWidth: 2, printWidth: 120, CRLF, plugins: svelte + tailwindcss)
+- **Formatter**: Prettier (tabWidth: 2, printWidth: 120, CRLF, quoteProps: consistent, plugins: svelte + tailwindcss)
 
 ## Directory Layout
 ```
@@ -120,10 +120,11 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - `raid-library.ts` is the source of truth for pre-built templates; each `LibraryGate` has a `releaseOrder` (from the LOA Logs `encounters.json` ordering — higher = newer)
 - Library currently covers all 18 raid release groups: **48 gates, 220 mechanics** — all with `notes` populated from Maxroll per-gate guides
 - `LibraryMechanic` interface includes `notes?: string`; passed through to `Mechanic.notes` by both `makeMechanics()` and `stableGate()`
-- `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (imported from `$lib/constants/encounters`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBarCount`, so the simulation starts near the first mechanic threshold rather than far above it
+- `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (imported from `$lib/constants/encounters`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBars`, so the simulation starts near the first mechanic threshold rather than far above it
 - `buildDefaultRaids()` derives the 3 newest raids automatically from `releaseOrder` — no hardcoded list
 - When adding new raids to the library: assign the next `releaseOrder`, add the boss to `bossHpMap` in `encounters.ts`, no other changes needed
-- Authoritative source for boss HP bar counts is `Npc.json` → `hpBarCount` in `src-tauri/meter-data/` (upstream repo: github.com/snoww/loa-logs); note it has multiple entries per boss name — cross-reference with `encounters.json` for the correct raid entry
+- Authoritative source for boss HP bar counts is `Npc.json` → `hpBars` in `src-tauri/meter-data/` (upstream repo: github.com/snoww/loa-logs); use the entry with `grade: "commander"` — other entries for the same boss name have `hpBars: 1` (phase variants). Cross-reference with `encounters.json` for the correct raid entry.
+- GateSidebar orders raids newest-first using `libraryByRaid[name]?.[0]?.releaseOrder` — the `Gate` objects stored in localStorage don't carry `releaseOrder`, so it's looked up from the library at render time. Custom (user-added) raids with no library entry fall to the bottom.
 - `BossStatusData` includes `gateId?: string | null` — resolved by the main window and sent in the event payload so the overlay window skips re-matching independently with potentially stale data
 - Gate matching is sticky: `mechStore.setBossStatus()` only calls `bestGateMatch()` when `liveGateId` is null (fight start). Mid-fight boss name changes do not flip the overlay to a different raid.
 - Two-tier heartbeat in `mech-store.svelte.ts`: `OVERLAY_HIDE_MS = 8_000` (hides overlay + clears HP display, keeps `liveGateId`); `GATE_RESET_MS = 60_000` (resets `liveGateId` — genuine encounter end).
