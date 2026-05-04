@@ -1,6 +1,7 @@
 <script lang="ts">
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Gate } from "$lib/mech-types";
+  import { libraryByRaid } from "$lib/data/raid-library";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -26,7 +27,13 @@
     return `Gate ${Math.floor(gate / 10)}-${gate % 10}`;
   }
 
-  const raidNames = $derived(Array.from(new Set(mechStore.raids.map((r) => r.raid))).reverse());
+  const raidNames = $derived(
+    Array.from(new Set(mechStore.raids.map((r) => r.raid))).sort((a, b) => {
+      const orderA = libraryByRaid[a]?.[0]?.releaseOrder ?? 0;
+      const orderB = libraryByRaid[b]?.[0]?.releaseOrder ?? 0;
+      return orderB - orderA; // newest first; custom raids (order 0) fall to bottom
+    })
+  );
   const raidsByName = $derived(
     raidNames.reduce(
       (acc, n) => {
