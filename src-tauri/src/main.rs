@@ -2,6 +2,7 @@
 
 mod api;
 mod app;
+mod tts_cmd;
 mod background;
 mod constants;
 mod context;
@@ -10,6 +11,7 @@ mod database;
 mod handlers;
 #[cfg(feature = "meter-core")]
 mod live;
+#[cfg(feature = "meter-core")]
 mod local;
 mod misc;
 mod models;
@@ -45,8 +47,12 @@ async fn main() -> Result<()> {
     let settings_manager =
         SettingsManager::new(context.settings_path.clone()).expect("could not create settings");
     load_windivert(&context.current_dir).expect("could not load windivert dependencies");
-    // load meter-data
-    AssetPreloader::new(&context.current_dir).expect("could not load meter-data");
+    // Prefer LOA Logs' meter-data if installed — it stays current with game patches automatically.
+    // Fall back to our bundled copy if LOA Logs isn't present.
+    let meter_data_dir = crate::app::loa_detect::find_loa_meter_data()
+        .unwrap_or_else(|| context.current_dir.clone());
+    log::info!("meter-data source: {}", meter_data_dir.display());
+    AssetPreloader::new(&meter_data_dir).expect("could not load meter-data");
     let database = Database::new(context.database_path.clone(), &context.version)
         .expect("error setting up database: {}");
     let repository = database.create_repository();
@@ -67,7 +73,8 @@ async fn main() -> Result<()> {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        // TODO: restore when updater endpoints are configured
+        // .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_window_state::Builder::new()
                 .with_state_flags(WINDOW_STATE_FLAGS)
