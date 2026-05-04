@@ -21,16 +21,10 @@
   import { flip } from "svelte/animate";
   import Toast from "./Toast.svelte";
   import { settings } from "$lib/stores.svelte";
-  import { page } from "$app/state";
-
-  const live = $derived(page.route.id === "/(live)/live");
 </script>
 
 <div
-  class="fixed top-auto z-50 m-4 flex flex-col {settings.app.general.accentColor} {live
-    ? 'inset-x-0 bottom-3 items-center gap-1'
-    : 'right-0 bottom-0 items-end gap-2'} 
-  "
+  class="fixed right-0 bottom-0 top-auto z-50 m-4 flex flex-col items-end gap-2 {settings.app.general.accentColor}"
   use:portal
 >
   {#each $toasts as toast (toast.id)}
