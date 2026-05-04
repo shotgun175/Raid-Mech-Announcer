@@ -14,6 +14,9 @@
 
   let { children }: { children?: import("svelte").Snippet } = $props();
 
+  const scaleMap = [0.8, 1.0, 1.2, 1.4];
+  const logScale = $derived(scaleMap[Number(settings.app.general.logScale ?? 1)] ?? 1.0);
+
   const LOA_LIVE_PREFIX = "https://live.lostark.bible/";
   let lastSeenClip = "";
 
@@ -50,7 +53,7 @@
 
 <UpdateAvailable />
 <Toaster />
-<div class="flex h-screen flex-col bg-neutral-900 select-none">
+<div class="flex h-screen flex-col bg-neutral-900 select-none" style="font-size: {logScale}rem; zoom: {logScale};">
   <div class="min-h-0 flex-1 overflow-auto">
     {@render children?.()}
   </div>
