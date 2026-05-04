@@ -110,9 +110,9 @@
             type="range"
             min={0}
             max={gate.totalBars}
-            value={simBar}
+            value={gate.totalBars - simBar}
             oninput={(e) => {
-              if (!isLive) _manualBar = Number((e.target as HTMLInputElement).value);
+              if (!isLive) _manualBar = gate.totalBars - Number((e.target as HTMLInputElement).value);
             }}
             style="flex: 1; accent-color: #38bdf8; height: 4px; {isLive ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
           />
@@ -125,10 +125,10 @@
 
       <!-- Table header -->
       <div
-        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 12px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+        style="display: grid; grid-template-columns: 78px 60px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 12px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
       >
         <div>HP Bar</div>
-        <div>Ph</div>
+        <div>Phase</div>
         <div>Mechanic</div>
         <div>Severity</div>
         <div>Repeat</div>
