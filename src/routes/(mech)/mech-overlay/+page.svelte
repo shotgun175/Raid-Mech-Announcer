@@ -9,7 +9,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, MechSettings } from "$lib/mech-types";
-  import { invoke } from "@tauri-apps/api/core";
+  import { setClickthrough } from "$lib/api";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { onDestroy, onMount } from "svelte";
@@ -34,7 +34,7 @@
 
   // Apply click-through state to this window whenever the setting changes
   $effect(() => {
-    invoke("set_clickthrough", { set: clickThrough }).catch(() => {});
+    setClickthrough(clickThrough).catch(() => {});
   });
 
   // Initiate OS-level window drag on mousedown (only works when click-through is off)

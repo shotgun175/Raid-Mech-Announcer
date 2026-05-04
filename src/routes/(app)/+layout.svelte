@@ -50,8 +50,8 @@
 
 <UpdateAvailable />
 <Toaster />
-<div class="flex flex-col h-screen bg-neutral-900 select-none">
-  <div class="flex-1 overflow-auto min-h-0">
+<div class="flex h-screen flex-col bg-neutral-900 select-none">
+  <div class="min-h-0 flex-1 overflow-auto">
     {@render children?.()}
   </div>
   <PeerConnect />
