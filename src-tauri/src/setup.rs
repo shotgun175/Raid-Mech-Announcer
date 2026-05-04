@@ -52,11 +52,6 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     background.start(args)?;
     app_handle.manage(background);
 
-    // #[cfg(debug_assertions)]
-    // {
-    //     _logs_window.open_devtools();
-    // }
-
     // Keep the watcher alive for the app's lifetime. Returns None if LOA Logs isn't installed.
     let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());
     app_handle.manage(std::sync::Mutex::new(log_watcher));

@@ -1,4 +1,4 @@
-import { setClickthrough, toggleMechOverlay } from "$lib/api";
+import { setClickthrough, toggleOverlayWindow } from "$lib/api";
 import { misc, settings } from "$lib/stores.svelte";
 import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
 
@@ -9,7 +9,7 @@ export type Shortcut = {
 export const shortcuts: Record<string, Shortcut> = {
   hideMeter: {
     name: "Hide Meter",
-    action: () => toggleMechOverlay()
+    action: () => toggleOverlayWindow()
   },
   disableClickthrough: {
     name: "Toggle Clickthrough",

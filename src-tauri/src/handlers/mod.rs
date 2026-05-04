@@ -16,7 +16,7 @@ mod models;
 
 pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
     Box::new(generate_handler![
-        toggle_meter_window,
+        toggle_overlay_window,
         open_url,
         save_settings,
         get_settings,
@@ -39,7 +39,7 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
 }
 
 #[command]
-pub fn toggle_meter_window(app: AppHandle) -> Result<()> {
+pub fn toggle_overlay_window(app: AppHandle) -> Result<()> {
     if let Some(overlay) = app.get_webview_window(OVERLAY_WINDOW_LABEL) {
         if overlay.is_visible().unwrap() {
             if overlay.is_minimized().unwrap() {

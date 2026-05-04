@@ -55,4 +55,4 @@ export const relaunchApp = async () => {
   await relaunch();
 };
 
-export const toggleMechOverlay = (): Promise<void> => invoke("toggle_meter_window");
+export const toggleOverlayWindow = (): Promise<void> => invoke("toggle_overlay_window");
