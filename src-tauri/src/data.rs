@@ -51,24 +51,24 @@ fn load<T: DeserializeOwned>(path: &Path) -> Result<T> {
 
 impl AssetPreloader {
     pub fn new(resource_dir: &Path) -> Result<Self> {
-        COMBAT_EFFECT_DATA.set(load(&resource_dir.join("meter-data/CombatEffect.json"))?)?;
-        ENGRAVING_DATA.set(load(&resource_dir.join("meter-data/Ability.json"))?)?;
-        SKILL_BUFF_DATA.set(load(&resource_dir.join("meter-data/SkillBuff.json"))?)?;
-        SKILL_DATA.set(load(&resource_dir.join("meter-data/Skill.json"))?)?;
-        SKILL_EFFECT_DATA.set(load(&resource_dir.join("meter-data/SkillEffect.json"))?)?;
-        STAT_TYPE_MAP.set(load(&resource_dir.join("meter-data/StatType.json"))?)?;
-        ESTHER_DATA.set(load(&resource_dir.join("meter-data/Esther.json"))?)?;
-        NPC_DATA.set(load(&resource_dir.join("meter-data/Npc.json"))?)?;
+        COMBAT_EFFECT_DATA.set(load(&resource_dir.join("CombatEffect.json"))?)?;
+        ENGRAVING_DATA.set(load(&resource_dir.join("Ability.json"))?)?;
+        SKILL_BUFF_DATA.set(load(&resource_dir.join("SkillBuff.json"))?)?;
+        SKILL_DATA.set(load(&resource_dir.join("Skill.json"))?)?;
+        SKILL_EFFECT_DATA.set(load(&resource_dir.join("SkillEffect.json"))?)?;
+        STAT_TYPE_MAP.set(load(&resource_dir.join("StatType.json"))?)?;
+        ESTHER_DATA.set(load(&resource_dir.join("Esther.json"))?)?;
+        NPC_DATA.set(load(&resource_dir.join("Npc.json"))?)?;
         GEM_SKILL_MAP.set({
             let raw: HashMap<String, (String, String, Vec<u32>)> =
-                load(&resource_dir.join("meter-data/GemSkillGroup.json"))?;
+                load(&resource_dir.join("GemSkillGroup.json"))?;
             raw.into_iter()
                 .filter_map(|(key, entry)| key.parse::<u32>().ok().map(|id| (id, entry.2)))
                 .collect()
         })?;
         RAID_MAP.set({
             let encounters: HashMap<String, HashMap<String, Vec<String>>> =
-                load(&resource_dir.join("meter-data/encounters.json"))?;
+                load(&resource_dir.join("encounters.json"))?;
             encounters
                 .values()
                 .flat_map(|raid| raid.iter())
