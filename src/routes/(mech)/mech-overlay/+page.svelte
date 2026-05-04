@@ -4,6 +4,7 @@
   import OLHudStrip from "$lib/components/mech/overlays/OLHudStrip.svelte";
   import OLCardStack from "$lib/components/mech/overlays/OLCardStack.svelte";
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
+  import OverlayControls from "$lib/components/mech/overlays/OverlayControls.svelte";
   import { SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
@@ -197,3 +198,5 @@
     {/if}
   </div>
 {/if}
+
+<OverlayControls {clickThrough} />
