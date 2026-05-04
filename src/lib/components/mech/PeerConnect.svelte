@@ -98,13 +98,13 @@
     <button
       onclick={handleConnect}
       disabled={!input.trim() || peerState.status === "connecting"}
-      style="background: {input.trim()
-        ? 'rgba(56,189,248,0.15)'
-        : '#1a1a1a'}; border: 1px solid {input.trim()
+      style="background: {input.trim() ? 'rgba(56,189,248,0.15)' : '#1a1a1a'}; border: 1px solid {input.trim()
         ? 'rgba(56,189,248,0.5)'
         : '#333333'}; border-radius: 4px; padding: 3px 10px; color: {input.trim()
         ? '#7dd3fc'
-        : '#525252'}; cursor: {input.trim() ? 'pointer' : 'not-allowed'}; font-size: 12px; font-weight: 600; flex-shrink: 0; white-space: nowrap; font-family: inherit;"
+        : '#525252'}; cursor: {input.trim()
+        ? 'pointer'
+        : 'not-allowed'}; font-size: 12px; font-weight: 600; flex-shrink: 0; white-space: nowrap; font-family: inherit;"
     >
       {peerState.status === "connecting" ? "…" : "Connect"}
     </button>
