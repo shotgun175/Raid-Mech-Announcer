@@ -78,7 +78,7 @@
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
         <div>
           <div style="font-size: 14px; font-weight: 700; color: #fafafa;">Import Raids</div>
-          <div style="font-size: 11px; color: #525252; margin-top: 2px;">
+          <div style="font-size: 11px; color: #8a8a8a; margin-top: 2px;">
             Select gates to add pre-built mechanic templates · newest first
           </div>
         </div>
@@ -114,7 +114,7 @@
               style="flex: 1; text-align: left; background: transparent; border: none; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; min-width: 0;"
             >
               <span
-                style="font-size: 9px; color: #525252; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
+                style="font-size: 9px; color: #8a8a8a; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
                   raidName
                 ]
                   ? 90
@@ -169,7 +169,7 @@
                     <span style="font-size: 12.5px; font-weight: 600; color: {imported ? '#86efac' : '#e5e5e5'};"
                       >{gateLabel(entry.gate)}</span
                     >
-                    <span style="font-size: 10.5px; color: #525252; margin-left: 8px;">{entry.boss}</span>
+                    <span style="font-size: 10.5px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
                   </div>
                   {#if imported}
                     <button
@@ -209,7 +209,7 @@
           {/if}
         </div>
       {:else}
-        <div style="padding: 32px; text-align: center; color: #525252; font-size: 12px;">No raids match "{search}"</div>
+        <div style="padding: 32px; text-align: center; color: #8a8a8a; font-size: 12px;">No raids match "{search}"</div>
       {/each}
     </div>
 

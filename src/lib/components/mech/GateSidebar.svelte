@@ -182,7 +182,7 @@
                 >
               {/if}
             </div>
-            <span style="font-size: 10px; color: #525252; font-family: ui-monospace, monospace; flex-shrink: 0;"
+            <span style="font-size: 10px; color: #8a8a8a; font-family: ui-monospace, monospace; flex-shrink: 0;"
               >{gate.mechanics.length}</span
             >
           </div>
@@ -291,7 +291,7 @@
             ? 'rgba(56,189,248,0.3)'
             : '#262626'}; border-radius: 4px; padding: 7px 14px; color: {form.raid.trim() && form.boss.trim()
             ? '#38bdf8'
-            : '#525252'}; cursor: {form.raid.trim() && form.boss.trim()
+            : '#8a8a8a'}; cursor: {form.raid.trim() && form.boss.trim()
             ? 'pointer'
             : 'not-allowed'}; font-size: 12.5px; font-weight: 600; font-family: inherit; opacity: {form.raid.trim() &&
           form.boss.trim()

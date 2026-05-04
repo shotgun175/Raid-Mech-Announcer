@@ -57,7 +57,7 @@
       ></div>
       <div
         style="font-size: 9px; font-family: ui-monospace, monospace; color: {drained
-          ? '#525252'
+          ? '#8a8a8a'
           : sev.color}; opacity: {drained
           ? 0.55
           : 1}; margin-top: 2px; transform: translateX(-50%); position: relative; left: 1px; font-weight: 700; white-space: nowrap;"
@@ -95,11 +95,11 @@
 
   <!-- Axis labels -->
   <span
-    style="position: absolute; left: 2px; bottom: 0; font-size: 9px; color: #525252; font-family: ui-monospace, monospace; font-weight: 600;"
+    style="position: absolute; left: 2px; bottom: 0; font-size: 9px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
     >{totalBars}× <span style="opacity: 0.5;">MAX</span></span
   >
   <span
-    style="position: absolute; right: 2px; bottom: 0; font-size: 9px; color: #525252; font-family: ui-monospace, monospace; font-weight: 600;"
+    style="position: absolute; right: 2px; bottom: 0; font-size: 9px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
     ><span style="opacity: 0.5;">DEAD</span> 0×</span
   >
 </div>

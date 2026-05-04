@@ -41,7 +41,7 @@
       : '#fafafa'};"
   >
     {#if mech.hpBar != null}
-      {mech.hpBar}<span style="font-size: 9px; color: #525252; font-weight: 400; margin-left: 2px;">×</span>
+      {mech.hpBar}<span style="font-size: 9px; color: #8a8a8a; font-weight: 400; margin-left: 2px;">×</span>
     {:else}
       <span style="font-size: 12px; color: #fbbf24;">⏱ {formatTimer(mech.timerSecs)}</span>
     {/if}
