@@ -89,10 +89,7 @@ pub fn start(args: StartArgs) -> Result<()> {
             manager.set_boss_only_damage();
             info!("boss only damage enabled")
         }
-        if settings.general.low_performance_mode {
-            duration = Duration::from_millis(1500);
-            info!("low performance mode enabled")
-        }
+
     } else {
         info!("no settings found, using defaults");
     }
