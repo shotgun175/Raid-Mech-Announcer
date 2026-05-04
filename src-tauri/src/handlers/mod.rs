@@ -9,7 +9,6 @@ use crate::shell::ShellManager;
 use crate::ui::AppHandleExtensions;
 
 mod error;
-mod models;
 
 pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
     Box::new(generate_handler![
