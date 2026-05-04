@@ -130,7 +130,6 @@ fn initialize_windows_and_settings(
 ) -> u16 {
     let mut port = DEFAULT_PORT;
     let meter_window = app_handle.get_meter_window().unwrap();
-    let logs_window = app_handle.get_logs_window().unwrap();
 
     if let Some(settings) = settings {
         info!("settings loaded");
@@ -139,13 +138,6 @@ fn initialize_windows_and_settings(
             meter_window.show().unwrap();
         } else {
             meter_window.hide().unwrap();
-        }
-
-        if !settings.general.hide_logs_on_start {
-            logs_window.restore_default_state();
-            logs_window.show().unwrap();
-        } else {
-            logs_window.hide().unwrap();
         }
 
         if settings.general.always_on_top {
@@ -164,7 +156,6 @@ fn initialize_windows_and_settings(
         }
     } else {
         meter_window.show().unwrap();
-        logs_window.show().unwrap();
     }
 
     port

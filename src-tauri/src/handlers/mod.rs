@@ -2,14 +2,11 @@ use anyhow::Context;
 use error::*;
 use log::*;
 use tauri::ipc::Invoke;
-use tauri::{AppHandle, Emitter, Manager, State, command, generate_handler};
+use tauri::{AppHandle, Manager, State, command, generate_handler};
 use window_vibrancy::{apply_blur, clear_blur};
 
 use crate::app::autostart::{AutoLaunch, AutoLaunchManager};
 use crate::constants::*;
-use crate::database::models::{GetEncounterPreviewArgs, InsertSyncLogsArgs};
-use crate::database::{Database, Repository};
-use crate::models::*;
 use crate::settings::{Settings, SettingsManager};
 use crate::shell::ShellManager;
 use crate::ui::AppHandleExtensions;
@@ -19,152 +16,32 @@ mod models;
 
 pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
     Box::new(generate_handler![
-        load_encounters_preview,
-        load_encounter,
-        get_encounter_count,
-        open_most_recent_encounter,
-        delete_encounter,
-        delete_encounters,
         toggle_meter_window,
-        toggle_logs_window,
         open_url,
         save_settings,
         get_settings,
-        open_db_path,
-        delete_encounters_below_min_duration,
-        get_db_info,
         disable_blur,
         enable_blur,
         write_log,
-        toggle_encounter_favorite,
-        delete_all_encounters,
-        delete_all_uncleared_encounters,
         enable_aot,
         disable_aot,
         set_clickthrough,
-        optimize_database,
         check_start_on_boot,
         set_start_on_boot,
         check_loa_running,
         start_loa_process,
-        get_sync_candidates,
-        sync,
         remove_driver,
         unload_driver,
-        get_local_characters,
+        get_loa_meter_data_path,
         crate::tts_cmd::speak_tts,
         crate::tts_cmd::list_tts_voices,
-        get_loa_meter_data_path,
     ])
-}
-
-#[command]
-pub fn load_encounters_preview(
-    repository: State<Repository>,
-    page: i32,
-    page_size: i32,
-    search: String,
-    filter: SearchFilter,
-) -> Result<EncountersOverview> {
-    let args = GetEncounterPreviewArgs {
-        page,
-        page_size,
-        search,
-        filter,
-    };
-
-    let encounter = repository.get_encounter_preview(args)?;
-
-    Ok(encounter)
-}
-
-#[command]
-pub fn get_local_characters(repository: State<Repository>) -> Result<Vec<CharacterInfo>> {
-    let characters = repository.get_local_characters()?;
-    Ok(characters)
-}
-
-#[command]
-pub async fn load_encounter(repository: State<'_, Repository>, id: String) -> Result<Encounter> {
-    let encounter = repository
-        .get_encounter(&id)
-        .context(format!("could not get encounter by id {}", &id))?;
-    Ok(encounter)
-}
-
-#[command]
-pub fn get_sync_candidates(repository: State<Repository>, force_resync: bool) -> Result<Vec<i32>> {
-    let ids = repository
-        .get_sync_candidates(force_resync)
-        .context("could not get sync candidates")?;
-
-    Ok(ids)
-}
-
-#[command]
-pub fn get_encounter_count(repository: State<Repository>) -> Result<i32> {
-    let count = repository
-        .get_encounter_count()
-        .context("could not get encounter count")?;
-
-    Ok(count)
-}
-
-#[command]
-pub fn open_most_recent_encounter(
-    app_handle: AppHandle,
-    repository: State<Repository>,
-) -> Result<()> {
-    let id = repository
-        .get_last_encounter_id()
-        .context("could not get last encounter")?;
-
-    if let Some(logs) = app_handle.get_logs_window() {
-        match id {
-            Some(id) => {
-                logs.emit("show-latest-encounter", id.to_string()).unwrap();
-            }
-            None => {
-                logs.emit("redirect-url", "logs").unwrap();
-            }
-        }
-    }
-
-    Ok(())
-}
-
-#[command]
-pub fn toggle_encounter_favorite(repository: State<Repository>, id: i32) -> Result<()> {
-    repository
-        .toggle_encounter_favorite(id)
-        .context("could not update encounter")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn delete_encounter(repository: State<Repository>, id: String) -> Result<()> {
-    repository
-        .delete_encounter(id)
-        .context("could not delete encounters")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn delete_encounters(repository: State<Repository>, ids: Vec<i32>) -> Result<()> {
-    repository
-        .delete_encounters(ids)
-        .context("could not delete encounters")?;
-
-    Ok(())
 }
 
 #[command]
 pub fn toggle_meter_window(app: AppHandle) -> Result<()> {
     if let Some(meter) = app.get_webview_window(METER_WINDOW_LABEL) {
         if meter.is_visible().unwrap() {
-            // workaround for tauri not handling minimized state for windows without decorations
             if meter.is_minimized().unwrap() {
                 meter.unminimize().unwrap();
             }
@@ -178,22 +55,8 @@ pub fn toggle_meter_window(app: AppHandle) -> Result<()> {
 }
 
 #[command]
-pub fn toggle_logs_window(app_handle: AppHandle) {
-    if let Some(logs) = app_handle.get_logs_window() {
-        if logs.is_visible().unwrap() {
-            logs.hide().unwrap();
-        } else {
-            logs.emit("redirect-url", "logs").unwrap();
-            logs.show().unwrap();
-        }
-    }
-}
-
-#[command]
-pub fn open_url(app_handle: AppHandle, url: String) {
-    if let Some(logs) = app_handle.get_logs_window() {
-        logs.emit("redirect-url", url).unwrap();
-    }
+pub fn open_url(_app_handle: AppHandle, url: String) {
+    info!("open_url called: {}", url);
 }
 
 #[command]
@@ -210,96 +73,6 @@ pub fn get_settings(settings_manager: State<SettingsManager>) -> Result<Option<S
     let settings = settings_manager.read().ok().flatten();
 
     Ok(settings)
-}
-
-#[command]
-pub fn open_db_path(shell_manager: State<ShellManager>) {
-    shell_manager.open_db_path();
-}
-
-#[command]
-pub fn delete_encounters_below_min_duration(
-    repository: State<Repository>,
-    min_duration: i64,
-    keep_favorites: bool,
-) -> Result<()> {
-    repository
-        .delete_encounters_below_min_duration(min_duration, keep_favorites)
-        .context("could not delete encounters")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn sync(
-    repository: State<Repository>,
-    encounter: i32,
-    upstream: String,
-    failed: bool,
-) -> Result<()> {
-    let args = InsertSyncLogsArgs {
-        encounter,
-        upstream,
-        failed,
-    };
-
-    repository
-        .insert_sync_logs(args)
-        .context("could not insert sync logs")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn delete_all_uncleared_encounters(
-    repository: State<Repository>,
-    keep_favorites: bool,
-) -> Result<()> {
-    repository
-        .delete_all_uncleared_encounters(keep_favorites)
-        .context("could not delete encounters")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn delete_all_encounters(repository: State<Repository>, keep_favorites: bool) -> Result<()> {
-    repository
-        .delete_all_encounters(keep_favorites)
-        .context("could not delete encounters")?;
-
-    Ok(())
-}
-
-#[command]
-pub fn get_db_info(
-    database: State<Database>,
-    repository: State<Repository>,
-    min_duration: i64,
-) -> Result<EncounterDbInfo> {
-    let (total_encounters, total_encounters_filtered) = repository
-        .get_db_stats(min_duration)
-        .context("could not get db stats")?;
-
-    let size = database
-        .get_metadata()
-        .context("could not get db metadata")?;
-
-    let info = EncounterDbInfo {
-        size,
-        total_encounters,
-        total_encounters_filtered,
-    };
-
-    Ok(info)
-}
-
-#[command]
-pub fn optimize_database(repository: State<Repository>) -> Result<()> {
-    repository.optimize()?;
-    info!("optimized database");
-
-    Ok(())
 }
 
 #[command]
@@ -392,6 +165,3 @@ pub fn get_loa_meter_data_path() -> Option<String> {
     crate::app::loa_detect::find_loa_meter_data()
         .map(|p| p.display().to_string())
 }
-
-// Updater commands stubbed out — plugin disabled until endpoints are configured (see CLAUDE.md)
-// Re-enable by: restoring tauri_plugin_updater in main.rs + adding endpoints to tauri.conf.json

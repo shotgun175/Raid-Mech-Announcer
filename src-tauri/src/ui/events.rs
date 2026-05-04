@@ -89,9 +89,8 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
             }
         }
         TrayCommand::ShowLogs => {
-            if let Some(logs) = app_handle.get_logs_window() {
-                logs.show().unwrap();
-                logs.unminimize().unwrap();
+            if let Some(meter) = app_handle.get_meter_window() {
+                meter.restore_and_focus();
             }
         }
         TrayCommand::StartLoa => {
@@ -104,32 +103,20 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
 }
 
 pub fn on_window_event(window: &Window, event: &WindowEvent) {
-    let label = window.label();
-    on_window_event_inner(label, window, event)
+    on_window_event_inner(window, event)
         .expect("An error occurred whilst handling window event");
 }
 
-pub fn on_window_event_inner(label: &str, window: &Window, event: &WindowEvent) -> Result<()> {
+pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()> {
     match event {
         WindowEvent::CloseRequested { api, .. } => {
             api.prevent_close();
-
-            if label == LOGS_WINDOW_LABEL {
-                window.hide()?;
-
-                return Ok(());
-            }
 
             let app_handle = window.app_handle();
 
             if let Some(meter_window) = app_handle.get_meter_window() {
                 if meter_window.is_minimized()? {
                     meter_window.unminimize()?;
-                }
-            }
-            if let Some(logs_window) = app_handle.get_logs_window() {
-                if logs_window.is_minimized()? {
-                    logs_window.unminimize()?;
                 }
             }
 
