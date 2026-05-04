@@ -61,7 +61,8 @@
     <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
       <!-- Boss header -->
       <div
-        style="padding: 14px 22px; border-bottom: 1px solid #262626; display: flex; align-items: center; gap: 14px; flex-shrink: 0; background: rgba(23,23,23,0.7); backdrop-filter: blur(8px);"
+        class="border-b border-accent-500/20"
+        style="padding: 14px 22px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; background: rgba(23,23,23,0.7); backdrop-filter: blur(8px);"
       >
         <div style="flex: 1; min-width: 0;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -99,7 +100,8 @@
 
       <!-- HP Timeline + sim slider -->
       <div
-        style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); border-bottom: 1px solid #262626; flex-shrink: 0;"
+        class="border-b border-accent-500/20"
+        style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); flex-shrink: 0;"
       >
         <HPTimeline mechanics={gate.mechanics} totalBars={gate.totalBars} currentBar={simBar} />
         <div
@@ -125,7 +127,8 @@
 
       <!-- Table header -->
       <div
-        style="display: grid; grid-template-columns: 78px 60px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 12px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+        class="border-b border-accent-500/20"
+        style="display: grid; grid-template-columns: 78px 60px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; font-size: 12px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
       >
         <div>HP Bar</div>
         <div>Phase</div>
