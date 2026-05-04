@@ -12,13 +12,13 @@ use crate::ui::{on_menu_event, on_tray_icon_event};
 #[strum(serialize_all = "kebab_case")]
 pub enum TrayCommand {
     #[strum(props(label = "Show Settings"))]
-    ShowLogs,
+    ShowSettings,
 
     #[strum(props(label = "Show Overlay"))]
-    ShowMeter,
+    ShowOverlay,
 
     #[strum(props(label = "Hide Overlay"))]
-    Hide,
+    HideOverlay,
 
     #[strum(props(label = "Start Lost Ark"))]
     StartLoa,
@@ -54,10 +54,10 @@ impl<'a, R: Runtime> LoaMenuBuilder<'a, R> {
 
 pub fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
     let menu = LoaMenuBuilder::new(app)
-        .command(TrayCommand::ShowLogs)
+        .command(TrayCommand::ShowSettings)
         .separator()
-        .command(TrayCommand::ShowMeter)
-        .command(TrayCommand::Hide)
+        .command(TrayCommand::ShowOverlay)
+        .command(TrayCommand::HideOverlay)
         .separator()
         .command(TrayCommand::StartLoa)
         .separator()

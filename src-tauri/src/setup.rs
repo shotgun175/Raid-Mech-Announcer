@@ -27,14 +27,14 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     let app_handle = app.handle();
 
     let context = app.state::<AppContext>();
-    let shell_manger = ShellManager::new(app_handle.clone(), context.inner().clone());
+    let shell_manager = ShellManager::new(app_handle.clone());
     let settings_manager = app.state::<SettingsManager>();
 
     let settings = settings_manager.read().expect("Could not read settings");
 
-    let port = initialize_windows_and_settings(app_handle, settings.as_ref(), &shell_manger);
+    let port = initialize_windows_and_settings(app_handle, settings.as_ref(), &shell_manager);
 
-    app_handle.manage(shell_manger);
+    app_handle.manage(shell_manager);
 
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
@@ -89,24 +89,24 @@ fn check_updates(app_handle: &AppHandle) -> Arc<AtomicBool> {
 fn initialize_windows_and_settings(
     app_handle: &AppHandle,
     settings: Option<&Settings>,
-    shell_manger: &ShellManager,
+    shell_manager: &ShellManager,
 ) -> u16 {
     let mut port = DEFAULT_PORT;
-    let meter_window = app_handle.get_meter_window().unwrap();
+    let overlay_window = app_handle.get_overlay_window().unwrap();
 
     if let Some(settings) = settings {
         info!("settings loaded");
         if !settings.general.hide_meter_on_start {
-            meter_window.restore_default_state();
-            meter_window.show().unwrap();
+            overlay_window.restore_default_state();
+            overlay_window.show().unwrap();
         } else {
-            meter_window.hide().unwrap();
+            overlay_window.hide().unwrap();
         }
 
         if settings.general.always_on_top {
-            meter_window.set_always_on_top(true).unwrap();
+            overlay_window.set_always_on_top(true).unwrap();
         } else {
-            meter_window.set_always_on_top(false).unwrap();
+            overlay_window.set_always_on_top(false).unwrap();
         }
 
         if settings.general.auto_iface && settings.general.port > 0 {
@@ -115,10 +115,10 @@ fn initialize_windows_and_settings(
 
         if settings.general.start_loa_on_start {
             info!("auto launch game enabled");
-            shell_manger.start_loa_process();
+            shell_manager.start_loa_process();
         }
     } else {
-        meter_window.show().unwrap();
+        overlay_window.show().unwrap();
     }
 
     port

@@ -4,7 +4,7 @@
     "windows"
   ],
   "windows": [
-    "logs",
+    "settings",
     "main"
   ],
   "permissions": [

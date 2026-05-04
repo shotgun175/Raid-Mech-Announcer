@@ -26,6 +26,23 @@
   "app": {
     "windows": [
       {
+        "label": "settings",
+        "title": "Raid Mech Announcer",
+        "userAgent": "Raid Mech Announcer",
+        "url": "",
+        "fullscreen": false,
+        "width": 1100,
+        "height": 750,
+        "minWidth": 800,
+        "minHeight": 500,
+        "resizable": true,
+        "decorations": true,
+        "transparent": false,
+        "alwaysOnTop": false,
+        "visible": true,
+        "useHttpsScheme": true
+      },
+      {
         "label": "main",
         "title": "Mech Announcer Overlay",
         "userAgent": "Raid Mech Announcer",

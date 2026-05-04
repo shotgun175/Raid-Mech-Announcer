@@ -40,14 +40,14 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
 
 #[command]
 pub fn toggle_meter_window(app: AppHandle) -> Result<()> {
-    if let Some(meter) = app.get_webview_window(METER_WINDOW_LABEL) {
-        if meter.is_visible().unwrap() {
-            if meter.is_minimized().unwrap() {
-                meter.unminimize().unwrap();
+    if let Some(overlay) = app.get_webview_window(OVERLAY_WINDOW_LABEL) {
+        if overlay.is_visible().unwrap() {
+            if overlay.is_minimized().unwrap() {
+                overlay.unminimize().unwrap();
             }
-            meter.hide().unwrap();
+            overlay.hide().unwrap();
         } else {
-            meter.show().unwrap();
+            overlay.show().unwrap();
         }
     }
 
@@ -77,46 +77,41 @@ pub fn get_settings(settings_manager: State<SettingsManager>) -> Result<Option<S
 
 #[command]
 pub fn disable_blur(app_handle: AppHandle) -> Result<()> {
-    if let Some(meter_window) = app_handle.get_meter_window() {
-        clear_blur(&*meter_window)?;
+    if let Some(overlay_window) = app_handle.get_overlay_window() {
+        clear_blur(&*overlay_window)?;
     }
-
     Ok(())
 }
 
 #[command]
 pub fn enable_blur(app_handle: AppHandle) -> Result<()> {
-    if let Some(meter_window) = app_handle.get_meter_window() {
-        apply_blur(&*meter_window, Some(DEFAULT_BLUR))?;
+    if let Some(overlay_window) = app_handle.get_overlay_window() {
+        apply_blur(&*overlay_window, Some(DEFAULT_BLUR))?;
     }
-
     Ok(())
 }
 
 #[command]
 pub fn enable_aot(app_handle: AppHandle) -> Result<()> {
-    if let Some(meter_window) = app_handle.get_meter_window() {
-        meter_window.set_always_on_top(true)?;
+    if let Some(overlay_window) = app_handle.get_overlay_window() {
+        overlay_window.set_always_on_top(true)?;
     }
-
     Ok(())
 }
 
 #[command]
 pub fn disable_aot(app_handle: AppHandle) -> Result<()> {
-    if let Some(meter_window) = app_handle.get_meter_window() {
-        meter_window.set_always_on_top(false)?;
+    if let Some(overlay_window) = app_handle.get_overlay_window() {
+        overlay_window.set_always_on_top(false)?;
     }
-
     Ok(())
 }
 
 #[command]
 pub fn set_clickthrough(app_handle: AppHandle, set: bool) -> Result<()> {
-    if let Some(meter_window) = app_handle.get_meter_window() {
-        meter_window.set_ignore_cursor_events(set)?;
+    if let Some(overlay_window) = app_handle.get_overlay_window() {
+        overlay_window.set_ignore_cursor_events(set)?;
     }
-
     Ok(())
 }
 

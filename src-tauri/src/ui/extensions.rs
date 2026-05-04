@@ -3,10 +3,11 @@ use std::ops::Deref;
 use tauri::{AppHandle, Manager, WebviewWindow};
 use tauri_plugin_window_state::WindowExt;
 
-use crate::constants::{METER_WINDOW_LABEL, WINDOW_STATE_FLAGS};
+use crate::constants::{OVERLAY_WINDOW_LABEL, SETTINGS_WINDOW_LABEL, WINDOW_STATE_FLAGS};
 
 pub trait AppHandleExtensions {
-    fn get_meter_window(&self) -> Option<MeterWindow>;
+    fn get_overlay_window(&self) -> Option<OverlayWindow>;
+    fn get_settings_window(&self) -> Option<WebviewWindow>;
 }
 
 pub trait WindowExtensions {
@@ -15,21 +16,29 @@ pub trait WindowExtensions {
 }
 
 impl AppHandleExtensions for &AppHandle {
-    fn get_meter_window(&self) -> Option<MeterWindow> {
-        self.get_webview_window(METER_WINDOW_LABEL)
-            .map(MeterWindow::new)
+    fn get_overlay_window(&self) -> Option<OverlayWindow> {
+        self.get_webview_window(OVERLAY_WINDOW_LABEL)
+            .map(OverlayWindow::new)
+    }
+
+    fn get_settings_window(&self) -> Option<WebviewWindow> {
+        self.get_webview_window(SETTINGS_WINDOW_LABEL)
     }
 }
 
 impl AppHandleExtensions for AppHandle {
-    fn get_meter_window(&self) -> Option<MeterWindow> {
-        (&self).get_meter_window()
+    fn get_overlay_window(&self) -> Option<OverlayWindow> {
+        (&self).get_overlay_window()
+    }
+
+    fn get_settings_window(&self) -> Option<WebviewWindow> {
+        (&self).get_settings_window()
     }
 }
 
-pub struct MeterWindow(WebviewWindow);
+pub struct OverlayWindow(WebviewWindow);
 
-impl WindowExtensions for MeterWindow {
+impl WindowExtensions for OverlayWindow {
     fn restore_and_focus(&self) {
         self.0.show().unwrap();
         self.0.unminimize().unwrap();
@@ -42,16 +51,15 @@ impl WindowExtensions for MeterWindow {
     }
 }
 
-impl MeterWindow {
+impl OverlayWindow {
     pub fn new(window: WebviewWindow) -> Self {
         Self(window)
     }
 }
 
-impl Deref for MeterWindow {
+impl Deref for OverlayWindow {
     type Target = WebviewWindow;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
-
