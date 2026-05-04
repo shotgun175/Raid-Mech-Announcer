@@ -235,18 +235,6 @@ export const mechStore = (() => {
       return bestGateMatch(raids, bossName);
     },
 
-    reorderRaid(fromName: string, toName: string) {
-      const names = Array.from(new Set(raids.map((r) => r.raid)));
-      const fromIdx = names.indexOf(fromName);
-      const toIdx = names.indexOf(toName);
-      if (fromIdx < 0 || toIdx < 0 || fromIdx === toIdx) return;
-      const newNames = [...names];
-      newNames.splice(fromIdx, 1);
-      newNames.splice(toIdx, 0, fromName);
-      raids = newNames.flatMap((n) => raids.filter((r) => r.raid === n));
-      saveRaids();
-    },
-
     setBossStatus(data: BossStatusData | null) {
       if (!data || data.isDead) {
         stopHeartbeat();
