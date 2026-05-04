@@ -54,7 +54,7 @@
 
 <Header title="Raid Editor" />
 
-<div style="display: flex; overflow: hidden; height: 100%;">
+<div style="display: flex; overflow: hidden; height: calc(100% - 4rem);">
   <GateSidebar />
 
   {#if gate}
