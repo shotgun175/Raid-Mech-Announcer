@@ -213,9 +213,15 @@
         bossName={displayBossName}
       />
     {:else if variant === "compact"}
-      <OLCompact mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} />
+      <OLCompact mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} />
     {:else if variant === "hud"}
-      <OLHudStrip mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} />
+      <OLHudStrip
+        mechanics={gate.mechanics}
+        currentBar={displayBar}
+        {totalBars}
+        {gateName}
+        bossName={displayBossName}
+      />
     {:else if variant === "card"}
       <OLCardStack mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} />
     {:else}
