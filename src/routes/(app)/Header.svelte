@@ -11,7 +11,6 @@
   import { onMount, type Snippet } from "svelte";
   import { fade, fly } from "svelte/transition";
   import { checkLoaRunning, startLoaProcess } from "$lib/api";
-  import PeerConnect from "$lib/components/mech/PeerConnect.svelte";
 
   const { title, children }: { title: string; children?: Snippet } = $props();
 
@@ -131,11 +130,6 @@
           {/if}
         </button>
       </div>
-      <!-- LOA Logs connection — pinned to bottom -->
-      <div class="mt-auto">
-        <PeerConnect />
-      </div>
-
       <!-- version + update button row -->
       <div class="mx-4 mt-1 mb-2 flex items-center justify-between px-1">
         {#if version}

@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import UpdateAvailable from "$lib/components/UpdateAvailable.svelte";
   import Toaster from "$lib/components/Toaster.svelte";
+  import PeerConnect from "$lib/components/mech/PeerConnect.svelte";
   import { getSettings } from "$lib/api";
   import { emit } from "@tauri-apps/api/event";
   import { settings } from "$lib/stores.svelte";
@@ -24,7 +25,6 @@
       const version = await getVersion();
       if (settings.version !== version) settings.version = version;
 
-      // Register shortcuts immediately so they work without visiting settings first
       await registerShortcuts();
 
       try {
@@ -34,7 +34,6 @@
       goto("/mech-editor");
     })();
 
-    // Global clipboard polling — watches for LOA Logs share URLs regardless of active page
     const pollId = setInterval(async () => {
       if (peerState.status === "connecting" || peerState.isConnected) return;
       try {
@@ -51,6 +50,9 @@
 
 <UpdateAvailable />
 <Toaster />
-<div class="min-h-screen bg-neutral-900 select-none">
-  {@render children?.()}
+<div class="flex flex-col h-screen bg-neutral-900 select-none">
+  <div class="flex-1 overflow-auto min-h-0">
+    {@render children?.()}
+  </div>
+  <PeerConnect />
 </div>

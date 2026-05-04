@@ -306,9 +306,9 @@
     <!-- Tab bar -->
     <div class="flex gap-2 overflow-x-auto px-2 max-md:max-w-[100vw]">
       {@render tab("General")}
-      {@render tab("Announcements")}
       {@render tab("Overlay")}
       {@render tab("Overlay Preview")}
+      {@render tab("Announcements")}
       {@render tab("Shortcuts")}
       {@render tab("Discord")}
     </div>
