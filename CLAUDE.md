@@ -85,7 +85,8 @@ src-tauri/
     app/loa_detect.rs       LOA Logs install detection; find_loa_meter_data() -> Option<PathBuf>
     app/log_watch.rs        Log file watcher using notify crate; FightEndEvent, parse_fight_end(),
                             start_log_watcher() — emits loa:fight-end Tauri event on fight end
-  meter-data/               Bundled JSON game tables (Skill, SkillBuff, Npc, encounters, etc.)
+  meter-data/               NOT in git — loaded at runtime from LOA Logs installation
+                            (%LOCALAPPDATA%\LOA Logs\meter-data\). App will not start without it.
   meter-core-stub/          Stub crate replacing private meter-core-rs for open builds
 ```
 
@@ -147,7 +148,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - **Overlay windows start hidden**: `tauri.conf.json` sets `"visible": false`; the Rust backend controls show/hide. The mech overlay window label is `"main"`.
 - **WinDivert**: `WinDivert.dll` / `WinDivert64.sys` must exist next to the binary at runtime. Antivirus often quarantines them — add a folder exception.
 - **NordVPN conflict**: Both this app and NordVPN use WinDivert; they cannot run simultaneously.
-- **`meter-data/` must be alongside the binary**: loaded at startup by `AssetPreloader`; included as a Tauri bundle resource.
+- **`meter-data/` is NOT bundled**: loaded at startup from `%LOCALAPPDATA%\LOA Logs\meter-data\` via `loa_detect::find_loa_meter_data()`. App crashes on startup if LOA Logs is not installed — this is intentional. Do not add `meter-data/` back to the repo or bundle config; the files are 91 MB, go stale, and are always present if the user has LOA Logs.
 - **`meter-data/` auto-detected from LOA Logs**: at startup, `main.rs` calls `loa_detect::find_loa_meter_data()` and uses `%LOCALAPPDATA%\LOA Logs\meter-data\` if present (stays current with game patches). Falls back to the bundled copy if LOA Logs is not installed. Settings → General shows a badge indicating which source is active.
 - **Tauri capability changes**: any new permission requires editing `capabilities/desktop.json` and restarting `tauri:dev`. The capability applies to windows `["logs", "main"]`.
 - **Raid data storage**: user raids live in WebView2 `localStorage`, not a plain JSON file. Path: `%APPDATA%\com.shotgun175.raid-mech-announcer\EBWebView\Default\Local Storage\`. Not directly editable outside the app.

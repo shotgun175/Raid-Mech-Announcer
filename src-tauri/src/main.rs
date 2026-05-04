@@ -47,12 +47,11 @@ async fn main() -> Result<()> {
     let settings_manager =
         SettingsManager::new(context.settings_path.clone()).expect("could not create settings");
     load_windivert(&context.current_dir).expect("could not load windivert dependencies");
-    // Prefer LOA Logs' meter-data if installed — it stays current with game patches automatically.
-    // Fall back to our bundled copy if LOA Logs isn't present.
+    // Load game data from LOA Logs installation — required, app cannot run without it.
     let meter_data_dir = crate::app::loa_detect::find_loa_meter_data()
-        .unwrap_or_else(|| context.current_dir.clone());
+        .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
     log::info!("meter-data source: {}", meter_data_dir.display());
-    AssetPreloader::new(&meter_data_dir).expect("could not load meter-data");
+    AssetPreloader::new(&meter_data_dir).expect("could not load meter-data from LOA Logs");
     let database = Database::new(context.database_path.clone(), &context.version)
         .expect("error setting up database: {}");
     let repository = database.create_repository();

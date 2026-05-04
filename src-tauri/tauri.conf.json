@@ -12,9 +12,7 @@
     "createUpdaterArtifacts": false,
     "category": "Utility",
     "copyright": "GNU General Public License v3.0",
-    "resources": [
-      "meter-data/*.json"
-    ],
+    "resources": [],
     "icon": [
       "icons/icon.ico"
     ],
