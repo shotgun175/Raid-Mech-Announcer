@@ -33,7 +33,6 @@ export interface LogsBreakdown extends BreakdownBase {
 }
 
 export interface GeneralSettings {
-
   showNames: boolean;
   showGearScore: boolean;
   hideNames: boolean;
