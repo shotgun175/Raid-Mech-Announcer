@@ -210,3 +210,5 @@ export const onAdmin = (handler: () => void) => listen("admin", handler);
 export const onClearEncounter = (handler: (event: { payload: number }) => void) => listen("clear-encounter", handler);
 
 export const onBannedEvent = (handler: () => void) => listen("banned-event", handler);
+
+export const probeLOAPort = (): Promise<string> => invoke("probe_loa_port");
