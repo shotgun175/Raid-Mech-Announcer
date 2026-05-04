@@ -124,7 +124,7 @@
       <div>
         <div style="padding: 8px 10px 2px; display: flex; align-items: center; justify-content: space-between;">
           <div
-            style="font-size: 12px; color: #8a8a8a; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
+            style="font-size: 12px; color: #d4d4d4; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
           >
             {raidName}
           </div>

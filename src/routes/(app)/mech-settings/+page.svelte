@@ -319,7 +319,7 @@
       {#if currentTab === "Announcements"}
         <!-- TIMING section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Timing</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Timing</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -373,7 +373,7 @@
 
         <!-- VOICE section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Voice</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Voice</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -474,7 +474,7 @@
       {:else if currentTab === "Discord"}
         <!-- CONNECTION section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Connection</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Connection</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -506,7 +506,7 @@
 
         <!-- PREVIEW section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Preview</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Preview</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -532,7 +532,7 @@
       {:else if currentTab === "Overlay"}
         <!-- WINDOW section -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Window</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Window</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -580,7 +580,7 @@
 
         <!-- DISPLAY section -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Display</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Display</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
 
@@ -601,7 +601,7 @@
       {:else if currentTab === "General"}
         <!-- APPEARANCE -->
         <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Appearance</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Appearance</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
         <div class="flex flex-col gap-2">
@@ -615,7 +615,7 @@
 
         <!-- SCALING -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Scaling</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Scaling</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
         <div class="flex items-center gap-3">
@@ -651,7 +651,7 @@
 
         <!-- DATA SOURCE -->
         <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Data Source</span>
+          <span class="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Data Source</span>
           <div class="h-px flex-1 bg-neutral-700"></div>
         </div>
         <div class="mt-2 flex items-center gap-2 text-xs text-neutral-400">
