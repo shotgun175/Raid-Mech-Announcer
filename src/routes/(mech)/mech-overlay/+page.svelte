@@ -34,9 +34,15 @@
   let lastFiredKey = new Set<string>();
   const unlisteners: UnlistenFn[] = [];
 
-  // Apply click-through state to this window whenever the setting changes
+  // Apply click-through and always-on-top to this window whenever the settings change
   $effect(() => {
     setClickthrough(clickThrough).catch(() => {});
+  });
+
+  $effect(() => {
+    getCurrentWebviewWindow()
+      .setAlwaysOnTop(mechStore.mechSettings.alwaysOnTop)
+      .catch(() => {});
   });
 
   // Initiate OS-level window drag on mousedown (only works when click-through is off)

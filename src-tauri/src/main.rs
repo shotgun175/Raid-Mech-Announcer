@@ -20,7 +20,6 @@ mod shell;
 mod ui;
 mod utils;
 
-use crate::app::autostart::AutoLaunchManager;
 use crate::constants::*;
 use crate::context::AppContext;
 use crate::data::AssetPreloader;
@@ -50,13 +49,10 @@ async fn main() -> Result<()> {
         .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
     log::info!("meter-data source: {}", meter_data_dir.display());
     AssetPreloader::new(&meter_data_dir).expect("could not load meter-data from LOA Logs");
-    let auto_launch_manager = AutoLaunchManager::new(&package_info.name, &context.app_path);
-
     let handle = Handle::current();
     async_runtime::set(handle);
 
     tauri::Builder::default()
-        .manage(auto_launch_manager)
         .manage(context)
         .manage(settings_manager)
         .plugin(tauri_plugin_clipboard_manager::init())

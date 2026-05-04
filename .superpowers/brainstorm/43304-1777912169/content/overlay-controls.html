@@ -1,0 +1,96 @@
+<h2>Overlay Controls — Which Style Fits Best?</h2>
+<p class="subtitle">All three show the window bounds outline + controls. Pick the layout that feels right while gaming.</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;border-radius:8px;padding:12px;position:relative;height:160px;overflow:hidden;">
+        <!-- game bg -->
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a1a2e 0%,#0f0f1a 100%);border-radius:8px;"></div>
+        <!-- window bounds outline (always visible when click-through is off) -->
+        <div style="position:absolute;inset:4px;border:1px dashed rgba(148,163,184,0.18);border-radius:6px;pointer-events:none;"></div>
+        <!-- corner dots -->
+        <div style="position:absolute;top:4px;left:4px;width:4px;height:4px;background:rgba(148,163,184,0.35);border-radius:50%;"></div>
+        <div style="position:absolute;top:4px;right:4px;width:4px;height:4px;background:rgba(148,163,184,0.35);border-radius:50%;"></div>
+        <div style="position:absolute;bottom:4px;left:4px;width:4px;height:4px;background:rgba(148,163,184,0.35);border-radius:50%;"></div>
+        <div style="position:absolute;bottom:4px;right:4px;width:4px;height:4px;background:rgba(148,163,184,0.35);border-radius:50%;"></div>
+        <!-- control bar: top-right corner -->
+        <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:10;">
+          <div style="width:22px;height:22px;background:rgba(30,30,40,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#94a3b8;">⚙</div>
+          <div style="width:22px;height:22px;background:rgba(30,30,40,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#94a3b8;">—</div>
+        </div>
+        <!-- pill overlay content -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(23,23,23,0.88);border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+          <div style="width:7px;height:7px;border-radius:50%;background:#525252;"></div>
+          <span style="font-size:11px;color:#a3a3a3;font-weight:500;">Mech Announcer — waiting for LOA Logs</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Corner Buttons</h3>
+      <p>Tiny ⚙ and — icons pinned to the top-right corner of the window. Always visible when click-through is off. Outline shown with corner dots.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;border-radius:8px;padding:12px;position:relative;height:160px;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a1a2e 0%,#0f0f1a 100%);border-radius:8px;"></div>
+        <!-- window bounds outline -->
+        <div style="position:absolute;inset:4px;border:1px dashed rgba(148,163,184,0.18);border-radius:6px;pointer-events:none;"></div>
+        <!-- pill with integrated controls on the right side of it -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:0;white-space:nowrap;">
+          <!-- main pill -->
+          <div style="background:rgba(23,23,23,0.88);border:1px solid rgba(56,189,248,0.3);border-radius:8px 0 0 8px;padding:8px 16px;display:flex;align-items:center;gap:8px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:#525252;"></div>
+            <span style="font-size:11px;color:#a3a3a3;font-weight:500;">Mech Announcer — waiting for LOA Logs</span>
+          </div>
+          <!-- attached control strip -->
+          <div style="background:rgba(20,20,30,0.9);border:1px solid rgba(56,189,248,0.3);border-left:none;border-radius:0 8px 8px 0;padding:8px 8px;display:flex;align-items:center;gap:6px;">
+            <div style="font-size:13px;color:#64748b;cursor:pointer;">⚙</div>
+            <div style="width:1px;height:12px;background:rgba(255,255,255,0.1);"></div>
+            <div style="font-size:13px;color:#64748b;cursor:pointer;">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Attached to Pill</h3>
+      <p>Controls are fused to the right end of the overlay pill itself — moves with the content, always co-located. Consistent position regardless of overlay variant.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;border-radius:8px;padding:12px;position:relative;height:160px;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a1a2e 0%,#0f0f1a 100%);border-radius:8px;"></div>
+        <!-- window bounds outline -->
+        <div style="position:absolute;inset:4px;border:1px dashed rgba(148,163,184,0.18);border-radius:6px;pointer-events:none;"></div>
+        <!-- thin top bar spanning full window width -->
+        <div style="position:absolute;top:4px;left:4px;right:4px;height:18px;display:flex;align-items:center;justify-content:flex-end;padding:0 6px;gap:4px;">
+          <span style="font-size:9px;color:rgba(148,163,184,0.35);letter-spacing:0.06em;text-transform:uppercase;flex:1;">Mech Overlay</span>
+          <div style="width:16px;height:16px;background:rgba(30,30,40,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;">⚙</div>
+          <div style="width:16px;height:16px;background:rgba(30,30,40,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;">—</div>
+        </div>
+        <!-- pill overlay content, offset below the bar -->
+        <div style="position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);background:rgba(23,23,23,0.88);border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+          <div style="width:7px;height:7px;border-radius:50%;background:#525252;"></div>
+          <span style="font-size:11px;color:#a3a3a3;font-weight:500;">Mech Announcer — waiting for LOA Logs</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Full-Width Title Bar</h3>
+      <p>A very thin strip across the top of the window with a faint label + icons. Matches how LOA Logs does it. Acts as the drag handle for the whole window.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:16px;">
+  <p class="subtitle" style="font-size:12px;">In all options: the dashed outline is only shown when click-through is OFF (so you can see the window bounds while positioning). When click-through is ON it disappears completely.</p>
+</div>
