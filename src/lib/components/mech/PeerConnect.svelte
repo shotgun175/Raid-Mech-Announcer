@@ -4,6 +4,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
 
   let input = $state("");
+  let pasteAttempted = $state(false);
 
   const statusColor = $derived(
     peerState.status === "connected"
@@ -30,14 +31,16 @@
   );
 
   async function pasteFromClipboard() {
+    pasteAttempted = true;
     try {
       const text = await readText();
-      if (text) input = text.trim();
+      input = text?.trim() ?? "";
     } catch {
       try {
-        const text = await navigator.clipboard.readText();
-        if (text) input = text.trim();
-      } catch {}
+        input = (await navigator.clipboard.readText()).trim();
+      } catch {
+        input = "";
+      }
     }
   }
 
@@ -73,6 +76,16 @@
       Disconnect
     </button>
   {:else}
+    {#if pasteAttempted}
+      <span
+        style="font-size: 11px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; color: {input
+          ? '#64748b'
+          : '#f87171'};"
+        title={input || "Nothing on clipboard"}
+      >
+        {input || "Nothing on clipboard"}
+      </span>
+    {/if}
     <button
       onclick={pasteFromClipboard}
       title="Paste share URL from clipboard"
