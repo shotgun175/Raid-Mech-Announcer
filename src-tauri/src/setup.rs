@@ -10,8 +10,9 @@ use log::*;
 use tauri::{App, AppHandle, Manager};
 use tauri_plugin_updater::UpdaterExt;
 
+#[cfg(not(debug_assertions))]
+use crate::app;
 use crate::{
-    app,
     background::{BackgroundWorker, BackgroundWorkerArgs},
     constants::{BETA_ENDPOINT, DEFAULT_PORT},
     context::AppContext,
@@ -58,6 +59,10 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     //     _logs_window.open_devtools();
     // }
 
+    // Keep the watcher alive for the app's lifetime. Returns None if LOA Logs isn't installed.
+    let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());
+    app_handle.manage(std::sync::Mutex::new(log_watcher));
+
     Ok(())
 }
 
@@ -74,6 +79,11 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
             shell_manager.unload_driver().await;
 
             let check_result = if is_beta {
+                if BETA_ENDPOINT.is_empty() {
+                    warn!("beta channel enabled but BETA_ENDPOINT is not configured — skipping update check");
+                    update_checked.store(true, Ordering::Relaxed);
+                    return;
+                }
                 let beta_url = url::Url::parse(BETA_ENDPOINT).expect("beta endpoint URL is valid");
                 match app_handle.updater_builder().endpoints(vec![beta_url]).and_then(|b| b.build()) {
                     Ok(updater) => updater.check().await,
@@ -120,20 +130,15 @@ fn initialize_windows_and_settings(
 ) -> u16 {
     let mut port = DEFAULT_PORT;
     let meter_window = app_handle.get_meter_window().unwrap();
-    let mini_window = app_handle.get_mini_window().unwrap();
     let logs_window = app_handle.get_logs_window().unwrap();
 
     if let Some(settings) = settings {
         info!("settings loaded");
-        if settings.general.mini {
-            mini_window.restore_default_state();
-            mini_window.show().unwrap();
-        } else if !settings.general.hide_meter_on_start && !settings.general.mini {
+        if !settings.general.hide_meter_on_start {
             meter_window.restore_default_state();
             meter_window.show().unwrap();
         } else {
             meter_window.hide().unwrap();
-            mini_window.hide().unwrap()
         }
 
         if !settings.general.hide_logs_on_start {
@@ -145,10 +150,8 @@ fn initialize_windows_and_settings(
 
         if settings.general.always_on_top {
             meter_window.set_always_on_top(true).unwrap();
-            mini_window.set_always_on_top(true).unwrap();
         } else {
             meter_window.set_always_on_top(false).unwrap();
-            mini_window.set_always_on_top(false).unwrap();
         }
 
         if settings.general.auto_iface && settings.general.port > 0 {
