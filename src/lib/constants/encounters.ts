@@ -1,19 +1,19 @@
 export const encounterMap: { [key: string]: { [key: string]: Array<string> } } = {
-  Valtan: {
+  "Valtan": {
     "Valtan G1": ["Dark Mountain Predator", "Destroyer Lucas", "Leader Lugaru"],
     "Valtan G2": ["Demon Beast Commander Valtan", "Ravaged Tyrant of Beasts"]
   },
-  Vykas: {
+  "Vykas": {
     "Vykas G1": ["Incubus Morphe", "Nightmarish Morphe"],
     "Vykas G2": ["Covetous Devourer Vykas"],
     "Vykas G3": ["Covetous Legion Commander Vykas"]
   },
-  Clown: {
+  "Clown": {
     "Clown G1": ["Saydon"],
     "Clown G2": ["Kakul"],
     "Clown G3": ["Kakul-Saydon", "Encore-Desiring Kakul-Saydon"]
   },
-  Brelshaza: {
+  "Brelshaza": {
     "Brelshaza G1": ["Gehenna Helkasirs"],
     "Brelshaza G2": ["Prokel", "Prokel's Spiritual Echo", "Ashtarot"],
     "Brelshaza G3": ["Primordial Nightmare"],
@@ -25,12 +25,12 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
     ],
     "Brelshaza G6": ["Phantom Legion Commander Brelshaza"]
   },
-  Kayangel: {
+  "Kayangel": {
     "Kayangel G1": ["Tienis", "Celestial Sentinel"],
     "Kayangel G2": ["Prunya"],
     "Kayangel G3": ["Lauriel"]
   },
-  Akkan: {
+  "Akkan": {
     "Akkan G1": ["Griefbringer Maurug", "Evolved Maurug"],
     "Akkan G2": ["Lord of Degradation Akkan"],
     "Akkan G3": ["Plague Legion Commander Akkan", "Lord of Kartheon Akkan"]
@@ -47,13 +47,13 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
       "Brand of Subordination"
     ]
   },
-  Thaemine: {
+  "Thaemine": {
     "Thaemine G1": ["Killineza the Dark Worshipper"],
     "Thaemine G2": ["Valinak, Knight of Darkness", "Valinak, Taboo Usurper", "Valinak, Herald of the End"],
     "Thaemine G3": ["Thaemine the Lightqueller", "Dark Greatsword"],
     "Thaemine G4": ["Darkness Legion Commander Thaemine", "Thaemine Prokel", "Thaemine, Conqueror of Stars"]
   },
-  Echidna: {
+  "Echidna": {
     "Echidna G1": ["Red Doom Narkiel", "Agris"],
     "Echidna G2": [
       "Echidna",
@@ -63,7 +63,7 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
       "Agris, the Devouring Bog"
     ]
   },
-  Behemoth: {
+  "Behemoth": {
     "Behemoth G1": [
       "Behemoth, the Storm Commander",
       "Despicable Skolakia",
@@ -79,7 +79,7 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
   "Assault: Flame of Destruction": {
     "Assault: Flame of Destruction G1": ["Flame of Darkness, Tarkal"]
   },
-  Aegir: {
+  "Aegir": {
     "Aegir G1": ["Akkan, Lord of Death", "Abyss Monarch Aegir"],
     "Aegir G2": ["Aegir, the Oppressor", "Pulsating Giant's Heart"]
   },
@@ -102,7 +102,7 @@ export const encounterMap: { [key: string]: { [key: string]: Array<string> } } =
     "Final Act: Kazeros G2-2": ["God of Death Kazeros"],
     "Final Act: Kazeros G2-3": ["Death Incarnate Kazeros"]
   },
-  Serca: {
+  "Serca": {
     "Serca G1": ["Witch of Agony, Serca"],
     "Serca G2": ["Corvus Tul Rak"]
   }
@@ -118,12 +118,12 @@ export const bossHpMap: Record<string, number> = {
   "Nightmarish Morphe": 60,
   "Covetous Devourer Vykas": 160,
   "Covetous Legion Commander Vykas": 180,
-  Saydon: 160,
-  Kakul: 140,
+  "Saydon": 160,
+  "Kakul": 140,
   "Kakul-Saydon": 180,
   "Encore-Desiring Kakul-Saydon": 77,
   "Gehenna Helkasirs": 120,
-  Ashtarot: 170,
+  "Ashtarot": 170,
   "Primordial Nightmare": 190,
   "Brelshaza, Monarch of Nightmares": 200,
   "Imagined Primordial Nightmare": 20,
@@ -134,10 +134,10 @@ export const bossHpMap: Record<string, number> = {
   "Lord of Degradation Akkan": 190,
   "Plague Legion Commander Akkan": 220,
   "Lord of Kartheon Akkan": 300,
-  Tienis: 110,
+  "Tienis": 110,
   "Celestial Sentinel": 60,
-  Prunya: 90,
-  Lauriel: 200,
+  "Prunya": 90,
+  "Lauriel": 200,
   "Kaltaya, the Blooming Chaos": 120,
   "Rakathus, the Lurking Arrogance": 160,
   "Firehorn, Trampler of Earth": 160,
@@ -152,9 +152,9 @@ export const bossHpMap: Record<string, number> = {
   "Thaemine Prokel": 35,
   "Thaemine, Conqueror of Stars": 350,
   "Red Doom Narkiel": 180,
-  Agris: 100,
-  Echidna: 285,
-  "Covetous Master Echidna": 285,
+  "Agris": 100,
+  "Echidna": 285,
+  "Covetous Master Echidna": 137,
   "Alcaone, the Twisted Venom": 86,
   "Agris, the Devouring Bog": 103,
   "Behemoth, the Storm Commander": 500,
@@ -164,7 +164,7 @@ export const bossHpMap: Record<string, number> = {
   "Narok the Butcher": 300,
   "Phantom Manifester Brelshaza": 420,
   "Thaemine, Master of Darkness": 300,
-  Infernas: 300,
+  "Infernas": 300,
   "Blossoming Fear, Naitreya": 300,
   "Mordum, the Abyssal Punisher": 500,
   "Flash of Punishment": 350,
@@ -174,9 +174,9 @@ export const bossHpMap: Record<string, number> = {
   "Brelshaza, Ember in the Ashes": 450,
   "Armoche, Sentinel of the Abyss": 450,
   "Abyss Lord Kazeros": 1000,
-  "God of Death Kazeros": 650,
-  "Archdemon Kazeros": 950,
-  "Death Incarnate Kazeros": 300,
+  "God of Death Kazeros": 777,
+  "Archdemon Kazeros": 1000,
+  "Death Incarnate Kazeros": 777,
   "Witch of Agony, Serca": 300,
   "Corvus Tul Rak": 300
 };

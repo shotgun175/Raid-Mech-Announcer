@@ -2033,21 +2033,21 @@ const LIBRARY: LibraryGate[] = [
       },
       {
         name: "Final Time Attack",
-        hpBar: 225,
+        hpBar: 525,
         triggerType: "hp",
         severity: "wipe",
         notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones"
       },
       {
         name: "Sacrifice",
-        hpBar: 150,
+        hpBar: 350,
         triggerType: "hp",
         severity: "wipe",
         notes: "Wipe if DPS is insufficient across the 3 cones"
       },
       {
         name: "Fake Wipe",
-        hpBar: 75,
+        hpBar: 175,
         triggerType: "hp",
         severity: "wipe",
         notes: "Not an actual wipe — survive through the animation and keep pushing"
