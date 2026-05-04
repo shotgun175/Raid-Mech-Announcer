@@ -60,8 +60,7 @@ export const setAlwaysOnTop = (enabled: boolean): Promise<void> => {
 
 export const writeLog = (message: string): Promise<void> => invoke("write_log", { message });
 
-export const checkBetaUpdate = (): Promise<{ version: string; body?: string } | null> =>
-  invoke("check_beta_update");
+export const checkBetaUpdate = (): Promise<{ version: string; body?: string } | null> => invoke("check_beta_update");
 
 export const installBetaUpdate = (): Promise<void> => invoke("install_beta_update");
 
@@ -70,6 +69,8 @@ export const installStableUpdate = (): Promise<void> => invoke("install_stable_u
 export const optimizeDatabase = (): Promise<void> => invoke("optimize_database");
 
 export const startLoaProcess = (): Promise<void> => invoke("start_loa_process");
+
+export const listTtsVoices = (): Promise<string[]> => invoke("list_tts_voices");
 
 interface LoadEncountersCriteria {
   page: number;
@@ -99,8 +100,7 @@ export interface CharacterInfo {
 
 export const getLocalCharacters = (): Promise<CharacterInfo[]> => invoke("get_local_characters");
 
-export const getLOAMeterDataPath = (): Promise<string | null> =>
-  invoke("get_loa_meter_data_path");
+export const getLOAMeterDataPath = (): Promise<string | null> => invoke("get_loa_meter_data_path");
 
 export interface SyncArgs {
   encounter: number;
