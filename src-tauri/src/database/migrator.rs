@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use anyhow::Result;
 use log::*;
 use r2d2_sqlite::SqliteConnectionManager;

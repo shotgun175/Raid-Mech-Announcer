@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::models::utils::{int_or_string_as_option_string, int_or_string_as_string};
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};

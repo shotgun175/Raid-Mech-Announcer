@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub mod migrator;
 pub mod models;
 mod queries;

@@ -3,15 +3,11 @@ use std::ops::Deref;
 use tauri::{AppHandle, Manager, WebviewWindow};
 use tauri_plugin_window_state::WindowExt;
 
-use crate::constants::{
-    LOGS_WINDOW_LABEL, METER_MINI_WINDOW_LABEL, METER_WINDOW_LABEL, WINDOW_STATE_FLAGS,
-};
+use crate::constants::{LOGS_WINDOW_LABEL, METER_WINDOW_LABEL, WINDOW_STATE_FLAGS};
 
 pub trait AppHandleExtensions {
     fn get_meter_window(&self) -> Option<MeterWindow>;
-    fn get_mini_window(&self) -> Option<OtherWindow>;
     fn get_logs_window(&self) -> Option<OtherWindow>;
-    fn get_window(&self, is_mini: bool) -> Box<dyn WindowExtensions>;
 }
 
 pub trait WindowExtensions {
@@ -29,19 +25,6 @@ impl AppHandleExtensions for &AppHandle {
         self.get_webview_window(METER_WINDOW_LABEL)
             .map(MeterWindow::new)
     }
-
-    fn get_mini_window(&self) -> Option<OtherWindow> {
-        self.get_webview_window(METER_MINI_WINDOW_LABEL)
-            .map(OtherWindow::new)
-    }
-
-    fn get_window(&self, is_mini: bool) -> Box<dyn WindowExtensions> {
-        (if is_mini {
-            Box::new(self.get_mini_window().unwrap()) as Box<dyn WindowExtensions>
-        } else {
-            Box::new(self.get_meter_window().unwrap()) as Box<dyn WindowExtensions>
-        }) as _
-    }
 }
 
 impl AppHandleExtensions for AppHandle {
@@ -51,14 +34,6 @@ impl AppHandleExtensions for AppHandle {
 
     fn get_meter_window(&self) -> Option<MeterWindow> {
         (&self).get_meter_window()
-    }
-
-    fn get_mini_window(&self) -> Option<OtherWindow> {
-        (&self).get_mini_window()
-    }
-
-    fn get_window(&self, is_mini: bool) -> Box<dyn WindowExtensions> {
-        (&self).get_window(is_mini)
     }
 }
 

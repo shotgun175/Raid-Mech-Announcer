@@ -1,11 +1,11 @@
+#![allow(dead_code)]
+
 use crate::{
-    models::{Encounter, EntityType},
+    models::Encounter,
     utils::{boss_to_raid_map, is_valid_player},
 };
-use hashbrown::HashMap;
-use log::*;
+use log::warn;
 use serde::Serialize;
-use sha2::{Digest, Sha256};
 
 #[derive(Debug, Serialize, Clone)]
 struct ParticipantInfo<'a> {

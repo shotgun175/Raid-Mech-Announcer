@@ -1,49 +1,43 @@
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v1.42.4 - April 27th, 2026
+    v0.1.0 - May 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
 
-#### P.S. If you see any of us in town or raid, feel free to drop an honor!
+#### Initial Release
 
-- **Snowving** on Luterra
-- **Administrator** on Ratik
-- **Poont** on Giena
+**Raid Editor**
 
-#### Try out rDPS by opting into beta updates. Settings > Enable Beta Updates
+- Build and manage mechanic patterns per raid gate with HP, timer, and repeat triggers
+- Import pre-built templates from the raid library — all 18 raid groups covered (Valtan through Serca), 48 gates, 220 mechanics
+- Each imported mechanic includes notes sourced from Maxroll guides: sidereal timing, HM/NM differences, and key callout patterns
+- Live HP bar integration — auto-matches the active gate when LOA Logs sends boss status
+- Drag to reorder raids; remove individual raids or reset to the 3 newest defaults
 
-#### BUG FIXES AND IMPROVEMENTS
+**Overlay**
 
-- fixed some issues with ban list
+- 5 overlay variants: Combined, Compact List, HUD Strip, Card Stack, Minimal Pill
+- HP bar threshold shown inline with mechanic name (e.g. "Mirror Counter · 212×")
+- Scalable (Small / Normal / Large / Largest) — no scrollbars at any size
+- Overlay Preview tab in Settings for live simulation and drag-to-position testing
+- Simulation HP bar starts near the first mechanic threshold for each boss
 
----
+**LOA Logs Connection**
 
-### v1.42.3 - April 25th, 2026
+- Auto-detects LOA Logs share URL from clipboard app-wide (no need to be on a specific screen)
+- Connection status visible in the hamburger menu on every page
 
-#### BUG FIXES AND IMPROVEMENTS
+**Settings**
 
-- added column sorting for dps/stagger in logs
-- maybe fixed ban message showing up in random dungeons
+- TTS announcements via neural edge-tts voices (Andrew / Jenny) or Windows SAPI fallback
+- Discord webhook integration with per-mechanic firing
+- Shortcuts tab: configurable Hide Overlay and Confirm Pattern hotkeys
+- Shortcuts register on startup — no need to visit Settings first each session
 
-### v1.42.2 - April 22nd, 2026
+**General**
 
-#### BUG FIXES AND IMPROVEMENTS
-
-- maybe fixed parties bugging out when killing serca during rumble
-
----
-
-### v1.42.0 - April 15th, 2026
-
-#### NEW FEATURES
-
-- updated meter for serca patch (EU only)
-
-#### BUG FIXES AND IMPROVEMENTS
-
-- fixed tooltips for legacy skill cast log
-
-**Older Changelogs**: [link](https://github.com/snoww/loa-logs/releases/tag/v1.41.2)
+- Taskbar icon shown when the overlay is on screen
+- Windows app binary: Raid Mech Announcer

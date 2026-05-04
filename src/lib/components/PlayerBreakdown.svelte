@@ -22,6 +22,7 @@
   }
 
   let { entity, enc, handleRightClick }: Props = $props();
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(entity, enc);
   $effect(() => {
     entityState.entity = entity;

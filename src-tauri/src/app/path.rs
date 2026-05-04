@@ -1,18 +1,4 @@
 use std::path::PathBuf;
-use tauri::Manager;
-
-/// Returns the path where we store application data
-///
-/// - **Linux:** Resolves to `$XDG_DATA_HOME` with fallback to `$HOME/.local/share`
-/// - **Windows:** Resolves to $RESOURCE directory - near executable
-pub fn data_dir(app: &tauri::AppHandle) -> PathBuf {
-    #[cfg(target_os = "linux")]
-    let path = app.path().app_data_dir();
-    #[cfg(target_os = "windows")]
-    let path = app.path().resource_dir();
-
-    path.expect("could not get app data dir")
-}
 
 /// Returns the path where we store application logs
 /// FIXME: this code duplication needs to go, but without `tauri::AppHandle`

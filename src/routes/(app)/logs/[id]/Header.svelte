@@ -20,6 +20,7 @@
     return undefined;
   });
 
+  // svelte-ignore state_referenced_locally
   let fav = $state(encounter.favorite);
 
   async function toggleFavorite() {

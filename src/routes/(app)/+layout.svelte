@@ -2,56 +2,51 @@
   import { goto } from "$app/navigation";
   import UpdateAvailable from "$lib/components/UpdateAvailable.svelte";
   import Toaster from "$lib/components/Toaster.svelte";
+  import { getSettings } from "$lib/api";
+  import { emit } from "@tauri-apps/api/event";
   import { settings } from "$lib/stores.svelte";
-  import { checkForUpdate } from "$lib/utils";
+  import { peerState } from "$lib/mech-peer.svelte";
+  import { registerShortcuts } from "$lib/utils/shortcuts";
   import { getVersion } from "@tauri-apps/api/app";
-  import { type UnlistenFn } from "@tauri-apps/api/event";
-  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-  import { onDestroy, onMount } from "svelte";
-  import { onLatestEncounter, onRedirectUrl } from "$lib/api";
+  import { readText } from "@tauri-apps/plugin-clipboard-manager";
+  import { onMount } from "svelte";
 
   let { children }: { children?: import("svelte").Snippet } = $props();
 
-  let events: Set<UnlistenFn> = new Set();
+  const LOA_LIVE_PREFIX = "https://live.lostark.bible/";
+  let lastSeenClip = "";
 
   onMount(() => {
     (async () => {
-      let encounterUpdateEvent = await onLatestEncounter(async (event) => {
-        await goto("/logs/" + event.payload);
-        await showWindow();
-      });
-      let openUrlEvent = await onRedirectUrl(async (event) => {
-        await goto("/" + event.payload);
-        await showWindow();
-      });
+      const data = await getSettings();
+      if (data) settings.app = data;
 
-      events.add(encounterUpdateEvent);
-      events.add(openUrlEvent);
+      const version = await getVersion();
+      if (settings.version !== version) settings.version = version;
 
-      let version = await getVersion();
-      if (settings.version !== version) {
-        settings.version = version;
-        goto("/changelog");
-        await showWindow();
-      }
+      // Register shortcuts immediately so they work without visiting settings first
+      await registerShortcuts();
+
+      try {
+        await emit("mech:overlay-preview");
+      } catch {}
+
+      goto("/mech-editor");
     })();
 
-    // check for app updates
-    const interval = setInterval(() => checkForUpdate(settings.app.general.betaChannel), 60 * 15 * 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  });
-  onDestroy(() => {
-    events.forEach((unlisten) => unlisten());
-  });
+    // Global clipboard polling — watches for LOA Logs share URLs regardless of active page
+    const pollId = setInterval(async () => {
+      if (peerState.status === "connecting" || peerState.isConnected) return;
+      try {
+        const text = await readText();
+        if (!text || text === lastSeenClip || !text.trim().startsWith(LOA_LIVE_PREFIX)) return;
+        lastSeenClip = text;
+        peerState.connect(text.trim());
+      } catch {}
+    }, 1000);
 
-  async function showWindow() {
-    const appWindow = getCurrentWebviewWindow();
-    await appWindow.show();
-    await appWindow.unminimize();
-    await appWindow.setFocus();
-  }
+    return () => clearInterval(pollId);
+  });
 </script>
 
 <UpdateAvailable />

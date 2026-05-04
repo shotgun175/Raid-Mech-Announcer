@@ -3,8 +3,8 @@
 
 @import "tailwindcss";
 
-@plugin '@tailwindcss/typography';
-@plugin '@tailwindcss/forms';
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
 
 :root {
   --font-size: medium;
@@ -63,7 +63,6 @@
   }
 
   [data-view="logs"] {
-    
     *::-webkit-scrollbar {
       @apply right-0! block! size-2! bg-neutral-800!;
     }
@@ -198,6 +197,13 @@
 }
 
 @keyframes mech-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.4); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.4);
+  }
 }

@@ -3,7 +3,7 @@ import type { Mechanic } from "$lib/mech-types";
 
 export function upcomingFrom(mechs: Mechanic[], currentBar: number): Mechanic[] {
   return [...mechs]
-    .filter(m => m.hpBar != null && m.hpBar <= currentBar)
+    .filter((m) => m.hpBar != null && m.hpBar <= currentBar)
     .sort((a, b) => (b.hpBar ?? 0) - (a.hpBar ?? 0));
 }
 

@@ -55,7 +55,6 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         crate::tts_cmd::speak_tts,
         crate::tts_cmd::list_tts_voices,
         get_loa_meter_data_path,
-        probe_loa_port,
     ])
 }
 
@@ -396,25 +395,3 @@ pub fn get_loa_meter_data_path() -> Option<String> {
 
 // Updater commands stubbed out — plugin disabled until endpoints are configured (see CLAUDE.md)
 // Re-enable by: restoring tauri_plugin_updater in main.rs + adding endpoints to tauri.conf.json
-
-#[command]
-pub async fn probe_loa_port() -> String {
-    let client = match reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(2))
-        .build()
-    {
-        Ok(c) => c,
-        Err(e) => return format!("Failed to build client: {e}"),
-    };
-
-    match client.get("http://127.0.0.1:6040").send().await {
-        Ok(resp) => {
-            let status = resp.status();
-            let headers = format!("{:?}", resp.headers().clone());
-            let body = resp.text().await.unwrap_or_default();
-            let body_preview = &body[..body.len().min(500)];
-            format!("HTTP {status}\nHeaders: {headers}\nBody (first 500 chars):\n{body_preview}")
-        }
-        Err(e) => format!("Connection failed: {e}"),
-    }
-}

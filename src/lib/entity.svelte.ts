@@ -205,9 +205,7 @@ export class EntityState {
 
     // Step 4: Extrapolate: how much brand bDMG was hidden in identity rdpsContributed?
     // identityBrandBDmg = regularBrandBDmg * (identityBrandWindowDmg / regularBrandWindowDmg)
-    const identityBrandBDmg = Math.round(
-      regularBrandBDmg * (identityBrandWindowDmg / regularBrandWindowDmg)
-    );
+    const identityBrandBDmg = Math.round(regularBrandBDmg * (identityBrandWindowDmg / regularBrandWindowDmg));
     if (identityBrandBDmg <= 0) return null;
 
     // Step 5: Identify which of this support's skills are identity skills by matching
@@ -220,10 +218,7 @@ export class EntityState {
     );
     if (totalIdentityRdps === 0) return null;
 
-    const identityCasts = rawSkills.reduce(
-      (acc, s) => acc + (identitySkillIds.has(s.id) ? s.casts : 0),
-      0
-    );
+    const identityCasts = rawSkills.reduce((acc, s) => acc + (identitySkillIds.has(s.id) ? s.casts : 0), 0);
 
     return { bDmg: identityBrandBDmg, totalIdentityRdps, identitySkillIds, casts: identityCasts };
   });

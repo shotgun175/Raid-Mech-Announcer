@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { bossHpBarColors } from "$lib/constants/encounters";
+  import { BOSS_HP_COLORS } from "$lib/mech-constants";
   import { settings } from "$lib/stores.svelte.js";
   import type { Entity } from "$lib/types";
   import { broadcastLiveMessage } from "$lib/utils/live.svelte.js";
@@ -45,8 +45,8 @@
 
   // [current bar color, next bar color]
   let bossBarColor = $derived([
-    bossHpBarColors[bossCurrentBars % bossHpBarColors.length],
-    bossHpBarColors[(bossCurrentBars - 1) % bossHpBarColors.length]
+    BOSS_HP_COLORS[bossCurrentBars % BOSS_HP_COLORS.length],
+    BOSS_HP_COLORS[(bossCurrentBars - 1) % BOSS_HP_COLORS.length]
   ]);
 
   let bossCurrentHp = $derived.by(() => {

@@ -11,6 +11,7 @@
   import { onMount, type Snippet } from "svelte";
   import { fade, fly } from "svelte/transition";
   import { checkLoaRunning, startLoaProcess } from "$lib/api";
+  import PeerConnect from "$lib/components/mech/PeerConnect.svelte";
 
   const { title, children }: { title: string; children?: Snippet } = $props();
 
@@ -63,7 +64,7 @@
 {#snippet route(name: string, path: string)}
   <a
     href={path}
-    class="hover:text-accent-500 rounded-md px-3 py-1 text-base"
+    class="rounded-md px-3 py-1 text-base hover:text-accent-500"
     class:bg-neutral-800={pathname.startsWith(path)}
   >
     {name}
@@ -71,11 +72,11 @@
 {/snippet}
 
 {#if $open}
-  <div use:melt={$portalled} class="select-none text-white {settings.app.general.accentColor}">
+  <div use:melt={$portalled} class="text-white select-none {settings.app.general.accentColor}">
     <div use:melt={$overlay} class="fixed inset-0 z-30 bg-neutral-950/50" transition:fade={{ duration: 100 }}></div>
     <div
       use:melt={$content}
-      class="fixed left-0 top-0 z-30 flex h-screen min-w-[15rem] flex-col bg-neutral-900 shadow-md"
+      class="fixed top-0 left-0 z-30 flex h-screen min-w-[15rem] flex-col bg-neutral-900 shadow-md"
       transition:fly={{ x: -240, duration: 100 }}
     >
       <div class="m-4 flex items-center">
@@ -86,14 +87,10 @@
       </div>
       <div class="mx-4 mb-2 h-px bg-neutral-700"></div>
       <div class="grid gap-1 px-2">
-        {@render route("Past Encounters", "/logs")}
-        {@render route("Uploading", "/upload")}
         {@render route("Changelog", "/changelog")}
-        {@render route("Settings", "/settings")}
         <div class="mx-4 my-2 h-px bg-neutral-700"></div>
-        {@render route("Mech Editor", "/mech-editor")}
-        {@render route("Overlay Preview", "/overlay-preview")}
-        {@render route("Mech Settings", "/mech-settings")}
+        {@render route("Raid Editor", "/mech-editor")}
+        {@render route("Settings", "/mech-settings")}
       </div>
       <div class="m-2 h-px bg-neutral-700"></div>
 
@@ -134,48 +131,52 @@
           {/if}
         </button>
       </div>
-      <!-- todo version check -->
-      {#if version}
-        <div class="absolute bottom-0 mx-4 my-2 p-1 text-sm">
-          version {version}
-        </div>
-      {/if}
-      {#if !updateInfo.available}
-        <button
-          class="group absolute bottom-3.5 right-4"
-          onclick={async () => {
-            checking = true;
-            const update = await checkForUpdate(settings.app.general.betaChannel);
-            setTimeout(() => {
-              if (!update) {
-                addToast(noUpdateAvailable);
-              }
-              checking = false;
-            }, 900);
-          }}
-        >
-          <QuickTooltip tooltip="Check for updates">
-            <IconRefresh
-              class="group-hover:text-accent-500/80 size-4 transform {checking
-                ? 'animate-[spin_1s_linear_infinite_reverse]'
-                : ''}"
-            />
-          </QuickTooltip>
-        </button>
-      {:else}
-        <button
-          class="group absolute bottom-3.5 right-4"
-          onclick={async () => {
-            // emit update
-            updateInfo.available = false;
-            updateInfo.available = true;
-          }}
-        >
-          <QuickTooltip tooltip="Update available">
-            <IconArrowUp class="group-hover:text-accent-500/70 text-accent-500/80 size-4 animate-bounce" />
-          </QuickTooltip>
-        </button>
-      {/if}
+      <!-- LOA Logs connection — pinned to bottom -->
+      <div class="mt-auto">
+        <PeerConnect />
+      </div>
+
+      <!-- version + update button row -->
+      <div class="mx-4 mt-1 mb-2 flex items-center justify-between px-1">
+        {#if version}
+          <span class="text-sm text-neutral-500">version {version}</span>
+        {/if}
+        {#if !updateInfo.available}
+          <button
+            class="group ml-auto"
+            onclick={async () => {
+              checking = true;
+              const update = await checkForUpdate(settings.app.general.betaChannel);
+              setTimeout(() => {
+                if (!update) {
+                  addToast(noUpdateAvailable);
+                }
+                checking = false;
+              }, 900);
+            }}
+          >
+            <QuickTooltip tooltip="Check for updates">
+              <IconRefresh
+                class="size-4 transform group-hover:text-accent-500/80 {checking
+                  ? 'animate-[spin_1s_linear_infinite_reverse]'
+                  : ''}"
+              />
+            </QuickTooltip>
+          </button>
+        {:else}
+          <button
+            class="group ml-auto"
+            onclick={async () => {
+              updateInfo.available = false;
+              updateInfo.available = true;
+            }}
+          >
+            <QuickTooltip tooltip="Update available">
+              <IconArrowUp class="size-4 animate-bounce text-accent-500/80 group-hover:text-accent-500/70" />
+            </QuickTooltip>
+          </button>
+        {/if}
+      </div>
     </div>
   </div>
 {/if}

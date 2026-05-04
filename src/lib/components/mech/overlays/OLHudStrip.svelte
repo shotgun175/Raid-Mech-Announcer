@@ -9,26 +9,52 @@
   const barColor = $derived(hpBarColor(currentBar, totalBars));
 </script>
 
-<div style="background: rgba(23,23,23,0.75); backdrop-filter: blur(10px); border: 1px solid rgba(64,64,64,0.4); border-radius: 3px; min-width: 480px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.6);">
-  <div style="position: relative; height: 22px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(0,0,0,0.4);">
-    <div style="position: absolute; inset: 0; background: {barColor}; opacity: 0.75; width: {(currentBar / totalBars) * 100}%; transition: width 0.3s;" />
-    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">
+<div
+  style="background: rgba(23,23,23,0.75); backdrop-filter: blur(10px); border: 1px solid rgba(64,64,64,0.4); border-radius: 3px; min-width: 480px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.6);"
+>
+  <div style="position: relative; height: 26px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(0,0,0,0.4);">
+    <div
+      style="position: absolute; inset: 0; background: {barColor}; opacity: 0.75; width: {(currentBar / totalBars) *
+        100}%; transition: width 0.3s;"
+    ></div>
+    <div
+      style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
+    >
       {gateName} · <span style="font-family: ui-monospace, monospace; margin-left: 4px;">{currentBar}/{totalBars}</span>
     </div>
     {#if next && sev}
-      <div style="position: absolute; left: {((next.hpBar ?? 0) / totalBars) * 100}%; top: 0; width: 2px; height: 100%; background: {sev.color}; box-shadow: 0 0 6px {sev.color};" />
+      <div
+        style="position: absolute; left: {((next.hpBar ?? 0) / totalBars) *
+          100}%; top: 0; width: 2px; height: 100%; background: {sev.color}; box-shadow: 0 0 6px {sev.color};"
+      ></div>
     {/if}
   </div>
   <div style="padding: 8px 14px; display: flex; align-items: center; gap: 14px;">
     {#if next && sev}
-      <span style="font-size: 9px; color: #525252; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; flex-shrink: 0;">NEXT</span>
-      <div style="width: 7px; height: 7px; border-radius: 50%; background: {sev.color}; box-shadow: 0 0 6px {sev.color}; flex-shrink: 0;" />
-      <span style="font-size: 14px; font-weight: 700; color: {sev.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{next.name}</span>
+      <span
+        style="font-size: 9px; color: #525252; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; flex-shrink: 0;"
+        >NEXT</span
+      >
+      <div
+        style="width: 7px; height: 7px; border-radius: 50%; background: {sev.color}; box-shadow: 0 0 6px {sev.color}; flex-shrink: 0;"
+      ></div>
+      <span
+        style="font-size: 14px; font-weight: 700; color: {sev.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+        >{next.name}</span
+      >
       {#if next.phase}
-        <MechBadge label="P{next.phase}" color={PHASE_COLORS[next.phase]} bg="{PHASE_COLORS[next.phase]}18" border="{PHASE_COLORS[next.phase]}60" small />
+        <MechBadge
+          label="P{next.phase}"
+          color={PHASE_COLORS[next.phase]}
+          bg="{PHASE_COLORS[next.phase]}18"
+          border="{PHASE_COLORS[next.phase]}60"
+          small
+        />
       {/if}
       <span style="margin-left: auto; display: flex; align-items: baseline; gap: 4px; flex-shrink: 0;">
-        <span style="font-size: 18px; font-family: ui-monospace, monospace; font-weight: 700; color: #fafafa;">{currentBar - (next.hpBar ?? 0)}</span>
+        <span style="font-size: 18px; font-family: ui-monospace, monospace; font-weight: 700; color: #fafafa;"
+          >{currentBar - (next.hpBar ?? 0)}</span
+        >
         <span style="font-size: 10px; color: #525252;">bars</span>
       </span>
     {:else}

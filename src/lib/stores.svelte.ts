@@ -191,8 +191,6 @@ export const defaultSettings: AppSettings = {
     hideMeterOnStart: false,
     logsPerPage: 10,
     experimentalFeatures: false,
-    mini: false,
-    miniEdit: true,
     autoShow: false,
     autoHideDelay: 5,
     betaChannel: false
@@ -256,10 +254,6 @@ export const defaultSettings: AppSettings = {
       percentHatBySup: false,
       supportContrib: false
     }
-  },
-  mini: {
-    info: "damage",
-    bossHpBar: false
   },
   logs: {
     abbreviateHeader: false,

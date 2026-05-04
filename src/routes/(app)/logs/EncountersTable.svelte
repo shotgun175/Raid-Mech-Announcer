@@ -36,7 +36,7 @@
     onchange={() => {
       selected.has(id) ? selected.delete(id) : selected.add(id);
     }}
-    class="form-checkbox checked:text-accent-600/80 size-5 rounded-sm border-0 bg-neutral-700 focus:ring-0"
+    class="form-checkbox size-5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
   />
 {/snippet}
 {#snippet encounterPreview(encounter: EncounterPreview)}
@@ -56,7 +56,7 @@
       {/if}
     </td>
     <!-- Encounter info: Difficulty, Gate, Name, Favorite -->
-    <td class="w-full py-2 pl-3 pr-1 font-medium">
+    <td class="w-full py-2 pr-1 pl-3 font-medium">
       <div class="flex flex-col gap-1">
         <div class="flex gap-1 text-nowrap text-neutral-300">
           {#if encounter.difficulty}
@@ -81,7 +81,7 @@
         </div>
         <a
           href="/logs/{encounter.id}"
-          class="hover:text-accent-500 group flex items-center gap-1 text-sm hover:underline"
+          class="group flex items-center gap-1 text-sm hover:text-accent-500 hover:underline"
         >
           {#if encounter.favorite}
             <IconStar class="shrink-0 text-yellow-400" />
@@ -94,7 +94,7 @@
     </td>
     <!-- Classes -->
     <td class="p-3">
-      <div class="mask-r-from-80% mask-r-to-100% flex">
+      <div class="flex mask-r-from-80% mask-r-to-100%">
         {#each encounter.classes as classId, i}
           <QuickTooltip tooltip={encounter.names[i]} class="shrink-0">
             <img src={getClassIcon(classId)} alt="class-{classId}" class="size-8" />
@@ -178,7 +178,7 @@
                 }
               }
             }}
-            class="form-checkbox checked:text-accent-600/80 size-4.5 rounded-sm border-0 bg-neutral-700 focus:ring-0"
+            class="form-checkbox size-4.5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
           />
         </th>
       {/if}

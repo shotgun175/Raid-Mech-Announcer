@@ -19,6 +19,7 @@
 
   let { enc, player, groupedSynergies, percentage }: Props = $props();
 
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(player, enc);
   $effect(() => {
     entityState.entity = player;
@@ -29,6 +30,7 @@
     getSynergyPercentageDetailsSum(groupedSynergies, entityState)
   );
 
+  // svelte-ignore state_referenced_locally
   const tweenedValue = new Tween(enc.live ? 0 : percentage, {
     duration: 400,
     easing: cubicOut

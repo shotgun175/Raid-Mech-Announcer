@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use anyhow::Result;
 use flate2::Compression;
 use flate2::write::GzEncoder;

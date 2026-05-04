@@ -10,7 +10,8 @@
   const bdr = $derived(border ?? color);
 </script>
 
-<span style="
+<span
+  style="
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
@@ -24,4 +25,5 @@
   border: 1px solid {bdr};
   color: {color};
   font-size: {small ? 9.5 : 10.5}px;
-">{label}</span>
+">{label}</span
+>

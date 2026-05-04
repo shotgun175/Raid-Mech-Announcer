@@ -68,8 +68,6 @@ export interface GeneralSettings {
   startOnBoot: boolean;
   logsPerPage: number;
   experimentalFeatures: boolean;
-  mini: boolean;
-  miniEdit: boolean;
   autoShow: boolean;
   autoHideDelay: number;
   betaChannel: boolean;
@@ -112,11 +110,6 @@ export interface LogsSettings extends CommonSettings {
   breakdown: LogsBreakdown;
 }
 
-export interface MiniSettings {
-  info: string;
-  bossHpBar: boolean;
-}
-
 export interface BuffSettings {
   default: boolean;
 }
@@ -126,6 +119,5 @@ export interface AppSettings {
   shortcuts: Shortcuts;
   meter: MeterSettings;
   logs: LogsSettings;
-  mini: MiniSettings;
   buffs: BuffSettings;
 }

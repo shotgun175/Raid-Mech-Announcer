@@ -117,10 +117,16 @@ export const peerState = (() => {
   }
 
   return {
-    get status() { return status; },
-    get errorMsg() { return errorMsg; },
-    get isConnected() { return status === "connected"; },
+    get status() {
+      return status;
+    },
+    get errorMsg() {
+      return errorMsg;
+    },
+    get isConnected() {
+      return status === "connected";
+    },
     connect,
-    disconnect,
+    disconnect
   };
 })();

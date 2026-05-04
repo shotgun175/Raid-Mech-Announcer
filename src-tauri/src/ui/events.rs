@@ -12,7 +12,6 @@ use tauri_plugin_window_state::AppHandleExt;
 use crate::{
     background::BackgroundWorker,
     constants::*,
-    settings::SettingsManager,
     shell::ShellManager,
     ui::{AppHandleExtensions, TrayCommand, WindowExtensions},
 };
@@ -65,7 +64,6 @@ pub fn on_menu_event(app: &AppHandle, event: MenuEvent) {
 
 pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<()> {
     let menu_item_id = event.id().0.as_str();
-    let settings_manager = app_handle.state::<SettingsManager>();
 
     match TrayCommand::from_str(menu_item_id)? {
         TrayCommand::Quit => {
@@ -77,30 +75,13 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
             if let Some(meter) = app_handle.get_meter_window() {
                 meter.hide()?;
             }
-
-            if let Some(mini) = app_handle.get_mini_window() {
-                mini.hide()?;
-            }
         }
         TrayCommand::ShowMeter => {
-            let settings_manager = app_handle.state::<SettingsManager>();
-            let settings = settings_manager.read()?.unwrap_or_default();
-            let window = app_handle.get_window(settings.general.mini);
-            window.restore_and_focus();
+            if let Some(meter) = app_handle.get_meter_window() {
+                meter.restore_and_focus();
+            }
         }
         TrayCommand::Reset => {
-            let settings = settings_manager.read()?.unwrap_or_default();
-
-            if settings.general.mini {
-                if let Some(mini) = app_handle.get_mini_window() {
-                    mini.set_size(DEFAULT_MINI_METER_WINDOW_SIZE)?;
-                    mini.set_position(WINDOW_POSITION)?;
-                    mini.restore_and_focus();
-                }
-
-                return Ok(());
-            }
-
             if let Some(meter) = app_handle.get_meter_window() {
                 meter.set_size(DEFAULT_METER_WINDOW_SIZE)?;
                 meter.set_position(WINDOW_POSITION)?;
@@ -140,15 +121,16 @@ pub fn on_window_event_inner(label: &str, window: &Window, event: &WindowEvent) 
             }
 
             let app_handle = window.app_handle();
-            let meter_window = app_handle.get_meter_window().unwrap();
-            let logs_window = app_handle.get_logs_window().unwrap();
 
-            if logs_window.is_minimized()? {
-                logs_window.unminimize()?;
+            if let Some(meter_window) = app_handle.get_meter_window() {
+                if meter_window.is_minimized()? {
+                    meter_window.unminimize()?;
+                }
             }
-
-            if meter_window.is_minimized()? {
-                meter_window.unminimize()?;
+            if let Some(logs_window) = app_handle.get_logs_window() {
+                if logs_window.is_minimized()? {
+                    logs_window.unminimize()?;
+                }
             }
 
             teardown(app_handle);

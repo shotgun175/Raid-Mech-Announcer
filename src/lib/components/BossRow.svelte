@@ -18,12 +18,14 @@
   }
 
   let { enc, boss, width, index }: Props = $props();
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(boss, enc);
   $effect(() => {
     entityState.entity = boss;
     entityState.encounter = enc;
   });
 
+  // svelte-ignore state_referenced_locally
   const tweenedValue = new Tween(enc.live ? 0 : width, {
     duration: 400,
     easing: cubicOut

@@ -20,9 +20,12 @@
 
   let { skill, entityState, groupedSynergies, width, index }: Props = $props();
 
+  // svelte-ignore state_referenced_locally
   let synergyPercentageDetails: Array<BuffDetails> = $derived(getSynergyPercentageDetails(groupedSynergies, skill));
+  // svelte-ignore state_referenced_locally
   let isHyperAwakening = skill.isHyperAwakening || hyperAwakeningIds.has(skill.id);
 
+  // svelte-ignore state_referenced_locally
   const tweenedValue = new Tween(entityState.encounter.live ? 0 : width, {
     duration: 400,
     easing: cubicOut
@@ -32,7 +35,7 @@
   });
 </script>
 
-<tr class="text-xxs h-7 px-2 py-1 {settings.app.general.underlineHovered ? 'hover:underline' : ''}">
+<tr class="h-7 px-2 py-1 text-xxs {settings.app.general.underlineHovered ? 'hover:underline' : ''}">
   <td class="pl-1">
     <QuickTooltip tooltip={skill.name}>
       <img class="size-5" src={getSkillIcon(skill.icon)} alt={skill.name} />

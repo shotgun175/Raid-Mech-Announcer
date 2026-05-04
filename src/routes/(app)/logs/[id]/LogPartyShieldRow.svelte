@@ -15,6 +15,7 @@
   }
 
   let { enc, player, playerShields, percentage }: Props = $props();
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(player, enc);
   $effect(() => {
     entityState.entity = player;
@@ -35,12 +36,12 @@
     </QuickTooltip>
   </div>
 </td>
-<td class="text-xxs px-1 text-center">
+<td class="px-1 text-center text-xxs">
   {totalShieldStr[0]}<span class="text-xxs text-neutral-300">{totalShieldStr[1]}</span>
 </td>
 {#if playerShields.length > 0}
   {#each playerShields as shield (shield.id)}
-    <td class="text-xxs px-1 text-center">
+    <td class="px-1 text-center text-xxs">
       {#if shield.total}
         <ShieldDetailTooltip shieldDetails={shield} />
       {/if}

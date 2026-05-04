@@ -13,22 +13,30 @@
 
   const gate = $derived(mechStore.selectedGate);
 
+  // svelte-ignore state_referenced_locally
   let _manualBar = $state(gate?.totalBars ?? 300);
-  $effect(() => { _manualBar = gate?.totalBars ?? 300; });
+  $effect(() => {
+    _manualBar = gate?.totalBars ?? 300;
+  });
 
   const simBar = $derived(mechStore.liveBar ?? _manualBar);
   const isLive = $derived(mechStore.isLive);
 
-  const sorted = $derived(
-    gate ? [...gate.mechanics].sort((a, b) => ((b.hpBar ?? -1) - (a.hpBar ?? -1))) : []
-  );
-  const nextId = $derived(
-    sorted.find(m => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null
-  );
+  const sorted = $derived(gate ? [...gate.mechanics].sort((a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1)) : []);
+  const nextId = $derived(sorted.find((m) => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null);
 
-  function openAdd() { editMech = null; showModal = true; }
-  function openEdit(m: Mechanic) { editMech = m; showModal = true; }
-  function closeModal() { showModal = false; editMech = null; }
+  function openAdd() {
+    editMech = null;
+    showModal = true;
+  }
+  function openEdit(m: Mechanic) {
+    editMech = m;
+    showModal = true;
+  }
+  function closeModal() {
+    showModal = false;
+    editMech = null;
+  }
 
   function saveMechanic(m: Mechanic) {
     if (gate) mechStore.upsertMechanic(gate.id, m);
@@ -40,14 +48,11 @@
   }
 
   const bossTypeColor = $derived(
-    !gate ? "#fbbf24"
-    : gate.bossType === "HUMAN" ? "#fbbf24"
-    : gate.bossType === "ANCIENT" ? "#a78bfa"
-    : "#f87171"
+    !gate ? "#fbbf24" : gate.bossType === "HUMAN" ? "#fbbf24" : gate.bossType === "ANCIENT" ? "#a78bfa" : "#f87171"
   );
 </script>
 
-<Header title="Mech Editor" />
+<Header title="Raid Editor" />
 
 <div style="display: flex; overflow: hidden; height: calc(100vh - 64px);">
   <GateSidebar />
@@ -55,10 +60,18 @@
   {#if gate}
     <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
       <!-- Boss header -->
-      <div style="padding: 14px 22px; border-bottom: 1px solid #262626; display: flex; align-items: center; gap: 14px; flex-shrink: 0; background: rgba(23,23,23,0.7); backdrop-filter: blur(8px);">
+      <div
+        style="padding: 14px 22px; border-bottom: 1px solid #262626; display: flex; align-items: center; gap: 14px; flex-shrink: 0; background: rgba(23,23,23,0.7); backdrop-filter: blur(8px);"
+      >
         <div style="flex: 1; min-width: 0;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
-            <MechBadge label="Gate {gate.gate}" color="#38bdf8" bg="rgba(56,189,248,0.1)" border="rgba(56,189,248,0.3)" small />
+            <MechBadge
+              label="Gate {gate.gate}"
+              color="#38bdf8"
+              bg="rgba(56,189,248,0.1)"
+              border="rgba(56,189,248,0.3)"
+              small
+            />
             <MechBadge label={gate.bossType} color={bossTypeColor} small />
             {#if gate.weakness !== "No Weakness"}
               <MechBadge label={gate.weakness} color="#4ade80" small />
@@ -70,21 +83,37 @@
           <div style="font-size: 17px; font-weight: 700; color: #fafafa;">{gate.boss}</div>
         </div>
         <div style="text-align: right; flex-shrink: 0;">
-          <div style="font-size: 10px; color: #525252; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;">Total HP</div>
-          <div style="font-size: 22px; font-weight: 700; font-family: ui-monospace, monospace; color: #38bdf8; line-height: 1.1;">{gate.totalBars}</div>
+          <div
+            style="font-size: 10px; color: #525252; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;"
+          >
+            Total HP
+          </div>
+          <div
+            style="font-size: 22px; font-weight: 700; font-family: ui-monospace, monospace; color: #38bdf8; line-height: 1.1;"
+          >
+            {gate.totalBars}
+          </div>
           <div style="font-size: 10px; color: #525252;">bars</div>
         </div>
       </div>
 
       <!-- HP Timeline + sim slider -->
-      <div style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); border-bottom: 1px solid #262626; flex-shrink: 0;">
+      <div
+        style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); border-bottom: 1px solid #262626; flex-shrink: 0;"
+      >
         <HPTimeline mechanics={gate.mechanics} totalBars={gate.totalBars} currentBar={simBar} />
-        <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #525252; font-family: ui-monospace, monospace; font-weight: 600;">
+        <div
+          style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: #525252; font-family: ui-monospace, monospace; font-weight: 600;"
+        >
           <span style="letter-spacing: 0.08em; text-transform: uppercase;">Simulate HP</span>
           <input
-            type="range" min={0} max={gate.totalBars}
+            type="range"
+            min={0}
+            max={gate.totalBars}
             value={simBar}
-            oninput={(e) => { if (!isLive) _manualBar = Number((e.target as HTMLInputElement).value); }}
+            oninput={(e) => {
+              if (!isLive) _manualBar = Number((e.target as HTMLInputElement).value);
+            }}
             style="flex: 1; accent-color: #38bdf8; height: 4px; {isLive ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
           />
           <span style="color: {isLive ? '#4ade80' : '#38bdf8'}; min-width: 80px; text-align: right;">
@@ -95,10 +124,20 @@
       </div>
 
       <!-- Table header -->
-      <div style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 9.5px; font-weight: 700; color: #525252; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;">
-        <div>HP Bar</div><div>Ph</div><div>Mechanic</div><div>Severity</div><div>Repeat</div>
+      <div
+        style="display: grid; grid-template-columns: 78px 32px 1fr 110px 86px 78px; padding: 7px 14px; background: #0c0c0c; border-bottom: 1px solid #262626; font-size: 9.5px; font-weight: 700; color: #525252; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0;"
+      >
+        <div>HP Bar</div>
+        <div>Ph</div>
+        <div>Mechanic</div>
+        <div>Severity</div>
+        <div>Repeat</div>
         <div style="text-align: right;">
-          <button onclick={openAdd} style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 3px; padding: 3px 9px; color: #38bdf8; cursor: pointer; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;">+ ADD</button>
+          <button
+            onclick={openAdd}
+            style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 3px; padding: 3px 9px; color: #38bdf8; cursor: pointer; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; font-family: inherit;"
+            >+ ADD</button
+          >
         </div>
       </div>
 
@@ -107,7 +146,11 @@
         {#if sorted.length === 0}
           <div style="padding: 48px; text-align: center; color: #525252; font-size: 13px;">
             No mechanics yet.<br />
-            <button onclick={openAdd} style="margin-top: 12px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 8px 16px; color: #38bdf8; cursor: pointer; font-size: 12px; font-family: inherit;">+ Add First Mechanic</button>
+            <button
+              onclick={openAdd}
+              style="margin-top: 12px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 8px 16px; color: #38bdf8; cursor: pointer; font-size: 12px; font-family: inherit;"
+              >+ Add First Mechanic</button
+            >
           </div>
         {:else}
           {#each sorted as m (m.id)}
@@ -126,10 +169,5 @@
 </div>
 
 {#if showModal}
-  <MechModal
-    mech={editMech}
-    totalBars={gate?.totalBars ?? 300}
-    onSave={saveMechanic}
-    onClose={closeModal}
-  />
+  <MechModal mech={editMech} totalBars={gate?.totalBars ?? 300} onSave={saveMechanic} onClose={closeModal} />
 {/if}

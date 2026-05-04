@@ -24,6 +24,7 @@
 
   let { enc, entity, width, shadow = false, sortable = true }: Props = $props();
 
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(entity, enc);
   $effect(() => {
     entityState.entity = entity;
@@ -31,6 +32,7 @@
   });
   let hovering = $state(false);
 
+  // svelte-ignore state_referenced_locally
   let tweenedValue = new Tween(enc.live ? 0 : width, {
     duration: 400,
     easing: cubicOut

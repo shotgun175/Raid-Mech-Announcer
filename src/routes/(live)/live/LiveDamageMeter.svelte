@@ -98,7 +98,7 @@
   {/if}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
-    class="select-none overflow-scroll"
+    class="overflow-scroll select-none"
     style="height: calc(100% - 1.5rem - 1.75rem {enc.encounter?.currentBoss && settings.app.meter.bossInfo
       ? ' - 1.75rem'
       : ''});"

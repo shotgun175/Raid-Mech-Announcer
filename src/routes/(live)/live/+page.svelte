@@ -73,9 +73,7 @@
     let handles: Array<UnlistenFn> = [];
 
     let handle = await onEncounterUpdate((event) => {
-      if (!settings.app.general.mini) {
-        enc.encounter = event.payload;
-      }
+      enc.encounter = event.payload;
     });
     handles.push(handle);
 
@@ -188,7 +186,7 @@
 
   $effect(() => {
     let hideTimeout: ReturnType<typeof setTimeout> | undefined;
-    if (settings.app.general.autoShow && !settings.app.general.mini) {
+    if (settings.app.general.autoShow) {
       const appWindow = getCurrentWebviewWindow();
       if (misc.raidInProgress && enc.encounter?.currentBossName) {
         appWindow.show();

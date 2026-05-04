@@ -22,6 +22,7 @@
 
   let color = "#164e63";
 
+  // svelte-ignore state_referenced_locally
   const tweenedValue = new Tween(entityState.encounter.live ? 0 : width, {
     duration: 400,
     easing: cubicOut

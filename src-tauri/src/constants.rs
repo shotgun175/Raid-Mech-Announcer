@@ -8,7 +8,6 @@ pub const WINDOW_MS: i64 = 5_000;
 pub const WINDOW_S: i64 = 5;
 pub const DB_VERSION: i32 = 5;
 pub const METER_WINDOW_LABEL: &str = "main";
-pub const METER_MINI_WINDOW_LABEL: &str = "mini";
 pub const LOGS_WINDOW_LABEL: &str = "logs";
 pub const DATABASE_PATH: &str = "encounters.db";
 pub const MIGRATIONS_PATH: &str = "migrations.tar";
@@ -22,10 +21,6 @@ pub const DEFAULT_BLUR: Color = (10, 10, 10, 50);
 pub const DEFAULT_PORT: u16 = 6040;
 pub const BETA_ENDPOINT: &str = ""; // TODO: set your beta update endpoint URL
 pub const WINDOW_POSITION: Position = Position::Logical(LogicalPosition { x: 100.0, y: 100.0 });
-pub const DEFAULT_MINI_METER_WINDOW_SIZE: Size = Size::Logical(LogicalSize {
-    width: 1280.0,
-    height: 200.0,
-});
 pub const DEFAULT_METER_WINDOW_SIZE: Size = Size::Logical(LogicalSize {
     width: 500.0,
     height: 350.0,

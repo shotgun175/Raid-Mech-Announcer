@@ -211,4 +211,3 @@ export const onClearEncounter = (handler: (event: { payload: number }) => void) 
 
 export const onBannedEvent = (handler: () => void) => listen("banned-event", handler);
 
-export const probeLOAPort = (): Promise<string> => invoke("probe_loa_port");

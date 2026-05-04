@@ -371,10 +371,16 @@ export const supportSkills = {
   // (not via a dedicated brand skill). Used to separate identity-applied brand
   // from regular brand in the bDMG breakdown.
   identityBrandSources: [
-    21140, 21141, 21142, 21143, // Bard Serenade of Courage
-    31050, 31051,               // Artist Moonfall
-    36800,                      // Paladin Blessed Aura / Holy Aura
-    48040, 48041, 48042         // Valkyrie Release Light
+    21140,
+    21141,
+    21142,
+    21143, // Bard Serenade of Courage
+    31050,
+    31051, // Artist Moonfall
+    36800, // Paladin Blessed Aura / Holy Aura
+    48040,
+    48041,
+    48042 // Valkyrie Release Light
   ],
   haTechnique: [
     362600, // Paladin

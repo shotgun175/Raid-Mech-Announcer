@@ -44,7 +44,7 @@
         >
           <thead class="z-40 h-6 {enc.live ? 'sticky top-0 backdrop-blur-lg' : ''}">
             <tr class="bg-neutral-900">
-              <th class="w-7 whitespace-nowrap px-2 font-normal tracking-tight">Party {+partyId + 1}</th>
+              <th class="w-7 px-2 font-normal tracking-tight whitespace-nowrap">Party {+partyId + 1}</th>
               <th class="w-20 px-2 text-left font-normal"></th>
               <th class="w-full"></th>
               {#each [...synergies] as synergy (synergy)}

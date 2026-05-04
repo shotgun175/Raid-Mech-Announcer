@@ -7,11 +7,11 @@
 </script>
 
 {#snippet meterTab(name: string, t: MeterTab)}
-  <button class="rounded-xs shrink-0 px-1.5 transition {tab === t ? 'bg-accent-500/40' : ''}" onclick={() => (tab = t)}>
+  <button class="shrink-0 rounded-xs px-1.5 transition {tab === t ? 'bg-accent-500/40' : ''}" onclick={() => (tab = t)}>
     {name}
   </button>
 {/snippet}
-<div class="flex h-6 select-none items-center justify-between bg-neutral-800/70 px-1 text-neutral-300">
+<div class="flex h-6 items-center justify-between bg-neutral-800/70 px-1 text-neutral-300 select-none">
   <div class="flex h-full items-center overflow-x-scroll text-xs">
     {@render meterTab("DPS", MeterTab.DAMAGE)}
     {@render meterTab("PARTY", MeterTab.PARTY_BUFFS)}

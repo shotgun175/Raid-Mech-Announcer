@@ -23,6 +23,7 @@
 
   let skillState = $derived(new SkillState(skill, entityState));
   let columns = $derived(getSortedBreakdownColumns(entityState.isSupport));
+  // svelte-ignore state_referenced_locally
   let tweenedValue = new Tween(entityState.encounter.live ? 0 : width, {
     duration: 400,
     easing: cubicOut

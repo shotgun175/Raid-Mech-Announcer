@@ -11,13 +11,13 @@ use crate::ui::{on_menu_event, on_tray_icon_event};
 #[derive(Debug, EnumString, EnumProperty, AsRefStr)]
 #[strum(serialize_all = "kebab_case")]
 pub enum TrayCommand {
-    #[strum(props(label = "Show Logs"))]
+    #[strum(props(label = "Show Settings"))]
     ShowLogs,
 
-    #[strum(props(label = "Show Meter"))]
+    #[strum(props(label = "Show Overlay"))]
     ShowMeter,
 
-    #[strum(props(label = "Hide Meter"))]
+    #[strum(props(label = "Hide Overlay"))]
     Hide,
 
     #[strum(props(label = "Start Lost Ark"))]

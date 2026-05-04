@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub const SELECT_FROM_ENCOUNTER_JOIN_PREVIEW: &str = r"
 SELECT
     last_combat_packet,

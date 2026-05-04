@@ -18,6 +18,7 @@
   }
 
   let { groupedSynergies, player, enc, tab }: Props = $props();
+  // svelte-ignore state_referenced_locally
   let entityState = new EntityState(player, enc);
   $effect(() => {
     entityState.entity = player;
@@ -33,7 +34,7 @@
 </script>
 
 {#if tab === MeterTab.SELF_BUFFS || tab === MeterTab.PARTY_BUFFS}
-  <tr class="text-xxs h-7 px-2 py-1 {settings.app.general.underlineHovered ? 'hover:underline' : ''}">
+  <tr class="h-7 px-2 py-1 text-xxs {settings.app.general.underlineHovered ? 'hover:underline' : ''}">
     <td class="pl-1">
       <ClassTooltip entity={player} />
     </td>

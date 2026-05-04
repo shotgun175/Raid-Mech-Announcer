@@ -62,5 +62,7 @@ export async function registerShortcuts() {
         });
       }
     }
-  } catch {}
+  } catch (e) {
+    console.warn("shortcut registration failed:", e);
+  }
 }

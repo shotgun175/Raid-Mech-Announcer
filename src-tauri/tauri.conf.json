@@ -9,7 +9,7 @@
   },
   "bundle": {
     "active": true,
-    "createUpdaterArtifacts": true,
+    "createUpdaterArtifacts": false,
     "category": "Utility",
     "copyright": "GNU General Public License v3.0",
     "resources": [
@@ -25,21 +25,13 @@
   "productName": "Raid Mech Announcer",
   "version": "0.1.0",
   "identifier": "com.shotgun175.raid-mech-announcer",
-  "plugins": {
-    "updater": {
-      "pubkey": "",
-      "endpoints": [
-        ""
-      ]
-    }
-  },
   "app": {
     "windows": [
       {
         "label": "main",
-        "title": "Meter | Raid Mech Announcer",
+        "title": "Mech Announcer Overlay",
         "userAgent": "Raid Mech Announcer",
-        "url": "live",
+        "url": "mech-overlay",
         "fullscreen": false,
         "width": 500,
         "height": 350,
@@ -52,6 +44,7 @@
         "alwaysOnTop": true,
         "visible": false,
         "focus": false,
+        "skipTaskbar": false,
         "useHttpsScheme": true
       },
       {
@@ -66,25 +59,6 @@
         "decorations": true,
         "dragDropEnabled": false,
         "visible": false,
-        "useHttpsScheme": true
-      },
-      {
-        "label": "mini",
-        "title": "mini | Raid Mech Announcer",
-        "userAgent": "Raid Mech Announcer",
-        "url": "mini",
-        "fullscreen": false,
-        "width": 1280,
-        "height": 200,
-        "resizable": true,
-        "shadow": false,
-        "decorations": false,
-        "transparent": true,
-        "minWidth": 1280,
-        "minHeight": 200,
-        "alwaysOnTop": true,
-        "visible": false,
-        "focus": false,
         "useHttpsScheme": true
       }
     ],
