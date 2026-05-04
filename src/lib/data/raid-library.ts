@@ -24,648 +24,6 @@ interface LibraryGate {
 }
 
 const LIBRARY: LibraryGate[] = [
-  // ── Final Act: Kazeros (releaseOrder 17) ────────────────────────────────────
-  {
-    encounterKey: "Final Act: Kazeros G1",
-    raid: "Final Act: Kazeros",
-    gate: 1,
-    releaseOrder: 17,
-    boss: "Abyss Lord Kazeros",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Shield Debuff",
-        hpBar: 900,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Use Nineveh+recast when shield spawns; save Shandi for DPS window"
-      },
-      {
-        name: "Prokel",
-        hpBar: 700,
-        triggerType: "hp",
-        severity: "major",
-        notes: "All players separated into individual realms — fight Kazeros 1v1 until Prokel dies"
-      },
-      {
-        name: "Clash",
-        hpBar: 660,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "Find the correct clone; front/back indicators reveal the real Kazeros"
-      },
-      {
-        name: "Cracks & Shield",
-        hpBar: 500,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Use Nineveh+recast to break shield; team meter builds → consecutive special attacks"
-      },
-      {
-        name: "Hidden Wei Clash",
-        hpBar: 380,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "Use Hidden Wei when Kazeros reappears at 12 o'clock for damage window"
-      },
-      {
-        name: "Kazeros Guard",
-        hpBar: 100,
-        triggerType: "hp",
-        severity: "major",
-        notes: "3 waffle attacks → safe zone appears; survive to win"
-      }
-    ]
-  },
-  {
-    encounterKey: "Final Act: Kazeros G2-1",
-    raid: "Final Act: Kazeros",
-    gate: 21,
-    releaseOrder: 17,
-    boss: "Archdemon Kazeros",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Forced Clash",
-        hpBar: 950,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "First mechanic of G2; standard clash"
-      },
-      {
-        name: "Colosseum",
-        hpBar: 900,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Sequence 1: stun clouds → crater destruction → black hole → earthquake stagger"
-      },
-      {
-        name: "Stagger Break",
-        hpBar: 750,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Sequence 2 begins; use Kadan or Shandi for flying rock DPS check"
-      },
-      {
-        name: "Red Blade",
-        hpBar: 600,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "Distinguish knock-up vs grab puddle circles; supports shield/DR throughout"
-      },
-      {
-        name: "Giant Rock",
-        hpBar: 550,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Co-op counter after grapple mechanic resolves"
-      }
-    ]
-  },
-  {
-    encounterKey: "Final Act: Kazeros G2-2",
-    raid: "Final Act: Kazeros",
-    gate: 22,
-    releaseOrder: 17,
-    boss: "God of Death Kazeros",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Angry Birds",
-        timerSecs: 180,
-        repeatSecs: 180,
-        triggerType: "timer",
-        severity: "normal",
-        notes: "Repeating periodic mechanic throughout phase"
-      },
-      {
-        name: "Kazeros Says",
-        hpBar: 620,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Sequence 3 (desert phase) begins — most demanding mechanics"
-      },
-      {
-        name: "Time Attack",
-        hpBar: 500,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Twin Sword phase; Deep Cuts debuff stacks to 5 → healing immunity; use Inanna to cleanse, recast at ~3s remaining"
-      },
-      {
-        name: "Destiny",
-        hpBar: 310,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Hidden Kadan activates after co-op counter during 8-player split guard; Dark Grenade must stay on boss"
-      },
-      { name: "Kazeros Says", hpBar: 160, triggerType: "hp", severity: "major", notes: "Final sequence — push to end" }
-    ]
-  },
-  {
-    encounterKey: "Final Act: Kazeros G2-3",
-    raid: "Final Act: Kazeros",
-    gate: 23,
-    releaseOrder: 17,
-    boss: "Death Incarnate Kazeros",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Spotlight",
-        timerSecs: 150,
-        repeatSecs: 150,
-        triggerType: "timer",
-        severity: "normal",
-        notes: "Periodic spotlight — bait to edge and dodge away"
-      },
-      {
-        name: "Final Time Attack",
-        hpBar: 225,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones"
-      },
-      {
-        name: "Sacrifice",
-        hpBar: 150,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Wipe if DPS is insufficient across the 3 cones"
-      },
-      {
-        name: "Fake Wipe",
-        hpBar: 75,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Not an actual wipe — survive through the animation and keep pushing"
-      }
-    ]
-  },
-
-  // ── Act 4: Armoche (releaseOrder 16) ────────────────────────────────────────
-  {
-    encounterKey: "Act 4: Armoche G1",
-    raid: "Act 4: Armoche",
-    gate: 1,
-    releaseOrder: 16,
-    boss: "Act 4: Covetous Master Echidna",
-    bossType: "DEMONIC",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Spotlight",
-        hpBar: 285,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Bait clone to edge of arena; dodge away from clone after positioning"
-      },
-      {
-        name: "Shadow Dance",
-        hpBar: 240,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "NM: 2 clones toward each other = opposite side; HM: follow the large Echidna shadow, match weapon/action"
-      },
-      {
-        name: "Snake Dodge",
-        hpBar: 220,
-        triggerType: "hp",
-        severity: "major",
-        notes: "HM: marked players get rectangle snake attacks; spacebar through rope patterns (jump rope)"
-      },
-      {
-        name: "Shield Destruction",
-        hpBar: 150,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Use Nineveh+recast to deplete large shield; 1 flower pickup = 1 stack removal"
-      },
-      {
-        name: "Brelshaza Invasion",
-        hpBar: 30,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Use Wei for extra stagger/damage during Brelshaza phase; 3-bar recommended"
-      }
-    ]
-  },
-  {
-    encounterKey: "Act 4: Armoche G2",
-    raid: "Act 4: Armoche",
-    gate: 2,
-    releaseOrder: 16,
-    boss: "Armoche, Sentinel of the Abyss",
-    bossType: "ANCIENT",
-    weakness: "Weak to Fire",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Billiard",
-        hpBar: 420,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Pick up golden shield (G key) and throw (Q key) to remove armor stacks; cleanse bleed stacks at blue orbs"
-      },
-      {
-        name: "Wind Stagger",
-        hpBar: 360,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Use Balthorr sidereal; stagger + dodge 3 attacks → move downward avoiding soldiers → destroy rock wall"
-      },
-      {
-        name: "Sentinel Rush",
-        hpBar: 290,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Party assignment: 1=Left 2=Right; destroy yellow statues in order 4→3→2→1; ignore red statues; co-op counter after"
-      },
-      {
-        name: "Combo Guards",
-        hpBar: 240,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Use Thirain sidereal; gather at bottom; just guard patterns (Shield/Slash/Stab/Slam/Spin) while inflicting destruction"
-      },
-      {
-        name: "Shield Wall",
-        hpBar: 160,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Avoid red circle (instant death); use Balthorr during red line attacks for extra stagger"
-      },
-      {
-        name: "Body Slam",
-        hpBar: 110,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Spacebar jump rope; press A when knocked up; use Azena sidereal to destroy crater wall; sand tornado persists after"
-      },
-      {
-        name: "Pillars",
-        hpBar: 70,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Place 3 Volcano puddles away from pillars; hide behind a pillar to survive; Hyper Awakening or Time Stop if needed"
-      }
-    ]
-  },
-
-  // ── Serca (releaseOrder 18) ──────────────────────────────────────────────────
-  {
-    encounterKey: "Serca G1",
-    raid: "Serca",
-    gate: 1,
-    releaseOrder: 18,
-    boss: "Witch of Agony, Serca",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Saws & Spikes",
-        hpBar: 270,
-        repeatSecs: 60,
-        triggerType: "hp+timer",
-        severity: "major",
-        notes:
-          "Arena narrows to 8×8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles"
-      },
-      {
-        name: "Nail Just Guard",
-        hpBar: 240,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Two safe spots at 5&11 or 1&7 o'clock; 4 guard sequences required; counter types: S Counter, Nail Counter, Circle Counter"
-      },
-      {
-        name: "Moral Walls",
-        hpBar: 195,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "Spiked wall traps on ground marked as yellow squares; walls move inward — dodge the traps"
-      },
-      {
-        name: "Bomberman",
-        hpBar: 175,
-        repeatSecs: 70,
-        triggerType: "hp+timer",
-        severity: "major",
-        notes:
-          "Bombs explode in cross patterns; identify non-overlapping safe tiles; NM: timed bomb on target explodes after 5s damaging nearby players"
-      },
-      {
-        name: "Survival Run",
-        hpBar: 105,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
-      },
-      {
-        name: "Flame Maiden",
-        hpBar: 90,
-        repeatSecs: 60,
-        triggerType: "hp+timer",
-        severity: "wipe",
-        notes:
-          "Arena narrows to 4×4; counter Serca when she appears; HM/NM: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
-      }
-    ]
-  },
-  {
-    encounterKey: "Serca G2",
-    raid: "Serca",
-    gate: 2,
-    releaseOrder: 18,
-    boss: "Corvus Tul Rak",
-    bossType: "ANCIENT",
-    weakness: "Weak to Light",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Wing Prediction",
-        hpBar: 285,
-        repeatSecs: 80,
-        triggerType: "hp+timer",
-        severity: "major",
-        notes:
-          "Spacebar on red flash; stay opposite of the wing swipe; NM: count 2 wing flaps → spacebar after gray pulse"
-      },
-      {
-        name: "Veiled Stagger",
-        hpBar: 240,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Find real clone: attacks = fake, no attacks = real; raised sword = −1 clock position, lowered sword = +1 clock position"
-      },
-      {
-        name: "Guard Drain",
-        hpBar: 195,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Sequence: In → Out → 2 Guards → Frontal (dodge) → Counter → Guard; completing this allows crafting the Shadow Skill battle item"
-      },
-      {
-        name: "Find Corvuth",
-        hpBar: 120,
-        triggerType: "hp",
-        severity: "normal",
-        notes:
-          "Scout clones at x3 & x3+1 positions; sword cursor/red outline = fake; dodge while standing still during red AoE at 20s & 10s marks"
-      },
-      {
-        name: "Stagger Helping Pattern",
-        timerSecs: 510,
-        triggerType: "timer",
-        severity: "normal",
-        notes: "Timer-based stagger window; fire when boss is staggerable"
-      },
-      {
-        name: "Pizza Prediction",
-        hpBar: 60,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Spacebar on red flash; remember Pac-Man order and stagger boss; NM: count 2 wing flaps then spacebar"
-      }
-    ]
-  },
-
-  // ── Thaemine (releaseOrder 8) ────────────────────────────────────────────────
-  {
-    encounterKey: "Thaemine G4",
-    raid: "Thaemine",
-    gate: 4,
-    releaseOrder: 8,
-    boss: "Darkness Legion Commander Thaemine",
-    bossType: "DEMONIC",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Stagger Check",
-        hpBar: 320,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Place markers, dodge four red attack variations, stagger statue, and aim tethers"
-      },
-      {
-        name: "Expert Destroyer",
-        hpBar: 280,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Two DPS enter blue orb and kill clone/stagger sword; others spacebar wall then stagger"
-      },
-      {
-        name: "Phase 2 Transition",
-        hpBar: 220,
-        triggerType: "hp",
-        severity: "major",
-        notes:
-          "Phase 2 starts; use Shandi sidereal for Tethers & Clash; eliminate blue circles, gather yellow orb, run bottom, complete maze"
-      }
-    ]
-  },
-
-  // ── Act 3: Mordum (releaseOrder 13) ─────────────────────────────────────────
-  {
-    encounterKey: "Act 3: Mordum G1",
-    raid: "Act 3: Mordum",
-    gate: 1,
-    releaseOrder: 13,
-    boss: "Thaemine, Master of Darkness",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Shadow Realm Stagger",
-        hpBar: 270,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Enter shadow realm; stagger check with coordination — miss it and the mechanic resets"
-      },
-      {
-        name: "Hidden Kharmine",
-        hpBar: 210,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Kharmine appears for co-op counter; coordinate timing with party"
-      },
-      {
-        name: "Quick! Just Guard",
-        hpBar: 75,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Retaliation just-guard sequence; precise timing required against fast attack chains"
-      },
-      {
-        name: "Shrouded Attacks",
-        hpBar: 50,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Aerial dragon Azakiel joins; watch for incoming strikes from above while fighting Thaemine"
-      }
-    ]
-  },
-  {
-    encounterKey: "Act 3: Mordum G2",
-    raid: "Act 3: Mordum",
-    gate: 2,
-    releaseOrder: 13,
-    boss: "Blossoming Fear, Naitreya",
-    bossType: "OTHER",
-    weakness: "No Weakness",
-    tauntable: true,
-    mechanics: [
-      {
-        name: "Alberhastic Phase",
-        hpBar: 300,
-        triggerType: "hp",
-        severity: "normal",
-        notes: "Alberhastic joins; avoid stacking infection from boss attacks (x300–x235 window)"
-      },
-      {
-        name: "Alberhastic Memory",
-        hpBar: 235,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Color shield mechanic; memorize Alberhastic's color sequence to break the shield"
-      },
-      {
-        name: "Illusion Clone",
-        hpBar: 105,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Identify the real clone vs illusion using the gold puddle marker; attack the real one"
-      },
-      {
-        name: "Velga Pizza",
-        hpBar: 105,
-        repeatSecs: 90,
-        triggerType: "hp+timer",
-        severity: "normal",
-        notes: "Velganos pizza pattern repeats every 90s; dodge the correct slice and avoid re-overlap"
-      }
-    ]
-  },
-  {
-    encounterKey: "Act 3: Mordum G3",
-    raid: "Act 3: Mordum",
-    gate: 3,
-    releaseOrder: 13,
-    boss: "Mordum, the Abyssal Punisher",
-    bossType: "ANCIENT",
-    weakness: "Weak to Earth",
-    tauntable: false,
-    mechanics: [
-      {
-        name: "Laser Chase",
-        hpBar: 425,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Rotating laser chases players; stay ahead of the pattern, don't cut corners"
-      },
-      {
-        name: "1st Break Duel",
-        hpBar: 375,
-        triggerType: "hp",
-        severity: "major",
-        notes: "First Break Duel; twisters active throughout the fight — coordinate with your designated partner"
-      },
-      {
-        name: "Shattered Orb",
-        hpBar: 325,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Shattered Orb spawns; position correctly to intercept or dodge orb fragments"
-      },
-      {
-        name: "Supernova",
-        hpBar: 300,
-        triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Raid-wide supernova wipe; must survive via safe zone or mechanic resolution (HM: Dance mechanic precedes)"
-      },
-      {
-        name: "Anvil Just Guard",
-        hpBar: 275,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Just guard the anvil slam; precise timing — mistimed guard = large damage or knockback"
-      },
-      {
-        name: "2nd Break Duel",
-        hpBar: 250,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Second Break Duel; same mechanic as 1st — coordinate partner duel while managing twisters"
-      },
-      {
-        name: "Shield Disruption",
-        hpBar: 200,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Color-matching shield disruption; coordinate color assignments across the party"
-      },
-      {
-        name: "Charged Field",
-        hpBar: 180,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Charged field activates; avoid or clear the field quickly before it expands"
-      },
-      {
-        name: "Hammer Split/Bastion",
-        hpBar: 160,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Hammer Split (NM) or Bastion (HM); HM requires entering Bastion before hammer strike"
-      },
-      {
-        name: "3rd Break Duel",
-        hpBar: 120,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Third Break Duel; HM adds Dance/Supernova sequence — complete quickly to avoid DPS check"
-      },
-      {
-        name: "4th Break Duel",
-        hpBar: 75,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Fourth and final Break Duel; push damage after for Last Stand"
-      },
-      {
-        name: "Last Stand/Bastion",
-        hpBar: 0,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Last Stand (NM) or Bastion (HM); HM only — sphere color matching; survive to win"
-      }
-    ]
-  },
-
   // ── Valtan (releaseOrder 1) ─────────────────────────────────────────────────
   {
     encounterKey: "Valtan G1",
@@ -1603,7 +961,7 @@ const LIBRARY: LibraryGate[] = [
     ]
   },
 
-  // ── Thaemine G1–G3 (releaseOrder 8, G4 already in library) ─────────────────
+  // ── Thaemine (releaseOrder 8) ────────────────────────────────────────────────
   {
     encounterKey: "Thaemine G1",
     raid: "Thaemine",
@@ -1760,6 +1118,40 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         notes: "Movement is inverted; complete typing minigame; use Wei sidereal for ghosts if needed"
+      }
+    ]
+  },
+  {
+    encounterKey: "Thaemine G4",
+    raid: "Thaemine",
+    gate: 4,
+    releaseOrder: 8,
+    boss: "Darkness Legion Commander Thaemine",
+    bossType: "DEMONIC",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Stagger Check",
+        hpBar: 320,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Place markers, dodge four red attack variations, stagger statue, and aim tethers"
+      },
+      {
+        name: "Expert Destroyer",
+        hpBar: 280,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Two DPS enter blue orb and kill clone/stagger sword; others spacebar wall then stagger"
+      },
+      {
+        name: "Phase 2 Transition",
+        hpBar: 220,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Phase 2 starts; use Shandi sidereal for Tethers & Clash; eliminate blue circles, gather yellow orb, run bottom, complete maze"
       }
     ]
   },
@@ -2176,6 +1568,612 @@ const LIBRARY: LibraryGate[] = [
         severity: "major",
         notes:
           "Boss charges with hands — guard before yellow reaches end; failure = freeze + teleport + wave + typing test again"
+      }
+    ]
+  },
+
+  // ── Act 3: Mordum (releaseOrder 13) ─────────────────────────────────────────
+  {
+    encounterKey: "Act 3: Mordum G1",
+    raid: "Act 3: Mordum",
+    gate: 1,
+    releaseOrder: 13,
+    boss: "Thaemine, Master of Darkness",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Shadow Realm Stagger",
+        hpBar: 270,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Enter shadow realm; stagger check with coordination — miss it and the mechanic resets"
+      },
+      {
+        name: "Hidden Kharmine",
+        hpBar: 210,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Kharmine appears for co-op counter; coordinate timing with party"
+      },
+      {
+        name: "Quick! Just Guard",
+        hpBar: 75,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Retaliation just-guard sequence; precise timing required against fast attack chains"
+      },
+      {
+        name: "Shrouded Attacks",
+        hpBar: 50,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Aerial dragon Azakiel joins; watch for incoming strikes from above while fighting Thaemine"
+      }
+    ]
+  },
+  {
+    encounterKey: "Act 3: Mordum G2",
+    raid: "Act 3: Mordum",
+    gate: 2,
+    releaseOrder: 13,
+    boss: "Blossoming Fear, Naitreya",
+    bossType: "OTHER",
+    weakness: "No Weakness",
+    tauntable: true,
+    mechanics: [
+      {
+        name: "Alberhastic Phase",
+        hpBar: 300,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "Alberhastic joins; avoid stacking infection from boss attacks (x300–x235 window)"
+      },
+      {
+        name: "Alberhastic Memory",
+        hpBar: 235,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Color shield mechanic; memorize Alberhastic's color sequence to break the shield"
+      },
+      {
+        name: "Illusion Clone",
+        hpBar: 105,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Identify the real clone vs illusion using the gold puddle marker; attack the real one"
+      },
+      {
+        name: "Velga Pizza",
+        hpBar: 105,
+        repeatSecs: 90,
+        triggerType: "hp+timer",
+        severity: "normal",
+        notes: "Velganos pizza pattern repeats every 90s; dodge the correct slice and avoid re-overlap"
+      }
+    ]
+  },
+  {
+    encounterKey: "Act 3: Mordum G3",
+    raid: "Act 3: Mordum",
+    gate: 3,
+    releaseOrder: 13,
+    boss: "Mordum, the Abyssal Punisher",
+    bossType: "ANCIENT",
+    weakness: "Weak to Earth",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Laser Chase",
+        hpBar: 425,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Rotating laser chases players; stay ahead of the pattern, don't cut corners"
+      },
+      {
+        name: "1st Break Duel",
+        hpBar: 375,
+        triggerType: "hp",
+        severity: "major",
+        notes: "First Break Duel; twisters active throughout the fight — coordinate with your designated partner"
+      },
+      {
+        name: "Shattered Orb",
+        hpBar: 325,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Shattered Orb spawns; position correctly to intercept or dodge orb fragments"
+      },
+      {
+        name: "Supernova",
+        hpBar: 300,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "Raid-wide supernova wipe; must survive via safe zone or mechanic resolution (HM: Dance mechanic precedes)"
+      },
+      {
+        name: "Anvil Just Guard",
+        hpBar: 275,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Just guard the anvil slam; precise timing — mistimed guard = large damage or knockback"
+      },
+      {
+        name: "2nd Break Duel",
+        hpBar: 250,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Second Break Duel; same mechanic as 1st — coordinate partner duel while managing twisters"
+      },
+      {
+        name: "Shield Disruption",
+        hpBar: 200,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Color-matching shield disruption; coordinate color assignments across the party"
+      },
+      {
+        name: "Charged Field",
+        hpBar: 180,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Charged field activates; avoid or clear the field quickly before it expands"
+      },
+      {
+        name: "Hammer Split/Bastion",
+        hpBar: 160,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Hammer Split (NM) or Bastion (HM); HM requires entering Bastion before hammer strike"
+      },
+      {
+        name: "3rd Break Duel",
+        hpBar: 120,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Third Break Duel; HM adds Dance/Supernova sequence — complete quickly to avoid DPS check"
+      },
+      {
+        name: "4th Break Duel",
+        hpBar: 75,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Fourth and final Break Duel; push damage after for Last Stand"
+      },
+      {
+        name: "Last Stand/Bastion",
+        hpBar: 0,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Last Stand (NM) or Bastion (HM); HM only — sphere color matching; survive to win"
+      }
+    ]
+  },
+
+  // ── Act 4: Armoche (releaseOrder 16) ────────────────────────────────────────
+  {
+    encounterKey: "Act 4: Armoche G1",
+    raid: "Act 4: Armoche",
+    gate: 1,
+    releaseOrder: 16,
+    boss: "Act 4: Covetous Master Echidna",
+    bossType: "DEMONIC",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Spotlight",
+        hpBar: 285,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Bait clone to edge of arena; dodge away from clone after positioning"
+      },
+      {
+        name: "Shadow Dance",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "NM: 2 clones toward each other = opposite side; HM: follow the large Echidna shadow, match weapon/action"
+      },
+      {
+        name: "Snake Dodge",
+        hpBar: 220,
+        triggerType: "hp",
+        severity: "major",
+        notes: "HM: marked players get rectangle snake attacks; spacebar through rope patterns (jump rope)"
+      },
+      {
+        name: "Shield Destruction",
+        hpBar: 150,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Use Nineveh+recast to deplete large shield; 1 flower pickup = 1 stack removal"
+      },
+      {
+        name: "Brelshaza Invasion",
+        hpBar: 30,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Use Wei for extra stagger/damage during Brelshaza phase; 3-bar recommended"
+      }
+    ]
+  },
+  {
+    encounterKey: "Act 4: Armoche G2",
+    raid: "Act 4: Armoche",
+    gate: 2,
+    releaseOrder: 16,
+    boss: "Armoche, Sentinel of the Abyss",
+    bossType: "ANCIENT",
+    weakness: "Weak to Fire",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Billiard",
+        hpBar: 420,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Pick up golden shield (G key) and throw (Q key) to remove armor stacks; cleanse bleed stacks at blue orbs"
+      },
+      {
+        name: "Wind Stagger",
+        hpBar: 360,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Use Balthorr sidereal; stagger + dodge 3 attacks → move downward avoiding soldiers → destroy rock wall"
+      },
+      {
+        name: "Sentinel Rush",
+        hpBar: 290,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "Party assignment: 1=Left 2=Right; destroy yellow statues in order 4→3→2→1; ignore red statues; co-op counter after"
+      },
+      {
+        name: "Combo Guards",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "Use Thirain sidereal; gather at bottom; just guard patterns (Shield/Slash/Stab/Slam/Spin) while inflicting destruction"
+      },
+      {
+        name: "Shield Wall",
+        hpBar: 160,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Avoid red circle (instant death); use Balthorr during red line attacks for extra stagger"
+      },
+      {
+        name: "Body Slam",
+        hpBar: 110,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Spacebar jump rope; press A when knocked up; use Azena sidereal to destroy crater wall; sand tornado persists after"
+      },
+      {
+        name: "Pillars",
+        hpBar: 70,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "Place 3 Volcano puddles away from pillars; hide behind a pillar to survive; Hyper Awakening or Time Stop if needed"
+      }
+    ]
+  },
+
+  // ── Final Act: Kazeros (releaseOrder 17) ────────────────────────────────────
+  {
+    encounterKey: "Final Act: Kazeros G1",
+    raid: "Final Act: Kazeros",
+    gate: 1,
+    releaseOrder: 17,
+    boss: "Abyss Lord Kazeros",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Shield Debuff",
+        hpBar: 900,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Use Nineveh+recast when shield spawns; save Shandi for DPS window"
+      },
+      {
+        name: "Prokel",
+        hpBar: 700,
+        triggerType: "hp",
+        severity: "major",
+        notes: "All players separated into individual realms — fight Kazeros 1v1 until Prokel dies"
+      },
+      {
+        name: "Clash",
+        hpBar: 660,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "Find the correct clone; front/back indicators reveal the real Kazeros"
+      },
+      {
+        name: "Cracks & Shield",
+        hpBar: 500,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Use Nineveh+recast to break shield; team meter builds → consecutive special attacks"
+      },
+      {
+        name: "Hidden Wei Clash",
+        hpBar: 380,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "Use Hidden Wei when Kazeros reappears at 12 o'clock for damage window"
+      },
+      {
+        name: "Kazeros Guard",
+        hpBar: 100,
+        triggerType: "hp",
+        severity: "major",
+        notes: "3 waffle attacks → safe zone appears; survive to win"
+      }
+    ]
+  },
+  {
+    encounterKey: "Final Act: Kazeros G2-1",
+    raid: "Final Act: Kazeros",
+    gate: 21,
+    releaseOrder: 17,
+    boss: "Archdemon Kazeros",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Forced Clash",
+        hpBar: 950,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "First mechanic of G2; standard clash"
+      },
+      {
+        name: "Colosseum",
+        hpBar: 900,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Sequence 1: stun clouds → crater destruction → black hole → earthquake stagger"
+      },
+      {
+        name: "Stagger Break",
+        hpBar: 750,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Sequence 2 begins; use Kadan or Shandi for flying rock DPS check"
+      },
+      {
+        name: "Red Blade",
+        hpBar: 600,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "Distinguish knock-up vs grab puddle circles; supports shield/DR throughout"
+      },
+      {
+        name: "Giant Rock",
+        hpBar: 550,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Co-op counter after grapple mechanic resolves"
+      }
+    ]
+  },
+  {
+    encounterKey: "Final Act: Kazeros G2-2",
+    raid: "Final Act: Kazeros",
+    gate: 22,
+    releaseOrder: 17,
+    boss: "God of Death Kazeros",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Angry Birds",
+        timerSecs: 180,
+        repeatSecs: 180,
+        triggerType: "timer",
+        severity: "normal",
+        notes: "Repeating periodic mechanic throughout phase"
+      },
+      {
+        name: "Kazeros Says",
+        hpBar: 620,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Sequence 3 (desert phase) begins — most demanding mechanics"
+      },
+      {
+        name: "Time Attack",
+        hpBar: 500,
+        triggerType: "hp",
+        severity: "wipe",
+        notes:
+          "Twin Sword phase; Deep Cuts debuff stacks to 5 → healing immunity; use Inanna to cleanse, recast at ~3s remaining"
+      },
+      {
+        name: "Destiny",
+        hpBar: 310,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Hidden Kadan activates after co-op counter during 8-player split guard; Dark Grenade must stay on boss"
+      },
+      { name: "Kazeros Says", hpBar: 160, triggerType: "hp", severity: "major", notes: "Final sequence — push to end" }
+    ]
+  },
+  {
+    encounterKey: "Final Act: Kazeros G2-3",
+    raid: "Final Act: Kazeros",
+    gate: 23,
+    releaseOrder: 17,
+    boss: "Death Incarnate Kazeros",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Spotlight",
+        timerSecs: 150,
+        repeatSecs: 150,
+        triggerType: "timer",
+        severity: "normal",
+        notes: "Periodic spotlight — bait to edge and dodge away"
+      },
+      {
+        name: "Final Time Attack",
+        hpBar: 225,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones"
+      },
+      {
+        name: "Sacrifice",
+        hpBar: 150,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Wipe if DPS is insufficient across the 3 cones"
+      },
+      {
+        name: "Fake Wipe",
+        hpBar: 75,
+        triggerType: "hp",
+        severity: "wipe",
+        notes: "Not an actual wipe — survive through the animation and keep pushing"
+      }
+    ]
+  },
+
+  // ── Serca (releaseOrder 18) ──────────────────────────────────────────────────
+  {
+    encounterKey: "Serca G1",
+    raid: "Serca",
+    gate: 1,
+    releaseOrder: 18,
+    boss: "Witch of Agony, Serca",
+    bossType: "HUMAN",
+    weakness: "No Weakness",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Saws & Spikes",
+        hpBar: 270,
+        repeatSecs: 60,
+        triggerType: "hp+timer",
+        severity: "major",
+        notes:
+          "Arena narrows to 8×8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles"
+      },
+      {
+        name: "Nail Just Guard",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Two safe spots at 5&11 or 1&7 o'clock; 4 guard sequences required; counter types: S Counter, Nail Counter, Circle Counter"
+      },
+      {
+        name: "Moral Walls",
+        hpBar: 195,
+        triggerType: "hp",
+        severity: "normal",
+        notes: "Spiked wall traps on ground marked as yellow squares; walls move inward — dodge the traps"
+      },
+      {
+        name: "Bomberman",
+        hpBar: 175,
+        repeatSecs: 70,
+        triggerType: "hp+timer",
+        severity: "major",
+        notes:
+          "Bombs explode in cross patterns; identify non-overlapping safe tiles; NM: timed bomb on target explodes after 5s damaging nearby players"
+      },
+      {
+        name: "Survival Run",
+        hpBar: 105,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
+      },
+      {
+        name: "Flame Maiden",
+        hpBar: 90,
+        repeatSecs: 60,
+        triggerType: "hp+timer",
+        severity: "wipe",
+        notes:
+          "Arena narrows to 4×4; counter Serca when she appears; HM/NM: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
+      }
+    ]
+  },
+  {
+    encounterKey: "Serca G2",
+    raid: "Serca",
+    gate: 2,
+    releaseOrder: 18,
+    boss: "Corvus Tul Rak",
+    bossType: "ANCIENT",
+    weakness: "Weak to Light",
+    tauntable: false,
+    mechanics: [
+      {
+        name: "Wing Prediction",
+        hpBar: 285,
+        repeatSecs: 80,
+        triggerType: "hp+timer",
+        severity: "major",
+        notes:
+          "Spacebar on red flash; stay opposite of the wing swipe; NM: count 2 wing flaps → spacebar after gray pulse"
+      },
+      {
+        name: "Veiled Stagger",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Find real clone: attacks = fake, no attacks = real; raised sword = −1 clock position, lowered sword = +1 clock position"
+      },
+      {
+        name: "Guard Drain",
+        hpBar: 195,
+        triggerType: "hp",
+        severity: "major",
+        notes:
+          "Sequence: In → Out → 2 Guards → Frontal (dodge) → Counter → Guard; completing this allows crafting the Shadow Skill battle item"
+      },
+      {
+        name: "Find Corvuth",
+        hpBar: 120,
+        triggerType: "hp",
+        severity: "normal",
+        notes:
+          "Scout clones at x3 & x3+1 positions; sword cursor/red outline = fake; dodge while standing still during red AoE at 20s & 10s marks"
+      },
+      {
+        name: "Stagger Helping Pattern",
+        timerSecs: 510,
+        triggerType: "timer",
+        severity: "normal",
+        notes: "Timer-based stagger window; fire when boss is staggerable"
+      },
+      {
+        name: "Pizza Prediction",
+        hpBar: 60,
+        triggerType: "hp",
+        severity: "major",
+        notes: "Spacebar on red flash; remember Pac-Man order and stagger boss; NM: count 2 wing flaps then spacebar"
       }
     ]
   }
