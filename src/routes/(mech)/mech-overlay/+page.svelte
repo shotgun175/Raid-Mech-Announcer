@@ -29,9 +29,9 @@
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
+  let contentEl = $state<HTMLElement | null>(null);
   let announceTimer: ReturnType<typeof setTimeout> | null = null;
   let lastFiredKey = new Set<string>();
-  let contentEl = $state<HTMLElement | null>(null);
   const unlisteners: UnlistenFn[] = [];
 
   // Apply click-through state to this window whenever the setting changes
@@ -113,7 +113,7 @@
     return () => ro.disconnect();
   });
 
-  // Reset to compact waiting size when the fight ends.
+  // Set compact waiting size when idle (on mount and on fight end).
   $effect(() => {
     if (gate) return;
     getCurrentWebviewWindow()
