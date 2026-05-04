@@ -131,7 +131,7 @@
         </button>
       </div>
       <!-- version + update button row -->
-      <div class="mx-4 mt-1 mb-2 flex items-center justify-between px-1">
+      <div class="mx-4 mt-auto mb-2 flex items-center justify-between px-1">
         {#if version}
           <span class="text-sm text-neutral-500">version {version}</span>
         {/if}

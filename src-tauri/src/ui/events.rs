@@ -100,6 +100,11 @@ pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()>
         WindowEvent::CloseRequested { api, .. } => {
             api.prevent_close();
 
+            if window.label() == SETTINGS_WINDOW_LABEL {
+                window.hide()?;
+                return Ok(());
+            }
+
             let app_handle = window.app_handle();
 
             if let Some(overlay_window) = app_handle.get_overlay_window() {
