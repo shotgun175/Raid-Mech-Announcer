@@ -110,9 +110,9 @@
             type="range"
             min={0}
             max={gate.totalBars}
-            value={gate.totalBars - simBar}
+            value={simBar}
             oninput={(e) => {
-              if (!isLive) _manualBar = gate.totalBars - Number((e.target as HTMLInputElement).value);
+              if (!isLive) _manualBar = Number((e.target as HTMLInputElement).value);
             }}
             style="flex: 1; accent-color: #38bdf8; height: 4px; {isLive ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
           />

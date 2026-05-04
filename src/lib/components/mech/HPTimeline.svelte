@@ -93,13 +93,13 @@
     style="position: absolute; left: {drainPct}%; top: 8px; width: 2px; height: 20px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"
   ></div>
 
-  <!-- Axis labels -->
+  <!-- Axis labels: DEAD on left (0 HP), MAX on right (full HP) — bar drains right→left -->
   <span
     style="position: absolute; left: 2px; bottom: 0; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
-    >{totalBars}× <span style="opacity: 0.5;">MAX</span></span
+    ><span style="opacity: 0.5;">DEAD</span> 0×</span
   >
   <span
     style="position: absolute; right: 2px; bottom: 0; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
-    ><span style="opacity: 0.5;">DEAD</span> 0×</span
+    >{totalBars}× <span style="opacity: 0.5;">MAX</span></span
   >
 </div>
