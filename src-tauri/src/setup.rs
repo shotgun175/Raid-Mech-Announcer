@@ -94,7 +94,7 @@ fn check_updates(app_handle: &AppHandle, is_beta: bool) -> Arc<AtomicBool> {
                     }
                 }
             } else {
-                match app_handle.updater_builder().and_then(|b| b.build()) {
+                match app_handle.updater_builder().build() {
                     Ok(updater) => updater.check().await,
                     Err(e) => {
                         warn!("updater plugin not available — skipping update check: {e}");
