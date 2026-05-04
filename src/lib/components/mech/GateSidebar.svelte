@@ -104,16 +104,16 @@
     </div>
     <div style="display: flex; flex-direction: column; gap: 4px;">
       <button
-        onclick={() => (showImport = true)}
-        style="width: 100%; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3); border-radius: 4px; padding: 4px 6px; color: #4ade80; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
-      >
-        ⬇ Import Raids
-      </button>
-      <button
         use:melt={$trigger}
         style="width: 100%; background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 4px; padding: 4px 6px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
       >
         + Add Raid
+      </button>
+      <button
+        onclick={() => (showImport = true)}
+        style="width: 100%; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3); border-radius: 4px; padding: 4px 6px; color: #4ade80; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit;"
+      >
+        ⬇ Import Raids
       </button>
     </div>
   </div>
