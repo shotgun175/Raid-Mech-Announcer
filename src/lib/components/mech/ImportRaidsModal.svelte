@@ -42,6 +42,14 @@
     if (id) mechStore.removeGate(id);
   }
 
+  function importRaid(raidName: string) {
+    for (const entry of libraryByRaid[raidName]) {
+      if (!isImported(mechStore.raids, entry.encounterKey)) {
+        mechStore.addGate(buildLibraryGate(entry));
+      }
+    }
+  }
+
   const severityColor: Record<string, string> = {
     normal: "#a3a3a3",
     major: "#fb923c",
@@ -94,29 +102,54 @@
     <div style="overflow-y: auto; flex: 1; padding: 10px 0;">
       {#each filteredRaids as raidName (raidName)}
         {@const gates = libraryByRaid[raidName]}
+        {@const importedCount = gates.filter((g) => isImported(mechStore.raids, g.encounterKey)).length}
+        {@const allImported = importedCount === gates.length}
         <div style="margin-bottom: 2px;">
           <!-- Raid header -->
-          <button
-            onclick={() => {
-              expanded[raidName] = !expanded[raidName];
-            }}
-            style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; padding: 8px 18px; display: flex; align-items: center; gap: 8px; font-family: inherit;"
-          >
-            <span
-              style="font-size: 9px; color: #525252; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
-                raidName
-              ]
-                ? 90
-                : 0}deg);">▶</span
+          <div style="display: flex; align-items: center; padding: 4px 18px 4px 18px;">
+            <button
+              onclick={() => {
+                expanded[raidName] = !expanded[raidName];
+              }}
+              style="flex: 1; text-align: left; background: transparent; border: none; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; min-width: 0;"
             >
-            <span
-              style="font-size: 11px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
-              >{raidName}</span
-            >
-            <span style="font-size: 10px; color: #404040; margin-left: auto;"
-              >{gates.filter((g) => isImported(mechStore.raids, g.encounterKey)).length}/{gates.length} added</span
-            >
-          </button>
+              <span
+                style="font-size: 9px; color: #525252; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
+                  raidName
+                ]
+                  ? 90
+                  : 0}deg); flex-shrink: 0;">▶</span
+              >
+              <span
+                style="font-size: 11px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
+                >{raidName}</span
+              >
+              <span style="font-size: 10px; color: #404040; flex-shrink: 0;">{importedCount}/{gates.length} added</span>
+            </button>
+            <!-- Raid-level actions -->
+            <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 8px;">
+              {#if !allImported}
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    importRaid(raidName);
+                  }}
+                  style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 3px 10px;"
+                  >+ All</button
+                >
+              {/if}
+              {#if importedCount > 0}
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    mechStore.removeRaid(raidName);
+                  }}
+                  style="{btn} background: rgba(248,113,113,0.08); color: #f87171; border: 1px solid rgba(248,113,113,0.2); padding: 3px 10px;"
+                  >Remove All</button
+                >
+              {/if}
+            </div>
+          </div>
 
           <!-- Gates -->
           {#if expanded[raidName]}

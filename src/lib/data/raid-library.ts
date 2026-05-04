@@ -2217,13 +2217,17 @@ export const sortedRaidNames: string[] = [
   ...new Set([...LIBRARY].sort((a, b) => b.releaseOrder - a.releaseOrder).map((g) => g.raid))
 ];
 
-/** All library entries grouped by raid name */
-export const libraryByRaid: Record<string, LibraryGate[]> = LIBRARY.reduce(
-  (acc, g) => {
-    (acc[g.raid] ??= []).push(g);
-    return acc;
-  },
-  {} as Record<string, LibraryGate[]>
+/** All library entries grouped by raid name, gates sorted by gate number */
+export const libraryByRaid: Record<string, LibraryGate[]> = Object.fromEntries(
+  Object.entries(
+    LIBRARY.reduce(
+      (acc, g) => {
+        (acc[g.raid] ??= []).push(g);
+        return acc;
+      },
+      {} as Record<string, LibraryGate[]>
+    )
+  ).map(([raid, gates]) => [raid, [...gates].sort((a, b) => a.gate - b.gate)])
 );
 
 /** Check if a gate (by encounterKey) is already in the user's raid list */
