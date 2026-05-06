@@ -17,6 +17,11 @@ async function broadcastSettings(settings: MechSettings) {
     await emit("mech:settings-changed", settings);
   } catch {}
 }
+async function broadcastRaids(payload: Gate[]) {
+  try {
+    await emit("mech:raids-changed", payload);
+  } catch {}
+}
 
 // Score-based boss matching: exact = 1.0, partial = overlap ratio, no match = 0.
 // Picks the raid whose stored boss name most closely matches the live name,
@@ -121,6 +126,7 @@ export const mechStore = (() => {
 
   function saveRaids() {
     localStorage.setItem(RAIDS_KEY, JSON.stringify(raids));
+    broadcastRaids(raids);
   }
 
   function saveSettings() {
@@ -229,6 +235,11 @@ export const mechStore = (() => {
     // Applied in the overlay window when it receives mech:settings-changed — no save/re-broadcast
     applyRemoteSettings(settings: MechSettings) {
       mechSettings = settings;
+    },
+
+    // Applied in the overlay window when it receives mech:raids-changed — no save/re-broadcast
+    applyRemoteRaids(updated: Gate[]) {
+      raids = updated;
     },
 
     findBestGate(bossName: string): Gate | null {
