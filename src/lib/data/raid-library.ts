@@ -2131,7 +2131,7 @@ const LIBRARY: LibraryGate[] = [
       {
         name: "Wing Prediction",
         hpBar: 285,
-        repeatSecs: 80,
+        repeatSecs: 30,
         triggerType: "hp+timer",
         severity: "major",
         notes:
