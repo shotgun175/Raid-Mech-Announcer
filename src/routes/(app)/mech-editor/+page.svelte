@@ -7,6 +7,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Difficulty, Mechanic } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
+  import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
   import Header from "../Header.svelte";
 
   let showModal = $state(false);
@@ -26,7 +27,12 @@
   const simBar = $derived(mechStore.liveBar ?? _manualBar);
   const isLive = $derived(mechStore.isLive);
 
-  const sorted = $derived(gate ? [...gate.mechanics].sort((a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1)) : []);
+  const activeDifficulty = $derived(activeDifficultyForGate(mechStore.difficultyMap, gate?.raid ?? ""));
+  const sorted = $derived(
+    gate
+      ? filterByDifficulty([...gate.mechanics], activeDifficulty).sort((a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1))
+      : []
+  );
   const nextId = $derived(sorted.find((m) => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null);
 
   function openAdd() {
@@ -107,7 +113,7 @@
         class="border-b border-accent-500/20"
         style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); flex-shrink: 0;"
       >
-        <HPTimeline mechanics={gate.mechanics} totalBars={gate.totalBars} currentBar={simBar} />
+        <HPTimeline mechanics={sorted} totalBars={gate.totalBars} currentBar={simBar} />
         <div
           style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
         >
