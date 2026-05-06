@@ -27,6 +27,11 @@
   const displayBossName = $derived(gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
+  // True when LOA Logs switches to a different HP pool mid-fight (e.g. Echidna G2 stagger phase
+  // reports 1/1 while the gate expects 285 total bars). Show a phase banner instead of mechanics.
+  const isPhaseTransition = $derived(
+    gate != null && currentBar != null && totalBars > 0 && totalBars < gate.totalBars * 0.5
+  );
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
   let contentEl = $state<HTMLElement | null>(null);
@@ -276,6 +281,15 @@
       <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">
         {bossName ? `"${bossName}" — import this raid to see mechanics` : 'Mech Announcer — no gate matched'}
       </span>
+    </div>
+  </div>
+{:else if isPhaseTransition}
+  <!-- Different HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 vs gate's 285 bars) -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div onmousedown={startDrag} class="absolute top-4 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
+    <div style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;">
+      <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa; animation: mech-pulse 2s ease-in-out infinite;"></div>
+      <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">{bossName || 'Phase transition…'}</span>
     </div>
   </div>
 {:else}
