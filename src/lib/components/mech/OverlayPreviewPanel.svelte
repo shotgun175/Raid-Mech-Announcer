@@ -35,14 +35,42 @@
 
   $effect(() => {
     if (!gate || isLive) return;
-    const lead = mechStore.mechSettings.lead;
+    const cfg = mechStore.mechSettings;
     gate.mechanics.forEach((m) => {
       if (m.hpBar == null) return;
-      const fireAt = m.hpBar + lead;
-      const cycleKey = `${m.id}-${Math.floor(_simBar / (m.repeatSecs ?? 999999))}`;
-      if (_simBar <= fireAt && _simBar > m.hpBar && !firedSet.has(cycleKey)) {
-        firedSet.add(cycleKey);
-        fireAnnouncement(m.name, m.severity, m.ttsEnabled, m.ttsText);
+
+      // HP trigger: fires once as _simBar enters the lead window before the mechanic
+      const fireAt = m.hpBar + cfg.lead;
+      const initKey = `${m.id}-initial`;
+      if (_simBar <= fireAt && _simBar > m.hpBar && !firedSet.has(initKey)) {
+        firedSet.add(initKey);
+        const barsLeft = _simBar - m.hpBar;
+        fireAnnouncement(
+          m.name, m.severity, m.ttsEnabled,
+          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
+        );
+      }
+
+      // Repeat cycle: fires once per cycle as _simBar enters the repeatLead window
+      if (m.repeatSecs && _simBar < m.hpBar) {
+        const H = m.hpBar;
+        const R = m.repeatSecs;
+        const n = Math.ceil((H - _simBar) / R);
+        const triggerBar = H - n * R;
+        const repeatKey = `${m.id}-repeat-${n}`;
+        if (
+          triggerBar >= 0 &&
+          _simBar > triggerBar &&
+          _simBar <= triggerBar + cfg.repeatLead &&
+          !firedSet.has(repeatKey)
+        ) {
+          firedSet.add(repeatKey);
+          const secsLeft = cfg.repeatLead;
+          fireAnnouncement(
+            m.name, m.severity, m.ttsEnabled,
+            `${m.ttsText || m.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+          );
+        }
       }
     });
   });
