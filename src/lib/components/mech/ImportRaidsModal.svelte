@@ -14,7 +14,7 @@
   const { onClose }: Props = $props();
 
   let search = $state("");
-  let expanded = $state<Record<string, boolean>>(Object.fromEntries(sortedRaidNames.map((r) => [r, true])));
+  let expanded = $state<Record<string, boolean>>(Object.fromEntries(sortedRaidNames.map((r) => [r, false])));
 
   const filteredRaids = $derived.by(() => {
     const q = search.trim().toLowerCase();
