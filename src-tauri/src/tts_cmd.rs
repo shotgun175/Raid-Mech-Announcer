@@ -10,27 +10,38 @@ fn voice_id(name: &str) -> &'static str {
 }
 
 /// Speak text using Python edge-tts (neural voices) with SAPI fallback.
+/// rate: 1.0 = normal, 1.5 = 50% faster, 0.5 = half speed.
 #[command]
-pub fn speak_tts(text: String, voice: String, volume: u8, pitch: f64) {
+pub fn speak_tts(text: String, voice: String, volume: u8, _pitch: f64, rate: f64) {
     let vid = voice_id(&voice).to_string();
     std::thread::spawn(move || {
-        if try_python_edge_tts(&text, &vid, volume) {
+        if try_python_edge_tts(&text, &vid, volume, rate) {
             return;
         }
-        try_sapi(&text, &voice, volume, pitch);
+        try_sapi(&text, &voice, volume, rate);
     });
 }
 
-/// Try Python edge-tts via subprocess (same method Dark Rotation Manager uses).
-fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8) -> bool {
+/// Try Python edge-tts via subprocess.
+fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> bool {
     let temp = std::env::temp_dir().join("mech_tts.mp3");
     let temp_str = temp.to_string_lossy().to_string();
+
+    // edge-tts rate format: "+50%" for 1.5x, "-25%" for 0.75x
+    let rate_pct = (rate - 1.0) * 100.0;
+    let rate_str = format!("{:+.0}%", rate_pct);
 
     #[cfg(target_os = "windows")]
     let gen_ok = {
         use std::os::windows::process::CommandExt;
         std::process::Command::new("python")
-            .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--write-media", &temp_str])
+            .args([
+                "-m", "edge_tts",
+                "--voice", voice_id,
+                "--text", text,
+                "--rate", &rate_str,
+                "--write-media", &temp_str,
+            ])
             .creation_flags(0x08000000)
             .output()
             .map(|o| o.status.success())
@@ -39,7 +50,7 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8) -> bool {
 
     #[cfg(not(target_os = "windows"))]
     let gen_ok = std::process::Command::new("python")
-        .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--write-media", &temp_str])
+        .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--rate", &rate_str, "--write-media", &temp_str])
         .output()
         .map(|o| o.status.success())
         .unwrap_or(false);
@@ -66,29 +77,30 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8) -> bool {
     false
 }
 
-/// Last-resort: Windows SAPI via PowerShell (uses David/Zira desktop voices).
-fn try_sapi(text: &str, voice: &str, volume: u8, pitch: f64) {
+/// Last-resort: Windows SAPI via PowerShell.
+fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64) {
     let safe = text.replace('\'', "''");
     let safe_voice = voice.replace('\'', "''").replace('{', "{{").replace('}', "}}");
-    let rate  = ((pitch - 1.0) * 5.0).round() as i32;
+    // SAPI Rate: -10 (slowest) to +10 (fastest). Map 0.25-4.0 to -10..+10.
+    let sapi_rate = ((rate - 1.0) * 8.0).round().clamp(-10.0, 10.0) as i32;
     let script = format!(
         r#"try {{
     Add-Type -AssemblyName System.Speech -ErrorAction Stop
     $s = New-Object System.Speech.Synthesis.SpeechSynthesizer
     $v = $s.GetInstalledVoices() | Where-Object {{ $_.VoiceInfo.Name -like '*{safe_voice}*' }} | Select-Object -First 1
     if ($v) {{ $s.SelectVoice($v.VoiceInfo.Name) }}
-    $s.Volume = {volume}; $s.Rate = {rate}; $s.Speak('{safe}')
+    $s.Volume = {volume}; $s.Rate = {sapi_rate}; $s.Speak('{safe}')
 }} catch {{}}"#
     );
 
     #[cfg(target_os = "windows")]
-    {
+    {{
         use std::os::windows::process::CommandExt;
         let _ = std::process::Command::new("powershell")
             .args(["-NoProfile", "-NonInteractive", "-Command", &script])
             .creation_flags(0x08000000)
             .spawn();
-    }
+    }}
 }
 
 /// List voice sources available on this system.
