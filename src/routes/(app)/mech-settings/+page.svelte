@@ -164,6 +164,7 @@
           .filter((m) => m.repeatSecs != null)
           .sort((a, b) => (b.hpBar ?? 0) - (a.hpBar ?? 0))[0];
         if (next) mechStore.confirmMech(next.id);
+        emit("mech:confirm", null).catch(() => {});
       });
     } catch (e) {
       console.warn("Shortcut registration failed:", e);

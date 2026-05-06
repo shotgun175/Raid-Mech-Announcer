@@ -8,7 +8,7 @@
   import { SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
-  import type { BossStatusData, Gate, MechSettings } from "$lib/mech-types";
+  import type { BossStatusData, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { setClickthrough } from "$lib/api";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -33,6 +33,42 @@
   let announceTimer: ReturnType<typeof setTimeout> | null = null;
   let lastFiredKey = new Set<string>();
   const unlisteners: UnlistenFn[] = [];
+
+  let activeMech = $state<Mechanic | null>(null);
+  let repeatCountdown = $state<number | null>(null);
+  let repeatTimerId: ReturnType<typeof setInterval> | null = null;
+  let repeatAnnouncedThisCycle = false;
+
+  function startRepeatTimer(mech: Mechanic) {
+    if (repeatTimerId) { clearInterval(repeatTimerId); repeatTimerId = null; }
+    activeMech = mech;
+    repeatCountdown = mech.repeatSecs!;
+    repeatAnnouncedThisCycle = false;
+    repeatTimerId = setInterval(() => {
+      if (repeatCountdown === null || activeMech === null) return;
+      repeatCountdown--;
+      if (repeatCountdown <= 0) {
+        repeatCountdown = activeMech.repeatSecs!;
+        repeatAnnouncedThisCycle = false;
+      }
+      const cfg = mechStore.mechSettings;
+      if (!repeatAnnouncedThisCycle && repeatCountdown > 0 && repeatCountdown <= cfg.repeatLead) {
+        repeatAnnouncedThisCycle = true;
+        const secsLeft = repeatCountdown;
+        announce(
+          activeMech.name, activeMech.severity, activeMech.ttsEnabled,
+          `${activeMech.ttsText || activeMech.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+        );
+      }
+    }, 1000);
+  }
+
+  function clearRepeatTimer() {
+    if (repeatTimerId) { clearInterval(repeatTimerId); repeatTimerId = null; }
+    activeMech = null;
+    repeatCountdown = null;
+    repeatAnnouncedThisCycle = false;
+  }
 
   // Apply click-through and always-on-top to this window whenever the settings change
   $effect(() => {
@@ -104,8 +140,18 @@
           `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
         );
       }
-
     });
+
+    // Detect the most recently triggered hp+timer mechanic; reset timer when it changes
+    const newActive =
+      [...gate.mechanics]
+        .filter((m) => m.repeatSecs != null && m.hpBar != null && bar < (m.hpBar ?? 0))
+        .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
+        .at(-1) ?? null;
+    if (newActive?.id !== activeMech?.id) {
+      if (newActive) startRepeatTimer(newActive);
+      else clearRepeatTimer();
+    }
   });
 
   // Auto-resize to content when a gate loads. Fires once per gate — ResizeObserver
@@ -181,14 +227,23 @@
 
     const unFightStart = await listen("mech:fight-start", () => {
       lastFiredKey = new Set();
+      clearRepeatTimer();
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart);
+    const unConfirm = await listen("mech:confirm", () => {
+      if (activeMech) {
+        repeatCountdown = activeMech.repeatSecs!;
+        repeatAnnouncedThisCycle = false;
+      }
+    });
+
+    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm);
   });
 
   onDestroy(() => {
     unlisteners.forEach((fn) => fn());
     if (announceTimer) clearTimeout(announceTimer);
+    clearRepeatTimer();
   });
 </script>
 
