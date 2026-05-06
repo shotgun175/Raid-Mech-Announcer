@@ -1,3 +1,4 @@
+export type Difficulty = "Solo" | "Normal" | "Hard" | "Nightmare";
 export type Severity = "normal" | "major" | "wipe";
 export type TriggerType = "hp" | "timer" | "hp+timer";
 export type Phase = 1 | 2 | 3 | 4 | null;
@@ -14,6 +15,7 @@ export interface Mechanic {
   ttsEnabled: boolean;
   ttsText: string;
   notes: string;
+  difficulties?: Difficulty[];
 }
 
 export interface Gate {

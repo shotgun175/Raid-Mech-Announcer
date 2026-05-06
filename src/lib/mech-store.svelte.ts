@@ -22,6 +22,22 @@ async function broadcastRaids(payload: Gate[]) {
     await emit("mech:raids-changed", payload);
   } catch {}
 }
+async function broadcastDifficultyMap(map: Record<string, string>) {
+  try {
+    await emit("mech:difficulty-changed", map);
+  } catch {}
+}
+
+const DIFFICULTY_KEY = "mech-difficulty-map";
+
+function loadDifficultyMap(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(DIFFICULTY_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+  } catch {
+    return {};
+  }
+}
 async function broadcastFightStart() {
   try {
     await emit("mech:fight-start", null);
@@ -131,6 +147,7 @@ export const mechStore = (() => {
   let mechSettings = $state<MechSettings>(loadSettings());
   // mechId → timestamp (ms) of the last user-confirmed fire for that mechanic
   let confirmedAt = $state<Record<string, number>>({});
+  let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
 
   function saveRaids() {
     localStorage.setItem(RAIDS_KEY, JSON.stringify(raids));
@@ -248,6 +265,25 @@ export const mechStore = (() => {
     // Applied in the overlay window when it receives mech:raids-changed — no save/re-broadcast
     applyRemoteRaids(updated: Gate[]) {
       raids = updated;
+    },
+
+    get difficultyMap() {
+      return difficultyMap;
+    },
+
+    setDifficulty(raidName: string, difficulty: string | null) {
+      if (!difficulty) {
+        const { [raidName]: _, ...rest } = difficultyMap;
+        difficultyMap = rest;
+      } else {
+        difficultyMap = { ...difficultyMap, [raidName]: difficulty };
+      }
+      localStorage.setItem(DIFFICULTY_KEY, JSON.stringify(difficultyMap));
+      broadcastDifficultyMap(difficultyMap);
+    },
+
+    applyRemoteDifficultyMap(map: Record<string, string>) {
+      difficultyMap = map;
     },
 
     findBestGate(bossName: string): Gate | null {

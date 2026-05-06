@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatTimer, PHASE_COLORS, SEVERITY } from "$lib/mech-constants";
   import type { Mechanic } from "$lib/mech-types";
+  import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import MechBadge from "./MechBadge.svelte";
 
   interface Props {
@@ -71,6 +72,16 @@
           style="font-size: 12px; color: var(--color-accent-500); font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
           >▶ NEXT</span
         >
+      {/if}
+      {#if mech.difficulties?.length}
+        <span style="display: flex; gap: 3px; flex-shrink: 0;">
+          {#each mech.difficulties as d}
+            {@const sty = DIFFICULTY_STYLE[d]}
+            <span
+              style="background: {sty.bg}; border: 1px solid {sty.border}; border-radius: 2px; padding: 1px 4px; color: {sty.color}; font-size: 9px; font-weight: 700; letter-spacing: 0.04em;"
+            >{sty.label}</span>
+          {/each}
+        </span>
       {/if}
     </div>
     {#if mech.notes}
