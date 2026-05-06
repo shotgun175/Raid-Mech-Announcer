@@ -822,6 +822,15 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
+        name: "Water Park / Black Mist",
+        hpBar: 300,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes:
+          "HM only — Giant Akkan phase; squared arena with water hazards below ledges; Akkan Smash at x235 and x135: ledge-jump or step on Worm Trap to survive; Water Park tilts arena sideways at x200"
+      },
+      {
         name: "X Stagger",
         hpBar: 200,
         triggerType: "hp",
@@ -857,8 +866,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 30,
         triggerType: "hp",
         severity: "major",
-        notes:
-          "HM: Giant Akkan phase; Smash attacks at x235/x135 — ledge-jump or step on Worm Trap; Water Park platform tilting; use Wei at x15 to skip final destruction"
+        notes: "Boss breaks arena edge; dodge frontal/side/rotating lasers; use Wei at x15 to skip final destruction"
       },
       {
         name: "Destruction",
@@ -1014,8 +1022,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 55,
         triggerType: "hp",
         severity: "wipe",
-        notes:
-          "Use Balthorr sidereal if needed; at x3+1 on outer edge locate red tentacle, throw bombs, get grabbed by yellow telegraph"
+        difficulties: ["Normal", "Solo"],
+        notes: "At x3+1 on outer edge: locate red tentacle, throw bombs, get grabbed by yellow telegraph; use Balthorr if needed"
+      },
+      {
+        name: "Destroy & Grab (HM)",
+        hpBar: 55,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Same as NM + Raspberry (red orbs): do NOT destroy them — both destroyed = -95% damage/-100% stagger for all; use Balthorr if needed"
       },
       {
         name: "Eye Safe Zone",
@@ -1029,6 +1045,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 35,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Hard"],
         notes:
           "Hard Mode only; spread out to avoid overlapping; track boss on minimap; counterattack when eye disappears"
       }
@@ -1050,6 +1067,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 153,
         triggerType: "hp",
         severity: "normal",
+        difficulties: ["Hard"],
         notes: "Hard Mode only; top or bottom arena side breaks off — reposition accordingly"
       },
       {
@@ -1106,7 +1124,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 255,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Solo"],
         notes: "Dodge the pizza, bait boss sword to 9 o'clock then kill it"
+      },
+      {
+        name: "Sword Fight 2 (HM)",
+        hpBar: 255,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard"],
+        notes: "Dodge the pizza, bait boss sword to 9 o'clock then kill it; also dodge spinning tether ball rotating counter-clockwise"
       },
       {
         name: "Safe Spot",
@@ -1142,7 +1169,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 55,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Movement is inverted; complete typing minigame; use Wei sidereal for ghosts if needed"
+        difficulties: ["Normal", "Solo"],
+        notes: "Movement is inverted; complete typing minigame (standard left-to-right); use Wei for ghosts"
+      },
+      {
+        name: "Safe Spot (2nd) (HM)",
+        hpBar: 55,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Movement is inverted; complete typing minigame right-to-left (inverted direction); use Wei for ghosts"
       }
     ]
   },
@@ -1214,8 +1250,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
-        notes:
-          "Safe spot on odd-colored lines; 4th line shows directional counter indicator; HM: inter-party communication for overlapping lines"
+        difficulties: ["Normal", "Solo"],
+        notes: "Safe spot on odd-colored lines; 4th line shows directional counter indicator; no inter-party communication needed"
+      },
+      {
+        name: "Clone Split (HM)",
+        hpBar: 135,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Safe spot on odd-colored lines; 4th line counter indicator; inter-party communication required for overlapping safe spots"
       },
       {
         name: "Invasion",
@@ -1290,6 +1334,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 0,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Hard"],
         notes:
           "HM only: Echidna grabs at 6 o'clock; counter sequence reveals Real/Fake pattern; at least 1 player must be grabbed; use Azena after successful counter"
       }
@@ -1302,6 +1347,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Behemoth",
     gate: 1,
     releaseOrder: 10,
+    availableDifficulties: ["Normal"],
     boss: "Behemoth, the Storm Commander",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -1337,6 +1383,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Behemoth",
     gate: 2,
     releaseOrder: 10,
+    availableDifficulties: ["Normal"],
     boss: "Behemoth, Cruel Storm Slayer",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -1367,6 +1414,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Aegir",
     gate: 1,
     releaseOrder: 11,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Akkan, Lord of Death",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1391,6 +1439,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 150,
         triggerType: "hp",
         severity: "normal",
+        difficulties: ["Hard"],
         notes: "Hard Mode only — earthquake mechanic; dodge the shockwave and reposition"
       },
       {
@@ -1435,6 +1484,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Aegir",
     gate: 2,
     releaseOrder: 11,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Aegir, the Oppressor",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -1445,14 +1495,32 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 260,
         triggerType: "hp",
         severity: "wipe",
-        notes: "First Heart mechanic; destroy Aegir's heart to proceed; coordinate burst DPS window"
+        difficulties: ["Normal"],
+        notes: "Party 1 at 12→3, Party 2 at 6→9 rotation; destroy Aegir's heart to proceed"
+      },
+      {
+        name: "1st Heart (HM)",
+        hpBar: 260,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "3 positions with counter → auto-attack → stagger sequence; destroy heart to proceed"
       },
       {
         name: "Armor Break (1st)",
         hpBar: 260,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal"],
         notes: "Break Aegir's armor with destruction skills; opens after 1st Heart resolves"
+      },
+      {
+        name: "Armor Break (1st) (HM)",
+        hpBar: 260,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard"],
+        notes: "Break armor; supports place golden target puddle at right corners; opens after 1st Heart resolves"
       },
       {
         name: "Distorted Space (1st)",
@@ -1466,14 +1534,23 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 165,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Second Heart; same mechanic — repeat burst DPS on heart"
+        notes: "Second Heart; repeat burst DPS — can be skipped if damage was pushed in previous phase"
       },
       {
         name: "Armor Break (2nd)",
         hpBar: 165,
         triggerType: "hp",
         severity: "major",
-        notes: "Second armor break window; follow same pattern as 1st"
+        difficulties: ["Normal"],
+        notes: "Second armor break window; same as 1st"
+      },
+      {
+        name: "Armor Break (2nd) (HM)",
+        hpBar: 165,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard"],
+        notes: "Second armor break; supports place golden target puddle at right corners; same pattern as 1st (HM)"
       },
       {
         name: "Distorted Space (2nd)",
@@ -1495,6 +1572,7 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 50,
         triggerType: "timer",
         severity: "wipe",
+        difficulties: ["Hard"],
         notes: "HM only; timer-based enrage every 50s; must kill before timer expires or wipe"
       }
     ]
@@ -1506,6 +1584,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 2: Brelshaza",
     gate: 1,
     releaseOrder: 12,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Narok the Butcher",
     bossType: "ANCIENT",
     weakness: "Weak to Lightning",
@@ -1537,7 +1616,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 120,
         triggerType: "hp",
         severity: "major",
-        notes: "Chase Narok and break the barrier; stagger check follows"
+        difficulties: ["Normal"],
+        notes: "Chase Narok and break the barrier; 3 perfect guards then stagger check"
+      },
+      {
+        name: "Chase + Stagger (HM)",
+        hpBar: 120,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard"],
+        notes: "Party splits; 4 objects spawn, block the 2 real lasers; stagger Narok twice to complete"
       },
       {
         name: "Perfect Guard + Time Attack (2nd)",
@@ -1553,6 +1641,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 2: Brelshaza",
     gate: 2,
     releaseOrder: 12,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Phantom Manifester Brelshaza",
     bossType: "DEMONIC",
     weakness: "Weak to Lightning",
@@ -1563,8 +1652,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 335,
         triggerType: "hp",
         severity: "wipe",
-        notes:
-          "HM: two rings — Party 1 calls colors in order, Party 2 calls inner circle colors; stagger clones then boss"
+        difficulties: ["Normal"],
+        notes: "Stagger clones then boss; no color callout required"
+      },
+      {
+        name: "Colors Stagger (HM)",
+        hpBar: 335,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Two rings: Party 1 at 3x+1 position calls outer colors in order; Party 2 calls inner circle colors; stagger clones then boss"
       },
       {
         name: "Crystal Break",
@@ -1606,6 +1703,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 1,
     releaseOrder: 13,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Thaemine, Master of Darkness",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -1646,6 +1744,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 2,
     releaseOrder: 13,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Blossoming Fear, Naitreya",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -1663,7 +1762,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 235,
         triggerType: "hp",
         severity: "major",
-        notes: "Color shield mechanic; memorize Alberhastic's color sequence to break the shield"
+        difficulties: ["Normal"],
+        notes: "All players share same shield color; memorize Alberhastic's color sequence and burst the shield"
+      },
+      {
+        name: "Alberhastic Memory (HM)",
+        hpBar: 235,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard"],
+        notes: "4 Yellow + 4 White shields split by party: P1 breaks Yellow side, P2 breaks White side; coordinate in split arena"
       },
       {
         name: "Illusion Clone",
@@ -1678,7 +1786,17 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 90,
         triggerType: "hp+timer",
         severity: "normal",
-        notes: "Velganos pizza pattern repeats every 90s; dodge the correct slice and avoid re-overlap"
+        difficulties: ["Normal"],
+        notes: "Velganos pizza: 5-tile spread pattern; dodge the correct slice and avoid re-overlap; repeats every 90s"
+      },
+      {
+        name: "Velga Pizza (HM)",
+        hpBar: 105,
+        repeatSecs: 90,
+        triggerType: "hp+timer",
+        severity: "normal",
+        difficulties: ["Hard"],
+        notes: "Velganos pizza: 3 random black tiles that change direction; dodge the correct slice; repeats every 90s"
       }
     ]
   },
@@ -1687,6 +1805,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 3,
     releaseOrder: 13,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Mordum, the Abyssal Punisher",
     bossType: "ANCIENT",
     weakness: "Weak to Earth",
@@ -1726,6 +1845,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 275,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Hard"],
         notes: "Just guard the anvil slam; precise timing — mistimed guard = large damage or knockback"
       },
       {
@@ -1740,6 +1860,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 200,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Hard"],
         notes: "Color-matching shield disruption; coordinate color assignments across the party"
       },
       {
@@ -1754,6 +1875,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 160,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Hard"],
         notes: "Hammer Split (NM) or Bastion (HM); HM requires entering Bastion before hammer strike"
       },
       {
@@ -1775,6 +1897,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 0,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Hard"],
         notes: "Last Stand (NM) or Bastion (HM); HM only — sphere color matching; survive to win"
       }
     ]
@@ -1786,6 +1909,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 4: Armoche",
     gate: 1,
     releaseOrder: 16,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Act 4: Covetous Master Echidna",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1803,15 +1927,24 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 240,
         triggerType: "hp",
         severity: "wipe",
-        notes:
-          "NM: 2 clones toward each other = opposite side; HM: follow the large Echidna shadow, match weapon/action"
+        difficulties: ["Normal"],
+        notes: "2 clones walk toward each other → go to opposite side of shadow"
+      },
+      {
+        name: "Shadow Dance (HM)",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Follow the large Echidna shadow; 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action"
       },
       {
         name: "Snake Dodge",
         hpBar: 220,
         triggerType: "hp",
         severity: "major",
-        notes: "HM: marked players get rectangle snake attacks; spacebar through rope patterns (jump rope)"
+        difficulties: ["Hard"],
+        notes: "Marked players get rectangle snake attacks; spacebar through rope patterns (jump rope)"
       },
       {
         name: "Shield Destruction",
@@ -1834,6 +1967,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 4: Armoche",
     gate: 2,
     releaseOrder: 16,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Armoche, Sentinel of the Abyss",
     bossType: "ANCIENT",
     weakness: "Weak to Fire",
@@ -1902,6 +2036,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Final Act: Kazeros",
     gate: 1,
     releaseOrder: 17,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Abyss Lord Kazeros",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -1926,7 +2061,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 660,
         triggerType: "hp",
         severity: "normal",
-        notes: "Find the correct clone; front/back indicators reveal the real Kazeros"
+        difficulties: ["Normal"],
+        notes: "Find the correct clone; front/back indicators reveal the real Kazeros; press Q to clash"
+      },
+      {
+        name: "Clash (HM)",
+        hpBar: 660,
+        triggerType: "hp",
+        severity: "normal",
+        difficulties: ["Hard"],
+        notes: "Find the correct clone; front/back indicators reveal the real Kazeros; press QWER to clash"
       },
       {
         name: "Cracks & Shield",
@@ -1956,6 +2100,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Final Act: Kazeros",
     gate: 21,
     releaseOrder: 17,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Archdemon Kazeros",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -2003,6 +2148,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Final Act: Kazeros",
     gate: 22,
     releaseOrder: 17,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "God of Death Kazeros",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -2046,6 +2192,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Final Act: Kazeros",
     gate: 23,
     releaseOrder: 17,
+    availableDifficulties: ["Normal", "Hard"],
     boss: "Death Incarnate Kazeros",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -2117,7 +2264,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 195,
         triggerType: "hp",
         severity: "normal",
+        difficulties: ["Normal"],
         notes: "Spiked wall traps on ground marked as yellow squares; walls move inward — dodge the traps"
+      },
+      {
+        name: "Moral Walls",
+        hpBar: 195,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard", "Nightmare"],
+        notes: "Spiked wall traps move inward; additional checkered yellow spiked squares spawn — dodge both trap types"
       },
       {
         name: "Bomberman",
@@ -2126,15 +2282,23 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp+timer",
         severity: "major",
         notes:
-          "Bombs explode in cross patterns; identify non-overlapping safe tiles; NM: timed bomb on target explodes after 5s damaging nearby players"
+          "Bombs explode in cross patterns; identify non-overlapping safe tiles; Nightmare: timed bomb on target — separate from allies before 5s or deal large damage"
       },
       {
         name: "Survival Run",
         hpBar: 105,
         triggerType: "hp",
         severity: "major",
-        notes:
-          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
+        difficulties: ["Normal"],
+        notes: "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
+      },
+      {
+        name: "Survival Run",
+        hpBar: 105,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Hard", "Nightmare"],
+        notes: "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s; avoid bombs that spawn and explode on the field"
       },
       {
         name: "Flame Maiden",
@@ -2143,7 +2307,7 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp+timer",
         severity: "wipe",
         notes:
-          "Arena narrows to 4×4; counter Serca when she appears; HM/NM: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
+          "Arena narrows to 4×4; counter Serca when she appears; Hard/Nightmare: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
       }
     ]
   },
@@ -2164,8 +2328,17 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 30,
         triggerType: "hp+timer",
         severity: "major",
-        notes:
-          "Spacebar on red flash; stay opposite of the wing swipe; NM: count 2 wing flaps → spacebar after gray pulse"
+        difficulties: ["Normal", "Hard"],
+        notes: "Spacebar on red flash; stay opposite of the wing swipe"
+      },
+      {
+        name: "Wing Prediction (Nightmare)",
+        hpBar: 285,
+        repeatSecs: 30,
+        triggerType: "hp+timer",
+        severity: "major",
+        difficulties: ["Nightmare"],
+        notes: "Count 2 wing flaps → spacebar after gray pulse; stay opposite of the wing swipe"
       },
       {
         name: "Veiled Stagger",
@@ -2203,7 +2376,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 60,
         triggerType: "hp",
         severity: "major",
-        notes: "Spacebar on red flash; remember Pac-Man order and stagger boss; NM: count 2 wing flaps then spacebar"
+        difficulties: ["Normal", "Hard"],
+        notes: "Spacebar on red flash; remember Pac-Man order and stagger boss"
+      },
+      {
+        name: "Pizza Prediction (Nightmare)",
+        hpBar: 60,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Nightmare"],
+        notes: "Count 2 wing flaps then spacebar; remember Pac-Man order and stagger boss"
       }
     ]
   }
