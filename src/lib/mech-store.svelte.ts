@@ -256,13 +256,20 @@ export const mechStore = (() => {
 
     setBossStatus(data: BossStatusData | null) {
       if (!data || data.isDead) {
+        // If a gate is already locked in, ignore isDead events from unrelated bosses
+        // (e.g. Alcaone dying during Echidna G2 stagger). Only process if the dying boss
+        // matches the active gate, or if no gate is locked yet.
+        if (liveGateId && data?.isDead) {
+          const matchedGate = bestGateMatch(raids, data.name ?? "");
+          if (!matchedGate || matchedGate.id !== liveGateId) return;
+        }
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
         broadcastBossStatus(null);
         if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-        // Keep liveGateId — phase transitions (stagger, reduced damage) send isDead=true
-        // but the fight continues. Let the 60s tier-2 timer clear liveGateId.
+        // Keep liveGateId — phase transitions send isDead=true but the fight continues.
+        // The 60s tier-2 timer clears liveGateId if no HP data resumes.
         if (gateResetTimer) clearTimeout(gateResetTimer);
         gateResetTimer = setTimeout(() => { liveGateId = null; }, GATE_RESET_MS);
         return;
