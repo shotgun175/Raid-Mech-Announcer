@@ -52,7 +52,7 @@
           phase: "",
           repeatSecs: "",
           timerSecs: "",
-          ttsEnabled: true,
+          ttsEnabled: false,
           ttsText: "",
           notes: "",
           difficulties: []

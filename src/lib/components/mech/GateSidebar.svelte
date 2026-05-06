@@ -421,6 +421,7 @@
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #38bdf8;">Gate</div>
               <div
+                title={isGateResettable ? gateResetLabel : "Custom gate — no library version"}
                 style="font-size: 10px; color: #525252; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
               >
                 {isGateResettable ? gateResetLabel : "Custom gate — no library version"}
@@ -471,6 +472,7 @@
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #fb923c;">Raid</div>
               <div
+                title={isRaidResettable ? raidResetLabel : "No library gates in this raid"}
                 style="font-size: 10px; color: #525252; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
               >
                 {isRaidResettable ? raidResetLabel : "No library gates in this raid"}
