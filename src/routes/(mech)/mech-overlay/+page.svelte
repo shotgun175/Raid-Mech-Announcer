@@ -45,6 +45,10 @@
       .catch(() => {});
   });
 
+  $effect(() => {
+    document.documentElement.style.opacity = String(mechStore.mechSettings.opacity / 100);
+  });
+
   // Initiate OS-level window drag on mousedown (only works when click-through is off)
   async function startDrag(e: MouseEvent) {
     if (e.button !== 0 || clickThrough) return;

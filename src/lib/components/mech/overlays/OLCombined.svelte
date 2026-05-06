@@ -2,6 +2,7 @@
   import { PHASE_COLORS, SEVERITY, formatTimer } from "$lib/mech-constants";
   import MechBadge from "../MechBadge.svelte";
   import { upcomingFrom, hpBarColor, type OverlayProps } from "./_shared";
+  import { mechStore } from "$lib/mech-store.svelte";
 
   let { mechanics, currentBar, totalBars, bossName = "" }: OverlayProps = $props();
 
@@ -77,7 +78,7 @@
         <div style="min-width: 0; flex: 1;">
           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap;">
             <MechBadge label={sev.label} color={sev.color} bg={sev.dim} border={sev.border} small />
-            {#if next.phase}
+            {#if next.phase && mechStore.mechSettings.showPhaseLabels}
               <span
                 style="font-size: 10px; color: {PHASE_COLORS[next.phase]}; font-weight: 700; letter-spacing: 0.08em;"
                 >PHASE {next.phase}</span
@@ -157,7 +158,7 @@
         <span style="font-size: 11.5px; color: #a3a3a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
           >{m.name}</span
         >
-        {#if m.phase}
+        {#if m.phase && mechStore.mechSettings.showPhaseLabels}
           <span
             style="font-size: 9px; color: {PHASE_COLORS[m.phase]}; opacity: 0.8; font-family: ui-monospace, monospace;"
             >P{m.phase}</span

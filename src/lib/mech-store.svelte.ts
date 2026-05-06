@@ -270,7 +270,7 @@ export const mechStore = (() => {
       }
 
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
-      broadcastOverlayControl(true);
+      if (mechSettings.autoShowHide) broadcastOverlayControl(true);
 
       startHeartbeat(
         // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
@@ -280,7 +280,7 @@ export const mechStore = (() => {
           liveTotalBars = null;
           liveBossName = null;
           broadcastBossStatus(null);
-          broadcastOverlayControl(false);
+          if (mechSettings.autoShowHide) broadcastOverlayControl(false);
         },
         // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
         () => {
