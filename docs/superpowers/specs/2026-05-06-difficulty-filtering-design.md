@@ -283,10 +283,25 @@ This is a data-entry pass independent of the code changes — both can proceed i
 |---|---|
 | Normal | All raids |
 | Hard | All raids |
-| Solo | Raids up to and including Act 3: Mordum |
+| Solo | Specific legacy raids (curated list — see below) |
 | Nightmare | Serca only |
 
-These constraints drive `availableDifficulties` on each `LibraryGate`. Raids after Mordum (e.g. Kazeros, Brelshaza Eternal) get `["Normal", "Hard"]`. Serca gets `["Normal", "Hard", "Nightmare"]`. Raids up to Mordum get `["Solo", "Normal", "Hard"]` (or `["Normal", "Hard"]` if they predate Solo mode support).
+Solo Mode is NOT a clean "up to raid X" cutoff — it is a specific curated set of legacy raids defined by the in-game "Endgame Content: Solo Mode" page. Confirmed Solo raids from that page:
+
+- Valtan
+- Vykas
+- Kakul-Saydon
+- Brelshaza
+- Kayangel (Eternal Cradle of Haste)
+- Akkan
+- Ivory Tower (Trampled Garden)
+- Thaemine
+- Echidna (confirmed via LOA Logs: `difficulty: [Solo] Echidna`)
+- Additional raids partially visible in UI (to be confirmed during data-entry)
+
+Raids NOT in the Solo list (e.g. Kazeros G1/G2, Serca, Aegir, Mordum) get `["Normal", "Hard"]` or `["Normal", "Hard", "Nightmare"]` for Serca.
+
+These constraints drive `availableDifficulties` on each `LibraryGate`. The exact per-gate value is set during the Maxroll data-entry phase by cross-referencing the in-game Solo Mode content page.
 
 New difficulties added to future raids require only a library data update — no code changes.
 
@@ -294,5 +309,6 @@ New difficulties added to future raids require only a library data update — no
 
 ## Open Questions (resolved at data-entry time)
 
-- Do any pre-Mordum raids lack Solo mode support despite being before the cutoff? (Maxroll guides will clarify)
-- Are there mechanics that appear in Normal + Hard but not Nightmare on Serca? (Guides will clarify)
+- Which of the partially-visible raids on the Solo Mode page are in our library? (data-entry will confirm)
+- Are there mechanics that appear in Normal + Hard but not Nightmare on Serca? (Maxroll Serca guide will clarify)
+- Do Aegir and Mordum have Solo mode? (not visible in the screenshot — confirm in-game)
