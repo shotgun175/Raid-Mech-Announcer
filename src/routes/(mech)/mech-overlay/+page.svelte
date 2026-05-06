@@ -8,7 +8,7 @@
   import { SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
-  import type { BossStatusData, MechSettings } from "$lib/mech-types";
+  import type { BossStatusData, Gate, MechSettings } from "$lib/mech-types";
   import { setClickthrough } from "$lib/api";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -88,11 +88,39 @@
     const cfg = mechStore.mechSettings;
     gate.mechanics.forEach((m) => {
       if (m.hpBar == null) return;
+
+      // HP trigger: fires once as bar enters the lead window before the mechanic
       const fireAt = m.hpBar + cfg.lead;
-      const cycleKey = `${m.id}-${Math.floor(bar / (m.repeatSecs ?? 999999))}`;
-      if (bar <= fireAt && bar > m.hpBar && !lastFiredKey.has(cycleKey)) {
-        lastFiredKey.add(cycleKey);
-        announce(m.name, m.severity, m.ttsEnabled, m.ttsText);
+      const initKey = `${m.id}-initial`;
+      if (bar <= fireAt && bar > m.hpBar && !lastFiredKey.has(initKey)) {
+        lastFiredKey.add(initKey);
+        const barsLeft = bar - m.hpBar;
+        announce(
+          m.name, m.severity, m.ttsEnabled,
+          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
+        );
+      }
+
+      // Repeat cycle: fires once per cycle as bar enters the repeatLead window
+      if (m.repeatSecs && bar < m.hpBar) {
+        const H = m.hpBar;
+        const R = m.repeatSecs;
+        const n = Math.ceil((H - bar) / R);
+        const triggerBar = H - n * R;
+        const repeatKey = `${m.id}-repeat-${n}`;
+        if (
+          triggerBar >= 0 &&
+          bar > triggerBar &&
+          bar <= triggerBar + cfg.repeatLead &&
+          !lastFiredKey.has(repeatKey)
+        ) {
+          lastFiredKey.add(repeatKey);
+          const secsLeft = cfg.repeatLead;
+          announce(
+            m.name, m.severity, m.ttsEnabled,
+            `${m.ttsText || m.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+          );
+        }
       }
     });
   });
@@ -169,7 +197,11 @@
       mechStore.applyRemoteSettings(event.payload);
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings);
+    const unRaids = await listen<Gate[]>("mech:raids-changed", (event) => {
+      mechStore.applyRemoteRaids(event.payload);
+    });
+
+    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids);
   });
 
   onDestroy(() => {
