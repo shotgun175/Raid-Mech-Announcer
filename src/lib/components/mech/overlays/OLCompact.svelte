@@ -11,16 +11,6 @@
 </script>
 
 <div style="display: flex; flex-direction: column; gap: 4px; font-family: Inter, sans-serif;">
-  {#if showActiveMech && activeMech}
-    <div style="background: rgba(10,10,10,0.9); border: 1px solid rgba(167,139,250,{repeatUrgent ? '0.5' : '0.22'}); border-left: 3px solid #a78bfa; border-radius: 0 4px 4px 0; padding: 7px 14px; display: flex; align-items: center; gap: 8px;">
-      <span style="font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #a78bfa; text-transform: uppercase; background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.28); border-radius: 3px; padding: 1px 5px; flex-shrink: 0;">active</span>
-      <div style="width: 5px; height: 5px; border-radius: 50%; background: #a78bfa; flex-shrink: 0; {repeatUrgent ? 'animation: mech-pulse 0.7s infinite;' : 'opacity: 0.5;'}"></div>
-      <span style="font-size: 12.5px; font-weight: 600; color: #c4b5fd; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{activeMech.name}</span>
-      <span style="font-size: 11px; color: #525252; font-family: ui-monospace, monospace; flex-shrink: 0;">↻</span>
-      <span style="font-size: 15px; font-family: ui-monospace, monospace; font-weight: 700; color: {repeatUrgent ? '#f87171' : '#a78bfa'}; flex-shrink: 0;">{formatTimer(repeatCountdown)}</span>
-    </div>
-  {/if}
-
   {#if upcoming.length === 0}
     <div style="background: rgba(23,23,23,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(64,64,64,0.5); border-radius: 4px; padding: 8px 14px; color: #a3a3a3; font-size: 12px;">
       Awaiting first mech...
@@ -34,6 +24,15 @@
         <span style="font-size: 12px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">{bossName}</span>
         <span style="font-size: 13px; font-family: ui-monospace, monospace; color: #fafafa; font-weight: 600;">{currentBar}<span style="color: #525252; font-weight: 400;">×</span></span>
       </div>
+      <!-- Active mech row — anchored inside card, right below boss name -->
+      {#if showActiveMech && activeMech}
+        <div style="padding: 5px 12px; background: rgba(12,8,24,0.7); border-bottom: 1px solid rgba(167,139,250,0.15); display: flex; align-items: center; gap: 8px; border-left: 2px solid #a78bfa;">
+          <div style="width: 4px; height: 4px; border-radius: 50%; background: #a78bfa; flex-shrink: 0; {repeatUrgent ? 'animation: mech-pulse 0.7s infinite;' : 'opacity: 0.55;'}"></div>
+          <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #7c6db5; text-transform: uppercase; flex-shrink: 0;">active</span>
+          <span style="font-size: 11.5px; font-weight: 600; color: #c4b5fd; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{activeMech.name}</span>
+          <span style="font-size: 12px; font-family: ui-monospace, monospace; font-weight: 700; color: {repeatUrgent ? '#f87171' : '#a78bfa'}; flex-shrink: 0;">↻ {formatTimer(repeatCountdown)}</span>
+        </div>
+      {/if}
       {#each upcoming as m, i (m.id)}
         {@const sev = SEVERITY[m.severity]}
         <div style="padding: 7px 12px; border-bottom: {i < upcoming.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none'}; background: {i === 0 ? `${sev.color}0d` : 'transparent'}; display: flex; align-items: center; gap: 10px;">
