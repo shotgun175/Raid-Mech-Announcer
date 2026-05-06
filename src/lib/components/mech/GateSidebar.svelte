@@ -2,13 +2,14 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
-  import { cycleDifficulty, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
+  import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
   let showImport = $state(false);
   let confirmReset = $state(false);
   let resetTimer: ReturnType<typeof setTimeout> | null = null;
+  let openDiffDropdown = $state<string | null>(null);
 
   function handleReset() {
     if (!confirmReset) {
@@ -136,33 +137,89 @@
             {raidName}
           </div>
 
-          <!-- Difficulty chip — cycles on click -->
-          <button
-            onclick={(e) => {
-              e.stopPropagation();
-              const avail = availableDifficultiesFor(raidName);
-              const next = cycleDifficulty(diff, avail);
-              mechStore.setDifficulty(raidName, next);
-            }}
-            title="Cycle difficulty filter"
-            style="
-              flex-shrink: 0;
-              background: {sty ? sty.bg : '#1a1a1a'};
-              border: 1px {sty ? 'solid' : 'dashed'} {sty ? sty.border : '#33333366'};
-              border-radius: 3px;
-              padding: 1px 6px;
-              color: {sty ? sty.color : '#525252'};
-              font-size: 9px;
-              font-weight: 700;
-              letter-spacing: 0.04em;
-              cursor: pointer;
-              font-family: inherit;
-              line-height: 1.6;
-              transition: opacity 0.15s;
-            "
-            onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.7")}
-            onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
-          >{sty ? sty.label : "ALL"} ▾</button>
+          <!-- Difficulty dropdown -->
+          <div style="position: relative; flex-shrink: 0;">
+            <button
+              onclick={(e) => {
+                e.stopPropagation();
+                openDiffDropdown = openDiffDropdown === raidName ? null : raidName;
+              }}
+              title="Select difficulty"
+              style="
+                background: {sty ? sty.bg : '#1a1a1a'};
+                border: 1px {sty ? 'solid' : 'dashed'} {sty ? sty.border : '#33333366'};
+                border-radius: 3px;
+                padding: 1px 6px;
+                color: {sty ? sty.color : '#525252'};
+                font-size: 9px;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                cursor: pointer;
+                font-family: inherit;
+                line-height: 1.6;
+              "
+            >{sty ? sty.label : "ALL"} ▾</button>
+
+            {#if openDiffDropdown === raidName}
+              <!-- Backdrop: catches outside clicks -->
+              <div
+                role="presentation"
+                style="position: fixed; inset: 0; z-index: 19;"
+                onclick={() => (openDiffDropdown = null)}
+              ></div>
+
+              <!-- Floating panel -->
+              <div
+                style="
+                  position: absolute; right: 0; top: 100%; margin-top: 3px; z-index: 20;
+                  background: #1a1a1a; border: 1px solid #333; border-radius: 4px;
+                  min-width: 100px; overflow: hidden;
+                  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+                "
+              >
+                <!-- All (null) option -->
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    mechStore.setDifficulty(raidName, null);
+                    openDiffDropdown = null;
+                  }}
+                  style="
+                    display: flex; align-items: center; justify-content: space-between;
+                    width: 100%; padding: 4px 10px; font-size: 10px; font-weight: 600;
+                    color: #525252; background: {diff === null ? '#252525' : 'transparent'};
+                    border: none; cursor: pointer; font-family: inherit; text-align: left;
+                    letter-spacing: 0.03em;
+                  "
+                >
+                  <span>All</span>
+                  {#if diff === null}<span>✓</span>{/if}
+                </button>
+
+                <!-- Per-difficulty options -->
+                {#each availableDifficultiesFor(raidName) as d (d)}
+                  {@const ds = DIFFICULTY_STYLE[d]}
+                  <button
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      mechStore.setDifficulty(raidName, d);
+                      openDiffDropdown = null;
+                    }}
+                    style="
+                      display: flex; align-items: center; justify-content: space-between;
+                      width: 100%; padding: 4px 10px; font-size: 10px; font-weight: 600;
+                      color: {ds.color}; background: {diff === d ? ds.bg : 'transparent'};
+                      border: none; cursor: pointer; font-family: inherit; text-align: left;
+                      letter-spacing: 0.03em;
+                    "
+                  >
+                    <span>{ds.label}</span>
+                    {#if diff === d}<span>✓</span>{/if}
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
 
           <button
             onclick={(e) => {
