@@ -27,10 +27,11 @@
   const displayBossName = $derived(gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
-  // True when LOA Logs switches to a different HP pool mid-fight (e.g. Echidna G2 stagger phase
-  // reports 1/1 while the gate expects 285 total bars). Show a phase banner instead of mechanics.
+  // True when LOA Logs reports a tiny HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 bars
+  // vs gate's 285). 5% threshold catches stagger bars (0.35%) without triggering on real
+  // later phases that may have a smaller but legitimate bar count.
   const isPhaseTransition = $derived(
-    gate != null && currentBar != null && totalBars > 0 && totalBars < gate.totalBars * 0.5
+    gate != null && currentBar != null && totalBars > 0 && totalBars < gate.totalBars * 0.05
   );
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
