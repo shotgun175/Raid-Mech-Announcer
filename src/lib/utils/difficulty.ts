@@ -8,7 +8,7 @@ export const DIFFICULTY_STYLE: Record<Difficulty, { color: string; bg: string; b
   Solo:      { color: "#3b82f6", bg: "#0d1220", border: "#3b82f633", label: "SOLO" },
   Normal:    { color: "#9ca3af", bg: "#1a1a1a",  border: "#6b728033", label: "NORMAL" },
   Hard:      { color: "#fb923c", bg: "#1a0f00",  border: "#fb923c33", label: "HARD" },
-  Nightmare: { color: "#a855f7", bg: "#120d1a",  border: "#a855f733", label: "NM" },
+  Nightmare: { color: "#a855f7", bg: "#120d1a",  border: "#a855f733", label: "Nightmare" },
 };
 
 /**

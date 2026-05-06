@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterByDifficulty, cycleDifficulty, activeDifficultyForGate } from "./difficulty";
+import { filterByDifficulty, cycleDifficulty, activeDifficultyForGate, DIFFICULTY_STYLE } from "./difficulty";
 import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
@@ -71,5 +71,11 @@ describe("activeDifficultyForGate", () => {
 
   it("returns null when the raid has no entry", () => {
     expect(activeDifficultyForGate({}, "Valtan")).toBeNull();
+  });
+});
+
+describe("DIFFICULTY_STYLE", () => {
+  it("uses Nightmare (not NM abbreviation) for the Nightmare label", () => {
+    expect(DIFFICULTY_STYLE.Nightmare.label).toBe("Nightmare");
   });
 });
