@@ -1,7 +1,8 @@
 <script lang="ts">
   import { mechStore } from "$lib/mech-store.svelte";
-  import type { Gate } from "$lib/mech-types";
+  import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
+  import { cycleDifficulty, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -58,6 +59,10 @@
     tauntable: false,
     totalBars: 300
   });
+
+  function availableDifficultiesFor(raidName: string): Difficulty[] {
+    return libraryByRaid[raidName]?.[0]?.availableDifficulties ?? ["Normal", "Hard"];
+  }
 
   const inp =
     "width: 100%; background: #0a0a0a; border: 1px solid #262626; border-radius: 4px; padding: 7px 10px; color: #fafafa; font-size: 13px; outline: none; font-family: inherit;";
@@ -121,20 +126,51 @@
   <!-- Raid groups -->
   <div style="flex: 1; overflow-y: auto;">
     {#each raidNames as raidName (raidName)}
+      {@const diff = (mechStore.difficultyMap[raidName] as Difficulty) ?? null}
+      {@const sty = diff ? DIFFICULTY_STYLE[diff] : null}
       <div>
-        <div style="padding: 8px 10px 2px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="padding: 6px 10px 2px; display: flex; align-items: center; gap: 6px;">
           <div
-            style="font-size: 12px; color: #d4d4d4; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;"
+            style="font-size: 12px; color: #d4d4d4; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
           >
             {raidName}
           </div>
+
+          <!-- Difficulty chip — cycles on click -->
+          <button
+            onclick={(e) => {
+              e.stopPropagation();
+              const avail = availableDifficultiesFor(raidName);
+              const next = cycleDifficulty(diff, avail);
+              mechStore.setDifficulty(raidName, next);
+            }}
+            title="Cycle difficulty filter"
+            style="
+              flex-shrink: 0;
+              background: {sty ? sty.bg : '#1a1a1a'};
+              border: 1px {sty ? 'solid' : 'dashed'} {sty ? sty.border : '#33333366'};
+              border-radius: 3px;
+              padding: 1px 6px;
+              color: {sty ? sty.color : '#525252'};
+              font-size: 9px;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              cursor: pointer;
+              font-family: inherit;
+              line-height: 1.6;
+              transition: opacity 0.15s;
+            "
+            onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.7")}
+            onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
+          >{sty ? sty.label : "ALL"} ▾</button>
+
           <button
             onclick={(e) => {
               e.stopPropagation();
               mechStore.removeRaid(raidName);
             }}
             title="Remove raid"
-            style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
+            style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s; flex-shrink: 0;"
             onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
             onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
           >
