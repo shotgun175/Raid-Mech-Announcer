@@ -247,6 +247,21 @@ Visit each Maxroll gate guide linked from the [Cheatsheet Collection](https://ma
 
 Mechanics that exist in all available modes get `difficulties: []` (or omit the field). Mechanics exclusive to one mode (e.g. `["Hard"]`) or a subset (e.g. `["Hard", "Nightmare"]`) are tagged explicitly.
 
+### Additive mechanic model
+
+Difficulties scale upward — higher modes add patterns on top of lower ones, not replace them. The data-entry convention follows this:
+
+- **Mechanic present in all available modes** → `difficulties: []` (omit or leave empty)
+- **Mechanic exclusive to one or more higher modes** → tag with those modes only
+
+**Example — Serca bomb pattern:**
+```ts
+{ name: "Bomb Pattern", difficulties: [] }           // Normal, Hard, Nightmare all have this
+{ name: "Extra Bombs (×2)", difficulties: ["Nightmare"] }  // Nightmare only — adds on top
+```
+
+When a Normal player runs Serca, they see "Bomb Pattern" announced. A Nightmare player sees both "Bomb Pattern" and "Extra Bombs (×2)." Nothing is replaced — only added.
+
 This is a data-entry pass independent of the code changes — both can proceed in parallel.
 
 ---
