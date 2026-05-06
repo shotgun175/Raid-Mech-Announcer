@@ -29,13 +29,14 @@ export interface Gate {
 }
 
 export type TtsVoice = "Andrew" | "Jenny";
-export type OverlayVariant = "combined" | "compact" | "hud" | "card" | "pill";
+export type OverlayVariant = "standard" | "compact" | "hud" | "card" | "pill";
 
 export interface MechSettings {
   lead: number;
   repeatLead: number;
   vol: number;
   pitch: number;
+  ttsRate: number;
   voice: TtsVoice;
   confirmKey: string;
   overlayVariant: OverlayVariant;

@@ -8,12 +8,12 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
 
-  type VariantId = "combined" | "compact" | "hud" | "card" | "pill";
+  type VariantId = "standard" | "compact" | "hud" | "card" | "pill";
 
   const gate = $derived(mechStore.selectedGate);
   const isLive = $derived(mechStore.isLive);
 
-  let variant = $state<VariantId>((mechStore.mechSettings.overlayVariant as VariantId) ?? "combined");
+  let variant = $state<VariantId>((mechStore.mechSettings.overlayVariant as VariantId) ?? "standard");
   // svelte-ignore state_referenced_locally
   let _simBar = $state(gate?.totalBars ?? 300);
   const simBar = $derived(mechStore.liveBar ?? _simBar);
@@ -78,7 +78,7 @@
   function fireAnnouncement(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
     const cfg = mechStore.mechSettings;
     if (ttsEnabled) {
-      speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.pitch ?? 1);
+      speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.pitch ?? 1, cfg.ttsRate ?? 1.0);
     }
     if (cfg.hook) {
       const colorMap: Record<string, number> = { normal: 0x38bdf8, major: 0xfb923c, wipe: 0xf87171 };
@@ -135,7 +135,7 @@
   }
 
   const variants: { id: VariantId; label: string }[] = [
-    { id: "combined", label: "★ Combined" },
+    { id: "standard", label: "★ Standard" },
     { id: "compact", label: "Compact List" },
     { id: "hud", label: "HUD Strip" },
     { id: "card", label: "Card Stack" },
@@ -294,7 +294,7 @@
           : overlayDefaultStyle} cursor: grab;"
         onmousedown={startDrag}
       >
-        {#if variant === "combined"}
+        {#if variant === "standard"}
           <OLCombined mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
         {:else if variant === "compact"}
           <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />

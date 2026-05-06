@@ -56,7 +56,7 @@
   function announce(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
     const cfg = mechStore.mechSettings;
     if (ttsEnabled) {
-      speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.pitch ?? 1);
+      speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.pitch ?? 1, cfg.ttsRate ?? 1.0);
     }
     if (cfg.hook) {
       const colorMap: Record<string, number> = { normal: 0x38bdf8, major: 0xfb923c, wipe: 0xf87171 };
@@ -236,7 +236,7 @@
     class="absolute top-4 left-1/2 -translate-x-1/2 select-none"
     style="z-index: 10; cursor: {clickThrough ? 'default' : 'grab'};"
   >
-    {#if variant === "combined"}
+    {#if variant === "standard"}
       <OLCombined
         mechanics={gate.mechanics}
         currentBar={displayBar}
