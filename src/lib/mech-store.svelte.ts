@@ -22,6 +22,11 @@ async function broadcastRaids(payload: Gate[]) {
     await emit("mech:raids-changed", payload);
   } catch {}
 }
+async function broadcastFightStart() {
+  try {
+    await emit("mech:fight-start", null);
+  } catch {}
+}
 
 // Score-based boss matching: exact = 1.0, partial = overlap ratio, no match = 0.
 // Picks the raid whose stored boss name most closely matches the live name,
@@ -249,13 +254,15 @@ export const mechStore = (() => {
 
     setBossStatus(data: BossStatusData | null) {
       if (!data || data.isDead) {
-        stopHeartbeat();
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
-        liveGateId = null;
         broadcastBossStatus(null);
-        broadcastOverlayControl(false);
+        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
+        // Keep liveGateId — phase transitions (stagger, reduced damage) send isDead=true
+        // but the fight continues. Let the 60s tier-2 timer clear liveGateId.
+        if (gateResetTimer) clearTimeout(gateResetTimer);
+        gateResetTimer = setTimeout(() => { liveGateId = null; }, GATE_RESET_MS);
         return;
       }
       liveBar = data.currentBars;
@@ -266,7 +273,10 @@ export const mechStore = (() => {
       // keep it even if the boss name changes mid-phase (e.g. Echidna → Covetous Master Echidna).
       if (!liveGateId) {
         const matched = bestGateMatch(raids, data.name);
-        if (matched) liveGateId = matched.id;
+        if (matched) {
+          liveGateId = matched.id;
+          broadcastFightStart();
+        }
       }
 
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });

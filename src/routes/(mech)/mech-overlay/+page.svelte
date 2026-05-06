@@ -129,11 +129,6 @@
     });
   });
 
-  $effect(() => {
-    gateId;
-    lastFiredKey = new Set();
-  });
-
   // Auto-resize to content when a gate loads. Fires once per gate — ResizeObserver
   // disconnects after the first measurement so it doesn't fight manual resizes mid-fight.
   $effect(() => {
@@ -205,7 +200,11 @@
       mechStore.applyRemoteRaids(event.payload);
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids);
+    const unFightStart = await listen("mech:fight-start", () => {
+      lastFiredKey = new Set();
+    });
+
+    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart);
   });
 
   onDestroy(() => {
