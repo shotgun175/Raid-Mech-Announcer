@@ -105,27 +105,6 @@
         );
       }
 
-      // Repeat cycle: fires once per cycle as bar enters the repeatLead window
-      if (m.repeatSecs && bar < m.hpBar) {
-        const H = m.hpBar;
-        const R = m.repeatSecs;
-        const n = Math.ceil((H - bar) / R);
-        const triggerBar = H - n * R;
-        const repeatKey = `${m.id}-repeat-${n}`;
-        if (
-          triggerBar >= 0 &&
-          bar > triggerBar &&
-          bar <= triggerBar + cfg.repeatLead &&
-          !lastFiredKey.has(repeatKey)
-        ) {
-          lastFiredKey.add(repeatKey);
-          const secsLeft = cfg.repeatLead;
-          announce(
-            m.name, m.severity, m.ttsEnabled,
-            `${m.ttsText || m.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
-          );
-        }
-      }
     });
   });
 

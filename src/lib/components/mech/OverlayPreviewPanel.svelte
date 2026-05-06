@@ -51,27 +51,6 @@
         );
       }
 
-      // Repeat cycle: fires once per cycle as _simBar enters the repeatLead window
-      if (m.repeatSecs && _simBar < m.hpBar) {
-        const H = m.hpBar;
-        const R = m.repeatSecs;
-        const n = Math.ceil((H - _simBar) / R);
-        const triggerBar = H - n * R;
-        const repeatKey = `${m.id}-repeat-${n}`;
-        if (
-          triggerBar >= 0 &&
-          _simBar > triggerBar &&
-          _simBar <= triggerBar + cfg.repeatLead &&
-          !firedSet.has(repeatKey)
-        ) {
-          firedSet.add(repeatKey);
-          const secsLeft = cfg.repeatLead;
-          fireAnnouncement(
-            m.name, m.severity, m.ttsEnabled,
-            `${m.ttsText || m.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
-          );
-        }
-      }
     });
   });
 
