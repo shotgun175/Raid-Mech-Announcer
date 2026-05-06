@@ -1,4 +1,4 @@
-import type { Gate, Mechanic, Severity, TriggerType } from "$lib/mech-types";
+import type { Difficulty, Gate, Mechanic, Severity, TriggerType } from "$lib/mech-types";
 import { bossHpMap } from "$lib/constants/encounters";
 
 interface LibraryMechanic {
@@ -9,6 +9,7 @@ interface LibraryMechanic {
   timerSecs?: number;
   repeatSecs?: number;
   notes?: string;
+  difficulties?: Difficulty[];
 }
 
 interface LibraryGate {
@@ -21,6 +22,7 @@ interface LibraryGate {
   weakness: string;
   tauntable: boolean;
   mechanics: LibraryMechanic[];
+  availableDifficulties?: Difficulty[]; // omitted = ["Normal", "Hard"]
 }
 
 const LIBRARY: LibraryGate[] = [
@@ -30,6 +32,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Valtan",
     gate: 1,
     releaseOrder: 1,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Dark Mountain Predator",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -70,6 +73,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Valtan",
     gate: 2,
     releaseOrder: 1,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Demon Beast Commander Valtan",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -141,6 +145,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Vykas",
     gate: 1,
     releaseOrder: 2,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Incubus Morphe",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -169,6 +174,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Vykas",
     gate: 2,
     releaseOrder: 2,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Covetous Devourer Vykas",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -242,6 +248,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Clown",
     gate: 1,
     releaseOrder: 3,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Saydon",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -296,6 +303,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Clown",
     gate: 2,
     releaseOrder: 3,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kakul",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -350,6 +358,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Clown",
     gate: 3,
     releaseOrder: 3,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kakul-Saydon",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -406,6 +415,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Brelshaza",
     gate: 1,
     releaseOrder: 4,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Gehenna Helkasirs",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -433,6 +443,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Brelshaza",
     gate: 2,
     releaseOrder: 4,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Ashtarot",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -473,6 +484,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Brelshaza",
     gate: 3,
     releaseOrder: 4,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Primordial Nightmare",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -521,6 +533,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Brelshaza",
     gate: 4,
     releaseOrder: 4,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Phantom Legion Commander Brelshaza",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -563,6 +576,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Kayangel",
     gate: 1,
     releaseOrder: 5,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Tienis",
     bossType: "HUMAN",
     weakness: "Weak to Dark",
@@ -583,6 +597,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Kayangel",
     gate: 2,
     releaseOrder: 5,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Prunya",
     bossType: "HUMAN",
     weakness: "Weak to Dark",
@@ -618,6 +633,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Kayangel",
     gate: 3,
     releaseOrder: 5,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Lauriel",
     bossType: "HUMAN",
     weakness: "Weak to Dark",
@@ -662,6 +678,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Akkan",
     gate: 1,
     releaseOrder: 6,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Griefbringer Maurug",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -725,6 +742,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Akkan",
     gate: 2,
     releaseOrder: 6,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Lord of Degradation Akkan",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -797,6 +815,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Akkan",
     gate: 3,
     releaseOrder: 6,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Plague Legion Commander Akkan",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -858,6 +877,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Ivory Tower",
     gate: 1,
     releaseOrder: 7,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kaltaya, the Blooming Chaos",
     bossType: "OTHER",
     weakness: "Weak to Fire",
@@ -884,6 +904,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Ivory Tower",
     gate: 2,
     releaseOrder: 7,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Rakathus, the Lurking Arrogance",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -910,6 +931,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Ivory Tower",
     gate: 3,
     releaseOrder: 7,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Firehorn, Trampler of Earth",
     bossType: "ANCIENT",
     weakness: "No Weakness",
@@ -967,6 +989,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Thaemine",
     gate: 1,
     releaseOrder: 8,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Killineza the Dark Worshipper",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1016,6 +1039,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Thaemine",
     gate: 2,
     releaseOrder: 8,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Valinak, Knight of Darkness",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1057,6 +1081,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Thaemine",
     gate: 3,
     releaseOrder: 8,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Thaemine the Lightqueller",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1126,6 +1151,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Thaemine",
     gate: 4,
     releaseOrder: 8,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Darkness Legion Commander Thaemine",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1162,6 +1188,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Echidna",
     gate: 1,
     releaseOrder: 9,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Red Doom Narkiel",
     bossType: "HUMAN",
     weakness: "Weak to Fire",
@@ -1220,6 +1247,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Echidna",
     gate: 2,
     releaseOrder: 9,
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Echidna",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -2061,6 +2089,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Serca",
     gate: 1,
     releaseOrder: 18,
+    availableDifficulties: ["Normal", "Hard", "Nightmare"],
     boss: "Witch of Agony, Serca",
     bossType: "HUMAN",
     weakness: "No Weakness",
@@ -2123,6 +2152,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Serca",
     gate: 2,
     releaseOrder: 18,
+    availableDifficulties: ["Normal", "Hard", "Nightmare"],
     boss: "Corvus Tul Rak",
     bossType: "ANCIENT",
     weakness: "Weak to Light",
@@ -2191,7 +2221,8 @@ function makeMechanics(raw: LibraryMechanic[], prefix: string): Mechanic[] {
     phase: null,
     ttsEnabled: true,
     ttsText: m.name,
-    notes: m.notes ?? ""
+    notes: m.notes ?? "",
+    difficulties: m.difficulties?.length ? m.difficulties : undefined
   }));
 }
 
@@ -2264,7 +2295,8 @@ function stableGate(entry: LibraryGate): Gate {
       phase: null,
       ttsEnabled: true,
       ttsText: m.name,
-      notes: m.notes ?? ""
+      notes: m.notes ?? "",
+      difficulties: m.difficulties?.length ? m.difficulties : undefined
     }))
   };
 }
