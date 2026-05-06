@@ -1,5 +1,5 @@
 import { emit } from "@tauri-apps/api/event";
-import { buildDefaultRaids } from "./data/raid-library";
+import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Gate, MechSettings } from "./mech-types";
 
 async function broadcastBossStatus(payload: BossStatusData | null) {
@@ -248,6 +248,26 @@ export const mechStore = (() => {
       const fresh = buildDefaultRaids();
       raids = fresh;
       selectedGateId = fresh[0]?.id ?? "";
+      saveRaids();
+    },
+
+    resetGate(gateId: string) {
+      const gate = raids.find((r) => r.id === gateId);
+      if (!gate) return;
+      const entry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
+      if (!entry) return; // custom gate — no library version, no-op
+      const fresh = buildLibraryGate(entry);
+      raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id } : r));
+      saveRaids();
+    },
+
+    resetRaid(raidName: string) {
+      raids = raids.map((r) => {
+        if (r.raid !== raidName) return r;
+        const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
+        if (!entry) return r; // custom gate — preserve as-is
+        return { ...buildLibraryGate(entry), id: r.id };
+      });
       saveRaids();
     },
 
