@@ -18,4 +18,6 @@ export interface OverlayProps {
   totalBars: number;
   gateName: string;
   bossName?: string;
+  activeMech?: Mechanic | null;
+  repeatCountdown?: number | null;
 }

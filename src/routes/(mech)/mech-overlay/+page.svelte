@@ -280,6 +280,8 @@
         {totalBars}
         {gateName}
         bossName={displayBossName}
+        {activeMech}
+        {repeatCountdown}
       />
     {:else if variant === "compact"}
       <OLCompact mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} />
