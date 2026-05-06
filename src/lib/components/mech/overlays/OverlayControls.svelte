@@ -22,8 +22,8 @@
     style="position: fixed; inset: 0; border: 1px dashed rgba(148,163,184,0.2); border-radius: 6px; pointer-events: none;"
   ></div>
 
-  <!-- Corner controls -->
-  <div style="position: fixed; top: 8px; right: 8px; display: flex; gap: 4px; z-index: 100;">
+  <!-- Corner controls — bottom-right to avoid overlapping the HP bar -->
+  <div style="position: fixed; bottom: 8px; right: 8px; display: flex; gap: 4px; z-index: 100;">
     <!-- Settings -->
     <button
       onclick={openSettings}

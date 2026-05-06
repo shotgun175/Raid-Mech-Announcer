@@ -63,7 +63,8 @@
       <span style="font-size: 11px; color: #333333; font-family: ui-monospace, monospace;">no events yet</span>
     {:else}
       {#each peerState.debugLog as entry, i (i)}
-        <div style="font-size: 11px; color: {i === 0 ? '#a3a3a3' : '#404040'}; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6;">{entry}</div>
+        {@const isLatest = i === peerState.debugLog.length - 1}
+        <div style="font-size: 11px; color: {isLatest ? '#a3a3a3' : '#404040'}; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6;">{entry}</div>
       {/each}
     {/if}
   </div>

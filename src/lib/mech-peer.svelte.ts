@@ -88,7 +88,7 @@ export const peerState = (() => {
         const entry = d
           ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}`
           : "— null";
-        debugLog = [entry, ...debugLog].slice(0, 15);
+        debugLog = [...debugLog, entry].slice(-15);
         mechStore.setBossStatus(msg.data);
       }
     });
