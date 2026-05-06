@@ -5,13 +5,17 @@
   import MechModal from "$lib/components/mech/MechModal.svelte";
   import MechRow from "$lib/components/mech/MechRow.svelte";
   import { mechStore } from "$lib/mech-store.svelte";
-  import type { Mechanic } from "$lib/mech-types";
+  import type { Difficulty, Mechanic } from "$lib/mech-types";
+  import { libraryByRaid } from "$lib/data/raid-library";
   import Header from "../Header.svelte";
 
   let showModal = $state(false);
   let editMech = $state<Mechanic | null>(null);
 
   const gate = $derived(mechStore.selectedGate);
+  const availableDifficulties = $derived<Difficulty[]>(
+    libraryByRaid[gate?.raid ?? ""]?.[0]?.availableDifficulties ?? ["Normal", "Hard"]
+  );
 
   // svelte-ignore state_referenced_locally
   let _manualBar = $state(gate?.totalBars ?? 300);
@@ -174,5 +178,5 @@
 </div>
 
 {#if showModal}
-  <MechModal mech={editMech} totalBars={gate?.totalBars ?? 300} onSave={saveMechanic} onClose={closeModal} />
+  <MechModal mech={editMech} totalBars={gate?.totalBars ?? 300} {availableDifficulties} onSave={saveMechanic} onClose={closeModal} />
 {/if}

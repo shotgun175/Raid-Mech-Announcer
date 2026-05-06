@@ -1,14 +1,16 @@
 <script lang="ts">
   import { formatTimer } from "$lib/mech-constants";
-  import type { Mechanic, Phase, Severity, TriggerType } from "$lib/mech-types";
+  import type { Difficulty, Mechanic, Phase, Severity, TriggerType } from "$lib/mech-types";
+  import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
 
   interface Props {
     mech: Mechanic | null;
     totalBars: number;
+    availableDifficulties: Difficulty[];
     onSave: (m: Mechanic) => void;
     onClose: () => void;
   }
-  let { mech, totalBars, onSave, onClose }: Props = $props();
+  let { mech, totalBars, availableDifficulties, onSave, onClose }: Props = $props();
 
   const isEdit = $derived(mech != null && !!mech.id);
 
@@ -23,6 +25,7 @@
     ttsEnabled: boolean;
     ttsText: string;
     notes: string;
+    difficulties: Difficulty[];
   };
 
   // svelte-ignore state_referenced_locally
@@ -38,7 +41,8 @@
           timerSecs: mech.timerSecs != null ? String(mech.timerSecs) : "",
           ttsEnabled: mech.ttsEnabled,
           ttsText: mech.ttsText,
-          notes: mech.notes
+          notes: mech.notes,
+          difficulties: mech.difficulties ?? []
         }
       : {
           name: "",
@@ -50,7 +54,8 @@
           timerSecs: "",
           ttsEnabled: true,
           ttsText: "",
-          notes: ""
+          notes: "",
+          difficulties: []
         }
   );
 
@@ -68,7 +73,8 @@
       timerSecs: form.timerSecs !== "" ? parseInt(form.timerSecs) : null,
       ttsEnabled: form.ttsEnabled,
       ttsText: form.ttsText,
-      notes: form.notes
+      notes: form.notes,
+      difficulties: form.difficulties.length ? form.difficulties : undefined
     } as Mechanic);
   }
 
@@ -200,6 +206,38 @@
           <input style={inp} bind:value={form.ttsText} placeholder={form.name || "Announcement..."} />
         {/if}
       </div>
+
+      <!-- Difficulties -->
+      {#if availableDifficulties.length > 1}
+        <div style="margin-bottom: 14px;">
+          <div class="field-label">Difficulties</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
+            {#each DIFFICULTY_ORDER.filter(d => availableDifficulties.includes(d)) as d}
+              {@const sty = DIFFICULTY_STYLE[d]}
+              <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px;">
+                <input
+                  type="checkbox"
+                  checked={form.difficulties.includes(d)}
+                  onchange={(e) => {
+                    if ((e.target as HTMLInputElement).checked) {
+                      form.difficulties = [...form.difficulties, d];
+                    } else {
+                      form.difficulties = form.difficulties.filter((x) => x !== d);
+                    }
+                  }}
+                  style="accent-color: {sty.color}; width: 13px; height: 13px;"
+                />
+                <span
+                  style="background: {sty.bg}; border: 1px solid {sty.border}; border-radius: 3px; padding: 1px 6px; color: {sty.color}; font-size: 10px; font-weight: 700; letter-spacing: 0.04em;"
+                >{sty.label}</span>
+              </label>
+            {/each}
+          </div>
+          <div style="font-size: 11px; color: #525252; margin-top: 4px;">
+            Leave all unchecked = mechanic applies to every difficulty.
+          </div>
+        </div>
+      {/if}
 
       <!-- Notes -->
       <div>
