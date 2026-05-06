@@ -75,7 +75,7 @@ describe("activeDifficultyForGate", () => {
 });
 
 describe("DIFFICULTY_STYLE", () => {
-  it("uses Nightmare (not NM abbreviation) for the Nightmare label", () => {
-    expect(DIFFICULTY_STYLE.Nightmare.label).toBe("Nightmare");
+  it("uses all-caps NIGHTMARE label consistent with other difficulties", () => {
+    expect(DIFFICULTY_STYLE.Nightmare.label).toBe("NIGHTMARE");
   });
 });
