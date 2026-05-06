@@ -7,6 +7,8 @@
   import { BOSS_HP_COLORS, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
+  import { onDestroy } from "svelte";
+  import type { Mechanic } from "$lib/mech-types";
 
   type VariantId = "standard" | "compact" | "hud" | "card" | "pill";
 
@@ -26,10 +28,47 @@
   let overlayEl = $state<HTMLElement | null>(null);
   let dragPos = $state<{ x: number; y: number } | null>(null);
 
+  let activeMechSim = $state<Mechanic | null>(null);
+  let repeatCountdownSim = $state<number | null>(null);
+  let repeatTimerSim: ReturnType<typeof setInterval> | null = null;
+  let repeatAnnouncedSim = false;
+
+  function startSimTimer(mech: Mechanic) {
+    if (repeatTimerSim) { clearInterval(repeatTimerSim); repeatTimerSim = null; }
+    activeMechSim = mech;
+    repeatCountdownSim = mech.repeatSecs!;
+    repeatAnnouncedSim = false;
+    repeatTimerSim = setInterval(() => {
+      if (repeatCountdownSim === null || activeMechSim === null) return;
+      repeatCountdownSim--;
+      if (repeatCountdownSim <= 0) {
+        repeatCountdownSim = activeMechSim.repeatSecs!;
+        repeatAnnouncedSim = false;
+      }
+      const cfg = mechStore.mechSettings;
+      if (!repeatAnnouncedSim && repeatCountdownSim > 0 && repeatCountdownSim <= cfg.repeatLead) {
+        repeatAnnouncedSim = true;
+        const secsLeft = repeatCountdownSim;
+        fireAnnouncement(
+          activeMechSim.name, activeMechSim.severity, activeMechSim.ttsEnabled,
+          `${activeMechSim.ttsText || activeMechSim.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+        );
+      }
+    }, 1000);
+  }
+
+  function clearSimTimer() {
+    if (repeatTimerSim) { clearInterval(repeatTimerSim); repeatTimerSim = null; }
+    activeMechSim = null;
+    repeatCountdownSim = null;
+    repeatAnnouncedSim = false;
+  }
+
   $effect(() => {
     if (gate) {
       _simBar = gate.totalBars;
       firedSet = new Set();
+      clearSimTimer();
     }
   });
 
@@ -50,8 +89,18 @@
           `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
         );
       }
-
     });
+
+    // Detect active hp+timer mechanic in sim
+    const newActive =
+      [...gate.mechanics]
+        .filter((m) => m.repeatSecs != null && m.hpBar != null && _simBar < (m.hpBar ?? 0))
+        .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
+        .at(-1) ?? null;
+    if (newActive?.id !== activeMechSim?.id) {
+      if (newActive) startSimTimer(newActive);
+      else clearSimTimer();
+    }
   });
 
   function fireAnnouncement(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
@@ -150,6 +199,8 @@
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
   }
+
+  onDestroy(() => { clearSimTimer(); });
 </script>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
@@ -274,7 +325,15 @@
         onmousedown={startDrag}
       >
         {#if variant === "standard"}
-          <OLCombined mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
+          <OLCombined
+            mechanics={gate.mechanics}
+            currentBar={simBar}
+            totalBars={gate.totalBars}
+            {gateName}
+            {bossName}
+            activeMech={activeMechSim}
+            repeatCountdown={repeatCountdownSim}
+          />
         {:else if variant === "compact"}
           <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
         {:else if variant === "hud"}
