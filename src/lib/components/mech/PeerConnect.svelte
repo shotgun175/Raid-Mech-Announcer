@@ -6,6 +6,12 @@
   let input = $state("");
   let pasteAttempted = $state(false);
   let showDebug = $state(false);
+  let logEl = $state<HTMLElement | null>(null);
+
+  $effect(() => {
+    peerState.debugLog;
+    if (logEl) logEl.scrollTop = logEl.scrollHeight;
+  });
 
   const statusColor = $derived(
     peerState.status === "connected"
@@ -51,7 +57,7 @@
 </script>
 
 {#if showDebug}
-  <div style="border-top: 1px solid #262626; background: #0a0a0a; padding: 6px 10px; max-height: 220px; overflow-y: auto; flex-shrink: 0;">
+  <div bind:this={logEl} style="border-top: 1px solid #262626; background: #0a0a0a; padding: 6px 10px; max-height: 220px; overflow-y: auto; flex-shrink: 0;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
       <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #525252; text-transform: uppercase;">PeerJS Event Log</span>
       <button
