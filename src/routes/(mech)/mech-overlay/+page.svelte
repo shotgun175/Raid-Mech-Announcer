@@ -129,7 +129,7 @@
   }
 
   $effect(() => {
-    if (currentBar == null || !gate) return;
+    if (currentBar == null || !gate || isPhaseTransition) return;
     const bar = currentBar;
     const cfg = mechStore.mechSettings;
     gate.mechanics.forEach((m) => {
