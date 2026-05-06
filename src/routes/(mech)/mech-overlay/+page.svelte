@@ -254,7 +254,7 @@
 
   When not live, show a preview pill so the user can position and check scale.
 -->
-{#if currentBar == null}
+{#if currentBar == null || !gate}
   <!-- Preview / positioning mode -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div onmousedown={startDrag} class="absolute top-4 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
