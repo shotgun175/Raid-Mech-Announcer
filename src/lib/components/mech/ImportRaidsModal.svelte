@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     buildLibraryGate,
-    importedId,
     isImported,
     libraryByRaid,
     sortedRaidNames,
@@ -35,11 +34,6 @@
 
   function importGate(entry: LibraryGate) {
     mechStore.addGate(buildLibraryGate(entry));
-  }
-
-  function removeGate(entry: LibraryGate) {
-    const id = importedId(mechStore.raids, entry.encounterKey);
-    if (id) mechStore.removeGate(id);
   }
 
   function importRaid(raidName: string) {
@@ -79,7 +73,7 @@
         <div>
           <div style="font-size: 14px; font-weight: 700; color: #fafafa;">Import Raids</div>
           <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
-            Select gates to add pre-built mechanic templates · newest first
+            Add pre-built mechanic templates · already-imported gates are hidden
           </div>
         </div>
         <button
@@ -104,6 +98,7 @@
         {@const gates = libraryByRaid[raidName]}
         {@const importedCount = gates.filter((g) => isImported(mechStore.raids, g.encounterKey)).length}
         {@const allImported = importedCount === gates.length}
+        {#if !allImported}
         <div style="margin-bottom: 2px;">
           <!-- Raid header -->
           <div style="display: flex; align-items: center; padding: 4px 18px 4px 18px;">
@@ -128,64 +123,37 @@
             </button>
             <!-- Raid-level actions -->
             <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 8px;">
-              {#if !allImported}
-                <button
-                  onclick={(e) => {
-                    e.stopPropagation();
-                    importRaid(raidName);
-                  }}
-                  style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 3px 10px;"
-                  >+ All</button
-                >
-              {/if}
-              {#if importedCount > 0}
-                <button
-                  onclick={(e) => {
-                    e.stopPropagation();
-                    mechStore.removeRaid(raidName);
-                  }}
-                  style="{btn} background: rgba(248,113,113,0.08); color: #f87171; border: 1px solid rgba(248,113,113,0.2); padding: 3px 10px;"
-                  >Remove All</button
-                >
-              {/if}
+              <button
+                onclick={(e) => {
+                  e.stopPropagation();
+                  importRaid(raidName);
+                }}
+                style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 3px 10px;"
+                >+ All</button
+              >
             </div>
           </div>
 
           <!-- Gates -->
           {#if expanded[raidName]}
             {#each gates as entry (entry.encounterKey)}
-              {@const imported = isImported(mechStore.raids, entry.encounterKey)}
+              {#if !isImported(mechStore.raids, entry.encounterKey)}
               <div
-                style="margin: 2px 10px 2px 32px; background: {imported
-                  ? 'rgba(74,222,128,0.04)'
-                  : '#0f0f0f'}; border: 1px solid {imported
-                  ? 'rgba(74,222,128,0.2)'
-                  : '#1f1f1f'}; border-radius: 6px; padding: 10px 14px;"
+                style="margin: 2px 10px 2px 32px; background: #0f0f0f; border: 1px solid #1f1f1f; border-radius: 6px; padding: 10px 14px;"
               >
                 <div
                   style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;"
                 >
                   <div>
-                    <span style="font-size: 12.5px; font-weight: 600; color: {imported ? '#86efac' : '#e5e5e5'};"
-                      >{gateLabel(entry.gate)}</span
-                    >
+                    <span style="font-size: 12.5px; font-weight: 600; color: #e5e5e5;">{gateLabel(entry.gate)}</span>
                     <span style="font-size: 12px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
                   </div>
-                  {#if imported}
-                    <button
-                      onclick={() => removeGate(entry)}
-                      style="{btn} background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.25);"
-                      >Remove</button
-                    >
-                  {:else}
-                    <button
-                      onclick={() => importGate(entry)}
-                      style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);"
-                      >+ Import</button
-                    >
-                  {/if}
+                  <button
+                    onclick={() => importGate(entry)}
+                    style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);"
+                    >+ Import</button
+                  >
                 </div>
-
                 <!-- Mechanic chips -->
                 <div style="display: flex; flex-wrap: wrap; gap: 4px;">
                   {#each entry.mechanics as m}
@@ -205,9 +173,11 @@
                   {/each}
                 </div>
               </div>
+              {/if}
             {/each}
           {/if}
         </div>
+        {/if}
       {:else}
         <div style="padding: 32px; text-align: center; color: #8a8a8a; font-size: 12px;">No raids match "{search}"</div>
       {/each}
