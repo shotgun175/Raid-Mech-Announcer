@@ -9,6 +9,7 @@ export type { BossStatusData } from "./mech-types";
 export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
   let errorMsg = $state<string | null>(null);
+  let debugLog = $state<string[]>([]);
   let peer: Peer | null = null;
   let conn: DataConnection | null = null;
   let connectId = 0; // incremented on each connect() call to detect stale callbacks
@@ -84,7 +85,10 @@ export const peerState = (() => {
       const msg = raw as { type: string; data: BossStatusData | null };
       if (msg.type === "bossStatus") {
         const d = msg.data;
-        console.log("[RMA]", d ? `${d.name} | bars ${d.currentBars}/${d.totalBars} | dead:${d.isDead}` : "null");
+        const entry = d
+          ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}`
+          : "— null";
+        debugLog = [entry, ...debugLog].slice(0, 15);
         mechStore.setBossStatus(msg.data);
       }
     });
@@ -127,6 +131,12 @@ export const peerState = (() => {
     },
     get isConnected() {
       return status === "connected";
+    },
+    get debugLog() {
+      return debugLog;
+    },
+    clearDebugLog() {
+      debugLog = [];
     },
     connect,
     disconnect
