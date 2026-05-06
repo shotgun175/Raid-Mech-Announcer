@@ -254,8 +254,8 @@
 
   When not live, show a preview pill so the user can position and check scale.
 -->
-{#if currentBar == null || !gate}
-  <!-- Preview / positioning mode -->
+{#if currentBar == null}
+  <!-- No data: waiting for LOA Logs connection -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div onmousedown={startDrag} class="absolute top-4 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
     <div
@@ -265,7 +265,20 @@
       <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">Mech Announcer — waiting for LOA Logs</span>
     </div>
   </div>
-{:else if gate}
+{:else if !gate}
+  <!-- HP data flowing but boss name didn't match any imported gate -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div onmousedown={startDrag} class="absolute top-4 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
+    <div
+      style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(251,146,60,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
+    >
+      <div style="width: 8px; height: 8px; border-radius: 50%; background: #fb923c; opacity: 0.6;"></div>
+      <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">
+        {bossName ? `"${bossName}" — import this raid to see mechanics` : 'Mech Announcer — no gate matched'}
+      </span>
+    </div>
+  </div>
+{:else}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     bind:this={contentEl}
