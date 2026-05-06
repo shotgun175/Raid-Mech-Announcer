@@ -335,13 +335,13 @@
             repeatCountdown={repeatCountdownSim}
           />
         {:else if variant === "compact"}
-          <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
+          <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
         {:else if variant === "hud"}
-          <OLHudStrip mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} />
+          <OLHudStrip mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
         {:else if variant === "card"}
-          <OLCardStack mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} />
+          <OLCardStack mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
         {:else}
-          <OLPill mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} />
+          <OLPill mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
         {/if}
 
         {#if lastAnnounced}
