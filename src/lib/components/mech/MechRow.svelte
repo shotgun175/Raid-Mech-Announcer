@@ -79,7 +79,8 @@
             {@const sty = DIFFICULTY_STYLE[d]}
             <span
               style="background: {sty.bg}; border: 1px solid {sty.border}; border-radius: 2px; padding: 1px 4px; color: {sty.color}; font-size: 9px; font-weight: 700; letter-spacing: 0.04em;"
-            >{sty.label}</span>
+              >{sty.label}</span
+            >
           {/each}
         </span>
       {/if}

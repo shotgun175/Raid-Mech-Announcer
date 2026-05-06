@@ -184,5 +184,11 @@
 </div>
 
 {#if showModal}
-  <MechModal mech={editMech} totalBars={gate?.totalBars ?? 300} {availableDifficulties} onSave={saveMechanic} onClose={closeModal} />
+  <MechModal
+    mech={editMech}
+    totalBars={gate?.totalBars ?? 300}
+    {availableDifficulties}
+    onSave={saveMechanic}
+    onClose={closeModal}
+  />
 {/if}

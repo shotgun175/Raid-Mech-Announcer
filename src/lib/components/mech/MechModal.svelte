@@ -212,7 +212,7 @@
         <div style="margin-bottom: 14px;">
           <div class="field-label">Difficulties</div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
-            {#each DIFFICULTY_ORDER.filter(d => availableDifficulties.includes(d)) as d}
+            {#each DIFFICULTY_ORDER.filter((d) => availableDifficulties.includes(d)) as d}
               {@const sty = DIFFICULTY_STYLE[d]}
               <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px;">
                 <input
@@ -229,7 +229,8 @@
                 />
                 <span
                   style="background: {sty.bg}; border: 1px solid {sty.border}; border-radius: 3px; padding: 1px 6px; color: {sty.color}; font-size: 10px; font-weight: 700; letter-spacing: 0.04em;"
-                >{sty.label}</span>
+                  >{sty.label}</span
+                >
               </label>
             {/each}
           </div>

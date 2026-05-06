@@ -37,9 +37,7 @@
   const activeDifficulty = $derived<Difficulty | null>(
     gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
   );
-  const visibleMechanics = $derived(
-    gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []
-  );
+  const visibleMechanics = $derived(gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
   let contentEl = $state<HTMLElement | null>(null);
@@ -53,7 +51,10 @@
   let repeatAnnouncedThisCycle = false;
 
   function startRepeatTimer(mech: Mechanic) {
-    if (repeatTimerId) { clearInterval(repeatTimerId); repeatTimerId = null; }
+    if (repeatTimerId) {
+      clearInterval(repeatTimerId);
+      repeatTimerId = null;
+    }
     activeMech = mech;
     repeatCountdown = mech.repeatSecs!;
     repeatAnnouncedThisCycle = false;
@@ -69,15 +70,20 @@
         repeatAnnouncedThisCycle = true;
         const secsLeft = repeatCountdown;
         announce(
-          activeMech.name, activeMech.severity, activeMech.ttsEnabled,
-          `${activeMech.ttsText || activeMech.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+          activeMech.name,
+          activeMech.severity,
+          activeMech.ttsEnabled,
+          `${activeMech.ttsText || activeMech.name} in ${secsLeft} second${secsLeft === 1 ? "" : "s"}`
         );
       }
     }, 1000);
   }
 
   function clearRepeatTimer() {
-    if (repeatTimerId) { clearInterval(repeatTimerId); repeatTimerId = null; }
+    if (repeatTimerId) {
+      clearInterval(repeatTimerId);
+      repeatTimerId = null;
+    }
     activeMech = null;
     repeatCountdown = null;
     repeatAnnouncedThisCycle = false;
@@ -149,8 +155,10 @@
         lastFiredKey.add(initKey);
         const barsLeft = bar - m.hpBar;
         announce(
-          m.name, m.severity, m.ttsEnabled,
-          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
+          m.name,
+          m.severity,
+          m.ttsEnabled,
+          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
         );
       }
     });
@@ -291,7 +299,7 @@
     >
       <div style="width: 8px; height: 8px; border-radius: 50%; background: #fb923c; opacity: 0.6;"></div>
       <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">
-        {bossName ? `"${bossName}" — import this raid to see mechanics` : 'Mech Announcer — no gate matched'}
+        {bossName ? `"${bossName}" — import this raid to see mechanics` : "Mech Announcer — no gate matched"}
       </span>
     </div>
   </div>
@@ -299,9 +307,13 @@
   <!-- Different HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 vs gate's 285 bars) -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
-    <div style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;">
-      <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa; animation: mech-pulse 2s ease-in-out infinite;"></div>
-      <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">{bossName || 'Phase transition…'}</span>
+    <div
+      style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
+    >
+      <div
+        style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa; animation: mech-pulse 2s ease-in-out infinite;"
+      ></div>
+      <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;">{bossName || "Phase transition…"}</span>
     </div>
   </div>
 {:else}
@@ -323,13 +335,43 @@
         {repeatCountdown}
       />
     {:else if variant === "compact"}
-      <OLCompact mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
+      <OLCompact
+        mechanics={visibleMechanics}
+        currentBar={displayBar}
+        {totalBars}
+        {gateName}
+        bossName={displayBossName}
+        {activeMech}
+        {repeatCountdown}
+      />
     {:else if variant === "hud"}
-      <OLHudStrip mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
+      <OLHudStrip
+        mechanics={visibleMechanics}
+        currentBar={displayBar}
+        {totalBars}
+        {gateName}
+        bossName={displayBossName}
+        {activeMech}
+        {repeatCountdown}
+      />
     {:else if variant === "card"}
-      <OLCardStack mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
+      <OLCardStack
+        mechanics={visibleMechanics}
+        currentBar={displayBar}
+        {totalBars}
+        {gateName}
+        {activeMech}
+        {repeatCountdown}
+      />
     {:else}
-      <OLPill mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
+      <OLPill
+        mechanics={visibleMechanics}
+        currentBar={displayBar}
+        {totalBars}
+        {gateName}
+        {activeMech}
+        {repeatCountdown}
+      />
     {/if}
 
     {#if lastAnnounced}

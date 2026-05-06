@@ -57,20 +57,32 @@
 </script>
 
 {#if showDebug}
-  <div bind:this={logEl} style="border-top: 1px solid #262626; background: #0a0a0a; padding: 6px 10px; max-height: 220px; overflow-y: auto; flex-shrink: 0;">
+  <div
+    bind:this={logEl}
+    style="border-top: 1px solid #262626; background: #0a0a0a; padding: 6px 10px; max-height: 220px; overflow-y: auto; flex-shrink: 0;"
+  >
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-      <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #525252; text-transform: uppercase;">PeerJS Event Log</span>
+      <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #525252; text-transform: uppercase;"
+        >PeerJS Event Log</span
+      >
       <button
         onclick={() => peerState.clearDebugLog()}
         style="font-size: 10px; color: #525252; background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;"
-      >clear</button>
+        >clear</button
+      >
     </div>
     {#if peerState.debugLog.length === 0}
       <span style="font-size: 11px; color: #333333; font-family: ui-monospace, monospace;">no events yet</span>
     {:else}
       {#each peerState.debugLog as entry, i (i)}
         {@const isLatest = i === peerState.debugLog.length - 1}
-        <div style="font-size: 11px; color: {isLatest ? '#a3a3a3' : '#404040'}; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6;">{entry}</div>
+        <div
+          style="font-size: 11px; color: {isLatest
+            ? '#a3a3a3'
+            : '#404040'}; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6;"
+        >
+          {entry}
+        </div>
       {/each}
     {/if}
   </div>
@@ -83,8 +95,11 @@
   <button
     onclick={() => (showDebug = !showDebug)}
     title="Toggle event log"
-    style="font-size: 10px; color: {showDebug ? '#38bdf8' : '#404040'}; background: none; border: none; cursor: pointer; padding: 0; flex-shrink: 0; font-family: ui-monospace, monospace; line-height: 1;"
-  >⬡</button>
+    style="font-size: 10px; color: {showDebug
+      ? '#38bdf8'
+      : '#404040'}; background: none; border: none; cursor: pointer; padding: 0; flex-shrink: 0; font-family: ui-monospace, monospace; line-height: 1;"
+    >⬡</button
+  >
 
   <!-- status dot -->
   <div

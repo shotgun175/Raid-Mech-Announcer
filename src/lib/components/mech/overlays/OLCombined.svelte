@@ -26,9 +26,7 @@
     activeMech != null && repeatCountdown != null && mechStore.mechSettings.showRepeatTicker
   );
   const repeatUrgent = $derived(
-    repeatCountdown != null &&
-    repeatCountdown > 0 &&
-    repeatCountdown <= (mechStore.mechSettings.repeatLead ?? 5)
+    repeatCountdown != null && repeatCountdown > 0 && repeatCountdown <= (mechStore.mechSettings.repeatLead ?? 5)
   );
 </script>
 
@@ -69,7 +67,9 @@
   <!-- Active repeating mechanic row (Option A) — sits between HP bar and primary card -->
   {#if showActiveMech && activeMech}
     <div
-      style="background: rgba(10,10,10,0.9); border: 1px solid rgba(167,139,250,{repeatUrgent ? '0.5' : '0.22'}); border-left: 3px solid #a78bfa; border-radius: 0 4px 4px 0; padding: 7px 14px; display: flex; align-items: center; gap: 8px;"
+      style="background: rgba(10,10,10,0.9); border: 1px solid rgba(167,139,250,{repeatUrgent
+        ? '0.5'
+        : '0.22'}); border-left: 3px solid #a78bfa; border-radius: 0 4px 4px 0; padding: 7px 14px; display: flex; align-items: center; gap: 8px;"
     >
       <span
         style="font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #a78bfa; text-transform: uppercase; background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.28); border-radius: 3px; padding: 1px 5px; flex-shrink: 0;"
@@ -88,8 +88,7 @@
       <span
         style="font-size: 15px; font-family: ui-monospace, monospace; font-weight: 700; color: {repeatUrgent
           ? '#f87171'
-          : '#a78bfa'}; flex-shrink: 0;"
-        >{formatTimer(repeatCountdown)}</span
+          : '#a78bfa'}; flex-shrink: 0;">{formatTimer(repeatCountdown)}</span
       >
     </div>
   {/if}
@@ -116,8 +115,8 @@
             {/if}
           </div>
           <div style="display: flex; align-items: baseline; gap: 7px; line-height: 1.15;">
-            <span
-              style="font-size: 16.5px; font-weight: 700; color: #fafafa; letter-spacing: -0.01em;">{next.name}</span
+            <span style="font-size: 16.5px; font-weight: 700; color: #fafafa; letter-spacing: -0.01em;"
+              >{next.name}</span
             >
             {#if next.hpBar != null}
               <span style="font-size: 14px; color: #6b6b6b; font-family: ui-monospace, monospace; font-weight: 500;"
@@ -141,7 +140,10 @@
       </div>
       <div style="height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden;">
         <div
-          style="height: 100%; width: {Math.min(100, progress * 100)}%; background: {sev.color}; transition: width 0.3s;"
+          style="height: 100%; width: {Math.min(
+            100,
+            progress * 100
+          )}%; background: {sev.color}; transition: width 0.3s;"
         ></div>
       </div>
     </div>
@@ -179,4 +181,3 @@
     </div>
   {/each}
 </div>
-

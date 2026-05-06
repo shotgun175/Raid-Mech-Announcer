@@ -99,84 +99,87 @@
         {@const importedCount = gates.filter((g) => isImported(mechStore.raids, g.encounterKey)).length}
         {@const allImported = importedCount === gates.length}
         {#if !allImported}
-        <div style="margin-bottom: 2px;">
-          <!-- Raid header -->
-          <div style="display: flex; align-items: center; padding: 4px 18px 4px 18px;">
-            <button
-              onclick={() => {
-                expanded[raidName] = !expanded[raidName];
-              }}
-              style="flex: 1; text-align: left; background: transparent; border: none; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; min-width: 0;"
-            >
-              <span
-                style="font-size: 12px; color: #8a8a8a; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
-                  raidName
-                ]
-                  ? 90
-                  : 0}deg); flex-shrink: 0;">▶</span
-              >
-              <span
-                style="font-size: 12px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
-                >{raidName}</span
-              >
-              <span style="font-size: 12px; color: #404040; flex-shrink: 0;">{importedCount}/{gates.length} added</span>
-            </button>
-            <!-- Raid-level actions -->
-            <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 8px;">
+          <div style="margin-bottom: 2px;">
+            <!-- Raid header -->
+            <div style="display: flex; align-items: center; padding: 4px 18px 4px 18px;">
               <button
-                onclick={(e) => {
-                  e.stopPropagation();
-                  importRaid(raidName);
+                onclick={() => {
+                  expanded[raidName] = !expanded[raidName];
                 }}
-                style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 3px 10px;"
-                >+ All</button
+                style="flex: 1; text-align: left; background: transparent; border: none; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; min-width: 0;"
               >
-            </div>
-          </div>
-
-          <!-- Gates -->
-          {#if expanded[raidName]}
-            {#each gates as entry (entry.encounterKey)}
-              {#if !isImported(mechStore.raids, entry.encounterKey)}
-              <div
-                style="margin: 2px 10px 2px 32px; background: #0f0f0f; border: 1px solid #1f1f1f; border-radius: 6px; padding: 10px 14px;"
-              >
-                <div
-                  style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;"
+                <span
+                  style="font-size: 12px; color: #8a8a8a; transition: transform 0.15s; display: inline-block; transform: rotate({expanded[
+                    raidName
+                  ]
+                    ? 90
+                    : 0}deg); flex-shrink: 0;">▶</span
                 >
-                  <div>
-                    <span style="font-size: 12.5px; font-weight: 600; color: #e5e5e5;">{gateLabel(entry.gate)}</span>
-                    <span style="font-size: 12px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
-                  </div>
-                  <button
-                    onclick={() => importGate(entry)}
-                    style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);"
-                    >+ Import</button
-                  >
-                </div>
-                <!-- Mechanic chips -->
-                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                  {#each entry.mechanics as m}
-                    <span
-                      style="font-size: 12px; color: {severityColor[m.severity]}; background: {m.severity === 'wipe'
-                        ? 'rgba(248,113,113,0.08)'
-                        : m.severity === 'major'
-                          ? 'rgba(251,146,60,0.08)'
-                          : 'rgba(163,163,163,0.06)'}; border: 1px solid {m.severity === 'wipe'
-                        ? 'rgba(248,113,113,0.2)'
-                        : m.severity === 'major'
-                          ? 'rgba(251,146,60,0.2)'
-                          : 'rgba(163,163,163,0.12)'}; border-radius: 3px; padding: 1px 6px; white-space: nowrap;"
-                    >
-                      {m.name}{m.hpBar != null ? ` · ${m.hpBar}×` : m.repeatSecs ? ` · ↻${m.repeatSecs}s` : ""}
-                    </span>
-                  {/each}
-                </div>
+                <span
+                  style="font-size: 12px; font-weight: 700; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em;"
+                  >{raidName}</span
+                >
+                <span style="font-size: 12px; color: #404040; flex-shrink: 0;"
+                  >{importedCount}/{gates.length} added</span
+                >
+              </button>
+              <!-- Raid-level actions -->
+              <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 8px;">
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    importRaid(raidName);
+                  }}
+                  style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 3px 10px;"
+                  >+ All</button
+                >
               </div>
-              {/if}
-            {/each}
-          {/if}
-        </div>
+            </div>
+
+            <!-- Gates -->
+            {#if expanded[raidName]}
+              {#each gates as entry (entry.encounterKey)}
+                {#if !isImported(mechStore.raids, entry.encounterKey)}
+                  <div
+                    style="margin: 2px 10px 2px 32px; background: #0f0f0f; border: 1px solid #1f1f1f; border-radius: 6px; padding: 10px 14px;"
+                  >
+                    <div
+                      style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;"
+                    >
+                      <div>
+                        <span style="font-size: 12.5px; font-weight: 600; color: #e5e5e5;">{gateLabel(entry.gate)}</span
+                        >
+                        <span style="font-size: 12px; color: #8a8a8a; margin-left: 8px;">{entry.boss}</span>
+                      </div>
+                      <button
+                        onclick={() => importGate(entry)}
+                        style="{btn} background: rgba(56,189,248,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);"
+                        >+ Import</button
+                      >
+                    </div>
+                    <!-- Mechanic chips -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                      {#each entry.mechanics as m}
+                        <span
+                          style="font-size: 12px; color: {severityColor[m.severity]}; background: {m.severity === 'wipe'
+                            ? 'rgba(248,113,113,0.08)'
+                            : m.severity === 'major'
+                              ? 'rgba(251,146,60,0.08)'
+                              : 'rgba(163,163,163,0.06)'}; border: 1px solid {m.severity === 'wipe'
+                            ? 'rgba(248,113,113,0.2)'
+                            : m.severity === 'major'
+                              ? 'rgba(251,146,60,0.2)'
+                              : 'rgba(163,163,163,0.12)'}; border-radius: 3px; padding: 1px 6px; white-space: nowrap;"
+                        >
+                          {m.name}{m.hpBar != null ? ` · ${m.hpBar}×` : m.repeatSecs ? ` · ↻${m.repeatSecs}s` : ""}
+                        </span>
+                      {/each}
+                    </div>
+                  </div>
+                {/if}
+              {/each}
+            {/if}
+          </div>
         {/if}
       {:else}
         <div style="padding: 32px; text-align: center; color: #8a8a8a; font-size: 12px;">No raids match "{search}"</div>

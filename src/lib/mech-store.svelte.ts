@@ -327,7 +327,9 @@ export const mechStore = (() => {
         // Keep liveGateId — phase transitions send isDead=true but the fight continues.
         // The 60s tier-2 timer clears liveGateId if no HP data resumes.
         if (gateResetTimer) clearTimeout(gateResetTimer);
-        gateResetTimer = setTimeout(() => { liveGateId = null; }, GATE_RESET_MS);
+        gateResetTimer = setTimeout(() => {
+          liveGateId = null;
+        }, GATE_RESET_MS);
         return;
       }
       liveBar = data.currentBars;

@@ -4,9 +4,18 @@ import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
   return {
-    id: "m1", name: "Test", severity: "major", hpBar: 100, timerSecs: null,
-    phase: null, repeatSecs: null, triggerType: "hp", ttsEnabled: true,
-    ttsText: "Test", notes: "", ...overrides
+    id: "m1",
+    name: "Test",
+    severity: "major",
+    hpBar: 100,
+    timerSecs: null,
+    phase: null,
+    repeatSecs: null,
+    triggerType: "hp",
+    ttsEnabled: true,
+    ttsText: "Test",
+    notes: "",
+    ...overrides
   };
 }
 

@@ -34,7 +34,10 @@
   let repeatAnnouncedSim = false;
 
   function startSimTimer(mech: Mechanic) {
-    if (repeatTimerSim) { clearInterval(repeatTimerSim); repeatTimerSim = null; }
+    if (repeatTimerSim) {
+      clearInterval(repeatTimerSim);
+      repeatTimerSim = null;
+    }
     activeMechSim = mech;
     repeatCountdownSim = mech.repeatSecs!;
     repeatAnnouncedSim = false;
@@ -50,15 +53,20 @@
         repeatAnnouncedSim = true;
         const secsLeft = repeatCountdownSim;
         fireAnnouncement(
-          activeMechSim.name, activeMechSim.severity, activeMechSim.ttsEnabled,
-          `${activeMechSim.ttsText || activeMechSim.name} in ${secsLeft} second${secsLeft === 1 ? '' : 's'}`
+          activeMechSim.name,
+          activeMechSim.severity,
+          activeMechSim.ttsEnabled,
+          `${activeMechSim.ttsText || activeMechSim.name} in ${secsLeft} second${secsLeft === 1 ? "" : "s"}`
         );
       }
     }, 1000);
   }
 
   function clearSimTimer() {
-    if (repeatTimerSim) { clearInterval(repeatTimerSim); repeatTimerSim = null; }
+    if (repeatTimerSim) {
+      clearInterval(repeatTimerSim);
+      repeatTimerSim = null;
+    }
     activeMechSim = null;
     repeatCountdownSim = null;
     repeatAnnouncedSim = false;
@@ -85,8 +93,10 @@
         firedSet.add(initKey);
         const barsLeft = _simBar - m.hpBar;
         fireAnnouncement(
-          m.name, m.severity, m.ttsEnabled,
-          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? '' : 's'}`
+          m.name,
+          m.severity,
+          m.ttsEnabled,
+          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
         );
       }
     });
@@ -200,7 +210,9 @@
     document.addEventListener("mouseup", onUp);
   }
 
-  onDestroy(() => { clearSimTimer(); });
+  onDestroy(() => {
+    clearSimTimer();
+  });
 </script>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
@@ -335,13 +347,43 @@
             repeatCountdown={repeatCountdownSim}
           />
         {:else if variant === "compact"}
-          <OLCompact mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
+          <OLCompact
+            mechanics={gate.mechanics}
+            currentBar={simBar}
+            totalBars={gate.totalBars}
+            {gateName}
+            {bossName}
+            activeMech={activeMechSim}
+            repeatCountdown={repeatCountdownSim}
+          />
         {:else if variant === "hud"}
-          <OLHudStrip mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} {bossName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
+          <OLHudStrip
+            mechanics={gate.mechanics}
+            currentBar={simBar}
+            totalBars={gate.totalBars}
+            {gateName}
+            {bossName}
+            activeMech={activeMechSim}
+            repeatCountdown={repeatCountdownSim}
+          />
         {:else if variant === "card"}
-          <OLCardStack mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
+          <OLCardStack
+            mechanics={gate.mechanics}
+            currentBar={simBar}
+            totalBars={gate.totalBars}
+            {gateName}
+            activeMech={activeMechSim}
+            repeatCountdown={repeatCountdownSim}
+          />
         {:else}
-          <OLPill mechanics={gate.mechanics} currentBar={simBar} totalBars={gate.totalBars} {gateName} activeMech={activeMechSim} repeatCountdown={repeatCountdownSim} />
+          <OLPill
+            mechanics={gate.mechanics}
+            currentBar={simBar}
+            totalBars={gate.totalBars}
+            {gateName}
+            activeMech={activeMechSim}
+            repeatCountdown={repeatCountdownSim}
+          />
         {/if}
 
         {#if lastAnnounced}

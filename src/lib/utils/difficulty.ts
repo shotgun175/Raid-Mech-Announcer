@@ -5,10 +5,10 @@ export const DIFFICULTY_ORDER: Difficulty[] = ["Solo", "Normal", "Hard", "Nightm
 
 /** Per-difficulty visual style tokens */
 export const DIFFICULTY_STYLE: Record<Difficulty, { color: string; bg: string; border: string; label: string }> = {
-  Solo:      { color: "#3b82f6", bg: "#0d1220", border: "#3b82f633", label: "SOLO" },
-  Normal:    { color: "#9ca3af", bg: "#1a1a1a",  border: "#6b728033", label: "NORMAL" },
-  Hard:      { color: "#fb923c", bg: "#1a0f00",  border: "#fb923c33", label: "HARD" },
-  Nightmare: { color: "#a855f7", bg: "#120d1a",  border: "#a855f733", label: "NIGHTMARE" },
+  Solo: { color: "#3b82f6", bg: "#0d1220", border: "#3b82f633", label: "SOLO" },
+  Normal: { color: "#9ca3af", bg: "#1a1a1a", border: "#6b728033", label: "NORMAL" },
+  Hard: { color: "#fb923c", bg: "#1a0f00", border: "#fb923c33", label: "HARD" },
+  Nightmare: { color: "#a855f7", bg: "#120d1a", border: "#a855f733", label: "NIGHTMARE" }
 };
 
 /**
@@ -25,10 +25,7 @@ export function filterByDifficulty(mechanics: Mechanic[], difficulty: Difficulty
  * Returns the active Difficulty for a raid from the stored map,
  * or null (= All) if none is set.
  */
-export function activeDifficultyForGate(
-  difficultyMap: Record<string, string>,
-  raidName: string
-): Difficulty | null {
+export function activeDifficultyForGate(difficultyMap: Record<string, string>, raidName: string): Difficulty | null {
   return (difficultyMap[raidName] as Difficulty) ?? null;
 }
 
@@ -36,10 +33,7 @@ export function activeDifficultyForGate(
  * Cycles to the next difficulty in the available list (filtered to
  * DIFFICULTY_ORDER). Wraps from last → null (All), and null → first.
  */
-export function cycleDifficulty(
-  current: Difficulty | null,
-  availableDifficulties: Difficulty[]
-): Difficulty | null {
+export function cycleDifficulty(current: Difficulty | null, availableDifficulties: Difficulty[]): Difficulty | null {
   const ordered = DIFFICULTY_ORDER.filter((d) => availableDifficulties.includes(d));
   if (ordered.length === 0) return null;
   if (!current) return ordered[0];

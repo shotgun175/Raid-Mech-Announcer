@@ -85,9 +85,7 @@ export const peerState = (() => {
       const msg = raw as { type: string; data: BossStatusData | null };
       if (msg.type === "bossStatus") {
         const d = msg.data;
-        const entry = d
-          ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}`
-          : "— null";
+        const entry = d ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}` : "— null";
         debugLog = [...debugLog, entry].slice(-15);
         mechStore.setBossStatus(msg.data);
       }

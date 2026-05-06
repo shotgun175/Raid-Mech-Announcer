@@ -1023,7 +1023,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Normal", "Solo"],
-        notes: "At x3+1 on outer edge: locate red tentacle, throw bombs, get grabbed by yellow telegraph; use Balthorr if needed"
+        notes:
+          "At x3+1 on outer edge: locate red tentacle, throw bombs, get grabbed by yellow telegraph; use Balthorr if needed"
       },
       {
         name: "Destroy & Grab (HM)",
@@ -1031,7 +1032,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "Same as NM + Raspberry (red orbs): do NOT destroy them — both destroyed = -95% damage/-100% stagger for all; use Balthorr if needed"
+        notes:
+          "Same as NM + Raspberry (red orbs): do NOT destroy them — both destroyed = -95% damage/-100% stagger for all; use Balthorr if needed"
       },
       {
         name: "Eye Safe Zone",
@@ -1133,7 +1135,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Hard"],
-        notes: "Dodge the pizza, bait boss sword to 9 o'clock then kill it; also dodge spinning tether ball rotating counter-clockwise"
+        notes:
+          "Dodge the pizza, bait boss sword to 9 o'clock then kill it; also dodge spinning tether ball rotating counter-clockwise"
       },
       {
         name: "Safe Spot",
@@ -1251,7 +1254,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Normal", "Solo"],
-        notes: "Safe spot on odd-colored lines; 4th line shows directional counter indicator; no inter-party communication needed"
+        notes:
+          "Safe spot on odd-colored lines; 4th line shows directional counter indicator; no inter-party communication needed"
       },
       {
         name: "Clone Split (HM)",
@@ -1259,7 +1263,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "Safe spot on odd-colored lines; 4th line counter indicator; inter-party communication required for overlapping safe spots"
+        notes:
+          "Safe spot on odd-colored lines; 4th line counter indicator; inter-party communication required for overlapping safe spots"
       },
       {
         name: "Invasion",
@@ -1661,7 +1666,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "Two rings: Party 1 at 3x+1 position calls outer colors in order; Party 2 calls inner circle colors; stagger clones then boss"
+        notes:
+          "Two rings: Party 1 at 3x+1 position calls outer colors in order; Party 2 calls inner circle colors; stagger clones then boss"
       },
       {
         name: "Crystal Break",
@@ -1771,7 +1777,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Hard"],
-        notes: "4 Yellow + 4 White shields split by party: P1 breaks Yellow side, P2 breaks White side; coordinate in split arena"
+        notes:
+          "4 Yellow + 4 White shields split by party: P1 breaks Yellow side, P2 breaks White side; coordinate in split arena"
       },
       {
         name: "Illusion Clone",
@@ -1936,7 +1943,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "Follow the large Echidna shadow; 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action"
+        notes:
+          "Follow the large Echidna shadow; 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action"
       },
       {
         name: "Snake Dodge",
@@ -2260,7 +2268,7 @@ const LIBRARY: LibraryGate[] = [
           "Two safe spots at 5&11 or 1&7 o'clock; 4 guard sequences required; counter types: S Counter, Nail Counter, Circle Counter"
       },
       {
-        name: "Moral Walls",
+        name: "Spiked Walls",
         hpBar: 195,
         triggerType: "hp",
         severity: "normal",
@@ -2268,7 +2276,7 @@ const LIBRARY: LibraryGate[] = [
         notes: "Spiked wall traps on ground marked as yellow squares; walls move inward — dodge the traps"
       },
       {
-        name: "Moral Walls",
+        name: "Spiked Walls",
         hpBar: 195,
         triggerType: "hp",
         severity: "major",
@@ -2290,7 +2298,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Normal"],
-        notes: "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
+        notes:
+          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
       },
       {
         name: "Survival Run",
@@ -2298,7 +2307,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Hard", "Nightmare"],
-        notes: "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s; avoid bombs that spawn and explode on the field"
+        notes:
+          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s; avoid bombs that spawn and explode on the field"
       },
       {
         name: "Flame Maiden",
