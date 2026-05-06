@@ -83,6 +83,8 @@ export const peerState = (() => {
       if (connectId !== myId) return;
       const msg = raw as { type: string; data: BossStatusData | null };
       if (msg.type === "bossStatus") {
+        const d = msg.data;
+        console.log("[RMA]", d ? `${d.name} | bars ${d.currentBars}/${d.totalBars} | dead:${d.isDead}` : "null");
         mechStore.setBossStatus(msg.data);
       }
     });
