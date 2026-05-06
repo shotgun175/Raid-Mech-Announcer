@@ -8,7 +8,8 @@
   import { SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
-  import type { BossStatusData, Gate, Mechanic, MechSettings } from "$lib/mech-types";
+  import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
+  import { filterByDifficulty } from "$lib/utils/difficulty";
   import { setClickthrough } from "$lib/api";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -32,6 +33,12 @@
   // later phases that may have a smaller but legitimate bar count.
   const isPhaseTransition = $derived(
     gate != null && currentBar != null && totalBars > 0 && totalBars < gate.totalBars * 0.05
+  );
+  const activeDifficulty = $derived<Difficulty | null>(
+    gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
+  );
+  const visibleMechanics = $derived(
+    gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []
   );
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
@@ -132,7 +139,7 @@
     if (currentBar == null || !gate || isPhaseTransition) return;
     const bar = currentBar;
     const cfg = mechStore.mechSettings;
-    gate.mechanics.forEach((m) => {
+    visibleMechanics.forEach((m) => {
       if (m.hpBar == null) return;
 
       // HP trigger: fires once as bar enters the lead window before the mechanic
@@ -150,7 +157,7 @@
 
     // Detect the most recently triggered hp+timer mechanic; reset timer when it changes
     const newActive =
-      [...gate.mechanics]
+      [...visibleMechanics]
         .filter((m) => m.repeatSecs != null && m.hpBar != null && bar < (m.hpBar ?? 0))
         .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
         .at(-1) ?? null;
@@ -243,7 +250,11 @@
       }
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm);
+    const unDiff = await listen<Record<string, string>>("mech:difficulty-changed", (event) => {
+      mechStore.applyRemoteDifficultyMap(event.payload);
+    });
+
+    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm, unDiff);
   });
 
   onDestroy(() => {
@@ -303,7 +314,7 @@
   >
     {#if variant === "standard"}
       <OLCombined
-        mechanics={gate.mechanics}
+        mechanics={visibleMechanics}
         currentBar={displayBar}
         {totalBars}
         {gateName}
@@ -312,13 +323,13 @@
         {repeatCountdown}
       />
     {:else if variant === "compact"}
-      <OLCompact mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
+      <OLCompact mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
     {:else if variant === "hud"}
-      <OLHudStrip mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
+      <OLHudStrip mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} bossName={displayBossName} {activeMech} {repeatCountdown} />
     {:else if variant === "card"}
-      <OLCardStack mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
+      <OLCardStack mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
     {:else}
-      <OLPill mechanics={gate.mechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
+      <OLPill mechanics={visibleMechanics} currentBar={displayBar} {totalBars} {gateName} {activeMech} {repeatCountdown} />
     {/if}
 
     {#if lastAnnounced}
