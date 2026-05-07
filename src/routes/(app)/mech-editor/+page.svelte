@@ -9,6 +9,7 @@
   import { libraryByRaid } from "$lib/data/raid-library";
   import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
   import Header from "../Header.svelte";
+  import { formatGate } from "$lib/mech-constants";
 
   let showModal = $state(false);
   let editMech = $state<Mechanic | null>(null);
@@ -77,7 +78,7 @@
         <div style="flex: 1; min-width: 0;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
             <MechBadge
-              label="Gate {gate.gate}"
+              label="Gate {formatGate(gate.gate)}"
               color="var(--color-accent-500)"
               bg="color-mix(in oklch, var(--color-accent-500) 10%, transparent)"
               border="color-mix(in oklch, var(--color-accent-500) 30%, transparent)"

@@ -13,6 +13,10 @@ export const PHASE_COLORS: Record<number, string> = {
 
 export const BOSS_HP_COLORS = ["#D16F23", "#9F3930", "#582469", "#2B3A63", "#246977", "#798816", "#E7B826"];
 
+export function formatGate(gate: number): string {
+  return gate < 10 ? String(gate) : `${Math.floor(gate / 10)}.${gate % 10}`;
+}
+
 export function formatTimer(secs: number | null): string {
   if (secs == null) return "";
   const m = Math.floor(secs / 60);

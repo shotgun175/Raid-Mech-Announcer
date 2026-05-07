@@ -310,7 +310,7 @@ const LIBRARY: LibraryGate[] = [
     tauntable: true,
     mechanics: [
       {
-        name: "Saydon Arrives",
+        name: "Saydon Appears",
         hpBar: 125,
         triggerType: "hp",
         severity: "normal",
@@ -365,14 +365,14 @@ const LIBRARY: LibraryGate[] = [
     tauntable: true,
     mechanics: [
       {
-        name: "1st Mario + Curtain Call",
+        name: "Mario Stage 1",
         hpBar: 155,
         triggerType: "hp",
         severity: "major",
         notes: "First Mario player enters stage; vertical saws mechanic follows during curtain call"
       },
       {
-        name: "2nd Mario + Curtain Call",
+        name: "Mario Stage 2",
         hpBar: 130,
         triggerType: "hp",
         severity: "major",
@@ -386,14 +386,14 @@ const LIBRARY: LibraryGate[] = [
         notes: "Group to bottom to dodge initial bullet shower; person targeted by cone stands in front of bomb"
       },
       {
-        name: "3rd Mario + Curtain Call",
+        name: "Mario Stage 3",
         hpBar: 80,
         triggerType: "hp",
         severity: "major",
         notes: "Hooks and saws combination; most complex Mario stage"
       },
       {
-        name: "4th Mario + Curtain Call",
+        name: "Mario Stage 4",
         hpBar: 55,
         triggerType: "hp",
         severity: "major",
@@ -1930,7 +1930,7 @@ const LIBRARY: LibraryGate[] = [
         notes: "Bait clone to edge of arena; dodge away from clone after positioning"
       },
       {
-        name: "Shadow Dance",
+        name: "Shadow Clones",
         hpBar: 240,
         triggerType: "hp",
         severity: "wipe",
@@ -1938,7 +1938,7 @@ const LIBRARY: LibraryGate[] = [
         notes: "2 clones walk toward each other → go to opposite side of shadow"
       },
       {
-        name: "Shadow Dance (HM)",
+        name: "Shadow Clones (HM)",
         hpBar: 240,
         triggerType: "hp",
         severity: "wipe",
@@ -1947,7 +1947,7 @@ const LIBRARY: LibraryGate[] = [
           "Follow the large Echidna shadow; 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action"
       },
       {
-        name: "Snake Dodge",
+        name: "Jump Rope",
         hpBar: 220,
         triggerType: "hp",
         severity: "major",
@@ -1982,7 +1982,7 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "Billiard",
+        name: "Shield Throw",
         hpBar: 420,
         triggerType: "hp",
         severity: "major",
@@ -2013,7 +2013,7 @@ const LIBRARY: LibraryGate[] = [
           "Use Thirain sidereal; gather at bottom; just guard patterns (Shield/Slash/Stab/Slam/Spin) while inflicting destruction"
       },
       {
-        name: "Shield Wall",
+        name: "Armadillo",
         hpBar: 160,
         triggerType: "hp",
         severity: "major",
@@ -2051,7 +2051,7 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "Shield Debuff",
+        name: "Orb Grab",
         hpBar: 900,
         triggerType: "hp",
         severity: "major",
@@ -2251,16 +2251,16 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "Saws & Spikes",
+        name: "Laser & Traps",
         hpBar: 270,
         repeatSecs: 60,
         triggerType: "hp+timer",
         severity: "major",
         notes:
-          "Arena narrows to 8×8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles"
+          "Arena narrows to 8x8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles"
       },
       {
-        name: "Nail Just Guard",
+        name: "Spike Guard",
         hpBar: 240,
         triggerType: "hp",
         severity: "major",
@@ -2284,7 +2284,7 @@ const LIBRARY: LibraryGate[] = [
         notes: "Spiked wall traps move inward; additional checkered yellow spiked squares spawn — dodge both trap types"
       },
       {
-        name: "Bomberman",
+        name: "Bomb Bingo",
         hpBar: 175,
         repeatSecs: 70,
         triggerType: "hp+timer",
@@ -2311,13 +2311,13 @@ const LIBRARY: LibraryGate[] = [
           "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s; avoid bombs that spawn and explode on the field"
       },
       {
-        name: "Flame Maiden",
+        name: "Maiden Bingo",
         hpBar: 90,
         repeatSecs: 60,
         triggerType: "hp+timer",
         severity: "wipe",
         notes:
-          "Arena narrows to 4×4; counter Serca when she appears; Hard/Nightmare: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
+          "Arena narrows to 4x4; counter Serca when she appears; Hard/Nightmare: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
       }
     ]
   },
