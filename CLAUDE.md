@@ -10,9 +10,17 @@ The Tauri updater is wired up against GitHub Releases. Public key lives in `src-
 Automated release (via `.github/workflows/release.yml`):
 
 **Easy path — one-click release from GitHub UI:**
-1. Go to repo → Actions tab → "Release" workflow → "Run workflow"
-2. Pick `patch` / `minor` / `major`, click Run
-3. Workflow auto-bumps version in all 3 files (`package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`), commits to main, tags, builds, signs, and publishes the GitHub release.
+1. Edit `src/lib/data/changelog.md` to fill in the `<!-- @release Unreleased -->` section with bullets for what changed since the last release. Commit + push to main.
+2. Go to repo → Actions tab → "Release" workflow → "Run workflow"
+3. Pick `patch` / `minor` / `major`, click Run
+4. Workflow auto-bumps version in all 3 files (`package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`), renames the changelog's `Unreleased` marker to the new version, commits to main, tags, builds, signs, and publishes the GitHub release.
+
+**Single source of truth for release notes:** `src/lib/data/changelog.md`. The workflow extracts the section between `<!-- @release Unreleased -->` and `<!-- @release-end -->`, then uses that content for:
+- the in-app Changelog page (whole file is bundled into the binary)
+- the GitHub release body
+- `latest.json` `notes` field (what the in-app updater modal shows users)
+
+If the Unreleased section is empty or only has comments, the workflow falls back to auto-generating notes from commits since the previous tag. After release, add a fresh `<!-- @release Unreleased -->...<!-- @release-end -->` block at the top of changelog.md to start collecting notes for the next version.
 
 **Manual path — for when you want to choose an exact version string:**
 1. Bump version in all 3 files, commit, push
