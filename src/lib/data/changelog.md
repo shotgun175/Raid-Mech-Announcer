@@ -1,4 +1,4 @@
-<!-- @release Unreleased -->
+<!-- @release v0.1.2 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
     Unreleased
