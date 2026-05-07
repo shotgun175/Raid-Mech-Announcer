@@ -1,13 +1,19 @@
+<!-- @release Unreleased -->
+<!-- Add bullets here for the next release. The workflow will rename this marker
+     to the new version tag and use this content for the GitHub release page +
+     in-app updater modal. -->
+<!-- @release-end -->
+
 <!-- @release v0.1.2 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    Unreleased
+    v0.1.2 - May 2026
   </div>
 </div>
 
 #### Fixes
 
-- Auto-updater now actually works — added the missing `updater:default` Tauri v2 capability permission. The frontend's `check()` call was being silently denied before, which is why v0.1.0 never saw the v0.1.1 update. From this version on, the in-app updater prompts work as expected.
+- Auto-updates now work properly. Earlier versions could not detect new releases when they were published. This version fixes that, and from here on future updates arrive automatically when you launch the app.
 <!-- @release-end -->
 
 <!-- @release v0.1.0 -->
