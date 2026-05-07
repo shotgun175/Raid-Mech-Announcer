@@ -4,10 +4,7 @@ import MarkdownIt from "markdown-it";
 import type { AppSettings } from "./settings";
 import { saveSettings } from "./api";
 
-/**
- * Merge settings from local storage into default settings.
- */
-export const mergeSettings = (defaultSettings: any, storageSettings: any) => {
+const mergeSettings = (defaultSettings: any, storageSettings: any) => {
   for (const key of Object.keys(storageSettings)) {
     if (key in defaultSettings) {
       if (typeof storageSettings[key] === "object" && storageSettings[key] !== null) {
@@ -21,7 +18,6 @@ export const mergeSettings = (defaultSettings: any, storageSettings: any) => {
 
 class Settings {
   app = $state(defaultSettings);
-  classColors = $state<Record<string, string>>(defaultClassColors);
   version = $state("");
   lockUpdate = false;
 
@@ -45,21 +41,6 @@ class Settings {
         this.lockUpdate = false;
       };
 
-      const updateClassColors = (classColors: string | null) => {
-        this.lockUpdate = true;
-        if (classColors) {
-          try {
-            const colors = JSON.parse(classColors);
-            for (const [key, value] of Object.entries(colors)) {
-              if (typeof value === "string" && Object.hasOwn(this.classColors, key)) {
-                this.classColors[key] = value;
-              }
-            }
-          } catch (e) {}
-        }
-        this.lockUpdate = false;
-      };
-
       const updateVersion = async (newVersion: string | null) => {
         this.lockUpdate = true;
         if (newVersion) {
@@ -69,17 +50,12 @@ class Settings {
       };
 
       updateSettings(localStorage.getItem("appSettings"), true);
-      updateClassColors(localStorage.getItem("classColors"));
       updateVersion(localStorage.getItem("version"));
 
       $effect.root(() => {
         $effect(() => {
           if (this.lockUpdate) return;
           localStorage.setItem("appSettings", JSON.stringify(this.app));
-        });
-        $effect(() => {
-          if (this.lockUpdate) return;
-          localStorage.setItem("classColors", JSON.stringify(this.classColors));
         });
         $effect(() => {
           if (this.lockUpdate) return;
@@ -92,9 +68,7 @@ class Settings {
         const { key, newValue, storageArea } = e;
         if (storageArea !== localStorage) return;
         if (key === "appSettings") updateSettings(newValue);
-        else if (key === "classColors") updateClassColors(newValue);
         else if (key === "version") updateVersion(newValue);
-        else return;
       });
     } else {
       console.warn("localStorage not available?");
@@ -255,50 +229,11 @@ export const defaultSettings: AppSettings = {
   }
 };
 
-export const defaultClassColors: Record<string, string> = {
-  Local: "#FFC9ED",
-  Berserker: "#ee2e48",
-  Destroyer: "#7b9aa2",
-  Gunlancer: "#e1907e",
-  Paladin: "#ff9900",
-  Slayer: "#db6a42",
-  Valkyrie: "#ffbf00",
-  Arcanist: "#b38915",
-  Summoner: "#22aa99",
-  Bard: "#674598",
-  Sorceress: "#66aa00",
-  Wardancer: "#aaaa11",
-  Scrapper: "#990099",
-  Soulfist: "#316395",
-  Glaivier: "#f6da6a",
-  Striker: "#994499",
-  Breaker: "#4de3d1",
-  Deathblade: "#a91a16",
-  Shadowhunter: "#0099c6",
-  Reaper: "#109618",
-  Souleater: "#c16ed0",
-  Sharpshooter: "#dd4477",
-  Deadeye: "#4442a8",
-  Artillerist: "#33670b",
-  Machinist: "#3b4292",
-  Gunslinger: "#6bcec2",
-  Artist: "#a34af0",
-  Aeromancer: "#084ba3",
-  Wildsoul: "#3a945e",
-  Guardianknight: "#f4554b"
-};
-
-export class Misc {
-  liveConnectionListening = $state(false);
-  raidInProgress = $state(false);
-  reset = $state(false);
-  paused = $state(false);
-  missingInfo = $state(false);
+class Misc {
   clickthrough = $state(false);
-  modifyingShortcuts = $state(false);
 }
 
-export class UpdateInfo {
+class UpdateInfo {
   available = $state(false);
   isBeta = $state(false);
   manifest: Update | { body?: string } | undefined = $state(undefined);
