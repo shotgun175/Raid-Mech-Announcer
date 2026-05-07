@@ -32,6 +32,9 @@ Thumbs.db
 Desktop.ini
 *.lnk
 
+# Claude Code project config — local-only, not for the public repo
+.claude/
+
 # Local Claude Code session notes (see CLAUDE.md — never commit CLAUDE.local.md)
 CLAUDE.local.md
 
@@ -49,6 +52,7 @@ release-staging/
 
 # Superpowers brainstorm sessions
 .superpowers/
+docs/superpowers/
 
 # Playwright MCP session logs
 .playwright-mcp/
