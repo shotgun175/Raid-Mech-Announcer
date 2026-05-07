@@ -55,7 +55,7 @@ jobs:
             echo "should_bump=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Bump version files, commit, tag, push
+      - name: Bump version + stamp changelog, commit, tag, push
         if: steps.version.outputs.should_bump == 'true'
         shell: bash
         env:
@@ -68,10 +68,12 @@ jobs:
           sed -i 's/"version": "[0-9.]*"/"version": "'"$NEW"'"/' src-tauri/tauri.conf.json
           # Cargo.toml — first "version" line under [package]
           sed -i '0,/^version = "[0-9.]*"/{s/^version = "[0-9.]*"/version = "'"$NEW"'"/}' src-tauri/Cargo.toml
+          # changelog.md — rename "@release Unreleased" marker to the new version
+          sed -i "s|<!-- @release Unreleased -->|<!-- @release $TAG -->|" src/lib/data/changelog.md
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json
+          git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json src/lib/data/changelog.md
           git commit -m "chore: bump to $NEW"
           git tag "$TAG"
           git push origin HEAD:main
@@ -94,16 +96,31 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Generate release notes from commits
+      - name: Resolve release notes
         id: notes
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.new_tag }}
         run: |
-          NOTES=$(gh api "repos/${{ github.repository }}/releases/generate-notes" \
-            -f tag_name="$TAG" \
-            --jq .body 2>/dev/null || echo "Release $TAG.")
+          # Source of truth: src/lib/data/changelog.md. Extract the section for this tag
+          # (the bump step just renamed "@release Unreleased" to "@release $TAG").
+          NOTES=$(awk -v tag="$TAG" '
+            $0 ~ "<!-- @release " tag " -->" { found=1; next }
+            /<!-- @release-end -->/ && found { exit }
+            found { print }
+          ' src/lib/data/changelog.md | sed -e 's/^[[:space:]]*//' -e '/./,$!d')
+
+          # Strip the "edit this section" instructional comment if it's all that's there
+          STRIPPED=$(echo "$NOTES" | sed '/<!--/,/-->/d' | sed '/^[[:space:]]*$/d')
+
+          if [ -z "$STRIPPED" ]; then
+            echo "::warning::No content found in changelog.md for $TAG — falling back to auto-generated notes from commits"
+            NOTES=$(gh api "repos/${{ github.repository }}/releases/generate-notes" \
+              -f tag_name="$TAG" \
+              --jq .body 2>/dev/null || echo "Release $TAG.")
+          fi
+
           {
             echo "body<<RELEASE_NOTES_EOF"
             echo "$NOTES"

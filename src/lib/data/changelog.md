@@ -1,3 +1,18 @@
+<!-- @release Unreleased -->
+<!--
+  Edit this section as you make changes between releases. On the next
+  Actions → Release run, the workflow will:
+    - extract whatever's between "@release Unreleased" and "@release-end"
+    - rename the marker to "@release vX.Y.Z" (the version it just bumped to)
+    - commit the change
+    - use the same content for the GitHub release body and latest.json notes
+       (latest.json is what the in-app updater modal shows users)
+
+  Format the same way as existing version sections — your call on prose vs bullets.
+-->
+<!-- @release-end -->
+
+<!-- @release v0.1.0 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
     v0.1.0 - May 2026
@@ -41,3 +56,4 @@
 
 - Taskbar icon shown when the overlay is on screen
 - Windows app binary: Raid Mech Announcer
+<!-- @release-end -->
