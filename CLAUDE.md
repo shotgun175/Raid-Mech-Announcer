@@ -1,22 +1,24 @@
 # Raid Mech Announcer
 
 ## TODO — Fill in before shipping
-- [ ] `src-tauri/main.rs` → uncomment `.plugin(tauri_plugin_updater::Builder::new().build())` — requires config below first
-- [ ] `src-tauri/tauri.conf.json` → add `plugins.updater` block when ready:
-  ```json
-  "plugins": {
-    "updater": {
-      "pubkey": "<output of: tauri signer generate>",
-      "endpoints": ["<URL where latest.json is hosted>"]
-    }
-  }
-  ```
-- [ ] `src-tauri/tauri.conf.json` → set `bundle.createUpdaterArtifacts` back to `true` when updater is restored
-- [ ] `latest.json` — populate with real release version, notes, installer URL, and signature after first build
 - [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your Discord invite link
 - [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your donation link
-- [ ] `src-tauri/Cargo.toml` → `repository` — add your GitHub repo URL once created
-- [ ] `package.json` → update repo/author fields once GitHub repo is up
+
+## Releases
+The Tauri updater is wired up against GitHub Releases. Public key lives in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; private key is at `~/.tauri/raid-mech-announcer.key` (gitignored via `.tauri/`). Endpoint: `https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json`.
+
+Manual release procedure (until automated via GitHub Actions):
+1. Bump `version` in `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
+2. Set env vars for signing:
+   ```powershell
+   $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content ~/.tauri/raid-mech-announcer.key -Raw
+   $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "<your passphrase>"
+   ```
+3. `npm run tauri build` — produces `.msi`, `.msi.sig`, and `latest.json` in `src-tauri/target/release/bundle/msi/`
+4. Create a GitHub release tagged `v<version>`, upload the `.msi`, `.msi.sig`, and `latest.json` as release assets
+5. Verify: existing app on `<version-1>` should detect the update on next launch (`(app)/+layout.svelte` calls `checkForUpdate` on mount)
+
+The `latest.json` Tauri produces during build is what users' running apps fetch — its `url` field points at the `.msi` asset URL on the same release. Don't hand-edit; always upload what the bundler emits.
 
 ## Git Workflow
 - **Always create a branch before editing files.** A pre-commit hook blocks all edits, writes, and creates directly on `main` (except inside `.claude/`). Run `git checkout -b <branch-name>` before touching any source file.

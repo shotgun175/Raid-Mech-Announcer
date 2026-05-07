@@ -3,7 +3,21 @@
   import { createDialog, melt } from "@melt-ui/svelte";
   import { fade } from "svelte/transition";
   import { markdown } from "./Markdown.svelte";
-  import { relaunchApp } from "$lib/api";
+  import { installUpdate } from "$lib/utils";
+  import type { Update } from "@tauri-apps/plugin-updater";
+
+  let installing = $state(false);
+
+  async function onInstall() {
+    if (!updateInfo.manifest || installing) return;
+    installing = true;
+    try {
+      await installUpdate(updateInfo.manifest as Update);
+    } catch (e) {
+      console.error("update install failed:", e);
+      installing = false;
+    }
+  }
 
   const {
     elements: { portalled, overlay, content, title, description },
@@ -32,8 +46,12 @@
         </div>
       {/if}
       <div class="flex items-center py-2">
-        <button class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0" onclick={relaunchApp}>
-          <span>Update Now</span>
+        <button
+          class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0 disabled:opacity-60"
+          disabled={installing}
+          onclick={onInstall}
+        >
+          <span>{installing ? "Installing…" : "Update Now"}</span>
         </button>
       </div>
     </div>

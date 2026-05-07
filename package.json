@@ -2,6 +2,16 @@
   "name": "raid-mech-announcer",
   "version": "0.1.0",
   "private": true,
+  "author": "shotgun175",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shotgun175/Raid-Mech-Announcer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shotgun175/Raid-Mech-Announcer/issues"
+  },
+  "homepage": "https://github.com/shotgun175/Raid-Mech-Announcer#readme",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
