@@ -22,6 +22,7 @@
     "format": "prettier --write src",
     "tauri": "tauri",
     "tauri:dev": "tauri dev --no-watch",
+    "tauri:exe": "tauri build --no-bundle",
     "setup:python": "pip install \"edge-tts>=7.0.0\""
   },
   "engines": {

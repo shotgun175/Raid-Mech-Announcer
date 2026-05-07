@@ -95,6 +95,7 @@ npm install              # install JS deps
 npm run setup:python     # install edge-tts (required for Andrew/Jenny TTS voices)
 npm run dev              # frontend only at http://localhost:5173 (no overlay)
 npm run tauri:dev        # full desktop app with overlays (requires Rust >= 1.90)
+npm run tauri:exe        # build unsigned standalone .exe → src-tauri/target/release/
 npm run build            # production frontend build (static adapter)
 npm run check            # svelte-kit sync + svelte-check TypeScript validation
 npm run lint             # prettier --check src
