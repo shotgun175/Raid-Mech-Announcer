@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(cargo *)",
+      "Bash(rm*)",
+      "Bash(mkdir *)",
+      "Bash(curl *)",
+      "Bash(kill *)",
+      "Bash(tasklist *)"
+    ],
+    "deny": [],
+    "defaultMode": "acceptEdits"
+  }
+}

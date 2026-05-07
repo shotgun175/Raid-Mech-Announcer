@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:5173",
+    "features": []
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": false,
+    "category": "Utility",
+    "copyright": "GNU General Public License v3.0",
+    "resources": [],
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "longDescription": "Raid Mech Announcer - Raid mechanic overlay and DPS meter for Lost Ark.",
+    "shortDescription": "Raid Mech Announcer",
+    "licenseFile": "../LICENSE"
+  },
+  "productName": "Raid Mech Announcer",
+  "version": "0.1.0",
+  "identifier": "com.shotgun175.raid-mech-announcer",
+  "app": {
+    "windows": [
+      {
+        "label": "settings",
+        "title": "Raid Mech Announcer",
+        "userAgent": "Raid Mech Announcer",
+        "url": "",
+        "fullscreen": false,
+        "width": 1100,
+        "height": 750,
+        "minWidth": 800,
+        "minHeight": 500,
+        "resizable": true,
+        "decorations": true,
+        "transparent": false,
+        "alwaysOnTop": false,
+        "visible": true,
+        "useHttpsScheme": true
+      },
+      {
+        "label": "main",
+        "title": "Mech Announcer Overlay",
+        "userAgent": "Raid Mech Announcer",
+        "url": "mech-overlay",
+        "fullscreen": false,
+        "width": 500,
+        "height": 350,
+        "resizable": true,
+        "shadow": false,
+        "decorations": false,
+        "transparent": true,
+        "minWidth": 400,
+        "minHeight": 120,
+        "alwaysOnTop": true,
+        "visible": false,
+        "focus": false,
+        "skipTaskbar": false,
+        "useHttpsScheme": true
+      }
+    ],
+    "security": {
+      "csp": "default-src *; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src * ipc: http://ipc.localhost"
+    }
+  }
+}
