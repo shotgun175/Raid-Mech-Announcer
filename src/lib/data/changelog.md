@@ -1,15 +1,13 @@
 <!-- @release Unreleased -->
-<!--
-  Edit this section as you make changes between releases. On the next
-  Actions → Release run, the workflow will:
-    - extract whatever's between "@release Unreleased" and "@release-end"
-    - rename the marker to "@release vX.Y.Z" (the version it just bumped to)
-    - commit the change
-    - use the same content for the GitHub release body and latest.json notes
-       (latest.json is what the in-app updater modal shows users)
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    Unreleased
+  </div>
+</div>
 
-  Format the same way as existing version sections — your call on prose vs bullets.
--->
+#### Fixes
+
+- Auto-updater now actually works — added the missing `updater:default` Tauri v2 capability permission. The frontend's `check()` call was being silently denied before, which is why v0.1.0 never saw the v0.1.1 update. From this version on, the in-app updater prompts work as expected.
 <!-- @release-end -->
 
 <!-- @release v0.1.0 -->
