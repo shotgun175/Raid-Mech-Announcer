@@ -7,18 +7,27 @@
 ## Releases
 The Tauri updater is wired up against GitHub Releases. Public key lives in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; private key is at `~/.tauri/raid-mech-announcer.key` (gitignored via `.tauri/`). Endpoint: `https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json`.
 
-Manual release procedure (until automated via GitHub Actions):
-1. Bump `version` in `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
-2. Set env vars for signing:
+Automated release (via `.github/workflows/release.yml`):
+1. Bump `version` to the new value in **all three** files: `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
+2. Commit, push, then tag and push:
    ```powershell
-   $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content ~/.tauri/raid-mech-announcer.key -Raw
-   $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "<your passphrase>"
+   git tag v0.1.1
+   git push origin v0.1.1
    ```
-3. `npm run tauri build` — produces `.msi`, `.msi.sig`, and `latest.json` in `src-tauri/target/release/bundle/msi/`
-4. Create a GitHub release tagged `v<version>`, upload the `.msi`, `.msi.sig`, and `latest.json` as release assets
-5. Verify: existing app on `<version-1>` should detect the update on next launch (`(app)/+layout.svelte` calls `checkForUpdate` on mount)
+3. The release workflow builds + signs on `windows-latest`, creates the GitHub release, and uploads the NSIS installer + `.sig` + auto-generated `latest.json`. Watch progress at `Actions` tab on GitHub.
 
-The `latest.json` Tauri produces during build is what users' running apps fetch — its `url` field points at the `.msi` asset URL on the same release. Don't hand-edit; always upload what the bundler emits.
+Repo secrets required (one-time setup):
+- `TAURI_SIGNING_PRIVATE_KEY` — full content of `.tauri/raid-mech-announcer.key`
+- `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — the passphrase you set when generating the key
+
+Set them via gh CLI:
+```powershell
+"C:\Program Files\GitHub CLI\gh.exe" secret set TAURI_SIGNING_PRIVATE_KEY < .tauri\raid-mech-announcer.key
+"C:\Program Files\GitHub CLI\gh.exe" secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD
+# (paste passphrase, press Enter, Ctrl+Z, Enter)
+```
+
+Manual fallback (if you need a release without the workflow): run `npm run tauri build` locally with `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` env vars set, then `gh release create v<version>` with the artifacts from `src-tauri/target/release/bundle/nsis/`.
 
 ## Git Workflow
 - **Always create a branch before editing files.** A pre-commit hook blocks all edits, writes, and creates directly on `main` (except inside `.claude/`). Run `git checkout -b <branch-name>` before touching any source file.
@@ -95,6 +104,7 @@ npm install              # install JS deps
 npm run setup:python     # install edge-tts (required for Andrew/Jenny TTS voices)
 npm run dev              # frontend only at http://localhost:5173 (no overlay)
 npm run tauri:dev        # full desktop app with overlays (requires Rust >= 1.90)
+npm run tauri:exe        # build unsigned standalone .exe → src-tauri/target/release/
 npm run build            # production frontend build (static adapter)
 npm run check            # svelte-kit sync + svelte-check TypeScript validation
 npm run lint             # prettier --check src

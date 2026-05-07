@@ -41,6 +41,9 @@ audit-*.md
 # Tauri signing keys — never commit
 .tauri/
 
+# Release staging — generated artifacts for GitHub Releases, not source
+release-staging/
+
 # JetBrains IDEs
 .idea/
 
