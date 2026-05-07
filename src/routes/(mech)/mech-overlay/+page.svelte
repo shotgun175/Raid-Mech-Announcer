@@ -5,7 +5,7 @@
   import OLCardStack from "$lib/components/mech/overlays/OLCardStack.svelte";
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
   import OverlayControls from "$lib/components/mech/overlays/OverlayControls.svelte";
-  import { SEVERITY } from "$lib/mech-constants";
+  import { formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
@@ -24,7 +24,7 @@
 
   const gate = $derived(gateId ? (mechStore.raids.find((r) => r.id === gateId) ?? null) : null);
   const variant = $derived(mechStore.mechSettings.overlayVariant);
-  const gateName = $derived(gate ? `G${gate.gate} · ${gate.raid.toUpperCase()}` : "");
+  const gateName = $derived(gate ? `G${formatGate(gate.gate)} · ${gate.raid.toUpperCase()}` : "");
   const displayBossName = $derived(gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
@@ -128,7 +128,7 @@
             {
               title: `${emoji} ${name}`,
               color: colorMap[severity] ?? 0x38bdf8,
-              footer: { text: `Mech Announcer · ${gate?.raid} G${gate?.gate}` }
+              footer: { text: `Mech Announcer · ${gate?.raid} G${gate ? formatGate(gate.gate) : ""}` }
             }
           ]
         })
@@ -287,7 +287,7 @@
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
       <div style="width: 8px; height: 8px; border-radius: 50%; background: #525252;"></div>
-      <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">Mech Announcer — waiting for LOA Logs</span>
+      <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">Mech Announcer - waiting for LOA Logs</span>
     </div>
   </div>
 {:else if !gate}
@@ -299,7 +299,7 @@
     >
       <div style="width: 8px; height: 8px; border-radius: 50%; background: #fb923c; opacity: 0.6;"></div>
       <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">
-        {bossName ? `"${bossName}" — import this raid to see mechanics` : "Mech Announcer — no gate matched"}
+        {bossName ? `"${bossName}" - import this raid to see mechanics` : "Mech Announcer - no gate matched"}
       </span>
     </div>
   </div>

@@ -4,7 +4,7 @@
   import OLCombined from "$lib/components/mech/overlays/OLCombined.svelte";
   import OLHudStrip from "$lib/components/mech/overlays/OLHudStrip.svelte";
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
-  import { BOSS_HP_COLORS, SEVERITY } from "$lib/mech-constants";
+  import { BOSS_HP_COLORS, formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { speakTts } from "$lib/utils/tts";
   import { onDestroy } from "svelte";
@@ -129,7 +129,7 @@
             {
               title: `${emoji} ${name}`,
               color: colorMap[severity] ?? 0x38bdf8,
-              footer: { text: `Mech Announcer · ${gate?.raid} G${gate?.gate}` }
+              footer: { text: `Mech Announcer · ${gate?.raid} G${gate ? formatGate(gate.gate) : ""}` }
             }
           ]
         })
@@ -180,7 +180,7 @@
     { id: "pill", label: "Minimal Pill" }
   ];
 
-  const gateName = $derived(gate ? `G${gate.gate} · ${gate.raid.toUpperCase()}` : "");
+  const gateName = $derived(gate ? `G${formatGate(gate.gate)} · ${gate.raid.toUpperCase()}` : "");
   const bossName = $derived(gate ? gate.boss.split(",")[0] : "");
 
   const barColor = $derived.by(() => {

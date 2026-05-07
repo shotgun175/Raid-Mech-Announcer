@@ -28,8 +28,7 @@
   });
 
   function gateLabel(gate: number): string {
-    if (gate < 10) return `Gate ${gate}`;
-    return `Gate ${Math.floor(gate / 10)}-${gate % 10}`;
+    return gate < 10 ? `Gate ${gate}` : `Gate ${Math.floor(gate / 10)}.${gate % 10}`;
   }
 
   function importGate(entry: LibraryGate) {

@@ -3,6 +3,7 @@
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
   import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
+  import { formatGate } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -54,8 +55,7 @@
   }
 
   function gateLabel(gate: number): string {
-    if (gate < 10) return `Gate ${gate}`;
-    return `Gate ${Math.floor(gate / 10)}-${gate % 10}`;
+    return `Gate ${formatGate(gate)}`;
   }
 
   const raidNames = $derived(
@@ -90,7 +90,7 @@
 
   const gateResetLabel = $derived(
     selectedGate
-      ? `G${selectedGate.gate} · ${selectedGate.boss.split(",")[0]} — restore library mechanics`
+      ? `G${formatGate(selectedGate.gate)} · ${selectedGate.boss.split(",")[0]} - restore library mechanics`
       : "No gate selected"
   );
 
@@ -98,7 +98,7 @@
 
   const raidResetLabel = $derived(
     selectedGate && raidGates.length > 0
-      ? `All ${selectedGate.raid} gates (G${raidGates[0].gate}–G${raidGates[raidGates.length - 1].gate})`
+      ? `All ${selectedGate.raid} gates (G${formatGate(raidGates[0].gate)}-G${formatGate(raidGates[raidGates.length - 1].gate)})`
       : "No raid selected"
   );
 
@@ -421,10 +421,9 @@
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #38bdf8;">Gate</div>
               <div
-                title={isGateResettable ? gateResetLabel : "Custom gate — no library version"}
-                style="font-size: 10px; color: #525252; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  style="font-size: 10px; color: #a3a3a3; margin-top: 2px;"
               >
-                {isGateResettable ? gateResetLabel : "Custom gate — no library version"}
+                {isGateResettable ? gateResetLabel : "Custom gate - no library version"}
               </div>
             </div>
           </button>
@@ -472,8 +471,7 @@
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #fb923c;">Raid</div>
               <div
-                title={isRaidResettable ? raidResetLabel : "No library gates in this raid"}
-                style="font-size: 10px; color: #525252; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  style="font-size: 10px; color: #a3a3a3; margin-top: 2px;"
               >
                 {isRaidResettable ? raidResetLabel : "No library gates in this raid"}
               </div>
@@ -495,96 +493,100 @@
               style="width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
                         flex-shrink: 0; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.22);"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <ellipse
-                  cx="12"
-                  cy="8"
-                  rx="7"
-                  ry="5.5"
-                  fill="#f87171"
-                  opacity="0.2"
-                  stroke="#f87171"
-                  stroke-width="1.3"
-                />
-                <ellipse cx="12" cy="7.5" rx="4.5" ry="3.5" fill="#f87171" opacity="0.25" />
-                <path
-                  d="M10 13.5C10 13.5 10.5 16 11 17H13C13.5 16 14 13.5 14 13.5"
-                  stroke="#f87171"
-                  stroke-width="1.3"
-                  stroke-linecap="round"
-                  fill="none"
-                />
-                <path
-                  d="M8 17.5C8 17.5 9.5 19 12 19C14.5 19 16 17.5 16 17.5"
-                  stroke="#f87171"
-                  stroke-width="1.3"
-                  stroke-linecap="round"
-                  opacity="0.7"
-                />
-                <path
-                  d="M6 18C6 18 8.5 20.5 12 20.5C15.5 20.5 18 18 18 18"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.3"
-                />
-                <line
-                  x1="5.5"
-                  y1="6"
-                  x2="4"
-                  y2="4.5"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.5"
-                />
-                <line
-                  x1="18.5"
-                  y1="6"
-                  x2="20"
-                  y2="4.5"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.5"
-                />
-                <line
-                  x1="12"
-                  y1="2.5"
-                  x2="12"
-                  y2="1"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.5"
-                />
-                <line
-                  x1="6"
-                  y1="9"
-                  x2="4"
-                  y2="9"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.4"
-                />
-                <line
-                  x1="18"
-                  y1="9"
-                  x2="20"
-                  y2="9"
-                  stroke="#f87171"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                  opacity="0.4"
-                />
-              </svg>
+              {#if confirmEverything}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <ellipse
+                    cx="12"
+                    cy="8"
+                    rx="7"
+                    ry="5.5"
+                    fill="#f87171"
+                    opacity="0.2"
+                    stroke="#f87171"
+                    stroke-width="1.3"
+                  />
+                  <ellipse cx="12" cy="7.5" rx="4.5" ry="3.5" fill="#f87171" opacity="0.25" />
+                  <path
+                    d="M10 13.5C10 13.5 10.5 16 11 17H13C13.5 16 14 13.5 14 13.5"
+                    stroke="#f87171"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                    fill="none"
+                  />
+                  <path
+                    d="M8 17.5C8 17.5 9.5 19 12 19C14.5 19 16 17.5 16 17.5"
+                    stroke="#f87171"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                    opacity="0.7"
+                  />
+                  <path
+                    d="M6 18C6 18 8.5 20.5 12 20.5C15.5 20.5 18 18 18 18"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.3"
+                  />
+                  <line
+                    x1="5.5"
+                    y1="6"
+                    x2="4"
+                    y2="4.5"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="18.5"
+                    y1="6"
+                    x2="20"
+                    y2="4.5"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="12"
+                    y1="2.5"
+                    x2="12"
+                    y2="1"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="6"
+                    y1="9"
+                    x2="4"
+                    y2="9"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.4"
+                  />
+                  <line
+                    x1="18"
+                    y1="9"
+                    x2="20"
+                    y2="9"
+                    stroke="#f87171"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    opacity="0.4"
+                  />
+                </svg>
+              {:else}
+                <span style="font-size: 18px; line-height: 1; color: #f87171;">☢</span>
+              {/if}
             </div>
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #f87171;">
                 {confirmEverything ? "⚠ Confirm?" : "Everything"}
               </div>
-              <div style="font-size: 10px; color: #525252; margin-top: 2px;">All raids — restore 3 newest defaults</div>
+              <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">All raids - restore 3 newest defaults</div>
             </div>
           </button>
         </div>

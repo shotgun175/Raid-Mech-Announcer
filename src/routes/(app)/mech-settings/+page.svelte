@@ -697,7 +697,7 @@
         <div class="flex flex-col gap-1">
           <div class="text-sm font-semibold">Confirm Pattern</div>
           <div class="text-xs text-neutral-400">
-            Press in-raid when a repeating mechanic fires — resyncs the timer if it has drifted.
+            Press in-raid when a repeating mechanic fires - resyncs the timer if it has drifted.
           </div>
           <div class="flex items-center gap-2 pt-2">
             <button
@@ -705,7 +705,7 @@
               onclick={() => openRecorder("__confirmKey__")}
               class="min-w-44 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-left font-mono text-sm transition hover:bg-neutral-700"
             >
-              {s.confirmKey || "None — click to record"}
+              {s.confirmKey || "None - click to record"}
             </button>
             {#if s.confirmKey}
               <button
@@ -726,7 +726,7 @@
               onclick={() => openRecorder("hideMeter")}
               class="min-w-44 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-left font-mono text-sm transition hover:bg-neutral-700"
             >
-              {settings.app.shortcuts.hideMeter || "None — click to record"}
+              {settings.app.shortcuts.hideMeter || "None - click to record"}
             </button>
             {#if settings.app.shortcuts.hideMeter}
               <button
