@@ -12,17 +12,10 @@ pub struct Settings {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct GeneralSettings {
-
-    #[serde(default = "default_true")]
-    pub auto_iface: bool,
-    pub port: u16,
     #[serde(default = "default_true")]
     pub always_on_top: bool,
     #[serde(default = "default_true")]
-    pub boss_only_damage: bool,
-    #[serde(default = "default_true")]
     pub hide_meter_on_start: bool,
-    pub hide_logs_on_start: bool,
     pub beta_channel: bool,
     #[serde(flatten)]
     pub extra: Map<String, Value>,
