@@ -8,13 +8,20 @@
 The Tauri updater is wired up against GitHub Releases. Public key lives in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; private key is at `~/.tauri/raid-mech-announcer.key` (gitignored via `.tauri/`). Endpoint: `https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json`.
 
 Automated release (via `.github/workflows/release.yml`):
-1. Bump `version` to the new value in **all three** files: `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
-2. Commit, push, then tag and push:
+
+**Easy path — one-click release from GitHub UI:**
+1. Go to repo → Actions tab → "Release" workflow → "Run workflow"
+2. Pick `patch` / `minor` / `major`, click Run
+3. Workflow auto-bumps version in all 3 files (`package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`), commits to main, tags, builds, signs, and publishes the GitHub release.
+
+**Manual path — for when you want to choose an exact version string:**
+1. Bump version in all 3 files, commit, push
+2. Tag and push:
    ```powershell
    git tag v0.1.1
    git push origin v0.1.1
    ```
-3. The release workflow builds + signs on `windows-latest`, creates the GitHub release, and uploads the NSIS installer + `.sig` + auto-generated `latest.json`. Watch progress at `Actions` tab on GitHub.
+3. The release workflow's tag-push trigger picks it up — same build/sign/publish steps run.
 
 Repo secrets required (one-time setup):
 - `TAURI_SIGNING_PRIVATE_KEY` — full content of `.tauri/raid-mech-announcer.key`

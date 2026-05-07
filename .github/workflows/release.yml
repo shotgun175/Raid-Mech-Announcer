@@ -1,6 +1,17 @@
 name: Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
   push:
     tags:
       - "v*.*.*"
@@ -14,6 +25,57 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CURRENT=$(grep '"version"' package.json | head -1 | sed -E 's/.*"version": "([0-9.]+)".*/\1/')
+            MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+            MINOR=$(echo "$CURRENT" | cut -d. -f2)
+            PATCH=$(echo "$CURRENT" | cut -d. -f3)
+            case "${{ github.event.inputs.bump }}" in
+              patch) PATCH=$((PATCH+1)) ;;
+              minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+              major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+            esac
+            NEW="$MAJOR.$MINOR.$PATCH"
+            echo "Bumping $CURRENT -> $NEW"
+            echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
+            echo "new_tag=v$NEW" >> "$GITHUB_OUTPUT"
+            echo "should_bump=true" >> "$GITHUB_OUTPUT"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "new_version=${TAG#v}" >> "$GITHUB_OUTPUT"
+            echo "new_tag=$TAG" >> "$GITHUB_OUTPUT"
+            echo "should_bump=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version files, commit, tag, push
+        if: steps.version.outputs.should_bump == 'true'
+        shell: bash
+        env:
+          NEW: ${{ steps.version.outputs.new_version }}
+          TAG: ${{ steps.version.outputs.new_tag }}
+        run: |
+          # package.json — first "version" key only (top of file)
+          sed -i '0,/"version": "[0-9.]*"/{s/"version": "[0-9.]*"/"version": "'"$NEW"'"/}' package.json
+          # tauri.conf.json
+          sed -i 's/"version": "[0-9.]*"/"version": "'"$NEW"'"/' src-tauri/tauri.conf.json
+          # Cargo.toml — first "version" line under [package]
+          sed -i '0,/^version = "[0-9.]*"/{s/^version = "[0-9.]*"/version = "'"$NEW"'"/}' src-tauri/Cargo.toml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json
+          git commit -m "chore: bump to $NEW"
+          git tag "$TAG"
+          git push origin HEAD:main
+          git push origin "$TAG"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,8 +101,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: ${{ github.ref_name }}
+          tagName: ${{ steps.version.outputs.new_tag }}
+          releaseName: ${{ steps.version.outputs.new_tag }}
           releaseDraft: false
           prerelease: false
           updaterJsonPreferNsis: true
