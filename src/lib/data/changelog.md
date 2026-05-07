@@ -1,7 +1,12 @@
-<!-- @release Unreleased -->
-<!-- Add bullets here for the next release. The workflow will rename this marker
-     to the new version tag and use this content for the GitHub release page +
-     in-app updater modal. -->
+<!-- @release v0.1.3 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.3 - 2026-05-07
+  </div>
+</div>
+
+#### Fixes
+- Auto-updater now works properly.
 <!-- @release-end -->
 
 <!-- @release v0.1.2 -->
