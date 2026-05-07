@@ -1,24 +1,17 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod api;
 mod app;
 mod tts_cmd;
-mod background;
 mod constants;
 mod context;
 mod data;
 mod handlers;
-#[cfg(feature = "meter-core")]
-mod live;
-#[cfg(feature = "meter-core")]
-mod local;
 mod misc;
 mod models;
 mod settings;
 mod setup;
 mod shell;
 mod ui;
-mod utils;
 
 use crate::constants::*;
 use crate::context::AppContext;
@@ -61,8 +54,7 @@ async fn main() -> Result<()> {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
-        // TODO: restore when updater endpoints are configured
-        // .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_window_state::Builder::new()
                 .with_state_flags(WINDOW_STATE_FLAGS)

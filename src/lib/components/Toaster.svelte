@@ -13,7 +13,6 @@
   } = createToaster<ToastData>();
 
   export const addToast = helpers.addToast;
-  export const removeToast = helpers.removeToast;
 </script>
 
 <script lang="ts">

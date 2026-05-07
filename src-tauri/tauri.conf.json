@@ -9,7 +9,7 @@
   },
   "bundle": {
     "active": true,
-    "createUpdaterArtifacts": false,
+    "createUpdaterArtifacts": true,
     "category": "Utility",
     "copyright": "GNU General Public License v3.0",
     "resources": [],
@@ -65,6 +65,14 @@
     ],
     "security": {
       "csp": "default-src *; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src * ipc: http://ipc.localhost"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhGOUYwQjU2N0Q3NkNFNEEKUldSS3puWjlWZ3VmajJqUjdpME1qM1doUUhTbmlzaHA5bnhnSWYwOE9pQWQwWGkzUUlOYksrMU0K",
+      "endpoints": [
+        "https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json"
+      ]
     }
   }
 }

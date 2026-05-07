@@ -21,7 +21,6 @@ export const shortcuts: Record<string, Shortcut> = {
 };
 
 export async function registerShortcuts() {
-  if (misc.modifyingShortcuts) return;
   try {
     await unregisterAll();
     for (const sc of Object.entries(shortcuts)) {

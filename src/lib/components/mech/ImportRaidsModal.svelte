@@ -6,6 +6,7 @@
     sortedRaidNames,
     type LibraryGate
   } from "$lib/data/raid-library";
+  import { gateLabel } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
 
   interface Props {
@@ -26,10 +27,6 @@
       );
     });
   });
-
-  function gateLabel(gate: number): string {
-    return gate < 10 ? `Gate ${gate}` : `Gate ${Math.floor(gate / 10)}.${gate % 10}`;
-  }
 
   function importGate(entry: LibraryGate) {
     mechStore.addGate(buildLibraryGate(entry));

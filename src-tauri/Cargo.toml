@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Raid mechanic announcer and DPS meter for Lost Ark"
 authors = ["shotgun175"]
 license = "GNU General Public License v3.0"
-repository = ""
+repository = "https://github.com/shotgun175/Raid-Mech-Announcer"
 default-run = "app"
 edition = "2024"
 rust-version = "1.90.0"
@@ -47,7 +47,6 @@ strum_macros = "0.27.2"
 semver = "1.0.27"
 url = "2"
 dirs = "6.0.0"
-meter-core = { git = "https://github.com/snoww/meter-core-rs", optional = true }
 sha2 = "0.10.9"
 rodio = { version = "0.19", default-features = false, features = ["mp3"] }
 
@@ -77,9 +76,6 @@ default = ["custom-protocol"]
 # this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
 custom-protocol = ["tauri/custom-protocol"]
-# If this feature is set, it will require meter-core and allow for live logs. Otherwise, only
-# older logs will be shown.
-meter-core = ["dep:meter-core"]
 
 [profile.release]
 panic = "abort" # Strip expensive panic clean-up logic
@@ -90,8 +86,3 @@ strip = true # Remove debug symbols
 
 [profile.dev.package."*"]
 debug = false # Disable debug symbols for dependencies
-
-# Redirects the private git dep to a local stub so `cargo build --no-default-features`
-# works without access to the private meter-core-rs repository.
-[patch."https://github.com/snoww/meter-core-rs"]
-meter-core = { path = "meter-core-stub" }

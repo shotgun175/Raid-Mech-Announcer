@@ -3,7 +3,9 @@ use hashbrown::{HashMap, HashSet};
 use serde::de::DeserializeOwned;
 use std::{fs, ops::Deref, path::Path, sync::OnceLock};
 
-use crate::models::*;
+use crate::models::{
+    CombatEffectData, EngravingData, Esther, Npc, SkillBuffData, SkillData, SkillEffectData,
+};
 
 pub static COMBAT_EFFECT_DATA: OnceLockWrapper<HashMap<i32, CombatEffectData>> =
     OnceLockWrapper::new();
