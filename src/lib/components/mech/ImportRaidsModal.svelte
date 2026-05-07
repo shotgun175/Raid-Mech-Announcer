@@ -16,6 +16,7 @@
 
   let search = $state("");
   let expanded = $state<Record<string, boolean>>(Object.fromEntries(sortedRaidNames.map((r) => [r, false])));
+  let hoveredRaid = $state<string | null>(null);
 
   const filteredRaids = $derived.by(() => {
     const q = search.trim().toLowerCase();
@@ -97,7 +98,17 @@
         {#if !allImported}
           <div style="margin-bottom: 2px;">
             <!-- Raid header -->
-            <div style="display: flex; align-items: center; padding: 4px 18px 4px 18px;">
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div
+              onmouseenter={() => (hoveredRaid = raidName)}
+              onmouseleave={() => (hoveredRaid = null)}
+              style="display: flex; align-items: center; padding: 4px 14px; margin: 0 4px; border-radius: 5px; transition: background 0.12s, border-color 0.12s; background: {hoveredRaid ===
+              raidName
+                ? 'color-mix(in oklch, var(--color-accent-500) 8%, transparent)'
+                : 'transparent'}; border: 1px solid {hoveredRaid === raidName
+                ? 'color-mix(in oklch, var(--color-accent-500) 25%, transparent)'
+                : 'transparent'};"
+            >
               <button
                 onclick={() => {
                   expanded[raidName] = !expanded[raidName];
