@@ -94,6 +94,22 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      - name: Generate release notes from commits
+        id: notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.new_tag }}
+        run: |
+          NOTES=$(gh api "repos/${{ github.repository }}/releases/generate-notes" \
+            -f tag_name="$TAG" \
+            --jq .body 2>/dev/null || echo "Release $TAG.")
+          {
+            echo "body<<RELEASE_NOTES_EOF"
+            echo "$NOTES"
+            echo "RELEASE_NOTES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build, sign, and publish release
         uses: tauri-apps/tauri-action@v0
         env:
@@ -103,6 +119,7 @@ jobs:
         with:
           tagName: ${{ steps.version.outputs.new_tag }}
           releaseName: ${{ steps.version.outputs.new_tag }}
+          releaseBody: ${{ steps.notes.outputs.body }}
           releaseDraft: false
           prerelease: false
           updaterJsonPreferNsis: true
