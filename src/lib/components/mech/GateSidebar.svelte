@@ -3,7 +3,7 @@
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
   import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
-  import { formatGate } from "$lib/mech-constants";
+  import { formatGate, gateLabel } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -52,10 +52,6 @@
       mechStore.resetRaids();
       closeResetPopover();
     }
-  }
-
-  function gateLabel(gate: number): string {
-    return `Gate ${formatGate(gate)}`;
   }
 
   const raidNames = $derived(

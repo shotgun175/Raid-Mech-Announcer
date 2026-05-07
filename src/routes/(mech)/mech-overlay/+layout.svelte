@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
   import { getSettings } from "$lib/api";
   import { listen } from "@tauri-apps/api/event";

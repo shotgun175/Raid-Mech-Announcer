@@ -1,8 +1,38 @@
 #![allow(dead_code)]
 
-use crate::models::utils::{int_or_string_as_option_string, int_or_string_as_string};
+//! Game-data types loaded by `AssetPreloader` from LOA Logs' `meter-data/` JSON files.
+//!
+//! Originally part of a much larger model surface inherited from snoww/loa-logs; the
+//! DPS-meter pipeline that consumed those types has been deleted. Only the structs the
+//! preloader actually deserialises survive here.
+
 use hashbrown::HashMap;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+use serde_json::Value;
+
+fn int_or_string_as_string<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Value::deserialize(deserializer)?;
+    match value {
+        Value::String(s) => Ok(s),
+        Value::Number(n) => Ok(n.to_string()),
+        _ => Err(serde::de::Error::custom("Expected a string or an integer")),
+    }
+}
+
+fn int_or_string_as_option_string<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Value::deserialize(deserializer)?;
+    match value {
+        Value::String(s) => Ok(Some(s)),
+        Value::Number(n) => Ok(Some(n.to_string())),
+        _ => Ok(None),
+    }
+}
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -132,4 +162,11 @@ pub struct Esther {
     pub skills: Vec<i32>,
     #[serde(alias = "npcs")]
     pub npc_ids: Vec<u32>,
+}
+
+#[derive(Debug, Default, Deserialize, Clone)]
+pub struct EngravingData {
+    pub id: u32,
+    pub name: Option<String>,
+    pub icon: Option<String>,
 }

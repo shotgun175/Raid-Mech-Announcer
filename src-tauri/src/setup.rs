@@ -1,10 +1,4 @@
-use std::{
-    error::Error,
-    sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-    },
-};
+use std::error::Error;
 
 use log::*;
 use tauri::{App, AppHandle, Manager};
@@ -12,8 +6,6 @@ use tauri::{App, AppHandle, Manager};
 #[cfg(not(debug_assertions))]
 use crate::app;
 use crate::{
-    background::{BackgroundWorker, BackgroundWorkerArgs},
-    constants::DEFAULT_PORT,
     context::AppContext,
     settings::*,
     shell::ShellManager,
@@ -32,25 +24,24 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
 
     let settings = settings_manager.read().expect("Could not read settings");
 
-    let port = initialize_windows_and_settings(app_handle, settings.as_ref());
+    initialize_windows_and_settings(app_handle, settings.as_ref());
 
     app_handle.manage(shell_manager);
 
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
-    let update_checked: Arc<AtomicBool> = check_updates(app_handle);
 
-    let mut background = BackgroundWorker::new(app_handle.clone());
-
-    let args = BackgroundWorkerArgs {
-        update_checked,
-        port,
-        settings,
-        version: context.version.clone(),
-    };
-
-    background.start(args)?;
-    app_handle.manage(background);
+    // Updater plugin disabled — restore when tauri_plugin_updater is re-added to main.rs.
+    // The update-check side effect that used to live here also unloaded the WinDivert driver;
+    // do that eagerly so the kernel driver does not stay loaded across runs.
+    {
+        let app_handle = app_handle.clone();
+        tauri::async_runtime::spawn(async move {
+            let shell_manager = app_handle.state::<ShellManager>();
+            shell_manager.unload_driver().await;
+            warn!("updater plugin disabled — skipping update check");
+        });
+    }
 
     // Keep the watcher alive for the app's lifetime. Returns None if LOA Logs isn't installed.
     let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());
@@ -59,30 +50,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn check_updates(app_handle: &AppHandle) -> Arc<AtomicBool> {
-    let update_checked = Arc::new(AtomicBool::new(false));
-
-    {
-        let update_checked = update_checked.clone();
-        let app_handle = app_handle.clone();
-
-        let check_update = async move {
-            let shell_manager = app_handle.state::<ShellManager>();
-            shell_manager.unload_driver().await;
-
-            // Updater plugin disabled — restore when tauri_plugin_updater is re-added to main.rs
-            warn!("updater plugin disabled — skipping update check");
-            update_checked.store(true, Ordering::Relaxed);
-        };
-
-        tauri::async_runtime::spawn(check_update);
-    }
-
-    update_checked
-}
-
-fn initialize_windows_and_settings(app_handle: &AppHandle, settings: Option<&Settings>) -> u16 {
-    let mut port = DEFAULT_PORT;
+fn initialize_windows_and_settings(app_handle: &AppHandle, settings: Option<&Settings>) {
     let overlay_window = app_handle.get_overlay_window().unwrap();
 
     if let Some(settings) = settings {
@@ -99,14 +67,7 @@ fn initialize_windows_and_settings(app_handle: &AppHandle, settings: Option<&Set
         } else {
             overlay_window.set_always_on_top(false).unwrap();
         }
-
-        if settings.general.auto_iface && settings.general.port > 0 {
-            port = settings.general.port;
-        }
-
     } else {
         overlay_window.show().unwrap();
     }
-
-    port
 }

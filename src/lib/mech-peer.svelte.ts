@@ -4,8 +4,6 @@ import type { BossStatusData } from "./mech-types";
 
 export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
 
-export type { BossStatusData } from "./mech-types";
-
 export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
   let errorMsg = $state<string | null>(null);

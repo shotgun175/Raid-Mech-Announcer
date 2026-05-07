@@ -4,10 +4,7 @@ import MarkdownIt from "markdown-it";
 import type { AppSettings } from "./settings";
 import { saveSettings } from "./api";
 
-/**
- * Merge settings from local storage into default settings.
- */
-export const mergeSettings = (defaultSettings: any, storageSettings: any) => {
+const mergeSettings = (defaultSettings: any, storageSettings: any) => {
   for (const key of Object.keys(storageSettings)) {
     if (key in defaultSettings) {
       if (typeof storageSettings[key] === "object" && storageSettings[key] !== null) {
@@ -21,7 +18,6 @@ export const mergeSettings = (defaultSettings: any, storageSettings: any) => {
 
 class Settings {
   app = $state(defaultSettings);
-  classColors = $state<Record<string, string>>(defaultClassColors);
   version = $state("");
   lockUpdate = false;
 
@@ -45,21 +41,6 @@ class Settings {
         this.lockUpdate = false;
       };
 
-      const updateClassColors = (classColors: string | null) => {
-        this.lockUpdate = true;
-        if (classColors) {
-          try {
-            const colors = JSON.parse(classColors);
-            for (const [key, value] of Object.entries(colors)) {
-              if (typeof value === "string" && Object.hasOwn(this.classColors, key)) {
-                this.classColors[key] = value;
-              }
-            }
-          } catch (e) {}
-        }
-        this.lockUpdate = false;
-      };
-
       const updateVersion = async (newVersion: string | null) => {
         this.lockUpdate = true;
         if (newVersion) {
@@ -69,17 +50,12 @@ class Settings {
       };
 
       updateSettings(localStorage.getItem("appSettings"), true);
-      updateClassColors(localStorage.getItem("classColors"));
       updateVersion(localStorage.getItem("version"));
 
       $effect.root(() => {
         $effect(() => {
           if (this.lockUpdate) return;
           localStorage.setItem("appSettings", JSON.stringify(this.app));
-        });
-        $effect(() => {
-          if (this.lockUpdate) return;
-          localStorage.setItem("classColors", JSON.stringify(this.classColors));
         });
         $effect(() => {
           if (this.lockUpdate) return;
@@ -92,9 +68,7 @@ class Settings {
         const { key, newValue, storageArea } = e;
         if (storageArea !== localStorage) return;
         if (key === "appSettings") updateSettings(newValue);
-        else if (key === "classColors") updateClassColors(newValue);
         else if (key === "version") updateVersion(newValue);
-        else return;
       });
     } else {
       console.warn("localStorage not available?");
@@ -104,201 +78,22 @@ class Settings {
 
 export const defaultSettings: AppSettings = {
   general: {
-    showNames: true,
-    showGearScore: true,
-    hideNames: false,
-    showEsther: true,
-    hideLogo: false,
-    showDate: true,
-    showDifficulty: true,
-    showGate: false,
-    showDetails: false,
-    showShields: true,
-    showTanked: false,
-    showBosses: false,
-    showRaidsOnly: true,
-    splitLines: true,
-    underlineHovered: false,
     accentColor: "theme-violet",
-    autoIface: true,
-    port: 6040,
-    blur: true,
-    blurWin11: false,
-    isWin11: false,
-    transparent: true,
     scale: "1",
     logScale: "1",
-    alwaysOnTop: true,
-    bossOnlyDamage: true,
-    keepFavorites: true,
-    hideLogsOnStart: false,
-    constantLocalPlayerColor: false,
-    startOnBoot: false,
-    hideMeterOnStart: false,
-    logsPerPage: 10,
-    experimentalFeatures: false,
-    autoShow: false,
-    autoHideDelay: 5,
     betaChannel: false
   },
   shortcuts: {
     hideMeter: "Control+ArrowDown",
-    showLogs: "Control+ArrowUp",
-    showLatestEncounter: "",
-    resetSession: "",
-    pauseSession: "",
-    manualSave: "",
     disableClickthrough: ""
-  },
-  meter: {
-    bossInfo: true,
-    bossHpBar: true,
-    splitBossHpBar: false,
-    showTimeUntilKill: false,
-    splitPartyBuffs: true,
-    showClassColors: true,
-    profileShortcut: false,
-    damage: false,
-    dps: true,
-    unbuffedDamage: false,
-    unbuffedDps: false,
-    damagePercent: true,
-    deathTime: false,
-    incapacitatedTime: false,
-    critRate: true,
-    critDmg: false,
-    frontAtk: true,
-    backAtk: true,
-    counters: false,
-    pinSelfParty: false,
-    positionalDmgPercent: true,
-    percentBuffBySup: true,
-    percentIdentityBySup: true,
-    percentBrand: true,
-    percentHatBySup: true,
-    supportContrib: false,
-    stagger: false,
-    breakdown: {
-      damage: true,
-      dps: true,
-      unbuffedDamage: false,
-      unbuffedDps: false,
-      damagePercent: true,
-      critRate: true,
-      critDmg: false,
-      frontAtk: true,
-      backAtk: true,
-      avgDamage: false,
-      maxDamage: true,
-      casts: true,
-      cpm: true,
-      hits: false,
-      hpm: false,
-      percentBuffBySup: false,
-      percentIdentityBySup: false,
-      percentBrand: false,
-      percentHatBySup: false,
-      supportContrib: false
-    }
-  },
-  logs: {
-    abbreviateHeader: false,
-    splitPartyDamage: true,
-    splitPartyBuffs: true,
-    profileShortcut: true,
-    damage: true,
-    dps: true,
-    unbuffedDamage: true,
-    unbuffedDps: true,
-    damagePercent: true,
-    deathTime: true,
-    incapacitatedTime: true,
-    critRate: true,
-    critDmg: false,
-    frontAtk: true,
-    backAtk: true,
-    counters: true,
-    minEncounterDuration: 30,
-    positionalDmgPercent: true,
-    percentBuffBySup: true,
-    percentIdentityBySup: true,
-    percentHatBySup: true,
-    percentBrand: true,
-    supportContrib: true,
-    stagger: true,
-    breakdown: {
-      damage: true,
-      dps: true,
-      unbuffedDamage: true,
-      unbuffedDps: true,
-      damagePercent: true,
-      critRate: true,
-      adjustedCritRate: true,
-      critDmg: false,
-      frontAtk: true,
-      backAtk: true,
-      avgDamage: true,
-      maxDamage: true,
-      casts: true,
-      cpm: true,
-      hits: true,
-      hpm: true,
-      percentBuffBySup: false,
-      percentIdentityBySup: false,
-      percentBrand: false,
-      percentHatBySup: false,
-      supportContrib: false
-    }
-  },
-  buffs: {
-    default: true
   }
 };
 
-export const defaultClassColors: Record<string, string> = {
-  Local: "#FFC9ED",
-  Berserker: "#ee2e48",
-  Destroyer: "#7b9aa2",
-  Gunlancer: "#e1907e",
-  Paladin: "#ff9900",
-  Slayer: "#db6a42",
-  Valkyrie: "#ffbf00",
-  Arcanist: "#b38915",
-  Summoner: "#22aa99",
-  Bard: "#674598",
-  Sorceress: "#66aa00",
-  Wardancer: "#aaaa11",
-  Scrapper: "#990099",
-  Soulfist: "#316395",
-  Glaivier: "#f6da6a",
-  Striker: "#994499",
-  Breaker: "#4de3d1",
-  Deathblade: "#a91a16",
-  Shadowhunter: "#0099c6",
-  Reaper: "#109618",
-  Souleater: "#c16ed0",
-  Sharpshooter: "#dd4477",
-  Deadeye: "#4442a8",
-  Artillerist: "#33670b",
-  Machinist: "#3b4292",
-  Gunslinger: "#6bcec2",
-  Artist: "#a34af0",
-  Aeromancer: "#084ba3",
-  Wildsoul: "#3a945e",
-  Guardianknight: "#f4554b"
-};
-
-export class Misc {
-  liveConnectionListening = $state(false);
-  raidInProgress = $state(false);
-  reset = $state(false);
-  paused = $state(false);
-  missingInfo = $state(false);
+class Misc {
   clickthrough = $state(false);
-  modifyingShortcuts = $state(false);
 }
 
-export class UpdateInfo {
+class UpdateInfo {
   available = $state(false);
   isBeta = $state(false);
   manifest: Update | { body?: string } | undefined = $state(undefined);

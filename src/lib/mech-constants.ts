@@ -17,6 +17,10 @@ export function formatGate(gate: number): string {
   return gate < 10 ? String(gate) : `${Math.floor(gate / 10)}.${gate % 10}`;
 }
 
+export function gateLabel(gate: number): string {
+  return `Gate ${formatGate(gate)}`;
+}
+
 export function formatTimer(secs: number | null): string {
   if (secs == null) return "";
   const m = Math.floor(secs / 60);

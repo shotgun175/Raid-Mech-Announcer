@@ -1,6 +1,6 @@
 <script lang="ts">
   import { PHASE_COLORS, SEVERITY, formatTimer } from "$lib/mech-constants";
-  import { upcomingFrom, hpBarColor, type OverlayProps } from "./_shared";
+  import { upcomingFrom, hpBarColor, type OverlayProps } from "./overlay-utils";
   import { mechStore } from "$lib/mech-store.svelte";
 
   let {

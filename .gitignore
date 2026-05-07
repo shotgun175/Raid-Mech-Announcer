@@ -35,6 +35,12 @@ Desktop.ini
 # Local Claude Code session notes (see CLAUDE.md — never commit CLAUDE.local.md)
 CLAUDE.local.md
 
+# Audit reports — internal artifacts, kept locally only
+audit-*.md
+
+# Tauri signing keys — never commit
+.tauri/
+
 # JetBrains IDEs
 .idea/
 

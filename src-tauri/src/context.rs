@@ -12,32 +12,19 @@ pub struct AppContext {
     pub app_path: PathBuf,
     pub current_dir: PathBuf,
     pub settings_path: PathBuf,
-    pub local_player_path: PathBuf,
-    pub region_file_path: PathBuf,
 }
 
 impl AppContext {
     pub fn new(version: String) -> Result<Self> {
-        #[cfg(target_os = "linux")]
-        let assets_path = dirs::app_data_dir();
-
         let app_path = std::env::current_exe()?;
         let current_dir = app_path.parent().unwrap().to_path_buf();
-
-        #[cfg(target_os = "windows")]
-        let assets_path = current_dir.clone();
-
         let settings_path = current_dir.join(SETTINGS_PATH);
-        let local_player_path = assets_path.join(LOCAL_PLAYERS_PATH);
-        let region_file_path = assets_path.join(REGION_PATH);
 
         Ok(Self {
             version,
             app_path,
             current_dir,
             settings_path,
-            local_player_path,
-            region_file_path,
         })
     }
 }

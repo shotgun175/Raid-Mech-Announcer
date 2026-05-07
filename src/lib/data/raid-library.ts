@@ -1,5 +1,80 @@
 import type { Difficulty, Gate, Mechanic, Severity, TriggerType } from "$lib/mech-types";
-import { bossHpMap } from "$lib/constants/encounters";
+
+// Hand-curated boss HP bar counts. Intentionally NOT sourced from Npc.json hpBars
+// since those start far above the first mechanic threshold. These values place
+// the simulation slider near the first real mechanic so the editor preview is useful.
+const bossHpMap: Record<string, number> = {
+  "Dark Mountain Predator": 50,
+  "Destroyer Lucas": 50,
+  "Leader Lugaru": 50,
+  "Demon Beast Commander Valtan": 160,
+  "Ravaged Tyrant of Beasts": 40,
+  "Incubus Morphe": 60,
+  "Nightmarish Morphe": 60,
+  "Covetous Devourer Vykas": 160,
+  "Covetous Legion Commander Vykas": 180,
+  "Saydon": 160,
+  "Kakul": 140,
+  "Kakul-Saydon": 180,
+  "Encore-Desiring Kakul-Saydon": 77,
+  "Gehenna Helkasirs": 120,
+  "Ashtarot": 170,
+  "Primordial Nightmare": 190,
+  "Brelshaza, Monarch of Nightmares": 200,
+  "Imagined Primordial Nightmare": 20,
+  "Pseudospace Primordial Nightmare": 20,
+  "Phantom Legion Commander Brelshaza": 250,
+  "Griefbringer Maurug": 150,
+  "Evolved Maurug": 30,
+  "Lord of Degradation Akkan": 190,
+  "Plague Legion Commander Akkan": 220,
+  "Lord of Kartheon Akkan": 300,
+  "Tienis": 110,
+  "Celestial Sentinel": 60,
+  "Prunya": 90,
+  "Lauriel": 200,
+  "Kaltaya, the Blooming Chaos": 120,
+  "Rakathus, the Lurking Arrogance": 160,
+  "Firehorn, Trampler of Earth": 160,
+  "Lazaram, the Trailblazer": 200,
+  "Killineza the Dark Worshipper": 180,
+  "Valinak, Knight of Darkness": 180,
+  "Valinak, Taboo Usurper": 180,
+  "Valinak, Herald of the End": 180,
+  "Thaemine the Lightqueller": 300,
+  "Dark Greatsword": 40,
+  "Darkness Legion Commander Thaemine": 350,
+  "Thaemine Prokel": 35,
+  "Thaemine, Conqueror of Stars": 350,
+  "Red Doom Narkiel": 180,
+  "Agris": 100,
+  "Echidna": 285,
+  "Covetous Master Echidna": 137,
+  "Alcaone, the Twisted Venom": 86,
+  "Agris, the Devouring Bog": 103,
+  "Behemoth, the Storm Commander": 500,
+  "Behemoth, Cruel Storm Slayer": 705,
+  "Akkan, Lord of Death": 220,
+  "Aegir, the Oppressor": 300,
+  "Narok the Butcher": 300,
+  "Phantom Manifester Brelshaza": 420,
+  "Thaemine, Master of Darkness": 300,
+  "Infernas": 300,
+  "Blossoming Fear, Naitreya": 300,
+  "Mordum, the Abyssal Punisher": 500,
+  "Flash of Punishment": 350,
+  "Abyssal Beast, Narhash": 100,
+  "Flame of Darkness, Tarkal": 300,
+  "Act 4: Covetous Master Echidna": 300,
+  "Brelshaza, Ember in the Ashes": 450,
+  "Armoche, Sentinel of the Abyss": 450,
+  "Abyss Lord Kazeros": 1000,
+  "God of Death Kazeros": 777,
+  "Archdemon Kazeros": 1000,
+  "Death Incarnate Kazeros": 777,
+  "Witch of Agony, Serca": 300,
+  "Corvus Tul Rak": 300
+};
 
 interface LibraryMechanic {
   name: string;
@@ -2456,13 +2531,6 @@ export function isImported(raids: Gate[], encounterKey: string): boolean {
   const entry = LIBRARY.find((g) => g.encounterKey === encounterKey);
   if (!entry) return false;
   return raids.some((r) => r.raid === entry.raid && r.gate === entry.gate);
-}
-
-/** Get the gate ID for an already-imported library entry, or null */
-export function importedId(raids: Gate[], encounterKey: string): string | null {
-  const entry = LIBRARY.find((g) => g.encounterKey === encounterKey);
-  if (!entry) return null;
-  return raids.find((r) => r.raid === entry.raid && r.gate === entry.gate)?.id ?? null;
 }
 
 function stableGate(entry: LibraryGate): Gate {

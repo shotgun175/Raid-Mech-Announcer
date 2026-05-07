@@ -1,22 +1,24 @@
 # Raid Mech Announcer
 
 ## TODO — Fill in before shipping
-- [ ] `src-tauri/main.rs` → uncomment `.plugin(tauri_plugin_updater::Builder::new().build())` — requires config below first
-- [ ] `src-tauri/tauri.conf.json` → add `plugins.updater` block when ready:
-  ```json
-  "plugins": {
-    "updater": {
-      "pubkey": "<output of: tauri signer generate>",
-      "endpoints": ["<URL where latest.json is hosted>"]
-    }
-  }
-  ```
-- [ ] `src-tauri/tauri.conf.json` → set `bundle.createUpdaterArtifacts` back to `true` when updater is restored
-- [ ] `latest.json` — populate with real release version, notes, installer URL, and signature after first build
 - [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your Discord invite link
 - [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your donation link
-- [ ] `src-tauri/Cargo.toml` → `repository` — add your GitHub repo URL once created
-- [ ] `package.json` → update repo/author fields once GitHub repo is up
+
+## Releases
+The Tauri updater is wired up against GitHub Releases. Public key lives in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; private key is at `~/.tauri/raid-mech-announcer.key` (gitignored via `.tauri/`). Endpoint: `https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json`.
+
+Manual release procedure (until automated via GitHub Actions):
+1. Bump `version` in `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
+2. Set env vars for signing:
+   ```powershell
+   $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content ~/.tauri/raid-mech-announcer.key -Raw
+   $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "<your passphrase>"
+   ```
+3. `npm run tauri build` — produces `.msi`, `.msi.sig`, and `latest.json` in `src-tauri/target/release/bundle/msi/`
+4. Create a GitHub release tagged `v<version>`, upload the `.msi`, `.msi.sig`, and `latest.json` as release assets
+5. Verify: existing app on `<version-1>` should detect the update on next launch (`(app)/+layout.svelte` calls `checkForUpdate` on mount)
+
+The `latest.json` Tauri produces during build is what users' running apps fetch — its `url` field points at the `.msi` asset URL on the same release. Don't hand-edit; always upload what the bundler emits.
 
 ## Git Workflow
 - **Always create a branch before editing files.** A pre-commit hook blocks all edits, writes, and creates directly on `main` (except inside `.claude/`). Run `git checkout -b <branch-name>` before touching any source file.
@@ -123,9 +125,9 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - `raid-library.ts` is the source of truth for pre-built templates; each `LibraryGate` has a `releaseOrder` (from the LOA Logs `encounters.json` ordering — higher = newer)
 - Library currently covers all 18 raid release groups: **48 gates, 220 mechanics** — all with `notes` populated from Maxroll per-gate guides
 - `LibraryMechanic` interface includes `notes?: string`; passed through to `Mechanic.notes` by both `makeMechanics()` and `stableGate()`
-- `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (imported from `$lib/constants/encounters`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBars`, so the simulation starts near the first mechanic threshold rather than far above it
+- `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (defined at the top of `raid-library.ts`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBars`, so the simulation starts near the first mechanic threshold rather than far above it
 - `buildDefaultRaids()` derives the 3 newest raids automatically from `releaseOrder` — no hardcoded list
-- When adding new raids to the library: assign the next `releaseOrder`, add the boss to `bossHpMap` in `encounters.ts`, no other changes needed
+- When adding new raids to the library: assign the next `releaseOrder`, add the boss to `bossHpMap` at the top of `raid-library.ts`, no other changes needed
 - **Mechanic naming convention**: prefer the community shorthand (what players say in party chat) over purely descriptive names. Use Maxroll cheat sheets as the reference — adopt their name only when it is clearly the established shorthand, not just because it differs from ours. TTS announces these names so recognition mid-fight matters.
 - **Multi-gate number encoding**: gates like G2-1, G2-2, G2-3 are stored as integers 21, 22, 23. Always use `formatGate()` from `$lib/mech-constants` to display them — it renders as "2.1", "2.2", "2.3". Never interpolate `gate.gate` directly into UI strings.
 - Authoritative source for boss HP bar counts is `Npc.json` → `hpBars` in `src-tauri/meter-data/` (upstream repo: github.com/snoww/loa-logs); use the entry with `grade: "commander"` — other entries for the same boss name have `hpBars: 1` (phase variants). Cross-reference with `encounters.json` for the correct raid entry.
@@ -150,7 +152,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - **`meter-data/` is required**: loaded at startup from `%LOCALAPPDATA%\LOA Logs\meter-data\` via `loa_detect::find_loa_meter_data()`. App will not start without it — this is intentional. LOA Logs must be installed.
 - **Tauri capability changes**: any new permission requires editing `capabilities/desktop.json` and restarting `tauri:dev`. The capability applies to windows `["settings", "main"]`.
 - **Raid data storage**: user raids live in WebView2 `localStorage`, not a plain JSON file. Path: `%APPDATA%\com.shotgun175.raid-mech-announcer\EBWebView\Default\Local Storage\`. Not directly editable outside the app.
-- **Raid library `totalBars`**: derived from `bossHpMap` in `encounters.ts`, NOT from `Npc.json`. This is intentional — the hand-curated values place the simulation start point near the first mechanic rather than at the true game HP. Do not replace with `Npc.json` values.
+- **Raid library `totalBars`**: derived from `bossHpMap` at the top of `raid-library.ts`, NOT from `Npc.json`. This is intentional — the hand-curated values place the simulation start point near the first mechanic rather than at the true game HP. Do not replace with `Npc.json` values.
 - **`$derived.by()` vs `$derived(() => ...)`**: `$derived(() => fn)` stores the arrow function as a reactive value — the body is never re-evaluated. Always use `$derived.by(() => { ... })` for multi-statement derivations.
 - **Shortcut registration**: shortcuts are registered on app startup (in the layout's `onMount`) and re-registered when leaving the Settings page. If a key conflicts with another app's global hotkey, registration fails silently with a `console.warn`.
 - **Rust edition 2024**: requires rustc ≥ 1.90 — `rustup update stable` if build fails.
