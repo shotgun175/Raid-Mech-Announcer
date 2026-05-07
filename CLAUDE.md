@@ -18,6 +18,9 @@
 - [ ] `src-tauri/Cargo.toml` → `repository` — add your GitHub repo URL once created
 - [ ] `package.json` → update repo/author fields once GitHub repo is up
 
+## Git Workflow
+- **Always create a branch before editing files.** A pre-commit hook blocks all edits, writes, and creates directly on `main` (except inside `.claude/`). Run `git checkout -b <branch-name>` before touching any source file.
+
 ## Overview
 Raid Mech Announcer is a Tauri v2 desktop overlay tool for Lost Ark. It uses a SvelteKit frontend to render a transparent always-on-top mech overlay window while a Rust backend detects LOA Logs data via WinDivert and a PeerJS live-share connection.
 
@@ -52,7 +55,7 @@ src/                        SvelteKit frontend
       raid-library.ts       Pre-built mechanic templates per gate; releaseOrder drives defaults
     utils/                  Pure TS utilities (shortcuts, tts, toasts)
     api.ts                  Tauri invoke() wrappers — ALL invoke calls go here
-    mech-constants.ts       SEVERITY, PHASE_COLORS, BOSS_HP_COLORS, formatTimer
+    mech-constants.ts       SEVERITY, PHASE_COLORS, BOSS_HP_COLORS, formatTimer, formatGate
     mech-peer.svelte.ts     PeerJS live-share connection state (peerState singleton)
     mech-store.svelte.ts    Raid list, gate selection, live HP state (mechStore singleton)
     mech-types.ts           Gate, Mechanic, MechSettings, BossStatusData interfaces
@@ -123,6 +126,8 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (imported from `$lib/constants/encounters`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBars`, so the simulation starts near the first mechanic threshold rather than far above it
 - `buildDefaultRaids()` derives the 3 newest raids automatically from `releaseOrder` — no hardcoded list
 - When adding new raids to the library: assign the next `releaseOrder`, add the boss to `bossHpMap` in `encounters.ts`, no other changes needed
+- **Mechanic naming convention**: prefer the community shorthand (what players say in party chat) over purely descriptive names. Use Maxroll cheat sheets as the reference — adopt their name only when it is clearly the established shorthand, not just because it differs from ours. TTS announces these names so recognition mid-fight matters.
+- **Multi-gate number encoding**: gates like G2-1, G2-2, G2-3 are stored as integers 21, 22, 23. Always use `formatGate()` from `$lib/mech-constants` to display them — it renders as "2.1", "2.2", "2.3". Never interpolate `gate.gate` directly into UI strings.
 - Authoritative source for boss HP bar counts is `Npc.json` → `hpBars` in `src-tauri/meter-data/` (upstream repo: github.com/snoww/loa-logs); use the entry with `grade: "commander"` — other entries for the same boss name have `hpBars: 1` (phase variants). Cross-reference with `encounters.json` for the correct raid entry.
 - GateSidebar orders raids newest-first using `libraryByRaid[name]?.[0]?.releaseOrder` — the `Gate` objects stored in localStorage don't carry `releaseOrder`, so it's looked up from the library at render time. Custom (user-added) raids with no library entry fall to the bottom.
 - `BossStatusData` includes `gateId?: string | null` — resolved by the main window and sent in the event payload so the overlay window skips re-matching independently with potentially stale data
@@ -156,3 +161,4 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - **Overlay auto-resize**: when a fight starts the overlay window resizes to wrap its content (top-left anchored). Resets to 360×90 when idle. This requires `core:window:allow-set-size` in capabilities.
 - **`alwaysOnTop` is applied in real time**: the overlay page has a `$effect` that calls `setAlwaysOnTop()` whenever `mechStore.mechSettings.alwaysOnTop` changes — no restart needed.
 - **OverlayControls**: the dashed window-bounds outline and corner buttons (gear = open Settings, dash = hide overlay) only render when `clickThrough` is `false`. They disappear completely in click-through mode.
+- **PowerShell text replacement corrupts UTF-8**: Never use PowerShell `-replace` / `Get-Content | Set-Content` on source files without `-Encoding utf8`. PS 5.1 reads as Windows-1252 by default; multi-byte UTF-8 characters whose bytes collide with the target codepoint get silently destroyed (e.g. `×` U+00D7 was corrupted when replacing em dashes because its byte 0x97 = em dash in Win-1252). Always use the Edit tool for in-source text changes.
