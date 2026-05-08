@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Cleaner changelog template with NEW FEATURES / BUG FIXES headings.
-
 <!-- @release-end -->
 
-<!-- @release v0.1.5 -->
+<!-- @release v0.1.6 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.5 - May 8th, 2026
+    v0.1.6 - May 8th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Cleaner changelog template with NEW FEATURES / BUG FIXES headings.
+<!-- @release-end -->
+
+<!-- @release v0.1.5 -->
+### v0.1.5 - May 8th, 2026
 
 Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Release notes" textarea on the workflow_dispatch panel. 2. Date stamp now uses Eastern time (TZ=America/New_York) instead of UTC.
 
@@ -33,10 +40,6 @@ Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Re
 <!-- @release v0.1.4 -->
 ### v0.1.4 - May 8th, 2026
 
-
-#### Test
-
-  - Verifying the auto-stamp + demote workflow works end-to-end.
 
 <!-- @release-end -->
 
@@ -58,9 +61,6 @@ Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Re
 <!-- @release v0.1.0 -->
 ### v0.1.0 - May 2026
 
-#### Initial Release
-
-**Raid Editor**
 
 - Build and manage mechanic patterns per raid gate with HP, timer, and repeat triggers
 - Import pre-built templates from the raid library — all 18 raid groups covered (Valtan through Serca), 48 gates, 220 mechanics
@@ -92,4 +92,7 @@ Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Re
 
 - Taskbar icon shown when the overlay is on screen
 - Windows app binary: Raid Mech Announcer
+#### Initial Release
+
+**Raid Editor**
 <!-- @release-end -->
