@@ -31,15 +31,14 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
 
-    // Updater plugin disabled — restore when tauri_plugin_updater is re-added to main.rs.
-    // The update-check side effect that used to live here also unloaded the WinDivert driver;
-    // do that eagerly so the kernel driver does not stay loaded across runs.
+    // Eagerly unload the WinDivert kernel driver on startup so it does not stay
+    // loaded across runs (e.g. after a crash or after the updater replaces the
+    // bundled .sys binary).
     {
         let app_handle = app_handle.clone();
         tauri::async_runtime::spawn(async move {
             let shell_manager = app_handle.state::<ShellManager>();
             shell_manager.unload_driver().await;
-            warn!("updater plugin disabled — skipping update check");
         });
     }
 

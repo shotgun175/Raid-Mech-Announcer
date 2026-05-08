@@ -115,7 +115,6 @@ function loadSettings(): MechSettings {
     lead: 10,
     repeatLead: 5,
     vol: 80,
-    pitch: 1,
     ttsRate: 1.0,
     voice: "Andrew",
     confirmKey: "",
@@ -130,7 +129,10 @@ function loadSettings(): MechSettings {
   };
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    return raw ? { ...defaults, ...(JSON.parse(raw) as Partial<MechSettings>) } : defaults;
+    if (!raw) return defaults;
+    const stored = JSON.parse(raw) as Partial<MechSettings> & { pitch?: number };
+    delete stored.pitch; // legacy: TTS pitch was a no-op control, removed
+    return { ...defaults, ...stored };
   } catch {
     return defaults;
   }

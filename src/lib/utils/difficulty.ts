@@ -32,6 +32,9 @@ export function activeDifficultyForGate(difficultyMap: Record<string, string>, r
 /**
  * Cycles to the next difficulty in the available list (filtered to
  * DIFFICULTY_ORDER). Wraps from last → null (All), and null → first.
+ *
+ * Reserved for the planned difficulty-cycling UI in GateSidebar — kept here
+ * so the behavior (and its tests) survives until the UI lands.
  */
 export function cycleDifficulty(current: Difficulty | null, availableDifficulties: Difficulty[]): Difficulty | null {
   const ordered = DIFFICULTY_ORDER.filter((d) => availableDifficulties.includes(d));

@@ -37,7 +37,6 @@ export interface MechSettings {
   lead: number;
   repeatLead: number;
   vol: number;
-  pitch: number;
   ttsRate: number;
   voice: TtsVoice;
   confirmKey: string;

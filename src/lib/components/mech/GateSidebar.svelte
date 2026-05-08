@@ -416,9 +416,7 @@
             </div>
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #38bdf8;">Gate</div>
-              <div
-                  style="font-size: 10px; color: #a3a3a3; margin-top: 2px;"
-              >
+              <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">
                 {isGateResettable ? gateResetLabel : "Custom gate - no library version"}
               </div>
             </div>
@@ -466,9 +464,7 @@
             </div>
             <div style="flex: 1; min-width: 0;">
               <div style="font-size: 13px; font-weight: 600; color: #fb923c;">Raid</div>
-              <div
-                  style="font-size: 10px; color: #a3a3a3; margin-top: 2px;"
-              >
+              <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">
                 {isRaidResettable ? raidResetLabel : "No library gates in this raid"}
               </div>
             </div>

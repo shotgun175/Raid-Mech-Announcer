@@ -2,9 +2,9 @@
   import { page } from "$app/state";
   import QuickTooltip from "$lib/components/QuickTooltip.svelte";
   import { addToast } from "$lib/components/Toaster.svelte";
-  import { IconArrowUp, IconDiscord, IconExternalLink, IconMenu, IconRefresh, IconX } from "$lib/icons";
+  import { IconArrowUp, IconMenu, IconRefresh, IconX } from "$lib/icons";
   import { settings, updateInfo } from "$lib/stores.svelte";
-  import { checkForUpdate } from "$lib/utils";
+  import { checkForUpdate } from "$lib/utils/updater";
   import { noUpdateAvailable } from "$lib/utils/toasts";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { getVersion } from "@tauri-apps/api/app";
@@ -82,20 +82,6 @@
       </div>
       <div class="m-2 h-px bg-accent-500/20"></div>
 
-      <div class="flex gap-1 px-2">
-        <!-- TODO: add your own donation link -->
-        <!-- <a href="" target="_blank" class="hover:text-accent-500 flex items-center gap-2 rounded-md px-3 py-1">
-          <div>Donate</div>
-          <IconExternalLink class="size-4" />
-        </a> -->
-      </div>
-      <div class="flex items-center gap-1 px-2">
-        <!-- TODO: add your own Discord invite link -->
-        <!-- <a href="" target="_blank" class="hover:text-accent-500 flex items-center gap-2 rounded-md px-3 py-1">
-          <div>Discord</div>
-          <IconDiscord class="size-4" />
-        </a> -->
-      </div>
       <!-- version + update button row -->
       <div class="mx-4 mt-auto mb-2 flex items-center justify-between px-1">
         {#if version}
@@ -106,7 +92,7 @@
             class="group ml-auto"
             onclick={async () => {
               checking = true;
-              const update = await checkForUpdate(settings.app.general.betaChannel);
+              const update = await checkForUpdate();
               setTimeout(() => {
                 if (!update) {
                   addToast(noUpdateAvailable);

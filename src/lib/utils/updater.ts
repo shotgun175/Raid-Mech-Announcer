@@ -1,10 +1,9 @@
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
-import { removeDriver, unloadDriver } from "./api";
-import { updateInfo } from "./stores.svelte";
+import { removeDriver, unloadDriver } from "../api";
+import { updateInfo } from "../stores.svelte";
 
-// betaChannel reserved for future split-channel releases.
-export async function checkForUpdate(_isBeta = false): Promise<Update | null> {
+export async function checkForUpdate(): Promise<Update | null> {
   try {
     const update = await check();
     if (update) {

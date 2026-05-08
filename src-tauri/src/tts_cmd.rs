@@ -1,6 +1,7 @@
 use rodio::{Decoder, OutputStream, Sink};
 use std::io::Cursor;
 use tauri::command;
+use uuid::Uuid;
 
 const ANDREW: &str = "en-US-AndrewNeural";
 const JENNY:  &str = "en-US-JennyNeural";
@@ -12,7 +13,7 @@ fn voice_id(name: &str) -> &'static str {
 /// Speak text using Python edge-tts (neural voices) with SAPI fallback.
 /// rate: 1.0 = normal, 1.5 = 50% faster, 0.5 = half speed.
 #[command]
-pub fn speak_tts(text: String, voice: String, volume: u8, _pitch: f64, rate: f64) {
+pub fn speak_tts(text: String, voice: String, volume: u8, rate: f64) {
     let vid = voice_id(&voice).to_string();
     std::thread::spawn(move || {
         if try_python_edge_tts(&text, &vid, volume, rate) {
@@ -24,7 +25,10 @@ pub fn speak_tts(text: String, voice: String, volume: u8, _pitch: f64, rate: f64
 
 /// Try Python edge-tts via subprocess.
 fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> bool {
-    let temp = std::env::temp_dir().join("mech_tts.mp3");
+    // Per-call unique filename so concurrent invocations don't clobber each other's MP3.
+    // (A single shared path caused thread A to read thread B's audio when calls overlapped,
+    // which the user heard as the same announcement playing twice.)
+    let temp = std::env::temp_dir().join(format!("mech_tts_{}.mp3", Uuid::new_v4()));
     let temp_str = temp.to_string_lossy().to_string();
 
     // edge-tts rate format: "+50%" for 1.5x, "-25%" for 0.75x
@@ -61,20 +65,19 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> boo
 
     let vol = (volume as f32 / 100.0).clamp(0.0, 1.0);
 
-    if let Ok(file) = std::fs::read(&temp) {
-        if let Ok((_stream, handle)) = OutputStream::try_default() {
-            if let Ok(sink) = Sink::try_new(&handle) {
-                sink.set_volume(vol);
-                if let Ok(decoder) = Decoder::new(Cursor::new(file)) {
-                    sink.append(decoder);
-                    sink.sleep_until_end();
-                    return true;
-                }
-            }
-        }
-    }
+    let played = (|| -> bool {
+        let Ok(file) = std::fs::read(&temp) else { return false };
+        let Ok((_stream, handle)) = OutputStream::try_default() else { return false };
+        let Ok(sink) = Sink::try_new(&handle) else { return false };
+        sink.set_volume(vol);
+        let Ok(decoder) = Decoder::new(Cursor::new(file)) else { return false };
+        sink.append(decoder);
+        sink.sleep_until_end();
+        true
+    })();
 
-    false
+    let _ = std::fs::remove_file(&temp);
+    played
 }
 
 /// Last-resort: Windows SAPI via PowerShell.
