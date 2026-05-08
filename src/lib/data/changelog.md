@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Cleaner changelog template with NEW FEATURES / BUG FIXES headings.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.5 -->
