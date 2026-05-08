@@ -71,6 +71,25 @@ jobs:
           # changelog.md — rename "@release Unreleased" marker to the new version
           sed -i "s|<!-- @release Unreleased -->|<!-- @release $TAG -->|" src/lib/data/changelog.md
 
+          # Compute date with ordinal suffix (UTC, long-form: e.g. "May 7th, 2026")
+          DAY=$(date -u +"%-d")
+          case "$DAY" in
+            11|12|13) SUFFIX="th" ;;
+            *1) SUFFIX="st" ;;
+            *2) SUFFIX="nd" ;;
+            *3) SUFFIX="rd" ;;
+            *) SUFFIX="th" ;;
+          esac
+          DATE="$(date -u +"%B") ${DAY}${SUFFIX}, $(date -u +"%Y")"
+
+          # Stamp the visible "Unreleased" heading with $TAG - $DATE.
+          # The pattern requires the line to contain ONLY whitespace + "Unreleased" + whitespace,
+          # so we never accidentally replace the word inside a bullet.
+          # No-op if user already stamped the heading manually.
+          START=$(grep -n "<!-- @release $TAG -->" src/lib/data/changelog.md | head -1 | cut -d: -f1)
+          END=$(awk -v start="$START" 'NR>start && /<!-- @release-end -->/ { print NR; exit }' src/lib/data/changelog.md)
+          [ -n "$START" ] && [ -n "$END" ] && sed -i "${START},${END}s|^[[:space:]]*Unreleased[[:space:]]*$|    $TAG - $DATE|" src/lib/data/changelog.md
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json src/lib/data/changelog.md
