@@ -22,7 +22,7 @@
 
   // ── TTS ─────────────────────────────────────────────────────────────
   function testTTS() {
-    speakTts("Saws and Spikes incoming", s.voice, s.vol, s.pitch, s.ttsRate ?? 1.0);
+    speakTts("Saws and Spikes incoming", s.voice, s.vol, s.ttsRate ?? 1.0);
   }
 
   let loaDataPath = $state<string | null>(null);
@@ -396,28 +396,6 @@
               class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
             >
               {s.vol}%
-            </div>
-          </div>
-        </div>
-
-        <!-- Pitch -->
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">Pitch</div>
-          <div class="text-xs text-neutral-400">TTS voice pitch</div>
-          <div class="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min={0.5}
-              max={2}
-              step={0.1}
-              value={s.pitch}
-              oninput={(e) => upd("pitch", parseFloat((e.target as HTMLInputElement).value))}
-              class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
-            />
-            <div
-              class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
-            >
-              {s.pitch}×
             </div>
           </div>
         </div>
