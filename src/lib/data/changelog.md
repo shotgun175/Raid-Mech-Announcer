@@ -1,3 +1,35 @@
+<!-- @release Unreleased -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    Unreleased
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+<!--
+  Bullets go below this comment. Write them for an end-user — a Lost Ark player
+  who installed the app — not for a developer. The workflow strips this comment
+  block from release notes, so detailed guidance here doesn't leak.
+
+  Tone: plain English, present-tense or past-tense ("Auto-updates now work" /
+  "Fixed a crash when…"). No file paths, no identifiers in backticks, no PR/commit
+  references, no internal terms.
+
+  GOOD vs BAD examples:
+    GOOD: "Auto-updates now work properly. Earlier versions couldn't detect new releases."
+    BAD:  "Fixed `updater:default` capability permission in capabilities/desktop.json"
+
+    GOOD: "Added the new Aegir raid to the library."
+    BAD:  "Added entries to raid-library.ts for Aegir gates 1-3"
+
+    GOOD: "Mech list scrolls more smoothly when you've imported many raids."
+    BAD:  "Refactored MechRow.svelte to use $derived.by instead of $effect"
+-->
+
+<!-- @release-end -->
+
 <!-- @release v0.1.3 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
