@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Release dates now reflect Eastern time instead of UTC (no more "May 8" when it's still May 7 your time).
+
 <!-- @release-end -->
 
 <!-- @release v0.1.6 -->
