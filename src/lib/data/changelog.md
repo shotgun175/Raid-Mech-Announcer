@@ -11,7 +11,6 @@
 #### NEW FEATURES
 
 #### BUG FIXES AND IMPROVEMENTS
-
 - Release dates now reflect Eastern time instead of UTC (no more "May 8" when it's still May 7 your time).
 
 <!-- @release-end -->
@@ -42,6 +41,7 @@ Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Re
 <!-- @release v0.1.4 -->
 ### v0.1.4 - May 8th, 2026
 
+Minor updates.
 
 <!-- @release-end -->
 
