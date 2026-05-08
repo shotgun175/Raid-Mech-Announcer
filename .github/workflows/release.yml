@@ -12,6 +12,11 @@ on:
           - patch
           - minor
           - major
+      notes:
+        description: "Release notes (markdown bullets, optional). If filled, overrides the Unreleased section in changelog.md for this release."
+        required: false
+        type: string
+        default: ""
   push:
     tags:
       - "v*.*.*"
@@ -61,7 +66,41 @@ jobs:
         env:
           NEW: ${{ steps.version.outputs.new_version }}
           TAG: ${{ steps.version.outputs.new_tag }}
+          NOTES_INPUT: ${{ github.event.inputs.notes }}
+          TZ: America/New_York
         run: |
+          # If the workflow_dispatch "notes" input is non-empty, replace the
+          # Unreleased section's body with those notes. Lets you ship a release
+          # without editing changelog.md by hand.
+          if [ -n "$NOTES_INPUT" ]; then
+            U_START=$(grep -n "<!-- @release Unreleased -->" src/lib/data/changelog.md | head -1 | cut -d: -f1)
+            U_END=$(awk -v start="$U_START" 'NR>start && /<!-- @release-end -->/ { print NR; exit }' src/lib/data/changelog.md)
+            if [ -n "$U_START" ] && [ -n "$U_END" ]; then
+              TMP=$(mktemp)
+              if [ "$U_START" -gt 1 ]; then
+                sed -n "1,$((U_START - 1))p" src/lib/data/changelog.md > "$TMP"
+              else
+                : > "$TMP"
+              fi
+              cat >> "$TMP" <<'HEADER'
+          <!-- @release Unreleased -->
+          <div class="rounded-md flex space-x-2 items-center">
+            <div class="text-lg font-semibold text-white">
+              Unreleased
+            </div>
+            <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+              New
+            </div>
+          </div>
+
+          HEADER
+              printf '%s\n\n' "$NOTES_INPUT" >> "$TMP"
+              echo '<!-- @release-end -->' >> "$TMP"
+              sed -n "$((U_END + 1)),\$p" src/lib/data/changelog.md >> "$TMP"
+              mv "$TMP" src/lib/data/changelog.md
+            fi
+          fi
+
           # package.json — first "version" key only (top of file)
           sed -i '0,/"version": "[0-9.]*"/{s/"version": "[0-9.]*"/"version": "'"$NEW"'"/}' package.json
           # tauri.conf.json
@@ -71,8 +110,8 @@ jobs:
           # changelog.md — rename "@release Unreleased" marker to the new version
           sed -i "s|<!-- @release Unreleased -->|<!-- @release $TAG -->|" src/lib/data/changelog.md
 
-          # Compute date with ordinal suffix (UTC, long-form: e.g. "May 7th, 2026")
-          DAY=$(date -u +"%-d")
+          # Compute date with ordinal suffix (Eastern time, long-form: e.g. "May 7th, 2026")
+          DAY=$(date +"%-d")
           case "$DAY" in
             11|12|13) SUFFIX="th" ;;
             *1) SUFFIX="st" ;;
@@ -80,7 +119,7 @@ jobs:
             *3) SUFFIX="rd" ;;
             *) SUFFIX="th" ;;
           esac
-          DATE="$(date -u +"%B") ${DAY}${SUFFIX}, $(date -u +"%Y")"
+          DATE="$(date +"%B") ${DAY}${SUFFIX}, $(date +"%Y")"
 
           # Stamp the visible "Unreleased" heading with $TAG - $DATE.
           # The pattern requires the line to contain ONLY whitespace + "Unreleased" + whitespace,
@@ -90,10 +129,12 @@ jobs:
           END=$(awk -v start="$START" 'NR>start && /<!-- @release-end -->/ { print NR; exit }' src/lib/data/changelog.md)
           [ -n "$START" ] && [ -n "$END" ] && sed -i "${START},${END}s|^[[:space:]]*Unreleased[[:space:]]*$|    $TAG - $DATE|" src/lib/data/changelog.md
 
-          # Demote every other @release vX.Y.Z section: replace its styled <div> heading
-          # block with a plain `### vX.Y.Z - Date` markdown line. Sections already in plain
-          # `###` form pass through untouched (idempotent). The just-stamped $TAG section
-          # and the Unreleased section are skipped.
+          # Demote older versioned sections to plain `### vX.Y.Z - Date` markdown
+          # AND strip multi-line guidance HTML comments from any non-Unreleased
+          # section, so the guidance fluff doesn't accumulate after each release.
+          # The just-stamped $TAG section keeps its styled <div> + "New" chip but
+          # loses the guidance comment. Unreleased keeps everything (template
+          # carries forward to next cycle via the prepend below).
           TMP=$(mktemp)
           awk -v just_stamped="$TAG" '
             /<!-- @release Unreleased -->/   { section = "unreleased"; print; next }
@@ -103,8 +144,16 @@ jobs:
               section = (ver == just_stamped) ? "current" : "old"
               print; next
             }
-            /<!-- @release-end -->/          { section = ""; print; next }
+            /<!-- @release-end -->/          { section = ""; in_block_comment = 0; print; next }
 
+            # Strip multi-line HTML comments from non-Unreleased sections
+            section == "current" || section == "old" {
+              if (/^<!--$/) { in_block_comment = 1; next }
+              if (in_block_comment && /^-->$/) { in_block_comment = 0; next }
+              if (in_block_comment) { next }
+            }
+
+            # Demote styled <div> heading to plain markdown in old sections
             section == "old" && /<div class="rounded-md flex space-x-2 items-center">/ {
               in_styled = 1
               div_depth = 0
