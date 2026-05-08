@@ -30,35 +30,23 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.1.4 -->
+<!-- @release v0.1.5 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.4 - May 8th, 2026
+    v0.1.5 - May 8th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
 
-<!--
-  Bullets go below this comment. Write them for an end-user — a Lost Ark player
-  who installed the app — not for a developer. The workflow strips this comment
-  block from release notes, so detailed guidance here doesn't leak.
+Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Release notes" textarea on the workflow_dispatch panel. 2. Date stamp now uses Eastern time (TZ=America/New_York) instead of UTC.
 
-  Tone: plain English, present-tense or past-tense ("Auto-updates now work" /
-  "Fixed a crash when…"). No file paths, no identifiers in backticks, no PR/commit
-  references, no internal terms.
+<!-- @release-end -->
 
-  GOOD vs BAD examples:
-    GOOD: "Auto-updates now work properly. Earlier versions couldn't detect new releases."
-    BAD:  "Fixed `updater:default` capability permission in capabilities/desktop.json"
+<!-- @release v0.1.4 -->
+### v0.1.4 - May 8th, 2026
 
-    GOOD: "Added the new Aegir raid to the library."
-    BAD:  "Added entries to raid-library.ts for Aegir gates 1-3"
-
-    GOOD: "Mech list scrolls more smoothly when you've imported many raids."
-    BAD:  "Refactored MechRow.svelte to use $derived.by instead of $effect"
--->
 
 #### Test
 
