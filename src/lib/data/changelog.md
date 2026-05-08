@@ -12,22 +12,29 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Release dates now reflect Eastern time instead of UTC.
-- Internal cleanup: removed unused code and tightened the build. No app changes.
-- Fixed a doubled-voice issue in rare cases
-- Pitch slider removed
-
 <!-- @release-end -->
 
-<!-- @release v0.1.6 -->
+<!-- @release v0.1.7 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.6 - May 8th, 2026
+    v0.1.7 - May 8th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+- Internal cleanup: removed unused code and tightened the build. No app changes.
+- Fixed a doubled-voice issue in rare cases
+- Pitch slider removed
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Release dates now reflect Eastern time instead of UTC.
+<!-- @release-end -->
+
+<!-- @release v0.1.6 -->
+### v0.1.6 - May 8th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
@@ -103,8 +110,8 @@ Minor updates.
 - Taskbar icon shown when the overlay is on screen
 - Windows app binary: Raid Mech Announcer
 
+
 #### Initial Release
 
 **Raid Editor**
-
 <!-- @release-end -->
