@@ -110,16 +110,22 @@ jobs:
           # changelog.md — rename "@release Unreleased" marker to the new version
           sed -i "s|<!-- @release Unreleased -->|<!-- @release $TAG -->|" src/lib/data/changelog.md
 
-          # Compute date with ordinal suffix (Eastern time, long-form: e.g. "May 7th, 2026")
-          DAY=$(date +"%-d")
-          case "$DAY" in
-            11|12|13) SUFFIX="th" ;;
-            *1) SUFFIX="st" ;;
-            *2) SUFFIX="nd" ;;
-            *3) SUFFIX="rd" ;;
-            *) SUFFIX="th" ;;
-          esac
-          DATE="$(date +"%B") ${DAY}${SUFFIX}, $(date +"%Y")"
+          # Compute date with ordinal suffix in Eastern time, long-form (e.g. "May 7th, 2026").
+          # Uses Node's Intl.DateTimeFormat instead of GNU `date` because the TZ env
+          # var doesn't reliably take effect on Windows runners' tzdata lookups.
+          # Node is preinstalled on windows-latest images.
+          DATE=$(node -e '
+            const d = new Date();
+            const tz = "America/New_York";
+            const day = parseInt(new Intl.DateTimeFormat("en-US", { day: "numeric", timeZone: tz }).format(d));
+            const month = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: tz }).format(d);
+            const year = new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: tz }).format(d);
+            const suffix = ([11, 12, 13].includes(day)) ? "th"
+                         : (day % 10 === 1) ? "st"
+                         : (day % 10 === 2) ? "nd"
+                         : (day % 10 === 3) ? "rd" : "th";
+            console.log(month + " " + day + suffix + ", " + year);
+          ')
 
           # Stamp the visible "Unreleased" heading with $TAG - $DATE.
           # The pattern requires the line to contain ONLY whitespace + "Unreleased" + whitespace,
