@@ -221,9 +221,19 @@ jobs:
               --jq .body 2>/dev/null || echo "Release $TAG.")
           fi
 
+          # Strip HTML comments (single-line + multi-line) from the extracted notes
+          # so guidance text inside the changelog never leaks to release pages or
+          # the in-app updater modal.
+          NOTES_CLEAN=$(echo "$NOTES" | awk '
+            /<!--/ { in_comment=1 }
+            in_comment && /-->/ { in_comment=0; next }
+            in_comment { next }
+            { print }
+          ')
+
           {
             echo "body<<RELEASE_NOTES_EOF"
-            echo "$NOTES"
+            echo "$NOTES_CLEAN"
             echo "RELEASE_NOTES_EOF"
           } >> "$GITHUB_OUTPUT"
 
