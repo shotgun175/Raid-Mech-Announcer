@@ -90,6 +90,45 @@ jobs:
           END=$(awk -v start="$START" 'NR>start && /<!-- @release-end -->/ { print NR; exit }' src/lib/data/changelog.md)
           [ -n "$START" ] && [ -n "$END" ] && sed -i "${START},${END}s|^[[:space:]]*Unreleased[[:space:]]*$|    $TAG - $DATE|" src/lib/data/changelog.md
 
+          # Demote every other @release vX.Y.Z section: replace its styled <div> heading
+          # block with a plain `### vX.Y.Z - Date` markdown line. Sections already in plain
+          # `###` form pass through untouched (idempotent). The just-stamped $TAG section
+          # and the Unreleased section are skipped.
+          TMP=$(mktemp)
+          awk -v just_stamped="$TAG" '
+            /<!-- @release Unreleased -->/   { section = "unreleased"; print; next }
+            /<!-- @release v[0-9]/ {
+              match($0, /v[0-9][0-9.]+/)
+              ver = substr($0, RSTART, RLENGTH)
+              section = (ver == just_stamped) ? "current" : "old"
+              print; next
+            }
+            /<!-- @release-end -->/          { section = ""; print; next }
+
+            section == "old" && /<div class="rounded-md flex space-x-2 items-center">/ {
+              in_styled = 1
+              div_depth = 0
+              captured = ""
+            }
+            in_styled {
+              s = $0
+              while (match(s, /<div/))    { div_depth++; s = substr(s, RSTART + 4) }
+              s = $0
+              while (match(s, /<\/div>/)) { div_depth--; s = substr(s, RSTART + 6) }
+              if (captured == "" && match($0, /v[0-9][^<]*[^[:space:]<]/)) {
+                captured = substr($0, RSTART, RLENGTH)
+              }
+              if (div_depth == 0) {
+                print "### " captured
+                in_styled = 0
+              }
+              next
+            }
+
+            { print }
+          ' src/lib/data/changelog.md > "$TMP"
+          mv "$TMP" src/lib/data/changelog.md
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json src/lib/data/changelog.md
