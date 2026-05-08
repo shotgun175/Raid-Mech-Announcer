@@ -12,7 +12,7 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Release dates now reflect Eastern time instead of UTC (no more "May 8" when it's still May 7 your time).
+- Release dates now reflect Eastern time instead of UTC.
 - Internal cleanup: removed unused code and tightened the build. No app changes.
 - Fixed a doubled-voice issue in rare cases
 - Pitch slider removed
