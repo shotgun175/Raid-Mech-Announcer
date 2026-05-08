@@ -210,20 +210,30 @@ jobs:
           } > "$TMP"
           mv "$TMP" src/lib/data/changelog.md
 
-          # Strip empty #### headings from non-Unreleased sections. A heading counts
-          # as "empty" if the next non-blank line is another heading or section
-          # marker. Unreleased is exempt — its NEW FEATURES / BUG FIXES headings
-          # are placeholders for the next release's bullets.
+          # Strip empty #### headings from non-Unreleased sections.
+          #
+          # Each #### heading starts a buffer that holds the heading and every line
+          # underneath it until the next ####, the next <!-- @release ... -->, or
+          # <!-- @release-end -->. At each flush the buffer is kept if it contains
+          # any content line (bullet or paragraph) and dropped otherwise. The
+          # Unreleased section keeps every buffer regardless of content so its
+          # NEW FEATURES / BUG FIXES placeholders survive the cycle.
+          #
+          # Buffering the whole section (not just up to the first bullet) prevents
+          # the heading from desynchronising from its bullets when there are 2+
+          # bullets — the previous logic stopped buffering after the first bullet,
+          # which let later bullets print directly to output before the buffer
+          # flushed and orphaned them above the heading.
           TMP=$(mktemp)
           awk '
             function flush() {
               if (buf_size == 0) return
-              # Unreleased keeps everything; others drop heading-only buffers
-              if (section == "unreleased" || !is_heading_only) {
+              if (section == "unreleased" || has_content) {
                 for (i = 0; i < buf_size; i++) print buf[i]
               }
               buf_size = 0
-              is_heading_only = 0
+              has_content = 0
+              in_heading_block = 0
             }
             /<!-- @release Unreleased -->/ { flush(); section = "unreleased"; print; next }
             /<!-- @release v[0-9]/         { flush(); section = "version"; print; next }
@@ -231,13 +241,12 @@ jobs:
             /^####/ {
               flush()
               buf[buf_size++] = $0
-              is_heading_only = 1
+              in_heading_block = 1
               next
             }
-            is_heading_only {
-              if (/^[[:space:]]*$/) { buf[buf_size++] = $0; next }
-              if (/^-/ || /^\*/) is_heading_only = 0
+            in_heading_block {
               buf[buf_size++] = $0
+              if (/^[-*]/ || /^[A-Za-z0-9]/) has_content = 1
               next
             }
             { print }
