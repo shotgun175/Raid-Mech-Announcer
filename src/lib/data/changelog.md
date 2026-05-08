@@ -11,6 +11,7 @@
 #### NEW FEATURES
 
 #### BUG FIXES AND IMPROVEMENTS
+
 - Release dates now reflect Eastern time instead of UTC (no more "May 8" when it's still May 7 your time).
 
 <!-- @release-end -->
@@ -25,20 +26,21 @@
   </div>
 </div>
 
-
 #### BUG FIXES AND IMPROVEMENTS
 
 - Cleaner changelog template with NEW FEATURES / BUG FIXES headings.
 <!-- @release-end -->
 
 <!-- @release v0.1.5 -->
+
 ### v0.1.5 - May 8th, 2026
 
-Improvements to the release workflow, all in one cohesive YAML diff:  1. New "Release notes" textarea on the workflow_dispatch panel. 2. Date stamp now uses Eastern time (TZ=America/New_York) instead of UTC.
+Improvements to the release workflow, all in one cohesive YAML diff: 1. New "Release notes" textarea on the workflow_dispatch panel. 2. Date stamp now uses Eastern time (TZ=America/New_York) instead of UTC.
 
 <!-- @release-end -->
 
 <!-- @release v0.1.4 -->
+
 ### v0.1.4 - May 8th, 2026
 
 Minor updates.
@@ -46,13 +48,16 @@ Minor updates.
 <!-- @release-end -->
 
 <!-- @release v0.1.3 -->
+
 ### v0.1.3 - 2026-05-07
 
 #### Fixes
+
 - Auto-updater now works properly.
 <!-- @release-end -->
 
 <!-- @release v0.1.2 -->
+
 ### v0.1.2 - May 2026
 
 #### Fixes
@@ -61,8 +66,8 @@ Minor updates.
 <!-- @release-end -->
 
 <!-- @release v0.1.0 -->
-### v0.1.0 - May 2026
 
+### v0.1.0 - May 2026
 
 - Build and manage mechanic patterns per raid gate with HP, timer, and repeat triggers
 - Import pre-built templates from the raid library — all 18 raid groups covered (Valtan through Serca), 48 gates, 220 mechanics
@@ -94,7 +99,9 @@ Minor updates.
 
 - Taskbar icon shown when the overlay is on screen
 - Windows app binary: Raid Mech Announcer
+
 #### Initial Release
 
 **Raid Editor**
+
 <!-- @release-end -->

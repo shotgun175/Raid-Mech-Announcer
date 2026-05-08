@@ -4,10 +4,8 @@ mod app;
 mod tts_cmd;
 mod constants;
 mod context;
-mod data;
 mod handlers;
 mod misc;
-mod models;
 mod settings;
 mod setup;
 mod shell;
@@ -15,7 +13,6 @@ mod ui;
 
 use crate::constants::*;
 use crate::context::AppContext;
-use crate::data::AssetPreloader;
 use crate::handlers::generate_handlers;
 use crate::misc::load_windivert;
 use crate::settings::SettingsManager;
@@ -37,11 +34,10 @@ async fn main() -> Result<()> {
     let settings_manager =
         SettingsManager::new(context.settings_path.clone()).expect("could not create settings");
     load_windivert(&context.current_dir).expect("could not load windivert dependencies");
-    // Load game data from LOA Logs installation — required, app cannot run without it.
-    let meter_data_dir = crate::app::loa_detect::find_loa_meter_data()
+    // LOA Logs install is required so the Settings window can surface the meter-data
+    // path back to the user. The path itself is the only thing this app reads.
+    crate::app::loa_detect::find_loa_meter_data()
         .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
-    log::info!("meter-data source: {}", meter_data_dir.display());
-    AssetPreloader::new(&meter_data_dir).expect("could not load meter-data from LOA Logs");
     let handle = Handle::current();
     async_runtime::set(handle);
 

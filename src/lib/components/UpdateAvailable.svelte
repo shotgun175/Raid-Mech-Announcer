@@ -3,7 +3,7 @@
   import { createDialog, melt } from "@melt-ui/svelte";
   import { fade } from "svelte/transition";
   import { markdown } from "./Markdown.svelte";
-  import { installUpdate } from "$lib/utils";
+  import { installUpdate } from "$lib/utils/updater";
   import type { Update } from "@tauri-apps/plugin-updater";
 
   let installing = $state(false);

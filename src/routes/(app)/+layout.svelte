@@ -7,7 +7,7 @@
   import { emit } from "@tauri-apps/api/event";
   import { settings } from "$lib/stores.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
-  import { checkForUpdate } from "$lib/utils";
+  import { checkForUpdate } from "$lib/utils/updater";
   import { registerShortcuts } from "$lib/utils/shortcuts";
   import { getVersion } from "@tauri-apps/api/app";
   import { readText } from "@tauri-apps/plugin-clipboard-manager";
@@ -31,7 +31,7 @@
 
       await registerShortcuts();
 
-      checkForUpdate(settings.app.general.betaChannel);
+      checkForUpdate();
 
       try {
         await emit("mech:overlay-preview");

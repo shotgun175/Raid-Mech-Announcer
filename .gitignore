@@ -32,6 +32,15 @@ Thumbs.db
 Desktop.ini
 *.lnk
 
+# macOS junk
+.DS_Store
+
+# Generic logs (npm/yarn covered above; this catches anything else)
+*.log
+
+# Test coverage output
+coverage/
+
 # Claude Code project config — local-only, not for the public repo
 .claude/
 

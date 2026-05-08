@@ -95,7 +95,6 @@ class Misc {
 
 class UpdateInfo {
   available = $state(false);
-  isBeta = $state(false);
   manifest: Update | { body?: string } | undefined = $state(undefined);
 }
 
