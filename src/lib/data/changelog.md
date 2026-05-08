@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Release workflow no longer scrambles bullet order in the stamped changelog.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.7 -->
