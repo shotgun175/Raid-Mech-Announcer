@@ -28,6 +28,10 @@
     BAD:  "Refactored MechRow.svelte to use $derived.by instead of $effect"
 -->
 
+#### Test
+
+  - Verifying the auto-stamp + demote workflow works end-to-end.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.3 -->
