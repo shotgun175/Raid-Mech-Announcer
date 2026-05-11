@@ -13,6 +13,7 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Release workflow no longer scrambles bullet order in the stamped changelog.
+- Fixed white flash when opening the settings window.
 
 <!-- @release-end -->
 
