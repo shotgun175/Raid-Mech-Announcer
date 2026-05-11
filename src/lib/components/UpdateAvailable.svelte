@@ -5,6 +5,7 @@
   import { markdown } from "./Markdown.svelte";
   import { installUpdate } from "$lib/utils/updater";
   import type { Update } from "@tauri-apps/plugin-updater";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
   let installing = $state(false);
 
@@ -27,6 +28,11 @@
   $effect(() => {
     if (updateInfo.available) {
       $open = true;
+      // Settings window is hidden by default at startup; surface it so the
+      // user actually sees the update modal instead of it sitting offscreen.
+      const win = getCurrentWebviewWindow();
+      win.show().catch(() => {});
+      win.setFocus().catch(() => {});
     }
   });
 </script>
