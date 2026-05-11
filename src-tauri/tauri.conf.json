@@ -40,7 +40,8 @@
         "transparent": false,
         "alwaysOnTop": false,
         "visible": true,
-        "useHttpsScheme": true
+        "useHttpsScheme": true,
+        "backgroundColor": "#171717"
       },
       {
         "label": "main",
