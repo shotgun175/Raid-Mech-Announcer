@@ -21,6 +21,7 @@
 - Release workflow no longer scrambles bullet order in the stamped changelog.
 - Fixed white flash when opening the settings window.
 - Update notifications now bring the settings window into view automatically when a new release is available.
+- Internal cleanup: route paths renamed to match the in-app names (Raid Editor, Settings). No app changes.
 
 <!-- @release-end -->
 

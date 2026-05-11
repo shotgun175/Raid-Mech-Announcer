@@ -37,7 +37,7 @@
         await emit("mech:overlay-preview");
       } catch {}
 
-      goto("/mech-editor");
+      goto("/raid-editor");
     })();
 
     const pollId = setInterval(async () => {

@@ -77,8 +77,8 @@
       <div class="grid gap-1 px-2">
         {@render route("Changelog", "/changelog")}
         <div class="mx-4 my-2 h-px bg-accent-500/20"></div>
-        {@render route("Raid Editor", "/mech-editor")}
-        {@render route("Settings", "/mech-settings")}
+        {@render route("Raid Editor", "/raid-editor")}
+        {@render route("Settings", "/settings")}
       </div>
       <div class="m-2 h-px bg-accent-500/20"></div>
 
