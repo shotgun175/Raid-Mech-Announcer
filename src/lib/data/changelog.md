@@ -10,6 +10,20 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.1.8 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.8 - May 11th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
 #### NEW FEATURES
 
 - App launch is quieter: the settings window stays hidden by default. Right-click the tray icon and pick "Show Settings" when you want to make a change.
@@ -26,14 +40,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.7 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.7 - May 8th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.7 - May 8th, 2026
 
 - Internal cleanup: removed unused code and tightened the build. No app changes.
 - Fixed a doubled-voice issue in rare cases

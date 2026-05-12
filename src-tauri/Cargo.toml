@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.7"
+version = "0.1.8"
 description = "Raid mechanic announcer and DPS meter for Lost Ark"
 authors = ["shotgun175"]
 license = "GNU General Public License v3.0"
