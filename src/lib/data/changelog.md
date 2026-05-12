@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.1.11 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.11 - May 12th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Solo Mode is now available for **Aegir**, **Act 2: Brelshaza**, and **Act 3: Mordum** when you import them from the raid library.
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -28,14 +44,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.10 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.10 - May 12th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.10 - May 12th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
