@@ -6,6 +6,7 @@
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
   import { BOSS_HP_COLORS, formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
+  import { peerState } from "$lib/mech-peer.svelte";
   import { speakTts } from "$lib/utils/tts";
   import { onDestroy } from "svelte";
   import type { Mechanic } from "$lib/mech-types";
@@ -34,6 +35,9 @@
   let repeatAnnouncedSim = false;
 
   function startSimTimer(mech: Mechanic) {
+    peerState.pushDebugLog(
+      `[TTS][preview] startSimTimer "${mech.name}" repeat=${mech.repeatSecs}s live=${mechStore.isLive}`
+    );
     if (repeatTimerSim) {
       clearInterval(repeatTimerSim);
       repeatTimerSim = null;
@@ -52,6 +56,9 @@
       if (!repeatAnnouncedSim && repeatCountdownSim > 0 && repeatCountdownSim <= cfg.repeatLead) {
         repeatAnnouncedSim = true;
         const secsLeft = repeatCountdownSim;
+        peerState.pushDebugLog(
+          `[TTS][preview] sim-timer fire "${activeMechSim.name}" secsLeft=${secsLeft} live=${mechStore.isLive}`
+        );
         fireAnnouncement(
           activeMechSim.name,
           activeMechSim.severity,
@@ -64,6 +71,7 @@
 
   function clearSimTimer() {
     if (repeatTimerSim) {
+      peerState.pushDebugLog(`[TTS][preview] clearSimTimer (was "${activeMechSim?.name ?? "?"}")`);
       clearInterval(repeatTimerSim);
       repeatTimerSim = null;
     }
@@ -92,6 +100,9 @@
       if (_simBar <= fireAt && _simBar > m.hpBar && !firedSet.has(initKey)) {
         firedSet.add(initKey);
         const barsLeft = _simBar - m.hpBar;
+        peerState.pushDebugLog(
+          `[TTS][preview] sim-initial fire "${m.name}" simBar=${_simBar} hpBar=${m.hpBar} live=${isLive}`
+        );
         fireAnnouncement(
           m.name,
           m.severity,
@@ -114,6 +125,14 @@
   });
 
   function fireAnnouncement(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
+    // Suppress preview announcements during a real fight — the mech-overlay
+    // window owns live announcements; otherwise both windows fire and the TTS
+    // audio doubles up.
+    if (mechStore.isLive) {
+      peerState.pushDebugLog(`[TTS][preview] SUPPRESSED (live) "${name}"`);
+      return;
+    }
+    peerState.pushDebugLog(`[TTS][preview] speakTts "${name}" tts=${ttsEnabled} text="${ttsText}"`);
     const cfg = mechStore.mechSettings;
     if (ttsEnabled) {
       speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.ttsRate ?? 1.0);
@@ -133,7 +152,11 @@
             }
           ]
         })
-      }).catch((e) => console.warn("Webhook error", e));
+      })
+        .then((r) => peerState.pushDebugLog(`[webhook][preview] sent "${name}" status=${r.status}`))
+        .catch((e) =>
+          peerState.pushDebugLog(`[webhook][preview] FAILED "${name}" ${e instanceof Error ? e.message : String(e)}`)
+        );
     }
     lastAnnounced = { name, severity };
     setTimeout(() => {

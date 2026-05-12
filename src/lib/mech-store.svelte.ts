@@ -2,27 +2,35 @@ import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Gate, MechSettings } from "./mech-types";
 
+// Fire-and-forget log into the in-app debug strip. Works from any window via
+// the main window's "tts:debug" listener in (app)/+layout.svelte.
+const dbg = (msg: string) => emit("tts:debug", msg).catch(() => {});
+
 async function broadcastBossStatus(payload: BossStatusData | null) {
   try {
     await emit("mech:boss-status", payload);
   } catch {}
 }
 async function broadcastOverlayControl(show: boolean) {
+  dbg(`[overlay] broadcast ${show ? "show" : "hide"}`);
   try {
     await emit(show ? "mech:overlay-show" : "mech:overlay-hide", null);
   } catch {}
 }
 async function broadcastSettings(settings: MechSettings) {
+  dbg(`[sync] broadcast settings → variant=${settings.overlayVariant} clickThrough=${settings.clickThrough}`);
   try {
     await emit("mech:settings-changed", settings);
   } catch {}
 }
 async function broadcastRaids(payload: Gate[]) {
+  dbg(`[sync] broadcast raids → ${payload.length} gate(s)`);
   try {
     await emit("mech:raids-changed", payload);
   } catch {}
 }
 async function broadcastDifficultyMap(map: Record<string, string>) {
+  dbg(`[sync] broadcast difficulty map → ${JSON.stringify(map)}`);
   try {
     await emit("mech:difficulty-changed", map);
   } catch {}
@@ -39,6 +47,7 @@ function loadDifficultyMap(): Record<string, string> {
   }
 }
 async function broadcastFightStart() {
+  dbg(`[fight] start → broadcast mech:fight-start`);
   try {
     await emit("mech:fight-start", null);
   } catch {}
@@ -282,11 +291,13 @@ export const mechStore = (() => {
 
     // Applied in the overlay window when it receives mech:settings-changed — no save/re-broadcast
     applyRemoteSettings(settings: MechSettings) {
+      dbg(`[sync] received settings → variant=${settings.overlayVariant} clickThrough=${settings.clickThrough}`);
       mechSettings = settings;
     },
 
     // Applied in the overlay window when it receives mech:raids-changed — no save/re-broadcast
     applyRemoteRaids(updated: Gate[]) {
+      dbg(`[sync] received raids → ${updated.length} gate(s)`);
       raids = updated;
     },
 
@@ -295,6 +306,8 @@ export const mechStore = (() => {
     },
 
     setDifficulty(raidName: string, difficulty: string | null) {
+      const prev = difficultyMap[raidName] ?? "All";
+      dbg(`[difficulty] ${raidName}: "${prev}" → "${difficulty ?? "All"}"`);
       if (!difficulty) {
         const { [raidName]: _, ...rest } = difficultyMap;
         difficultyMap = rest;
@@ -306,6 +319,7 @@ export const mechStore = (() => {
     },
 
     applyRemoteDifficultyMap(map: Record<string, string>) {
+      dbg(`[sync] received difficulty map → ${JSON.stringify(map)}`);
       difficultyMap = map;
     },
 
@@ -320,8 +334,12 @@ export const mechStore = (() => {
         // matches the active gate, or if no gate is locked yet.
         if (liveGateId && data?.isDead) {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
-          if (!matchedGate || matchedGate.id !== liveGateId) return;
+          if (!matchedGate || matchedGate.id !== liveGateId) {
+            dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
+            return;
+          }
         }
+        dbg(`[fight] end → boss "${data?.name ?? "null"}" cleared (gateId kept for 60s)`);
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
@@ -331,6 +349,7 @@ export const mechStore = (() => {
         // The 60s tier-2 timer clears liveGateId if no HP data resumes.
         if (gateResetTimer) clearTimeout(gateResetTimer);
         gateResetTimer = setTimeout(() => {
+          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
           liveGateId = null;
         }, GATE_RESET_MS);
         return;
@@ -345,7 +364,10 @@ export const mechStore = (() => {
         const matched = bestGateMatch(raids, data.name);
         if (matched) {
           liveGateId = matched.id;
+          dbg(`[gate] matched boss "${data.name}" → ${matched.raid} G${matched.gate} (${matched.id})`);
           broadcastFightStart();
+        } else {
+          dbg(`[gate] NO MATCH for boss "${data.name}" — overlay won't fire mechs`);
         }
       }
 
@@ -356,6 +378,7 @@ export const mechStore = (() => {
         // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
         // liveGateId is kept so the sticky match survives the gap.
         () => {
+          dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
           liveBar = null;
           liveTotalBars = null;
           liveBossName = null;
@@ -364,6 +387,7 @@ export const mechStore = (() => {
         },
         // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
         () => {
+          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
           liveGateId = null;
         }
       );

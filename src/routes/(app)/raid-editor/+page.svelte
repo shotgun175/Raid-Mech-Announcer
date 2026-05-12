@@ -174,6 +174,7 @@
               mech={m}
               isNext={m.id === nextId}
               isPast={m.hpBar != null && (m.hpBar ?? 0) > simBar}
+              {availableDifficulties}
               onEdit={openEdit}
               onDelete={deleteMechanic}
             />

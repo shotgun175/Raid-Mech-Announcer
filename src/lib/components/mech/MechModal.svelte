@@ -219,11 +219,10 @@
                   type="checkbox"
                   checked={form.difficulties.includes(d)}
                   onchange={(e) => {
-                    if ((e.target as HTMLInputElement).checked) {
-                      form.difficulties = [...form.difficulties, d];
-                    } else {
-                      form.difficulties = form.difficulties.filter((x) => x !== d);
-                    }
+                    const set = new Set(form.difficulties);
+                    if ((e.target as HTMLInputElement).checked) set.add(d);
+                    else set.delete(d);
+                    form.difficulties = DIFFICULTY_ORDER.filter((x) => set.has(x));
                   }}
                   style="accent-color: {sty.color}; width: 13px; height: 13px;"
                 />

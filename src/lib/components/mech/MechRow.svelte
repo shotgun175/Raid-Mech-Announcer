@@ -1,21 +1,34 @@
 <script lang="ts">
   import { formatTimer, PHASE_COLORS, SEVERITY } from "$lib/mech-constants";
-  import type { Mechanic } from "$lib/mech-types";
-  import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
+  import type { Difficulty, Mechanic } from "$lib/mech-types";
+  import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import MechBadge from "./MechBadge.svelte";
 
   interface Props {
     mech: Mechanic;
     isNext: boolean;
     isPast: boolean;
+    availableDifficulties: Difficulty[];
     onEdit: (m: Mechanic) => void;
     onDelete: (id: string) => void;
   }
-  let { mech, isNext, isPast, onEdit, onDelete }: Props = $props();
+  let { mech, isNext, isPast, availableDifficulties, onEdit, onDelete }: Props = $props();
 
   let hovered = $state(false);
   const sev = $derived(SEVERITY[mech.severity]);
   const phaseColor = $derived(mech.phase ? PHASE_COLORS[mech.phase] : null);
+  // Only show difficulty badges when the mech is restricted to a strict subset
+  // of the gate's available difficulties. Universal mechs (tagged with every
+  // available mode) would render every badge on every row — pure noise.
+  const showDifficultyBadges = $derived.by(() => {
+    if (!mech.difficulties?.length) return false;
+    return availableDifficulties.some((d) => !mech.difficulties!.includes(d));
+  });
+  // Render badges in canonical order (Solo → Normal → Hard → Nightmare) so
+  // toggle-click order in the modal doesn't leak into the row display.
+  const orderedDifficulties = $derived(
+    mech.difficulties ? DIFFICULTY_ORDER.filter((d) => mech.difficulties!.includes(d)) : []
+  );
 </script>
 
 <div
@@ -73,9 +86,9 @@
           >▶ NEXT</span
         >
       {/if}
-      {#if mech.difficulties?.length}
+      {#if showDifficultyBadges}
         <span style="display: flex; gap: 3px; flex-shrink: 0;">
-          {#each mech.difficulties as d}
+          {#each orderedDifficulties as d}
             {@const sty = DIFFICULTY_STYLE[d]}
             <span
               style="background: {sty.bg}; border: 1px solid {sty.border}; border-radius: 2px; padding: 1px 4px; color: {sty.color}; font-size: 9px; font-weight: 700; letter-spacing: 0.04em;"

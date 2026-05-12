@@ -286,7 +286,7 @@
         </div>
         {#each raidsByName[raidName] as gate (gate.id)}
           {@const sel = gate.id === mechStore.selectedGateId}
-          {@const isLive = gate.id === mechStore.liveGateId}
+          {@const isLive = gate.id === mechStore.liveGateId && mechStore.isLive}
           <!-- svelte-ignore a11y_interactive_supports_focus -->
           <div
             role="row"
