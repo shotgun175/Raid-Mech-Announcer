@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Overlay no longer opens oversized at startup. Idle pill stays on a single line when LOA Logs connects, instead of wrapping awkwardly until you nudge the window edge.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.8 -->
