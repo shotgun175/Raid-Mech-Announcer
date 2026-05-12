@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Overlay no longer opens oversized at startup. Idle pill stays on a single line when LOA Logs connects, instead of wrapping awkwardly until you nudge the window edge.
-
 <!-- @release-end -->
 
-<!-- @release v0.1.8 -->
+<!-- @release v0.1.9 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.8 - May 11th, 2026
+    v0.1.9 - May 12th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Overlay no longer opens oversized at startup. Idle pill stays on a single line when LOA Logs connects, instead of wrapping awkwardly until you nudge the window edge.
+
+<!-- @release-end -->
+
+<!-- @release v0.1.8 -->
+### v0.1.8 - May 11th, 2026
 
 #### NEW FEATURES
 
