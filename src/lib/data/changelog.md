@@ -12,20 +12,27 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.1.10 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.10 - May 12th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - Shortcut defaults refreshed: Hide Overlay is now `Ctrl + ↑` (was `Ctrl + ↓`) and the Confirm Pattern hotkey now defaults to `F9`. If you had custom bindings for either, they have been reset - re-bind them under Settings → Shortcuts.
 - Clipboard paste button in the bottom-bar Connect strip no longer dumps arbitrary clipboard text into the footer. If what you pasted is not an LOA Logs share URL, you'll see a short "Not a share URL" hint instead.
 
 <!-- @release-end -->
 
 <!-- @release v0.1.9 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.9 - May 12th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.9 - May 12th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
