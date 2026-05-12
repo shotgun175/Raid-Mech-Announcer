@@ -254,9 +254,14 @@ jobs:
           ' src/lib/data/changelog.md > "$TMP"
           mv "$TMP" src/lib/data/changelog.md
 
+          # Refresh Cargo.lock's `app` entry so the lockfile doesn't trail the
+          # workspace version by one release. `--workspace` keeps the update
+          # scoped to our crate (no registry index fetch, no transitive deps).
+          (cd src-tauri && cargo update -p app --workspace)
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json src-tauri/Cargo.toml src-tauri/tauri.conf.json src/lib/data/changelog.md
+          git add package.json src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json src/lib/data/changelog.md
           git commit -m "chore: bump to $NEW"
           git tag "$TAG"
           git push origin HEAD:main
