@@ -84,7 +84,7 @@
   });
 
   // ── Shortcuts tab ───────────────────────────────────────────────────
-  // Existing app shortcuts (hide meter etc.)
+  // Existing app shortcuts (hide overlay etc.)
   let shortcutRecordTarget = $state<string | null>(null); // which shortcut action is being recorded
   let shortcutKeys = $state("");
   let shortcutKeyUp = $state(true);
@@ -143,8 +143,8 @@
 
   function saveShortcut() {
     if (!shortcutRecordTarget || !shortcutKeys) return;
-    if (shortcutRecordTarget === "__confirmKey__") {
-      upd("confirmKey", shortcutKeys);
+    if (shortcutRecordTarget === "__confirmHotkey__") {
+      upd("confirmHotkey", shortcutKeys);
       registerConfirmShortcut(shortcutKeys);
     } else {
       settings.app.shortcuts[shortcutRecordTarget as keyof typeof settings.app.shortcuts] = shortcutKeys;
@@ -172,7 +172,7 @@
   }
 
   async function clearConfirmKey() {
-    upd("confirmKey", "");
+    upd("confirmHotkey", "");
     try {
       await unregisterAll();
     } catch {}
@@ -186,7 +186,7 @@
   onDestroy(() => {
     document.removeEventListener("keydown", handleScKeydown);
     document.removeEventListener("keyup", handleScKeyUp);
-    registerConfirmShortcut(s.confirmKey);
+    registerConfirmShortcut(s.confirmHotkey);
     registerShortcuts();
   });
 </script>
@@ -680,12 +680,12 @@
           <div class="flex items-center gap-2 pt-2">
             <button
               use:melt={$scTrigger}
-              onclick={() => openRecorder("__confirmKey__")}
+              onclick={() => openRecorder("__confirmHotkey__")}
               class="min-w-44 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-left font-mono text-sm transition hover:bg-neutral-700"
             >
-              {s.confirmKey || "None - click to record"}
+              {s.confirmHotkey || "None - click to record"}
             </button>
-            {#if s.confirmKey}
+            {#if s.confirmHotkey}
               <button
                 onclick={clearConfirmKey}
                 class="px-2 py-1.5 text-xs text-neutral-500 transition hover:text-red-400">Clear</button
@@ -701,15 +701,15 @@
           <div class="flex items-center gap-2 pt-2">
             <button
               use:melt={$scTrigger}
-              onclick={() => openRecorder("hideMeter")}
+              onclick={() => openRecorder("hideOverlay")}
               class="min-w-44 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-left font-mono text-sm transition hover:bg-neutral-700"
             >
-              {settings.app.shortcuts.hideMeter || "None - click to record"}
+              {settings.app.shortcuts.hideOverlay || "None - click to record"}
             </button>
-            {#if settings.app.shortcuts.hideMeter}
+            {#if settings.app.shortcuts.hideOverlay}
               <button
                 onclick={() => {
-                  settings.app.shortcuts.hideMeter = "";
+                  settings.app.shortcuts.hideOverlay = "";
                   registerShortcuts();
                 }}
                 class="px-2 py-1.5 text-xs text-neutral-500 transition hover:text-red-400">Clear</button

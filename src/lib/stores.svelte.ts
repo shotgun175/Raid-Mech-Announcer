@@ -84,14 +84,9 @@ export const defaultSettings: AppSettings = {
     betaChannel: false
   },
   shortcuts: {
-    hideMeter: "Control+ArrowDown",
-    disableClickthrough: ""
+    hideOverlay: "Control+ArrowUp"
   }
 };
-
-class Misc {
-  clickthrough = $state(false);
-}
 
 class UpdateInfo {
   available = $state(false);
@@ -99,7 +94,6 @@ class UpdateInfo {
 }
 
 export const settings = new Settings();
-export const misc = new Misc();
 export const updateInfo = new UpdateInfo();
 
 const md = new MarkdownIt({

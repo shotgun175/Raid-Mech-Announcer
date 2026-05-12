@@ -8,7 +8,6 @@ export interface AppSettings {
     betaChannel: boolean;
   };
   shortcuts: {
-    hideMeter: string;
-    disableClickthrough: string;
+    hideOverlay: string;
   };
 }

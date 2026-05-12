@@ -39,7 +39,7 @@ export interface MechSettings {
   vol: number;
   ttsRate: number;
   voice: TtsVoice;
-  confirmKey: string;
+  confirmHotkey: string;
   overlayVariant: OverlayVariant;
   hook: string;
   opacity: number;
