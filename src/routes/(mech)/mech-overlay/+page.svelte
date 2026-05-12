@@ -197,7 +197,7 @@
   $effect(() => {
     if (gate) return;
     getCurrentWebviewWindow()
-      .setSize(new LogicalSize(360, 100))
+      .setSize(new LogicalSize(500, 100))
       .catch(() => {});
   });
 
@@ -287,7 +287,7 @@
 {#if currentBar == null}
   <!-- No data: waiting for LOA Logs connection -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
+  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
@@ -300,7 +300,7 @@
 {:else if !gate}
   <!-- HP data flowing but boss name didn't match any imported gate -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
+  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(251,146,60,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
@@ -313,7 +313,7 @@
 {:else if isPhaseTransition}
   <!-- Different HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 vs gate's 285 bars) -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab;">
+  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
