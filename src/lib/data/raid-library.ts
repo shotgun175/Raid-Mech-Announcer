@@ -117,29 +117,37 @@ const LIBRARY: LibraryGate[] = [
         name: "Blue Wolf Split",
         hpBar: 40,
         triggerType: "hp",
-        severity: "major",
-        notes: "Separate wolves; Golden Orb Buff holders attack Blue Wolf; use Wei sidereal for coordination"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Separate wolves; Golden Orb Buff holders attack Blue Wolf; use Wei sidereal for coordination. (Maxroll calls this 'Invader (Blue Wolf)'.)"
       },
       {
         name: "Orb Phase",
         hpBar: 30,
         triggerType: "hp",
         severity: "major",
-        notes: "Consume orbs to manage critical resources; Wei sidereal applicable"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Consume orbs to manage critical resources; Wei sidereal applicable. Solo: collect colored orbs in alternating order, then stagger after collecting all 4."
       },
       {
         name: "Red Wolf Split",
         hpBar: 25,
         triggerType: "hp",
-        severity: "major",
-        notes: "Mirror of Blue Wolf split with reversed buff assignments; reallocate buffs"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Mirror of Blue Wolf split with reversed buff assignments; reallocate buffs. (Maxroll calls this 'Invader (Red Wolf)'.)"
       },
       {
         name: "Orb Phase (2nd)",
         hpBar: 15,
         triggerType: "hp",
         severity: "major",
-        notes: "Second orb consumption phase; Wei sidereal applicable; push to finish after"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Second orb consumption phase; Wei sidereal applicable; push to finish after. Solo: same alternating-orb sequence as 1st Orb Phase."
       }
     ]
   },
@@ -159,20 +167,25 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 160,
         triggerType: "hp",
         severity: "major",
-        notes: "Use Corrosive Bomb and Destruction Bomb when Valtan charges into a wall; positioning-dependent"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Use Corrosive Bomb and Destruction Bomb when Valtan charges into a wall; positioning-dependent. Solo: lead Valtan to charge at a pillar with blue orbs."
       },
       {
         name: "Wipe Pattern",
         hpBar: 130,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Heavy raid-wide wipe mechanic; use Balthorr sidereal"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Heavy raid-wide wipe mechanic; use Balthorr sidereal. Solo: dodge pizza pattern and secure blue orbs beforehand."
       },
       {
         name: "Pillar Hug",
         hpBar: 110,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Pillars block Yellow Zone damage; hide behind pillar or use Time Stop Potion with strict dodge timing"
       },
       {
@@ -180,13 +193,15 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Red telegraphs signal arena halving; move to opposite side from broken half"
       },
       {
         name: "Counter",
         hpBar: 65,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Counter precisely ~3 seconds after Valtan's turning animation; strict timing"
       },
       {
@@ -194,21 +209,24 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 40,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Counter ghost clones to remove armor stacks and build Sidereal meter; use Thirain after all stacks removed"
+          "Counter ghost clones to remove armor stacks and build Sidereal meter; use Thirain after all stacks removed. Hard: 6 armor stacks vs 4 in Normal."
       },
       {
         name: "Stage Break (2nd)",
         hpBar: 35,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Arena breaks again; move to opposite safe side; spatial awareness critical"
       },
       {
         name: "Ghost Transition",
         hpBar: 17,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Group up to direct Valtan's strike to one spot; use Balthorr sidereal; heavy coordination required"
       }
     ]
@@ -231,16 +249,34 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 120,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "5 players take orbs in center; 3 scout for wing count (0/1/2); rotate Purple 0→1→2 and Red 2→1→0; use Nineveh sidereal"
+          "5 players take orbs in center; 3 scout for wing count (0/1/2); rotate Purple 0→1→2 and Red 2→1→0; use Nineveh sidereal. Solo: pick up purple orb, follow wing patterns (Red Open→Half→Closed, Purple Closed→Half→Open)."
       },
       {
         name: "Clone Absorption",
         hpBar: 65,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Memorize black shockwaves and block black orbs from the clone; 5 shockwaves total; use Nineveh sidereal; memory-intensive"
+          "Memorize black shockwaves and block black orbs from the clone; 5 shockwaves total; use Nineveh sidereal; memory-intensive. Hard: any black orb reaching boss = wipe."
+      },
+      {
+        name: "Stun Shotgun",
+        hpBar: 60,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "V-shaped purple outline marks players; position away from center"
+      },
+      {
+        name: "Multiple Shockwaves",
+        hpBar: 45,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Four shockwaves in fixed pattern: stand outside → inside → inside → outside"
       }
     ]
   },
@@ -260,14 +296,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 170,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Place brown swamp in marked area; run swamp away from spot; group up at marked location for coordination"
+          "Two players marked with brown puddle; place swamp in marked area; others drop speed puddles. Solo: drop speed puddle outside, proceed to rally point."
       },
       {
         name: "Sword & Clones",
         hpBar: 150,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: ">70% Meter: ping sword locations; <70% Meter: ping clone overlaps; meter-dependent callouts"
       },
       {
@@ -275,44 +313,53 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Use north yellow orb to reduce Seduction Gauge to 0; execute key input; use Nineveh sidereal after key input"
+          "Use north yellow orb to reduce Seduction Gauge to 0; execute key input; use Nineveh sidereal after key input. Failures trigger shield/shockwave."
       },
       {
         name: "Throne",
         hpBar: 120,
         triggerType: "hp",
-        severity: "major",
-        notes: "Stack Seduction Puddles together; build Seduction Gauge to 100%; gauge accumulation phase"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Stack Seduction Puddles to max everyone's gauge to 100%. Solo: place puddle and stand on it to reach 100% gauge."
       },
       {
         name: "Stagger Check",
         hpBar: 102,
         triggerType: "hp",
-        severity: "major",
-        notes: "Two methods: west orb + stagger OR Wei sidereal with top slime while others kill bottom"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Use west orb + stagger OR Wei sidereal with top slime while others kill bottom. Apply Time Stop Potion before slime explosions. Solo: kill monster spawn, then stagger boss."
       },
       {
         name: "Swamp (2nd)",
         hpBar: 75,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Safe spot highlighted white on Human side; Human team calls out safe spot to Demon team"
       },
       {
         name: "Tentacles",
         hpBar: 55,
         triggerType: "hp",
-        severity: "major",
-        notes: "Red orbs increase Seduction Gauge; tentacles only destroyable by players with >70% Meter"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Destroy tentacles while maintaining 70%-99% gauge using red orbs. Tentacles only destroyable by players with >70% Meter."
       },
       {
         name: "Last Struggle",
-        hpBar: 2,
+        hpBar: 5,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Consume yellow orb at ~x10 to hit 0 Seduction Gauge; at x2 find real Vykas, get behind and stagger; use Wei sidereal"
+          "Find real Vykas, get behind and stagger before team reaches 100% gauge; use Wei sidereal. Solo: use orb to reset gauge."
       }
     ]
   },
@@ -334,6 +381,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 130,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Stagger where there is no purple shield; attack the unprotected side"
       },
       {
@@ -341,13 +389,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 110,
         triggerType: "hp",
         severity: "major",
-        notes: "Ping hearts; face away from the non-heart if 3 are present; face the heart if only 1 is present"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Ping hearts; face away from the non-heart if 3 are present; face the heart if only 1 is present. Solo: look at the odd one among three emoting clones."
       },
       {
         name: "Simon Says",
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Mirror boss emote when it faces you; use a different emote when its back is turned"
       },
       {
@@ -355,6 +406,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 65,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat stagger mechanic — attack where there is no purple shield"
       },
       {
@@ -362,13 +414,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 45,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Match suit/symbol above your head with the space across 3 rounds; use Inanna sidereal"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Match suit/symbol above your head with the space across 3 rounds; use Inanna sidereal. Solo: direct cards toward matching NPC symbols."
       },
       {
         name: "Heart (2nd)",
         hpBar: 25,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat heart mechanic from x110; same logic, face the heart or away from non-heart"
       }
     ]
@@ -389,41 +444,50 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 125,
         triggerType: "hp",
         severity: "normal",
-        notes: "Saydon joins the fight; boss transformation phase — prepare for multi-mechanic overlap"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Saydon joins the fight; boss transformation phase — prepare for multi-mechanic overlap. Dodge circus balls and explosions until boss lands."
       },
       {
         name: "Curtain",
         hpBar: 110,
         triggerType: "hp",
         severity: "major",
-        notes: "Party splits: 2 players enter red dome, 1 player enters blue dome; handle dome mechanics separately"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Party splits: 2 players enter red dome, 1 player enters blue dome; handle dome mechanics separately. Solo: match your clown icon color to the corresponding safe dome."
       },
       {
         name: "Flip",
         hpBar: 95,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Target 2nd/6th card initially; if unsuccessful, 4th position holds the answer"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Find Kakul within 3 card flips; target 2nd/6th card initially; if unsuccessful, 4th position holds the answer. Solo: bait Saydon's hammer strikes to reveal cards."
       },
       {
         name: "Maze",
         hpBar: 75,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Coordinate via Discord or call positions by rows/columns; don't overlap"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Kill matching suit enemies; coordinate via Discord or call positions by rows/columns; don't overlap"
       },
       {
         name: "Pizza",
         hpBar: 55,
         triggerType: "hp",
-        severity: "major",
-        notes: "Watch star rotation across 3 patterns; use Inanna sidereal"
+        severity: "normal",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Watch star rotations (3 total) to determine movement direction; use Inanna sidereal"
       },
       {
         name: "Flip (2nd)",
         hpBar: 30,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat card-finding mechanic from x95; same 2nd/6th → 4th fallback"
       }
     ]
@@ -444,42 +508,51 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 155,
         triggerType: "hp",
         severity: "major",
-        notes: "First Mario player enters stage; vertical saws mechanic follows during curtain call"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "First Mario player enters stage (15s portal window); vertical saws Iron Maiden mechanic follows during curtain call"
       },
       {
         name: "Mario Stage 2",
         hpBar: 130,
         triggerType: "hp",
         severity: "major",
-        notes: "Second Mario with hooks mechanic; dodge hooks while managing curtain call"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Second Mario with hooks Iron Maiden mechanic; dodge hooks while managing curtain call"
       },
       {
         name: "Showtime",
         hpBar: 90,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Group to bottom to dodge initial bullet shower; person targeted by cone stands in front of bomb"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Group to bottom to dodge initial bullet shower; person targeted by cone stands in front of bomb. Solo: dodge explosions, aim cones at bombs, evade crosshair."
       },
       {
         name: "Mario Stage 3",
         hpBar: 80,
         triggerType: "hp",
         severity: "major",
-        notes: "Hooks and saws combination; most complex Mario stage"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Hooks and saws combination Iron Maiden; most complex Mario stage"
       },
       {
         name: "Mario Stage 4",
         hpBar: 55,
         triggerType: "hp",
-        severity: "major",
-        notes: "Must pull both levers before the stagger check window opens"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Must pull both levers before the stagger check window opens (Iron Maiden Levers + Typing — wipe risk if missed)"
       },
       {
         name: "Bingo",
         hpBar: 0,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Final Bingo phase; use Bingo-Tool to coordinate; fail = wipe"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Final Bingo phase; use Bingo-Tool to coordinate; every 3rd bomb triggers channel; fail = wipe"
       }
     ]
   },
@@ -500,16 +573,19 @@ const LIBRARY: LibraryGate[] = [
         name: "Safe Zones",
         hpBar: 85,
         triggerType: "hp",
-        severity: "major",
-        notes: "Assign positions before fight; occupy your spawned safe zone immediately when it appears"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Assign positions before fight; occupy your spawned safe zone immediately when it appears. Solo: occupy one safe zone while NPCs cover others."
       },
       {
         name: "Sidereal Phase",
         hpBar: 45,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Use Azena sidereal; complete 6 counter attacks; Hammer & Bow Split: use Thirain once both bosses are aligned"
+          "Use Azena sidereal; complete 6 counter attacks; Hammer & Bow Split: use Thirain once both bosses are aligned. Solo: only 3 counters required."
       }
     ]
   },
@@ -529,13 +605,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 145,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Party positions spawn meteors; initiate typing test then stagger — all three must succeed"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "8 Meteors fall in set positions; complete typing test then stagger — all three must succeed. Solo: one meteor typing test."
       },
       {
         name: "Medusa + Stagger",
         hpBar: 100,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Cat's eye = look away; Round eye = look inside the AoE; stagger after resolving eye"
       },
       {
@@ -543,14 +622,17 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 43,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Destroy assigned stars, squares, and diamonds per color pattern; wrong shape = chain explosion"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Destroy assigned stars, squares, and diamonds per color pattern; wrong shape = chain explosion. Solo: break one shape pair."
       },
       {
         name: "Red & Blue Spears",
         hpBar: 0,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Consume all 6 colored marks correctly to finish the gate; wrong order wipes"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Consume 6+ colored areas to complete; failure triggers healing and repeat"
       }
     ]
   },
@@ -570,36 +652,43 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 212,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Check shape, dodge projectiles, navigate 3 safe areas, then report what you saw to the party"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Check shape, dodge projectiles, navigate safe tiles with reversed inputs, then report what you saw to the party"
       },
       {
         name: "Golden Meteor (1st)",
         hpBar: 188,
         triggerType: "hp",
         severity: "major",
-        notes: "Track blue meteor order; gold meteor always at 12 o'clock; escape the zone when placed"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Track blue meteor order; gold meteor always at 12 o'clock; escape the zone when placed. Solo: position at map corners; nearby tiles disappear upon impact."
       },
       {
         name: "Black Hole",
         hpBar: 113,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Avoid center tiles; collect yellow orbs; counter at pinged locations; HM: can skip with Shandi + high DPS"
+          "Party1 x3, Party2 x3+1; teams inside/outside collect yellow orbs, counter illusions; HM: can skip with Shandi + high DPS. Solo: collect orbs, counter/stagger clones, survive explosions."
       },
       {
         name: "Dream World (2nd)",
         hpBar: 28,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat shape mechanic; random inputs this time; use Inanna sidereal to cleanse"
       },
       {
         name: "Final Nightmare",
-        hpBar: 25,
+        hpBar: 0,
         triggerType: "hp",
-        severity: "major",
-        notes: "Avoid 3/6/9/12 o'clock cardinal positions; push damage to finish"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Destroy final orb; avoid 3/6/9/12 o'clock cardinal positions; push damage to finish"
       }
     ]
   },
@@ -619,28 +708,41 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 170,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Lowest stagger player enters dome; collect required objects after stagger resolves"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Color-dependent dome mechanic; lowest stagger player enters dome; collect required objects after stagger resolves. Solo: Red — stagger boss, grab pyramid buff; Blue — stagger cube, typing test, dodge laser; Yellow — destroy sphere, catch orb, stagger."
+      },
+      {
+        name: "Red/Blue/Yellow Domes (2nd)",
+        hpBar: 120,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Second color dome phase; cannot repeat previous color"
       },
       {
         name: "Stagger Check (1st)",
         hpBar: 95,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Use Inanna sidereal (cleanse) or Wei sidereal (high stagger damage); coordinate sidereal usage"
       },
       {
-        name: "Red/Blue/Yellow Domes (2nd)",
+        name: "Red/Blue/Yellow Domes (3rd)",
         hpBar: 60,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Repeat color dome mechanic from x170; same rules apply"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Third color dome phase"
       },
       {
         name: "Stagger Check (2nd)",
         hpBar: 20,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Final stagger check; use remaining sidereals; push to end"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Final stagger check; applies 20% damage increase debuff (Hard); use remaining sidereals; push to end"
       }
     ]
   },
@@ -661,9 +763,10 @@ const LIBRARY: LibraryGate[] = [
         name: "Dodge Minigame",
         hpBar: 55,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Watch for spear toss; avoid AoE knockback; puddles after x55 stun on contact; HM: additional lightning narrows safe spots"
+          "Arena breaks, lightning runs through map, constant pull downward. Spacebar spear toss; avoid AoE knockback; puddles after x55 stun on contact; HM: additional lightning narrows safe spots. Solo: dodge AoEs and spacebar spear without team support."
       }
     ]
   },
@@ -682,24 +785,28 @@ const LIBRARY: LibraryGate[] = [
         name: "Rotating Elements",
         hpBar: 62,
         triggerType: "hp",
-        severity: "major",
-        notes: "Intercept orbs, rotate counterclockwise avoiding repeated directions, destroy counter-element"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Intercept orbs, rotate counterclockwise avoiding repeated directions, destroy counter-element. Solo: block orbs and destroy the strong element (no rotation needed)."
       },
       {
         name: "Counter/Stagger",
         hpBar: 42,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Counter all three mobs before boss stagger; missing any counter fails the mechanic; HM: additional counter mobs"
+          "Counter all three mobs before boss stagger; missing any counter fails the mechanic; HM: additional counter mobs. Solo: counter one soldier, then stagger boss."
       },
       {
         name: "Rings",
         hpBar: 20,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Assign players to rings by color; failing 3 times wipes; HM: third ring requires two players splitting coverage"
+          "Assign players to rings by color; failing 3 times wipes; HM: third ring requires two players splitting coverage. Solo: destroy orbs matching ring color weaknesses."
       }
     ]
   },
@@ -719,22 +826,25 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 180,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Dodge 3 explosions then aim laser at egg for a 2-minute damage buff; HM: explosions overlap with orb collection"
+          "Dodge 3 explosions then aim laser at egg for a 2-minute damage buff; HM: explosions overlap with orb collection. Solo: position near edge eggs; rotate boss to touch mirror to egg."
       },
       {
         name: "Light Delivery",
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Reflect beam through each player into boss in party order; don't stack to prevent imprisonment; HM: black puddles require angle adjustments"
+          "Reflect beam through each player into boss in party order; don't stack to prevent imprisonment; HM: black puddles require angle adjustments. Solo: guide final laser toward boss instead of reflecting through teammates."
       },
       {
         name: "White Orbs / Sunlight",
         hpBar: 100,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Collect 5 white orbs for shield; black orbs stun — avoid; use Time Stop Potion if shield is missed"
       },
       {
@@ -742,6 +852,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 60,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Ping red pillars with runes then stagger the matching clone; coordinate pings clearly"
       }
     ]
@@ -764,6 +875,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 140,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Spears inflict percentage HP damage; time orb contact carefully to avoid overlap"
       },
       {
@@ -771,35 +883,41 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 128,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Touching opposite-color tumor = debuff (heal reduction + DoT); two tumors = death; HM: 4 orbs, one different color marks grab position"
+          "Touching opposite-color tumor = debuff (heal reduction + DoT); two tumors = death; HM: 4 orbs, one different color marks grab position. Solo: use Sidereal: Wei to cleanse."
       },
       {
         name: "Orbs / Grab / Stagger",
         hpBar: 112,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Only the different-colored orb designates grab position (HM); stagger check after grab resolves"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Only the different-colored orb designates grab position (HM); stagger check after grab resolves. Solo: destroy matching-color orbs or stagger boss independently."
       },
       {
         name: "Flood Escape",
         hpBar: 90,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Evacuation phase — wrong path = instant death (HM) vs destroyable barricade (NM); memorize route"
       },
       {
         name: "Stop Mobs",
         hpBar: 75,
         triggerType: "hp",
-        severity: "major",
+        severity: "normal",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Kill mob waves before they reach objective; HM: must eliminate 2 large mobs instead of 1"
       },
       {
         name: "Inanna Stagger",
         hpBar: 50,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Use Inanna sidereal — converts to free DPS phase when boss stands; deploy Thirain immediately after for bonus damage before 60s timer"
       },
@@ -808,7 +926,8 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 20,
         triggerType: "hp",
         severity: "major",
-        notes: "Green circles inflict 30%+ damage taken vulnerability; time movement carefully around bell triggers"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Break shield while managing green puddle stacks; green circles inflict 30%+ damage taken vulnerability"
       }
     ]
   },
@@ -827,7 +946,8 @@ const LIBRARY: LibraryGate[] = [
         name: "Tentacles",
         hpBar: 175,
         triggerType: "hp",
-        severity: "major",
+        severity: "normal",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Stay away from center; destroy tentacles quickly before they charge"
       },
       {
@@ -835,14 +955,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 160,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Prevent red ghost from reaching skull; pass skull clockwise; HM: green ghost also spawns; optional Camouflage Robe for invisibility"
+          "Prevent red ghost from reaching skull; pass skull clockwise; HM: green ghost also spawns; optional Camouflage Robe for invisibility. Solo: throw skull to yellow-marked locations at 5, 7, 11, 1 o'clock."
       },
       {
         name: "Red Hole",
         hpBar: 140,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Avoid touching red hole or ring explosions (heavy disease meter increase); dodge teleport after third explosion"
       },
@@ -850,7 +972,8 @@ const LIBRARY: LibraryGate[] = [
         name: "Hide",
         hpBar: 110,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Take cover from Akkan's incoming sweep; find a valid safe position"
       },
       {
@@ -858,6 +981,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat red hole; use Thirain sidereal in front of boss for damage boost and extended safe window"
       },
       {
@@ -865,14 +989,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 55,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Counter clones to build Sidereal meter ~33% per counter; HM: petrified players executed by Akkan at mechanic end"
+          "Counter clones to build Sidereal meter ~33% per counter; HM: petrified players executed by Akkan at mechanic end. Solo: counter Akkan clones for 50% Sidereal Meter per success."
       },
       {
         name: "Red Hole (3rd)",
         hpBar: 30,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Final red hole; same avoidance as previous instances; push damage after"
       },
       {
@@ -880,6 +1006,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 0,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Use Thirain sidereal immediately; HM: counterable clones build Sidereal meter ~33% each; don't stand in Big Scythe path (instant kill)"
       }
@@ -910,23 +1037,27 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 200,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Disease meter fills from boss attacks; 5th stack = charm effect causing explosion that kills nearby players"
+          "Intercept orange lasers, stagger boss. Disease meter fills from attacks; 5th stack = charm explosion that kills nearby players."
       },
       {
         name: "Line Delivery & Stagger",
         hpBar: 165,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Use Inanna sidereal to reduce gauge; prevent knockoff deaths during destruction phases"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Block/deliver lasers. Use Inanna sidereal to reduce gauge; prevent knockoff deaths during destruction phases. Solo: NPCs block orange/green lasers; you solo-manage purple laser."
       },
       {
         name: "Star or Hexagon",
         hpBar: 140,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Identify star vs hexagon pattern; HM: pizza with 5 consecutive explosions — use Time Stop Potion for safety"
+          "Rotate towers to form shape; identify star vs hexagon pattern. HM: pizza with 5 consecutive explosions — use Time Stop Potion for safety."
       },
       {
         name: "Plague Wave",
@@ -934,13 +1065,16 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 60,
         triggerType: "hp+timer",
         severity: "major",
-        notes: "Persistent disease meter mechanic repeats every 60s; manage stacks continuously"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Persistent disease meter mechanic recurs ~every 60s through the random-gimmicks phase (3 safespots / 4 curses / skulls / slimes)"
       },
       {
         name: "Arena Break",
         hpBar: 30,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Boss breaks arena edge; dodge frontal/side/rotating lasers; use Wei at x15 to skip final destruction"
       },
       {
@@ -948,8 +1082,9 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 0,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Don't stand in Big Scythe path (instant kill HM); use Wei sidereal at x15+ to skip this final destruction check"
+          "Complete knockback check. Don't stand in Big Scythe path (instant kill HM); use Wei sidereal at x15+ to skip."
       }
     ]
   },
@@ -971,6 +1106,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Collect green seeds while avoiding purple ones; stagger the boss once seeds collected"
       },
       {
@@ -978,7 +1114,9 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 45,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Guide the plant to destroy golden dust; attack purple orbs until x15; use Flame Grenade when ready"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Guide the plant to destroy golden dust; attack purple orbs until x15; use Flame Grenade when DR expires (45s window) or boss becomes more dangerous"
       }
     ]
   },
@@ -998,13 +1136,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 95,
         triggerType: "hp",
         severity: "major",
-        notes: "Support stays center at clock positions; counter and kill clones as they appear"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Support stays center at clock positions; counter and kill clones as they appear. Solo: counter clone alone. Keep armor ≤ 4 stacks — 5 = wipe."
       },
       {
         name: "Marathon / Stagger",
         hpBar: 30,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Gather at center, move to opposite side of boss, wait for flame breath, then rush in and stagger"
       }
     ]
@@ -1021,46 +1162,54 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "Pizza",
+        name: "Stage Destruction / Pizza",
         hpBar: 160,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Move to 3 positions; dodge 2 slices and mirror explosion; guide 3rd slice toward mirror; repeat clockwise"
+          "Move to 3 positions; dodge 2 slices and mirror explosion; guide 3rd slice toward mirror; repeat clockwise. Solo: fixed position at 3 o'clock."
       },
       {
         name: "Stagger",
-        hpBar: 160,
+        hpBar: 110,
         triggerType: "hp",
         severity: "major",
-        notes: "Stagger boss first, then split into groups of 2 to stagger the bottom mirrors"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Stagger boss first, then split into groups of 2 to stagger the bottom mirrors. Solo: independent mirror staggers."
       },
       {
         name: "Mirror Counter",
-        hpBar: 110,
+        hpBar: 60,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Use method '11223344'; counter real mirrors (red thorns) not fakes (purple thorns)"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Use method '11223344'; counter real mirrors (red thorns) not fakes (purple thorns). Failing the stagger on time wipes."
       },
       {
         name: "Sword Destruction",
         hpBar: 60,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Move to 3 positions with Destruction Bomb; stagger; use weak point skills on destruction targets"
       },
       {
         name: "Guardian Fight",
-        hpBar: 60,
+        hpBar: 40,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Lowest DPS gets tethered; grab order is highest DD → Support → DD"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Lowest DPS gets tethered; grab order is highest DD → Support → DD. Solo: kill Guardian then self-grab."
       },
       {
         name: "Rage Phase",
-        hpBar: 40,
+        hpBar: 0,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Mirrors spawn at 3 positions; focus boss or ignore mirrors based on party's agreed strategy"
       }
     ]
@@ -1082,7 +1231,8 @@ const LIBRARY: LibraryGate[] = [
         name: "Tentacle Destruction",
         hpBar: 145,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Run to arena edge; throw bombs on tentacles then stagger the boss"
       },
       {
@@ -1090,6 +1240,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 100,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Marked players stand in craters; same crater is targeted twice — hold position"
       },
       {
@@ -1097,28 +1248,21 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 55,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Normal", "Solo"],
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "At x3+1 on outer edge: locate red tentacle, throw bombs, get grabbed by yellow telegraph; use Balthorr if needed"
-      },
-      {
-        name: "Destroy & Grab (HM)",
-        hpBar: 55,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
-        notes:
-          "Same as NM + Raspberry (red orbs): do NOT destroy them — both destroyed = -95% damage/-100% stagger for all; use Balthorr if needed"
+          "At x3+1 on outer edge: locate red tentacle, throw bombs, get grabbed by yellow telegraph; use Balthorr if needed. Hard: + Raspberry red orbs — do NOT destroy them (both destroyed = -95% damage/-100% stagger). Solo: only one tentacle appears."
       },
       {
         name: "Eye Safe Zone",
         hpBar: 38,
         triggerType: "hp",
         severity: "major",
-        notes: "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes. Solo: eyes move toward you rather than spreading."
       },
       {
-        name: "Eye Black Hole (HM)",
+        name: "Eye Black Hole",
         hpBar: 35,
         triggerType: "hp",
         severity: "major",
@@ -1140,10 +1284,10 @@ const LIBRARY: LibraryGate[] = [
     tauntable: true,
     mechanics: [
       {
-        name: "Arena Break (HM)",
+        name: "Arena Break",
         hpBar: 153,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
         difficulties: ["Hard"],
         notes: "Hard Mode only; top or bottom arena side breaks off — reposition accordingly"
       },
@@ -1152,22 +1296,27 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Counter in party order (Party 1 then Party 2); avoid red flash counters; use Azena after wings and shockwave"
+          "Counter in party order (Party 1 then Party 2); 3s window; avoid red flash counters (= wipe); use Azena after wings and shockwave. Solo: counter single orb, then boss."
       },
       {
         name: "Black or Blue Stagger",
         hpBar: 72,
         triggerType: "hp",
-        severity: "major",
-        notes: "Identify the swirl color around the boss; attack the opposite-colored orbs to stagger"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Identify the swirl color around the boss; attack the opposite-colored orbs to stagger. Laser targets one player. Solo: use Hyper Awakening when available."
       },
       {
         name: "3 Monster Waves",
         hpBar: 18,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Defeat 8 weak → 4 elite → 2 boss monsters in sequence; use Thirain sidereal for the dual dragon bosses"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Defeat 8 weak → 4 elite → 2 boss monsters in sequence; don't counter Wave 3 dragon; use Thirain sidereal for the dual dragon bosses (~60s window). Solo: dragons spawn at 3 and 9 o'clock."
       }
     ]
   },
@@ -1187,45 +1336,42 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 300,
         triggerType: "hp",
         severity: "major",
-        notes: "Match the direction of boss's raised hand"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Boss indicates left/right hand; players go to same side and damage sword"
       },
       {
         name: "Albion",
         hpBar: 275,
         triggerType: "hp",
         severity: "major",
-        notes: "Observe patterns and walk to the shown safe spots"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Observe patterns and walk to the shown safe spots; darkness wave avoidance"
       },
       {
         name: "Sword Fight 2",
         hpBar: 255,
         triggerType: "hp",
-        severity: "major",
-        difficulties: ["Normal", "Solo"],
-        notes: "Dodge the pizza, bait boss sword to 9 o'clock then kill it"
-      },
-      {
-        name: "Sword Fight 2 (HM)",
-        hpBar: 255,
-        triggerType: "hp",
-        severity: "major",
-        difficulties: ["Hard"],
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Dodge the pizza, bait boss sword to 9 o'clock then kill it; also dodge spinning tether ball rotating counter-clockwise"
+          "Dodge the pizza, bait boss sword to 9 o'clock then kill it. Hard: also dodge spinning tether ball rotating counter-clockwise."
       },
       {
         name: "Safe Spot",
         hpBar: 225,
         triggerType: "hp",
         severity: "major",
-        notes: "Puddle player goes to top; all others go to bottom"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Puddle player goes to top; all others go to bottom. Navigate red telegraphs with inverted visibility."
       },
       {
         name: "Shield & Clash",
         hpBar: 210,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Assign 5 players for clash; use Inanna sidereal for red telegraphs; burst through 40 HP shield"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Break x40 HP shield via 1st/2nd clash minigames; use Inanna sidereal for red telegraphs. Solo: single-player clash, no team coordination."
       },
       {
         name: "Stage Break & Clash",
@@ -1233,30 +1379,27 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 45,
         triggerType: "hp+timer",
         severity: "wipe",
-        notes: "Every 45s stage breaks and clashes repeat; use Nineveh sidereal as needed; fog expands at 20/70/120s"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Alternate between 3rd/4th clashes and arena breaks every 45s through x210–x90; use Nineveh sidereal as needed; fog expands at 20/70/120s"
       },
       {
         name: "Fog",
         hpBar: 90,
         triggerType: "hp",
         severity: "major",
-        notes: "Black fog spreads from edges; push DPS to reach x55 HP quickly before fog covers arena"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Black fog reduces playfield from edges between x90–x55; DPS race to push through before fog covers arena"
       },
       {
         name: "Safe Spot (2nd)",
         hpBar: 55,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Normal", "Solo"],
-        notes: "Movement is inverted; complete typing minigame (standard left-to-right); use Wei for ghosts"
-      },
-      {
-        name: "Safe Spot (2nd) (HM)",
-        hpBar: 55,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
-        notes: "Movement is inverted; complete typing minigame right-to-left (inverted direction); use Wei for ghosts"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Movement inverted; complete typing minigame, kill clone (solo: clone of yourself), navigate telegraphs. Normal/Solo: left-to-right typing. Hard: right-to-left inverted typing. Use Wei for ghosts."
       }
     ]
   },
@@ -1265,33 +1408,54 @@ const LIBRARY: LibraryGate[] = [
     raid: "Thaemine",
     gate: 4,
     releaseOrder: 8,
-    availableDifficulties: ["Solo", "Normal", "Hard"],
+    availableDifficulties: ["Hard"],
     boss: "Darkness Legion Commander Thaemine",
     bossType: "DEMONIC",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
       {
-        name: "Stagger Check",
-        hpBar: 320,
+        name: "Red Marks",
+        hpBar: 315,
         triggerType: "hp",
-        severity: "major",
-        notes: "Place markers, dodge four red attack variations, stagger statue, and aim tethers"
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes:
+          "Two players marked; dodge expanding explosions, position at clock positions, stagger 4 swords with tethers"
       },
       {
-        name: "Expert Destroyer",
+        name: "Co-op Counter + Prokel",
         hpBar: 280,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Two DPS enter blue orb and kill clone/stagger sword; others spacebar wall then stagger"
+        difficulties: ["Hard"],
+        notes: "Team splits (2 inside / 6 outside); inside defeats clone, outside staggers boss with Sidereal support"
       },
       {
-        name: "Phase 2 Transition",
-        hpBar: 220,
+        name: "Tethers + Clash",
+        hpBar: 175,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes:
+          "Destroy blue circles using tether overlaps; navigate sword maze; perform two consecutive Clash minigames"
+      },
+      {
+        name: "6 Counters",
+        hpBar: 87,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard"],
+        notes: "Counter 6 moving swords at specific clock positions; use Sidereal to destroy stationary ones"
+      },
+      {
+        name: "Puddle Walk + Crit",
+        hpBar: 63,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Hard"],
         notes:
-          "Phase 2 starts; use Shandi sidereal for Tethers & Clash; eliminate blue circles, gather yellow orb, run bottom, complete maze"
+          "Parties split left/right; run to safe zones avoiding blue puddles; use Splendid Sacred Charm after 3rd explosion. Hidden Kadan activates ~1 minute into final phase."
       }
     ]
   },
@@ -1312,14 +1476,17 @@ const LIBRARY: LibraryGate[] = [
         name: "First Encounter",
         hpBar: 180,
         triggerType: "hp",
-        severity: "major",
-        notes: "Kill elite mobs with Azena ally skill after shield breaks; both parties attack their separate elites"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Kill elite mobs after shield breaks; use Azena ally skill. Normal/Hard: 2 elites split between parties. Solo: 1 elite."
       },
       {
         name: "Run Phase",
         hpBar: 162,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Timed platforming; must pass stagger check to reach boss before timer expires; use Azena when 3+ segments available"
       },
@@ -1327,40 +1494,43 @@ const LIBRARY: LibraryGate[] = [
         name: "Clone Split",
         hpBar: 135,
         triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Normal", "Solo"],
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Safe spot on odd-colored lines; 4th line shows directional counter indicator; no inter-party communication needed"
-      },
-      {
-        name: "Clone Split (HM)",
-        hpBar: 135,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
-        notes:
-          "Safe spot on odd-colored lines; 4th line counter indicator; inter-party communication required for overlapping safe spots"
+          "Safe spot on odd-colored lines; 4th line shows directional counter indicator. Normal/Solo: no inter-party communication. Hard: inter-party communication required for overlapping safe spots."
       },
       {
         name: "Invasion",
         hpBar: 110,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Use Avele ally skill next to boss, then deploy follow-up within 20 seconds to clear mobs before explosions"
       },
       {
-        name: "Mini Boss",
+        name: "Mini Boss + Safe Zone",
         hpBar: 90,
         triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Highest stagger party moves to mini boss (Solo: single-player stagger), use Whirlwind Grenade. Normal/Hard only: Safe Zone is sustained from x90→x50 (fans rotate, parties communicate safe positions)."
+      },
+      {
+        name: "Final Phase",
+        hpBar: 55,
+        triggerType: "hp",
         severity: "major",
-        notes: "Highest stagger party moves to mini boss; use Whirlwind Grenade (Bound)"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Deplete boss while avoiding red fog perimeter. HM: rotate censer debuff before 100 stacks."
       },
       {
         name: "Smoke & Stagger",
         hpBar: 50,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes:
           "Identify censer color (red/black smoke); mini boss party reveals color; main party uses Avele + follow-up to remove shield; tethered player needs 5+ stacks"
       }
@@ -1381,15 +1551,17 @@ const LIBRARY: LibraryGate[] = [
         name: "Mirror Counter",
         hpBar: 210,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Counter the mirror showing Echidna's portrait in odd direction; NM: dodge horizontal lasers; HM: also dodge red side-shooting lasers; use Azena after stagger"
+          "Counter the mirror showing Echidna's portrait in odd direction; NM: dodge horizontal lasers; HM: also dodge red side-shooting lasers; use Azena after stagger. Solo: blue-glowing mirror with correct portrait direction."
       },
       {
         name: "Huge Echidna",
         hpBar: 137,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "3-man co-op counter (2-man NM); HM: spacebar through 2nd mirror laser; flying hearts pull toward boss; use Thar for stagger then Azena after clash"
       },
@@ -1398,6 +1570,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 120,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Repeats at 100 and 80 HP; kill snakes at clash circles for permanent 30% buff; raid lead uses Thar at first clash; leave white snake at 79 for 2nd clash strategy"
       },
@@ -1406,8 +1579,18 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 50,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Large mirror rotates; follow its back and stagger; HM: find red glow and determine rotation direction (right=clockwise, left=counterclockwise)"
+      },
+      {
+        name: "Charm Chains",
+        timerSecs: 300,
+        triggerType: "timer",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo only; ~5 minutes into the fight; two players chained — break by moving 6+ tiles apart (note: solo so the second 'player' is the boss/NPC mechanic)"
       },
       {
         name: "Final Struggle",
@@ -1434,27 +1617,23 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "4 Guardians",
+        name: "Part Break + 4 Guardians",
         hpBar: 460,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Normal"],
         notes:
-          "Four guardians spawn at clock positions (Nacrasena, Yoho, Calventus, Velganos); coordinate spread positions"
+          "Damage Behemoth's body until it breaks (exposes wing/head weak points). Four guardians (Nacrasena, Yoho, Calventus, Velganos) spawn at clock positions — must kill before NPC dies."
       },
       {
-        name: "Twisters",
-        hpBar: 460,
+        name: "Twisters + Group Counter",
+        hpBar: 190,
         repeatSecs: 90,
         triggerType: "hp+timer",
-        severity: "normal",
-        notes: "Spread on designated twister lines; manage timing between hits; repeats every 90s throughout the fight"
-      },
-      {
-        name: "Group Counter/Stagger",
-        hpBar: 190,
-        triggerType: "hp",
         severity: "major",
-        notes: "Co-op counter required on the second charge; HM differs from NM — coordinate timing"
+        difficulties: ["Normal"],
+        notes:
+          "Spread on designated twister lines (spacebar through ropes); pattern recurs ~every 90s. Co-op counter required on the boss's second charge."
       }
     ]
   },
@@ -1470,20 +1649,22 @@ const LIBRARY: LibraryGate[] = [
     tauntable: false,
     mechanics: [
       {
-        name: "Enhanced Twisters",
-        hpBar: 700,
-        repeatSecs: 90,
-        triggerType: "hp+timer",
-        severity: "normal",
-        notes: "Assigned party positions with individual roles; repeats every 90s — trickier than G1 version"
+        name: "Final Phase",
+        hpBar: 260,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal"],
+        notes: "Boss heals and introduces new attack patterns including scratch and pizza attacks"
       },
       {
-        name: "Crystals",
+        name: "Enhanced Twisters + Crystals",
         hpBar: 190,
-        triggerType: "hp",
+        repeatSecs: 90,
+        triggerType: "hp+timer",
         severity: "major",
+        difficulties: ["Normal"],
         notes:
-          "Stagger phase; careful damage management required — stop hitting after two breaks to avoid destruction reset"
+          "10 twister lines with assigned party positions (pattern recurs ~every 90s, trickier than G1) PLUS Crystals stagger phase — careful damage management required, stop hitting after two breaks to avoid destruction reset."
       }
     ]
   },
@@ -1494,7 +1675,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Aegir",
     gate: 1,
     releaseOrder: 11,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Akkan, Lord of Death",
     bossType: "DEMONIC",
     weakness: "No Weakness",
@@ -1504,21 +1685,25 @@ const LIBRARY: LibraryGate[] = [
         name: "Aegir Appears + Banishment",
         hpBar: 195,
         triggerType: "hp",
-        severity: "major",
-        notes: "Aegir appears and banishes players into individual realms; fight back to rejoin main arena"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Aegir appears and banishes players into individual realms (10s imprisonment); fight back to rejoin main arena"
       },
       {
         name: "Ghost Phase",
         hpBar: 170,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Ghost phase — avoid ghost touches; coordinate counters and use sidereals to survive"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Ghost phase — avoid ghost touches; coordinate counters and use sidereals to survive. Solo: 2 ghosts. Group: 4 ghosts."
       },
       {
-        name: "Earthquake (HM)",
+        name: "Earthquake",
         hpBar: 150,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
         difficulties: ["Hard"],
         notes: "Hard Mode only — earthquake mechanic; dodge the shockwave and reposition"
       },
@@ -1527,6 +1712,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 143,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Dodge flame breath; use pillars for cover from the sweeping attack"
       },
       {
@@ -1534,13 +1720,16 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 115,
         triggerType: "hp",
         severity: "major",
-        notes: "Break Aegir's shield; Valtan's ghost assists — coordinate destruction skills"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Break Aegir's shield; Valtan's ghost assists — coordinate destruction skills. Solo: counter the Valtan Ghost, then use an ally skill."
       },
       {
         name: "Aegir Attack",
         hpBar: 85,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Dodge Aegir's red telegraphed attacks; maintain positioning for next mechanic"
       },
       {
@@ -1548,14 +1737,18 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 60,
         triggerType: "hp",
         severity: "major",
-        notes: "Guard against Aegir's arm sweeps; timing-sensitive — mistimed guard = knockback"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Guard against Aegir's arm sweeps; timing-sensitive — mistimed guard = knockback. Solo: DPS the arm, guard the swing, locate Akkan, use Thar ally skill, complete stagger."
       },
       {
         name: "Final Stagger",
         hpBar: 30,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Final stagger check to finish the gate; deploy remaining sidereals here"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Final stagger check to finish the gate; deploy remaining sidereals here. Solo: use immunity skills against the blue earthquake."
       }
     ]
   },
@@ -1564,96 +1757,64 @@ const LIBRARY: LibraryGate[] = [
     raid: "Aegir",
     gate: 2,
     releaseOrder: 11,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Aegir, the Oppressor",
     bossType: "ANCIENT",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
       {
-        name: "1st Heart",
-        hpBar: 260,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Normal"],
-        notes: "Party 1 at 12→3, Party 2 at 6→9 rotation; destroy Aegir's heart to proceed"
-      },
-      {
-        name: "1st Heart (HM)",
-        hpBar: 260,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
-        notes: "3 positions with counter → auto-attack → stagger sequence; destroy heart to proceed"
-      },
-      {
-        name: "Armor Break (1st)",
+        name: "1st Heart + Armor Break",
         hpBar: 260,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Normal"],
-        notes: "Break Aegir's armor with destruction skills; opens after 1st Heart resolves"
-      },
-      {
-        name: "Armor Break (1st) (HM)",
-        hpBar: 260,
-        triggerType: "hp",
-        severity: "major",
-        difficulties: ["Hard"],
-        notes: "Break armor; supports place golden target puddle at right corners; opens after 1st Heart resolves"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Destroy Aegir's heart to proceed, then Armor Break opens immediately after. Normal: Party 1 at 12→3, Party 2 at 6→9 rotation. Hard: 3 positions with counter → auto-attack → stagger sequence; supports place golden target puddle at right corners. Solo: stand in safe area while lasers rotate clockwise."
       },
       {
         name: "Distorted Space (1st)",
         hpBar: 250,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Navigate distorted space; correct path or instant wipe; memorize safe routes"
-      },
-      {
-        name: "2nd Heart",
-        hpBar: 165,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Second Heart; repeat burst DPS — can be skipped if damage was pushed in previous phase"
-      },
-      {
-        name: "Armor Break (2nd)",
-        hpBar: 165,
-        triggerType: "hp",
         severity: "major",
-        difficulties: ["Normal"],
-        notes: "Second armor break window; same as 1st"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Navigate distorted space (wall at ~50s); correct path required. NM: 7 debuff stacks reduces HP to 1. HM: 5 stacks."
       },
       {
-        name: "Armor Break (2nd) (HM)",
+        name: "2nd Heart + Armor Break",
         hpBar: 165,
         triggerType: "hp",
-        severity: "major",
-        difficulties: ["Hard"],
-        notes: "Second armor break; supports place golden target puddle at right corners; same pattern as 1st (HM)"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Second Heart (repeat burst DPS — can be skipped if damage was pushed), then Armor Break window. Solo: remove Aegir's shield, destroy heart within 80s using ally skills. Hard: supports place golden target puddle at right corners."
       },
       {
         name: "Distorted Space (2nd)",
         hpBar: 153,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Second distorted space; routes may differ from 1st — stay alert"
       },
       {
         name: "Stage Break",
         hpBar: 95,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Arena stage breaks; reposition to surviving platform and push DPS"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Arena stage breaks; reposition to surviving platform. Solo: use Ealyn ally skill at dialogue trigger, dodge feet spawns."
       },
       {
-        name: "Final Struggle (HM)",
+        name: "Final Struggle",
         timerSecs: 50,
         repeatSecs: 50,
         triggerType: "timer",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "HM only; timer-based enrage every 50s; must kill before timer expires or wipe"
+        notes: "HM only; guard every 50s and 90s enrage timer caps the fight — must kill before enrage or wipe"
       }
     ]
   },
@@ -1664,7 +1825,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 2: Brelshaza",
     gate: 1,
     releaseOrder: 12,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Narok the Butcher",
     bossType: "ANCIENT",
     weakness: "Weak to Lightning",
@@ -1672,46 +1833,52 @@ const LIBRARY: LibraryGate[] = [
     mechanics: [
       {
         name: "Armor Destruction",
-        hpBar: 290,
+        hpBar: 300,
         triggerType: "hp",
         severity: "major",
-        notes: "Use Corrosive Bomb and destruction skills to break Narok's armor stacks"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Use Corrosive Bomb and Weak Point destruction skills to break Narok's armor stacks (x300–x241)"
       },
       {
         name: "Ice Wall",
         hpBar: 240,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Bait Narok's laser toward the ice wall to destroy it; coordinate positioning across the arena"
+      },
+      {
+        name: "Laser Dodge",
+        hpBar: 215,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Post-Ice Wall (~70s delay): dodge follow-up laser sweep"
       },
       {
         name: "Perfect Guard + Time Attack (1st)",
         hpBar: 180,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Perfect guard sequence; 60s timer activates — break shield before time expires"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Perfect guard sequence; 60s timer activates — break shield before time expires. Solo: use Sidereal:Jederico."
       },
       {
         name: "Chase + Stagger",
         hpBar: 120,
         triggerType: "hp",
-        severity: "major",
-        difficulties: ["Normal"],
-        notes: "Chase Narok and break the barrier; 3 perfect guards then stagger check"
-      },
-      {
-        name: "Chase + Stagger (HM)",
-        hpBar: 120,
-        triggerType: "hp",
-        severity: "major",
-        difficulties: ["Hard"],
-        notes: "Party splits; 4 objects spawn, block the 2 real lasers; stagger Narok twice to complete"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Chase Narok and break the barrier. Normal/Solo: 3 perfect guards then stagger check. Hard: party splits; 4 objects spawn, block the 2 real lasers; stagger Narok twice to complete."
       },
       {
         name: "Perfect Guard + Time Attack (2nd)",
         hpBar: 60,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Repeat perfect guard and time attack from x180; second run tends to be faster-paced"
       }
     ]
@@ -1721,7 +1888,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 2: Brelshaza",
     gate: 2,
     releaseOrder: 12,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Phantom Manifester Brelshaza",
     bossType: "DEMONIC",
     weakness: "Weak to Lightning",
@@ -1732,48 +1899,36 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 335,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Normal"],
-        notes: "Stagger clones then boss; no color callout required"
-      },
-      {
-        name: "Colors Stagger (HM)",
-        hpBar: 335,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Two rings: Party 1 at 3x+1 position calls outer colors in order; Party 2 calls inner circle colors; stagger clones then boss"
+          "Stagger clones then boss. Normal/Solo: no color callout required. Hard: two rings — Party 1 at 3x+1 calls outer colors in order, Party 2 calls inner circle colors."
       },
       {
         name: "Crystal Break",
         hpBar: 280,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "White vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars)"
+          "Ice Field & Crystal Break: white vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars). Solo: succeed typing test, place crystal at 6 o'clock, destroy it."
       },
       {
         name: "Clockwise Orbs",
         hpBar: 145,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Rotate clockwise destroying orbs at 3x or 3x+1 positions; avoid AoEs; HM: dodge scythes as well"
       },
       {
         name: "Typing + Stagger (P3)",
         hpBar: 100,
-        triggerType: "hp",
-        severity: "wipe",
-        notes: "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss"
-      },
-      {
-        name: "Freeze AoE (P3)",
-        hpBar: 100,
         repeatSecs: 240,
         triggerType: "hp+timer",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Boss charges with hands — guard before yellow reaches end; failure = freeze + teleport + wave + typing test again"
+          "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss. Freeze AoE recurs every ~240s — guard before yellow reaches end; failure = freeze + teleport + wave + typing test again."
       }
     ]
   },
@@ -1784,39 +1939,71 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 1,
     releaseOrder: 13,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Thaemine, Master of Darkness",
     bossType: "HUMAN",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
       {
-        name: "Shadow Realm Stagger",
-        hpBar: 270,
+        name: "Retaliation",
+        hpBar: 300,
         triggerType: "hp",
         severity: "major",
-        notes: "Enter shadow realm; stagger check with coordination — miss it and the mechanic resets"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "DPS Thaemine to trigger his retaliation, then execute a Just Guard"
+      },
+      {
+        name: "Memory & Stagger",
+        hpBar: 270,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Dodge red line explosions in reverse order (4→3→2→1; Solo: 3 lines), then complete stagger checks"
+      },
+      {
+        name: "Dragon Transition",
+        hpBar: 250,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Portal escape required immediately after stagger phase"
       },
       {
         name: "Hidden Kharmine",
         hpBar: 210,
         triggerType: "hp",
-        severity: "major",
-        notes: "Kharmine appears for co-op counter; coordinate timing with party"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Counter on the 2nd slam, then activate Kharmine sidereal when text box appears. Solo: no puddle placement."
+      },
+      {
+        name: "Thaemine Transition",
+        hpBar: 150,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Red telegraph surrounds arena; dodge blue lines, stand in pizza safe spot, wait for fog before dashing inside"
       },
       {
         name: "Quick! Just Guard",
         hpBar: 75,
         triggerType: "hp",
         severity: "major",
-        notes: "Retaliation just-guard sequence; precise timing required against fast attack chains"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Boss glows white and disappears in a direction; just-guard sequence — precise timing against fast attack chains"
       },
       {
         name: "Shrouded Attacks",
         hpBar: 50,
         triggerType: "hp",
-        severity: "major",
-        notes: "Aerial dragon Azakiel joins; watch for incoming strikes from above while fighting Thaemine"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Aerial dragon Azakiel joins; aerial attacks followed by Just Guard when the dragon approaches. Solo: use Sidereal: Azakiel."
       }
     ]
   },
@@ -1825,7 +2012,7 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 2,
     releaseOrder: 13,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Blossoming Fear, Naitreya",
     bossType: "OTHER",
     weakness: "No Weakness",
@@ -1835,50 +2022,28 @@ const LIBRARY: LibraryGate[] = [
         name: "Alberhastic Phase",
         hpBar: 300,
         triggerType: "hp",
-        severity: "normal",
-        notes: "Alberhastic joins; avoid stacking infection from boss attacks (x300–x235 window)"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Alberhastic joins; passive infection/poison stacks throughout x300–x235 window (stacks last 60s)"
       },
       {
         name: "Alberhastic Memory",
         hpBar: 235,
         triggerType: "hp",
-        severity: "major",
-        difficulties: ["Normal"],
-        notes: "All players share same shield color; memorize Alberhastic's color sequence and burst the shield"
-      },
-      {
-        name: "Alberhastic Memory (HM)",
-        hpBar: 235,
-        triggerType: "hp",
-        severity: "major",
-        difficulties: ["Hard"],
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "4 Yellow + 4 White shields split by party: P1 breaks Yellow side, P2 breaks White side; coordinate in split arena"
+          "Memorize Alberhastic's color sequence and burst the shield. Normal/Solo: all players share same shield color; Solo follows In→Out→In→Out (or Out→In→Out→In) safe spot order. Hard: 4 Yellow + 4 White shields split by party (P1 Yellow, P2 White)."
       },
       {
-        name: "Illusion Clone",
-        hpBar: 105,
-        triggerType: "hp",
-        severity: "major",
-        notes: "Identify the real clone vs illusion using the gold puddle marker; attack the real one"
-      },
-      {
-        name: "Velga Pizza",
+        name: "Illusion Clone + Velga Pizza",
         hpBar: 105,
         repeatSecs: 90,
         triggerType: "hp+timer",
-        severity: "normal",
-        difficulties: ["Normal"],
-        notes: "Velganos pizza: 5-tile spread pattern; dodge the correct slice and avoid re-overlap; repeats every 90s"
-      },
-      {
-        name: "Velga Pizza (HM)",
-        hpBar: 105,
-        repeatSecs: 90,
-        triggerType: "hp+timer",
-        severity: "normal",
-        difficulties: ["Hard"],
-        notes: "Velganos pizza: 3 random black tiles that change direction; dodge the correct slice; repeats every 90s"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Identify the real clone vs illusion (gold puddle marker), then attack the real one. Velganos final phase pizza recurs every ~90s. Normal: 5-tile spread. Solo: 3-tile spread. Hard: 3 random black tiles that change direction. DPS race — Team Meter rises throughout."
       }
     ]
   },
@@ -1887,40 +2052,68 @@ const LIBRARY: LibraryGate[] = [
     raid: "Act 3: Mordum",
     gate: 3,
     releaseOrder: 13,
-    availableDifficulties: ["Normal", "Hard"],
+    availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Mordum, the Abyssal Punisher",
     bossType: "ANCIENT",
     weakness: "Weak to Earth",
     tauntable: false,
     mechanics: [
       {
+        name: "Twister #1",
+        hpBar: 475,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "First twister; stay ahead of the pattern, don't cut corners"
+      },
+      {
+        name: "Twister #2",
+        hpBar: 450,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Second twister; coordinate position with party"
+      },
+      {
         name: "Laser Chase",
         hpBar: 425,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
         notes: "Rotating laser chases players; stay ahead of the pattern, don't cut corners"
+      },
+      {
+        name: "Twister #3",
+        hpBar: 400,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Third twister; continues the chase pattern"
       },
       {
         name: "1st Break Duel",
         hpBar: 375,
         triggerType: "hp",
-        severity: "major",
-        notes: "First Break Duel; twisters active throughout the fight — coordinate with your designated partner"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "First Break Duel; stagger boss, move to minimap spot with 1 dot, perform 2 Just Guards (Solo) or partner duel"
       },
       {
-        name: "Shattered Orb",
-        hpBar: 325,
+        name: "Dome Smash",
+        hpBar: 320,
         triggerType: "hp",
         severity: "major",
-        notes: "Shattered Orb spawns; position correctly to intercept or dodge orb fragments"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Dodge lightning from dome, then enter it before the smash"
       },
       {
-        name: "Supernova",
+        name: "Supernova #1",
         hpBar: 300,
         triggerType: "hp",
-        severity: "wipe",
-        notes:
-          "Raid-wide supernova wipe; must survive via safe zone or mechanic resolution (HM: Dance mechanic precedes)"
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Wait for all 3 attack animations, then counter (HM: Dance mechanic precedes)"
       },
       {
         name: "Anvil Just Guard",
@@ -1934,8 +2127,10 @@ const LIBRARY: LibraryGate[] = [
         name: "2nd Break Duel",
         hpBar: 250,
         triggerType: "hp",
-        severity: "major",
-        notes: "Second Break Duel; same mechanic as 1st — coordinate partner duel while managing twisters"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Second Break Duel; stagger boss, move to minimap spot with 2 dots, perform 3 Just Guards (Solo) or partner duel"
       },
       {
         name: "Shield Disruption",
@@ -1946,33 +2141,46 @@ const LIBRARY: LibraryGate[] = [
         notes: "Color-matching shield disruption; coordinate color assignments across the party"
       },
       {
-        name: "Charged Field",
+        name: "Charged Field #1",
         hpBar: 180,
         triggerType: "hp",
         severity: "major",
-        notes: "Charged field activates; avoid or clear the field quickly before it expands"
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "First charged field: match your color to floor slices and move across the arena"
       },
       {
         name: "Hammer Split/Bastion",
         hpBar: 160,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
         difficulties: ["Hard"],
         notes: "Hammer Split (NM) or Bastion (HM); HM requires entering Bastion before hammer strike"
+      },
+      {
+        name: "Charged Field #2",
+        hpBar: 125,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes: "Second charged field; same pattern as the first — match color, traverse arena"
       },
       {
         name: "3rd Break Duel",
         hpBar: 120,
         triggerType: "hp",
-        severity: "major",
-        notes: "Third Break Duel; HM adds Dance/Supernova sequence — complete quickly to avoid DPS check"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Third Break Duel; move to minimap spot with 3 dots, perform 3 Just Guards (Solo). HM adds Dance/Supernova sequence."
       },
       {
         name: "4th Break Duel",
         hpBar: 75,
         triggerType: "hp",
-        severity: "major",
-        notes: "Fourth and final Break Duel; push damage after for Last Stand"
+        severity: "wipe",
+        difficulties: ["Solo", "Normal", "Hard"],
+        notes:
+          "Fourth and final Break Duel (~1:40 after 3rd break in Solo); use Hidden Balthor or complete Just Guards with Shandi for damage"
       },
       {
         name: "Last Stand/Bastion",
@@ -2001,25 +2209,18 @@ const LIBRARY: LibraryGate[] = [
         name: "Spotlight",
         hpBar: 285,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes: "Bait clone to edge of arena; dodge away from clone after positioning"
       },
       {
         name: "Shadow Clones",
         hpBar: 240,
         triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Normal"],
-        notes: "2 clones walk toward each other → go to opposite side of shadow"
-      },
-      {
-        name: "Shadow Clones (HM)",
-        hpBar: 240,
-        triggerType: "hp",
-        severity: "wipe",
-        difficulties: ["Hard"],
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Follow the large Echidna shadow; 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action"
+          "Follow the large Echidna shadow. Normal: 2 clones walk toward each other → go to opposite side. Hard: 2 jumping clones = same side; 2 walking clones = opposite side; match weapon/action."
       },
       {
         name: "Jump Rope",
@@ -2033,15 +2234,19 @@ const LIBRARY: LibraryGate[] = [
         name: "Shield Destruction",
         hpBar: 150,
         triggerType: "hp",
-        severity: "wipe",
-        notes: "Use Nineveh+recast to deplete large shield; 1 flower pickup = 1 stack removal"
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Use Nineveh+recast to deplete large shield; 1 flower pickup = 1 stack removal. Maxroll calls this the 'Jump Rope' phase (shield depletion race)."
       },
       {
         name: "Brelshaza Invasion",
         hpBar: 30,
         triggerType: "hp",
         severity: "major",
-        notes: "Use Wei for extra stagger/damage during Brelshaza phase; 3-bar recommended"
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Use Wei for extra stagger/damage during Brelshaza phase; 3-bar recommended. (Maxroll calls this 'DPS & Stagger'.)"
       }
     ]
   },
@@ -2061,54 +2266,61 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 420,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Pick up golden shield (G key) and throw (Q key) to remove armor stacks; cleanse bleed stacks at blue orbs"
+          "Pick up golden shield (G key) and throw (Q key) to remove armor stacks; cleanse bleed stacks at blue orbs. If this drags on, deaths stack and the fight can reset."
       },
       {
         name: "Wind Stagger",
         hpBar: 360,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Use Balthorr sidereal; stagger + dodge 3 attacks → move downward avoiding soldiers → destroy rock wall"
       },
       {
         name: "Sentinel Rush",
         hpBar: 290,
         triggerType: "hp",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Party assignment: 1=Left 2=Right; destroy yellow statues in order 4→3→2→1; ignore red statues; co-op counter after"
+          "Party assignment: 1=Left 2=Right; destroy yellow statues in order 4→3→2→1; ignore red statues; co-op counter after. (Maxroll calls this 'Statue Safespot'.)"
       },
       {
         name: "Combo Guards",
         hpBar: 240,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Use Thirain sidereal; gather at bottom; just guard patterns (Shield/Slash/Stab/Slam/Spin) while inflicting destruction"
+          "Use Thirain sidereal; gather at bottom; just guard patterns (Shield/Slash/Stab/Slam/Spin) while inflicting destruction. (Maxroll calls this 'Guard Destruction' — fails if Armoche reaches arena bottom.)"
       },
       {
         name: "Armadillo",
         hpBar: 160,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Avoid red circle (instant death); use Balthorr during red line attacks for extra stagger"
       },
       {
         name: "Body Slam",
-        hpBar: 110,
+        hpBar: 120,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Spacebar jump rope; press A when knocked up; use Azena sidereal to destroy crater wall; sand tornado persists after"
+          "Spacebar jump rope; press A when knocked up; use Azena sidereal to destroy crater wall; sand tornado persists after. (Maxroll calls this 'Crater'.)"
       },
       {
         name: "Pillars",
-        hpBar: 70,
+        hpBar: 60,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Place 3 Volcano puddles away from pillars; hide behind a pillar to survive; Hyper Awakening or Time Stop if needed"
+          "Place 3 Volcano puddles away from pillars; hide behind a pillar to survive; Hyper Awakening or Time Stop if needed. (Maxroll calls this '3x Volcano'.)"
       }
     ]
   },
@@ -2130,51 +2342,51 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 900,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Use Nineveh+recast when shield spawns; save Shandi for DPS window"
       },
       {
         name: "Prokel",
         hpBar: 700,
         triggerType: "hp",
-        severity: "major",
-        notes: "All players separated into individual realms — fight Kazeros 1v1 until Prokel dies"
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "All players separated into individual realms — fight Kazeros 1v1 until Prokel dies. (Maxroll calls this 'Team Stagger', ~40s phase.)"
       },
       {
         name: "Clash",
         hpBar: 660,
         triggerType: "hp",
-        severity: "normal",
-        difficulties: ["Normal"],
-        notes: "Find the correct clone; front/back indicators reveal the real Kazeros; press Q to clash"
-      },
-      {
-        name: "Clash (HM)",
-        hpBar: 660,
-        triggerType: "hp",
-        severity: "normal",
-        difficulties: ["Hard"],
-        notes: "Find the correct clone; front/back indicators reveal the real Kazeros; press QWER to clash"
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Find the correct clone; front/back indicators reveal the real Kazeros. Normal: press Q to clash. Hard: press QWER to clash."
       },
       {
         name: "Cracks & Shield",
         hpBar: 500,
         triggerType: "hp",
-        severity: "major",
-        notes: "Use Nineveh+recast to break shield; team meter builds → consecutive special attacks"
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Use Nineveh+recast to break shield; team meter builds → consecutive special attacks. (Maxroll calls this 'Shield Safespots'.)"
       },
       {
         name: "Hidden Wei Clash",
         hpBar: 380,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Use Hidden Wei when Kazeros reappears at 12 o'clock for damage window"
       },
       {
         name: "Kazeros Guard",
         hpBar: 100,
         triggerType: "hp",
-        severity: "major",
-        notes: "3 waffle attacks → safe zone appears; survive to win"
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes: "3 waffle attacks → safe zone appears; survive to win. (Maxroll calls this 'Orb Guard'.)"
       }
     ]
   },
@@ -2193,21 +2405,25 @@ const LIBRARY: LibraryGate[] = [
         name: "Forced Clash",
         hpBar: 950,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "First mechanic of G2; standard clash"
       },
       {
         name: "Colosseum",
         hpBar: 900,
         triggerType: "hp",
-        severity: "major",
-        notes: "Sequence 1: stun clouds → crater destruction → black hole → earthquake stagger"
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Sequence 1 at x900: Stun Clouds → Crater Destruction (wipe trigger) → Black Hole → Earthquake Stagger — chained together."
       },
       {
         name: "Stagger Break",
         hpBar: 750,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Sequence 2 begins; use Kadan or Shandi for flying rock DPS check"
       },
       {
@@ -2215,6 +2431,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 600,
         triggerType: "hp",
         severity: "normal",
+        difficulties: ["Normal", "Hard"],
         notes: "Distinguish knock-up vs grab puddle circles; supports shield/DR throughout"
       },
       {
@@ -2222,6 +2439,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 550,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard"],
         notes: "Co-op counter after grapple mechanic resolves"
       }
     ]
@@ -2243,6 +2461,7 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 180,
         triggerType: "timer",
         severity: "normal",
+        difficulties: ["Normal", "Hard"],
         notes: "Repeating periodic mechanic throughout phase"
       },
       {
@@ -2250,24 +2469,35 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 620,
         triggerType: "hp",
         severity: "major",
-        notes: "Sequence 3 (desert phase) begins — most demanding mechanics"
+        difficulties: ["Normal", "Hard"],
+        notes: "Sequence 3 (desert phase) begins — most demanding mechanics. (Maxroll calls this 'Word Command'.)"
       },
       {
         name: "Time Attack",
         hpBar: 500,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Twin Sword phase; Deep Cuts debuff stacks to 5 → healing immunity; use Inanna to cleanse, recast at ~3s remaining"
+          "Twin Sword phase; Deep Cuts debuff stacks to 5 → healing immunity; use Inanna to cleanse, recast at ~3s remaining. 50s timer."
       },
       {
         name: "Destiny",
         hpBar: 310,
         triggerType: "hp",
         severity: "major",
-        notes: "Hidden Kadan activates after co-op counter during 8-player split guard; Dark Grenade must stay on boss"
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Hidden Kadan activates after co-op counter during 8-player split guard; Dark Grenade must stay on boss. (Maxroll calls this 'Stagger Check'.)"
       },
-      { name: "Kazeros Says", hpBar: 160, triggerType: "hp", severity: "major", notes: "Final sequence — push to end" }
+      {
+        name: "Kazeros Says",
+        hpBar: 160,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard"],
+        notes: "Final sequence — push to end. (Maxroll calls this 'Word Command'.)"
+      }
     ]
   },
   {
@@ -2287,6 +2517,7 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 150,
         triggerType: "timer",
         severity: "normal",
+        difficulties: ["Normal", "Hard"],
         notes: "Periodic spotlight — bait to edge and dodge away"
       },
       {
@@ -2294,13 +2525,15 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 525,
         triggerType: "hp",
         severity: "wipe",
-        notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones"
+        difficulties: ["Normal", "Hard"],
+        notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones. 40s timer."
       },
       {
         name: "Sacrifice",
         hpBar: 350,
         triggerType: "hp",
         severity: "wipe",
+        difficulties: ["Normal", "Hard"],
         notes: "Wipe if DPS is insufficient across the 3 cones"
       },
       {
@@ -2308,7 +2541,8 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 175,
         triggerType: "hp",
         severity: "wipe",
-        notes: "Not an actual wipe — survive through the animation and keep pushing"
+        difficulties: ["Normal", "Hard"],
+        notes: "Not an actual wipe — survive through the animation and keep pushing. (Maxroll calls this 'Revival'.)"
       }
     ]
   },
@@ -2331,32 +2565,27 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 60,
         triggerType: "hp+timer",
         severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Arena narrows to 8x8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles"
+          "Arena narrows to 8x8; yellow squares with spinning saws move top-to-bottom; spacebar through ropes; bleed debuff stacks on spiked tiles. Repeats every 60s through x270-x200."
       },
       {
         name: "Spike Guard",
         hpBar: 240,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
           "Two safe spots at 5&11 or 1&7 o'clock; 4 guard sequences required; counter types: S Counter, Nail Counter, Circle Counter"
       },
       {
         name: "Spiked Walls",
-        hpBar: 195,
-        triggerType: "hp",
-        severity: "normal",
-        difficulties: ["Normal"],
-        notes: "Spiked wall traps on ground marked as yellow squares; walls move inward — dodge the traps"
-      },
-      {
-        name: "Spiked Walls",
-        hpBar: 195,
+        hpBar: 200,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Hard", "Nightmare"],
-        notes: "Spiked wall traps move inward; additional checkered yellow spiked squares spawn — dodge both trap types"
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Spiked wall traps move inward — dodge the traps. Hard/Nightmare: additional checkered yellow spiked squares spawn alongside the walls."
       },
       {
         name: "Bomb Bingo",
@@ -2364,35 +2593,36 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 70,
         triggerType: "hp+timer",
         severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Bombs explode in cross patterns; identify non-overlapping safe tiles; Nightmare: timed bomb on target — separate from allies before 5s or deal large damage"
+          "Bombs explode in cross patterns; identify non-overlapping safe tiles. Nightmare: timed bomb on target — separate from allies before 5s or deal large damage."
       },
       {
         name: "Survival Run",
         hpBar: 105,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Normal"],
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s"
+          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s. Hard/Nightmare: avoid bombs that spawn and explode on the field."
       },
       {
-        name: "Survival Run",
-        hpBar: 105,
+        name: "Safe Zone",
+        hpBar: 100,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Hard", "Nightmare"],
-        notes:
-          "P1+P2 start at 11 o'clock, P3+P4 at 5 o'clock; clockwise tile traversal; brawl phase grants +50% DMG for 10s; avoid bombs that spawn and explode on the field"
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes: "Safe zone window between Survival Run and Maiden Bingo — reposition for the final phase"
       },
       {
         name: "Maiden Bingo",
-        hpBar: 90,
+        hpBar: 100,
         repeatSecs: 60,
         triggerType: "hp+timer",
-        severity: "wipe",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Arena narrows to 4x4; counter Serca when she appears; Hard/Nightmare: bombs spawn during safe zone; guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel"
+          "Arena narrows to 4x4; counter Serca when she appears. Hard/Nightmare: bombs spawn during safe zone. Guard variants: Slow Hammer, Fast Hammer, Broom, Scythe, Wheel."
       }
     ]
   },
@@ -2413,47 +2643,43 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 30,
         triggerType: "hp+timer",
         severity: "major",
-        difficulties: ["Normal", "Hard"],
-        notes: "Spacebar on red flash; stay opposite of the wing swipe"
-      },
-      {
-        name: "Wing Prediction (Nightmare)",
-        hpBar: 285,
-        repeatSecs: 30,
-        triggerType: "hp+timer",
-        severity: "major",
-        difficulties: ["Nightmare"],
-        notes: "Count 2 wing flaps → spacebar after gray pulse; stay opposite of the wing swipe"
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Stay opposite of the wing swipe. Normal/Hard: spacebar on red flash. Nightmare: count 2 wing flaps → spacebar after gray pulse. (Maxroll calls this '1st Detection'.)"
       },
       {
         name: "Veiled Stagger",
         hpBar: 240,
         triggerType: "hp",
         severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Find real clone: attacks = fake, no attacks = real; raised sword = −1 clock position, lowered sword = +1 clock position"
+          "Find real clone: attacks = fake, no attacks = real; raised sword = −1 clock position, lowered sword = +1 clock position. (Maxroll calls this 'Find the Clone 1'.)"
       },
       {
         name: "Guard Drain",
-        hpBar: 195,
+        hpBar: 190,
         triggerType: "hp",
-        severity: "major",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Sequence: In → Out → 2 Guards → Frontal (dodge) → Counter → Guard; completing this allows crafting the Shadow Skill battle item"
+          "Sequence: In → Out → 2 Guards → Frontal (dodge) → Counter → Guard; completing this allows crafting the Shadow Skill battle item. (Maxroll calls this 'Guard/Counter Sequence'.)"
       },
       {
         name: "Find Corvuth",
         hpBar: 120,
         triggerType: "hp",
-        severity: "normal",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "Scout clones at x3 & x3+1 positions; sword cursor/red outline = fake; dodge while standing still during red AoE at 20s & 10s marks"
+          "Scout clones at x3 & x3+1 positions; sword cursor/red outline = fake; dodge while standing still during red AoE at 20s & 10s marks. (Maxroll calls this 'Find the Clone 2', 30s DPS check.)"
       },
       {
         name: "Stagger Helping Pattern",
         timerSecs: 510,
         triggerType: "timer",
         severity: "normal",
+        difficulties: ["Normal", "Hard", "Nightmare"],
         notes: "Timer-based stagger window; fire when boss is staggerable"
       },
       {
@@ -2461,16 +2687,9 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 60,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Normal", "Hard"],
-        notes: "Spacebar on red flash; remember Pac-Man order and stagger boss"
-      },
-      {
-        name: "Pizza Prediction (Nightmare)",
-        hpBar: 60,
-        triggerType: "hp",
-        severity: "major",
-        difficulties: ["Nightmare"],
-        notes: "Count 2 wing flaps then spacebar; remember Pac-Man order and stagger boss"
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Remember Pac-Man order and stagger boss. Normal/Hard: spacebar on red flash. Nightmare: count 2 wing flaps then spacebar. (Maxroll calls this 'Triangle Detection'.)"
       }
     ]
   }

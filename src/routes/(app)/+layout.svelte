@@ -4,7 +4,7 @@
   import Toaster from "$lib/components/Toaster.svelte";
   import PeerConnect from "$lib/components/mech/PeerConnect.svelte";
   import { getSettings } from "$lib/api";
-  import { emit } from "@tauri-apps/api/event";
+  import { emit, listen } from "@tauri-apps/api/event";
   import { settings } from "$lib/stores.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { checkForUpdate } from "$lib/utils/updater";
@@ -40,6 +40,11 @@
       goto("/raid-editor");
     })();
 
+    // Pipe TTS debug events from other windows (overlay) into the PeerJS debug strip
+    const unlistenTts = listen<string>("tts:debug", (event) => {
+      if (typeof event.payload === "string") peerState.pushDebugLog(event.payload);
+    });
+
     const pollId = setInterval(async () => {
       if (peerState.status === "connecting" || peerState.isConnected) return;
       try {
@@ -50,7 +55,10 @@
       } catch {}
     }, 1000);
 
-    return () => clearInterval(pollId);
+    return () => {
+      clearInterval(pollId);
+      unlistenTts.then((fn) => fn()).catch(() => {});
+    };
   });
 </script>
 

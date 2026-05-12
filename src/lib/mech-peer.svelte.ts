@@ -15,6 +15,9 @@ export const peerState = (() => {
   let lastBroadcastConnected = false;
 
   function setStatus(next: PeerStatus) {
+    if (status !== next) {
+      debugLog = [...debugLog, `[peer] status: ${status} → ${next}`].slice(-200);
+    }
     status = next;
     const connected = next === "connected";
     if (connected !== lastBroadcastConnected) {
@@ -48,6 +51,7 @@ export const peerState = (() => {
 
   async function connect(urlOrId: string): Promise<void> {
     const peerId = parsePeerId(urlOrId);
+    debugLog = [...debugLog, `[peer] connect("${peerId}")`].slice(-200);
     if (!peerId) {
       errorMsg = "Invalid peer ID or URL";
       setStatus("error");
@@ -95,33 +99,39 @@ export const peerState = (() => {
       if (msg.type === "bossStatus") {
         const d = msg.data;
         const entry = d ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}` : "— null";
-        debugLog = [...debugLog, entry].slice(-15);
+        debugLog = [...debugLog, entry].slice(-200);
         mechStore.setBossStatus(msg.data);
       }
     });
 
     newConn.on("close", () => {
       if (connectId !== myId) return;
+      debugLog = [...debugLog, `[peer] conn closed`].slice(-200);
       setStatus("disconnected");
       mechStore.setBossStatus(null);
     });
 
     newConn.on("error", (e) => {
       if (connectId !== myId) return;
+      const m = e instanceof Error ? e.message : String(e);
+      debugLog = [...debugLog, `[peer] conn error: ${m}`].slice(-200);
       setStatus("error");
-      errorMsg = e instanceof Error ? e.message : String(e);
+      errorMsg = m;
       mechStore.setBossStatus(null);
     });
 
     newPeer.on("error", (e) => {
       if (connectId !== myId) return;
+      const m = e instanceof Error ? e.message : String(e);
+      debugLog = [...debugLog, `[peer] peer error: ${m}`].slice(-200);
       setStatus("error");
-      errorMsg = e instanceof Error ? e.message : String(e);
+      errorMsg = m;
       mechStore.setBossStatus(null);
     });
   }
 
   function disconnect() {
+    debugLog = [...debugLog, `[peer] disconnect()`].slice(-200);
     connectId++; // invalidate any in-flight callbacks
     cleanupPeer();
     setStatus("disconnected");
@@ -144,6 +154,9 @@ export const peerState = (() => {
     },
     clearDebugLog() {
       debugLog = [];
+    },
+    pushDebugLog(entry: string) {
+      debugLog = [...debugLog, entry].slice(-200);
     },
     connect,
     disconnect

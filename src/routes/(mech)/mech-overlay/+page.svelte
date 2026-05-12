@@ -11,7 +11,11 @@
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
   import { setClickthrough } from "$lib/api";
-  import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+  import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
+
+  // Cross-window debug log helper — the PeerJS strip lives in the main window;
+  // the overlay emits and the main window's +layout listener pipes it through.
+  const ttsLog = (msg: string) => emit("tts:debug", msg).catch(() => {});
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   import { LogicalSize } from "@tauri-apps/api/window";
   import { onDestroy, onMount } from "svelte";
@@ -52,6 +56,7 @@
   let repeatAnnouncedThisCycle = false;
 
   function startRepeatTimer(mech: Mechanic) {
+    ttsLog(`[TTS][overlay] startRepeatTimer "${mech.name}" repeat=${mech.repeatSecs}s`);
     if (repeatTimerId) {
       clearInterval(repeatTimerId);
       repeatTimerId = null;
@@ -70,6 +75,7 @@
       if (!repeatAnnouncedThisCycle && repeatCountdown > 0 && repeatCountdown <= cfg.repeatLead) {
         repeatAnnouncedThisCycle = true;
         const secsLeft = repeatCountdown;
+        ttsLog(`[TTS][overlay] repeat-timer fire "${activeMech.name}" secsLeft=${secsLeft}`);
         announce(
           activeMech.name,
           activeMech.severity,
@@ -82,6 +88,7 @@
 
   function clearRepeatTimer() {
     if (repeatTimerId) {
+      ttsLog(`[TTS][overlay] clearRepeatTimer (was "${activeMech?.name ?? "?"}")`);
       clearInterval(repeatTimerId);
       repeatTimerId = null;
     }
@@ -114,6 +121,7 @@
   }
 
   function announce(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
+    ttsLog(`[TTS][overlay] speakTts "${name}" tts=${ttsEnabled} bar=${currentBar} text="${ttsText}"`);
     const cfg = mechStore.mechSettings;
     if (ttsEnabled) {
       speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.ttsRate ?? 1.0);
@@ -133,7 +141,9 @@
             }
           ]
         })
-      }).catch((e) => console.warn("Webhook error", e));
+      })
+        .then((r) => ttsLog(`[webhook] sent "${name}" status=${r.status}`))
+        .catch((e) => ttsLog(`[webhook] FAILED "${name}" ${e instanceof Error ? e.message : String(e)}`));
     }
     lastAnnounced = { name, severity };
     if (announceTimer) clearTimeout(announceTimer);
@@ -155,6 +165,7 @@
       if (bar <= fireAt && bar > m.hpBar && !lastFiredKey.has(initKey)) {
         lastFiredKey.add(initKey);
         const barsLeft = bar - m.hpBar;
+        ttsLog(`[TTS][overlay] hp-initial fire "${m.name}" bar=${bar} hpBar=${m.hpBar}`);
         announce(
           m.name,
           m.severity,
@@ -184,8 +195,11 @@
     const ro = new ResizeObserver(() => {
       const { width, height } = el.getBoundingClientRect();
       if (width === 0 || height === 0) return;
+      const w = Math.ceil(width) + 48;
+      const h = Math.ceil(height) + 48;
+      ttsLog(`[overlay] auto-resize → ${w}×${h}`);
       getCurrentWebviewWindow()
-        .setSize(new LogicalSize(Math.ceil(width) + 48, Math.ceil(height) + 48))
+        .setSize(new LogicalSize(w, h))
         .catch(() => {});
       ro.disconnect();
     });
@@ -207,6 +221,7 @@
     const unBoss = await listen<BossStatusData | null>("mech:boss-status", (event) => {
       const data = event.payload;
       if (!data || data.isDead) {
+        if (currentBar !== null) ttsLog(`[TTS][overlay] boss-status cleared (was ${currentBar})`);
         currentBar = null;
         gateId = null;
         return;
@@ -226,17 +241,21 @@
 
     // Show on live connection — no focus steal
     const unShow = await listen("mech:overlay-show", async () => {
+      ttsLog(`[overlay] event mech:overlay-show → win.show()`);
       await win.show();
     });
 
     // Show on boot for preview/positioning (app sends this at startup)
     const unPreview = await listen("mech:overlay-preview", async () => {
+      ttsLog(`[overlay] event mech:overlay-preview → win.show()`);
       await win.show();
     });
 
     const unHide = await listen("mech:overlay-hide", async () => {
       // Only hide when live data ends — keep visible if in preview mode
-      if (currentBar === null) await win.hide();
+      const willHide = currentBar === null;
+      ttsLog(`[overlay] event mech:overlay-hide → ${willHide ? "win.hide()" : "kept visible (preview)"}`);
+      if (willHide) await win.hide();
     });
 
     const unSettings = await listen<MechSettings>("mech:settings-changed", (event) => {
@@ -248,6 +267,7 @@
     });
 
     const unFightStart = await listen("mech:fight-start", () => {
+      ttsLog(`[TTS][overlay] fight-start → reset firedKey + repeatTimer`);
       lastFiredKey = new Set();
       clearRepeatTimer();
     });
@@ -287,7 +307,11 @@
 {#if currentBar == null}
   <!-- No data: waiting for LOA Logs connection -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
+  <div
+    onmousedown={startDrag}
+    class="absolute top-8 left-1/2 -translate-x-1/2 select-none"
+    style="cursor: grab; width: max-content;"
+  >
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
@@ -300,7 +324,11 @@
 {:else if !gate}
   <!-- HP data flowing but boss name didn't match any imported gate -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
+  <div
+    onmousedown={startDrag}
+    class="absolute top-8 left-1/2 -translate-x-1/2 select-none"
+    style="cursor: grab; width: max-content;"
+  >
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(251,146,60,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
@@ -313,7 +341,11 @@
 {:else if isPhaseTransition}
   <!-- Different HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 vs gate's 285 bars) -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onmousedown={startDrag} class="absolute top-8 left-1/2 -translate-x-1/2 select-none" style="cursor: grab; width: max-content;">
+  <div
+    onmousedown={startDrag}
+    class="absolute top-8 left-1/2 -translate-x-1/2 select-none"
+    style="cursor: grab; width: max-content;"
+  >
     <div
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
