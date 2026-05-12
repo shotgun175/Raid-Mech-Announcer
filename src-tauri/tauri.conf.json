@@ -39,7 +39,7 @@
         "decorations": true,
         "transparent": false,
         "alwaysOnTop": false,
-        "visible": true,
+        "visible": false,
         "useHttpsScheme": true,
         "backgroundColor": "#171717"
       },

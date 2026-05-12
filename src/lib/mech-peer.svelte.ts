@@ -1,4 +1,5 @@
 import { Peer, type DataConnection } from "peerjs";
+import { emit } from "@tauri-apps/api/event";
 import { mechStore } from "./mech-store.svelte";
 import type { BossStatusData } from "./mech-types";
 
@@ -11,6 +12,16 @@ export const peerState = (() => {
   let peer: Peer | null = null;
   let conn: DataConnection | null = null;
   let connectId = 0; // incremented on each connect() call to detect stale callbacks
+  let lastBroadcastConnected = false;
+
+  function setStatus(next: PeerStatus) {
+    status = next;
+    const connected = next === "connected";
+    if (connected !== lastBroadcastConnected) {
+      lastBroadcastConnected = connected;
+      emit("mech:peer-status", { isConnected: connected }).catch(() => {});
+    }
+  }
 
   function parsePeerId(input: string): string {
     const trimmed = input.trim();
@@ -39,7 +50,7 @@ export const peerState = (() => {
     const peerId = parsePeerId(urlOrId);
     if (!peerId) {
       errorMsg = "Invalid peer ID or URL";
-      status = "error";
+      setStatus("error");
       return;
     }
 
@@ -47,7 +58,7 @@ export const peerState = (() => {
     const myId = ++connectId;
 
     cleanupPeer();
-    status = "connecting";
+    setStatus("connecting");
     errorMsg = null;
 
     const newPeer = new Peer();
@@ -57,7 +68,7 @@ export const peerState = (() => {
       newPeer.once("open", () => resolve(true));
       newPeer.once("error", (e) => {
         if (connectId === myId) {
-          status = "error";
+          setStatus("error");
           errorMsg = e instanceof Error ? e.message : String(e);
           mechStore.setBossStatus(null);
         }
@@ -75,7 +86,7 @@ export const peerState = (() => {
 
     newConn.on("open", () => {
       if (connectId !== myId) return;
-      status = "connected";
+      setStatus("connected");
     });
 
     newConn.on("data", (raw) => {
@@ -91,20 +102,20 @@ export const peerState = (() => {
 
     newConn.on("close", () => {
       if (connectId !== myId) return;
-      status = "disconnected";
+      setStatus("disconnected");
       mechStore.setBossStatus(null);
     });
 
     newConn.on("error", (e) => {
       if (connectId !== myId) return;
-      status = "error";
+      setStatus("error");
       errorMsg = e instanceof Error ? e.message : String(e);
       mechStore.setBossStatus(null);
     });
 
     newPeer.on("error", (e) => {
       if (connectId !== myId) return;
-      status = "error";
+      setStatus("error");
       errorMsg = e instanceof Error ? e.message : String(e);
       mechStore.setBossStatus(null);
     });
@@ -113,7 +124,7 @@ export const peerState = (() => {
   function disconnect() {
     connectId++; // invalidate any in-flight callbacks
     cleanupPeer();
-    status = "disconnected";
+    setStatus("disconnected");
     errorMsg = null;
     mechStore.setBossStatus(null);
   }

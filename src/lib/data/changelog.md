@@ -10,10 +10,18 @@
 
 #### NEW FEATURES
 
+#### NEW FEATURES
+
+- App launch is quieter: the settings window stays hidden by default. Right-click the tray icon and pick "Show Settings" when you want to make a change.
+- Overlay is visible at launch for new installs (was previously hidden until a fight started). If you already use the app, your Auto Show / Hide setting stays as-is.
+- Overlay idle text now tells you whether it is waiting on LOA Logs to connect, or waiting for a fight to start.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 - Release workflow no longer scrambles bullet order in the stamped changelog.
 - Fixed white flash when opening the settings window.
+- Update notifications now bring the settings window into view automatically when a new release is available.
+- Internal cleanup: route paths renamed to match the in-app names (Raid Editor, Settings). No app changes.
 
 <!-- @release-end -->
 

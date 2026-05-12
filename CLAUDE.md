@@ -56,8 +56,8 @@ Manual fallback (if you need a release without the workflow): run `npm run tauri
 Raid Mech Announcer is a Tauri v2 desktop overlay tool for Lost Ark. It uses a SvelteKit frontend to render a transparent always-on-top mech overlay window while a Rust backend detects LOA Logs data via WinDivert and a PeerJS live-share connection.
 
 The app has two primary surfaces:
-- **Raid Editor** (`/mech-editor`) — build and manage mechanic patterns per raid gate; connects to LOA Logs via PeerJS for live HP bar data
-- **Settings** (`/mech-settings`) — TTS voice, Discord webhook, overlay variant, shortcuts, preview
+- **Raid Editor** (`/raid-editor`) — build and manage mechanic patterns per raid gate; connects to LOA Logs via PeerJS for live HP bar data
+- **Settings** (`/settings`) — TTS voice, Discord webhook, overlay variant, shortcuts, preview
 
 ## Stack
 - **Frontend**: Svelte 5 (runes API), SvelteKit 2, TypeScript, TailwindCSS 4, ECharts, Melt UI
@@ -93,8 +93,8 @@ src/                        SvelteKit frontend
     stores.svelte.ts        Global app/settings state
   routes/
     (app)/                  Main windowed shell: raid editor, settings, changelog
-      mech-editor/          Raid Editor page (GateSidebar + mechanic table + live HP)
-      mech-settings/        Settings page (tabs: General, Overlay, Overlay Preview,
+      raid-editor/          Raid Editor page (GateSidebar + mechanic table + live HP)
+      settings/             Settings page (tabs: General, Overlay, Overlay Preview,
                             Announcements, Shortcuts, Discord)
       changelog/            Changelog page
     (mech)/mech-overlay/    Mech announcer overlay window (transparent, always-on-top)

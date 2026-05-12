@@ -123,7 +123,7 @@ function loadSettings(): MechSettings {
     opacity: 90,
     alwaysOnTop: true,
     clickThrough: false,
-    autoShowHide: true,
+    autoShowHide: false,
     showPhaseLabels: true,
     showRepeatTicker: true
   };

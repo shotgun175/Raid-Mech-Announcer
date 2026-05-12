@@ -21,6 +21,7 @@
   let totalBars = $state(300);
   let bossName = $state("");
   let gateId = $state<string | null>(null);
+  let peerConnected = $state(false);
 
   const gate = $derived(gateId ? (mechStore.raids.find((r) => r.id === gateId) ?? null) : null);
   const variant = $derived(mechStore.mechSettings.overlayVariant);
@@ -262,7 +263,11 @@
       mechStore.applyRemoteDifficultyMap(event.payload);
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm, unDiff);
+    const unPeer = await listen<{ isConnected: boolean }>("mech:peer-status", (event) => {
+      peerConnected = event.payload.isConnected;
+    });
+
+    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm, unDiff, unPeer);
   });
 
   onDestroy(() => {
@@ -287,7 +292,9 @@
       style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
     >
       <div style="width: 8px; height: 8px; border-radius: 50%; background: #525252;"></div>
-      <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;">Mech Announcer - waiting for LOA Logs</span>
+      <span style="font-size: 13px; color: #a3a3a3; font-weight: 500;"
+        >Mech Announcer - {peerConnected ? "waiting for fight to start" : "waiting for LOA Logs"}</span
+      >
     </div>
   </div>
 {:else if !gate}
