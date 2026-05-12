@@ -3,8 +3,11 @@
   import { peerState } from "$lib/mech-peer.svelte";
   import { mechStore } from "$lib/mech-store.svelte";
 
+  const SHARE_URL_PREFIX = "https://live.lostark.bible/";
+
   let input = $state("");
   let pasteAttempted = $state(false);
+  let pasteError = $state<string | null>(null);
   let showDebug = $state(false);
   let logEl = $state<HTMLElement | null>(null);
 
@@ -39,16 +42,27 @@
 
   async function pasteFromClipboard() {
     pasteAttempted = true;
+    pasteError = null;
+    let text = "";
     try {
-      const text = await readText();
-      input = text?.trim() ?? "";
+      text = (await readText())?.trim() ?? "";
     } catch {
       try {
-        input = (await navigator.clipboard.readText()).trim();
+        text = (await navigator.clipboard.readText()).trim();
       } catch {
-        input = "";
+        text = "";
       }
     }
+    if (!text) {
+      input = "";
+      return;
+    }
+    if (!text.startsWith(SHARE_URL_PREFIX)) {
+      input = "";
+      pasteError = "Not a share URL";
+      return;
+    }
+    input = text;
   }
 
   function handleConnect() {
@@ -126,13 +140,14 @@
     </button>
   {:else}
     {#if pasteAttempted}
+      {@const previewLabel = input || pasteError || "Nothing on clipboard"}
       <span
         style="font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; color: {input
           ? '#64748b'
           : '#f87171'};"
-        title={input || "Nothing on clipboard"}
+        title={previewLabel}
       >
-        {input || "Nothing on clipboard"}
+        {previewLabel}
       </span>
     {/if}
     <button

@@ -117,7 +117,7 @@ function loadSettings(): MechSettings {
     vol: 80,
     ttsRate: 1.0,
     voice: "Andrew",
-    confirmKey: "",
+    confirmHotkey: "F9",
     overlayVariant: "standard",
     hook: "",
     opacity: 90,
@@ -130,8 +130,9 @@ function loadSettings(): MechSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return defaults;
-    const stored = JSON.parse(raw) as Partial<MechSettings> & { pitch?: number };
+    const stored = JSON.parse(raw) as Partial<MechSettings> & { pitch?: number; confirmKey?: string };
     delete stored.pitch; // legacy: TTS pitch was a no-op control, removed
+    delete stored.confirmKey; // legacy: renamed to confirmHotkey + reset to F9 default
     return { ...defaults, ...stored };
   } catch {
     return defaults;

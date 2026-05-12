@@ -12,6 +12,9 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Shortcut defaults refreshed: Hide Overlay is now `Ctrl + ↑` (was `Ctrl + ↓`) and the Confirm Pattern hotkey now defaults to `F9`. If you had custom bindings for either, they have been reset - re-bind them under Settings → Shortcuts.
+- Clipboard paste button in the bottom-bar Connect strip no longer dumps arbitrary clipboard text into the footer. If what you pasted is not an LOA Logs share URL, you'll see a short "Not a share URL" hint instead.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.9 -->
