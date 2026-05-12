@@ -14,15 +14,16 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Reconciled mechanic data for **every raid in the library** (Valtan through Serca) against the current Maxroll guides. Severities and HP triggers were corrected across the board, previously-missing main mechanics were added (Mordum G1 Retaliation + Dragon/Thaemine Transitions, Mordum G3 opener Twisters + second Charged Field, Echidna Safe Zone + Final Phase, Serca G1 Safe Zone, Vykas G1 Stun Shotgun + Multiple Shockwaves, Behemoth G1 Part Break, Behemoth G2 Final Phase, additional Brelshaza dome phase, and more), and a few mechanics were renamed to match Maxroll terminology (Shadow Realm Stagger → Memory & Stagger; Shattered Orb → Dome Smash; Supernova → Supernova #1).
-- Mechanics that exist in multiple difficulties no longer appear twice in the list. Paired entries like "1st Heart" + "1st Heart (HM)" are now a single mechanic tagged with all the modes it appears in; per-mode execution differences live in the notes. The "(HM)" suffix has been dropped throughout.
-- Mechanics that share the same HP trigger no longer announce back-to-back. Pairs like Aegir G2's `1st Heart` + `Armor Break` (both at x260) are now a single combined entry (`1st Heart + Armor Break`) so TTS announces once. Same for Aegir G2 x165, Behemoth G1 x460 and x190, Behemoth G2 x190, A2 Brel G2 x100, A3 Mordum G2 x105, and Echidna G1 x90.
-- Every mechanic in the updated raids now carries an explicit difficulty tag (Solo / Normal / Hard / Nightmare). Picking a difficulty in the editor shows exactly the mechanics that fire in that mode — no more "no filter = show everything" surprises.
-- Difficulty badges in the mech editor are cleaner — they only show on mechanics restricted to specific difficulties (HM-only, Solo-only, etc.) instead of cluttering every row. Tags also always render in canonical order (Solo → Normal → Hard → Nightmare) regardless of how you toggled them when editing.
+- Reconciled mechanic data for **every raid in the library** (Valtan through Serca) against the current Maxroll guides.
+- Mechanics that exist in multiple difficulties no longer appear twice. Paired entries like "1st Heart" + "1st Heart (HM)" are now a single mechanic tagged with all the modes it appears in; per-mode differences live in the notes.
+- Mechanics that share the same HP trigger no longer announce back-to-back. Pairs like Aegir G2's "1st Heart" + "Armor Break" (both at x260) are now a single combined entry so TTS announces once.
+- Every mechanic in the updated raids now carries an explicit difficulty tag (Solo / Normal / Hard / Nightmare). Picking a difficulty in the editor shows exactly the mechanics that fire in that mode.
+- Difficulty badges in the mech editor are cleaner — they only show on mechanics restricted to specific difficulties (HM-only, Solo-only, etc.) instead of cluttering every row.
+- Tags also always render in canonical order (Solo → Normal → Hard → Nightmare).
 - LIVE badge in the gate sidebar now clears as soon as the fight ends instead of lingering for ~60 seconds.
-- Fixed voice announcements doubling when the Settings window's Overlay Preview tab was open during a real fight. The preview panel now stays silent whenever a live fight is in progress so only the overlay window announces.
-- Debug strip at the bottom of the editor now logs everything the app does internally — PeerJS connection events, gate matching, fight lifecycle (start / heartbeat hide / 60s reset), difficulty changes, settings/raid sync between windows, overlay show/hide/auto-resize, Discord webhook fires, and TTS announcements. Useful when something doesn't fire as expected. Strip now holds 200 lines (was 15).
-- Heads-up: existing raid imports keep their previous mechanic data unchanged. To pick up the updated mechanics, re-import the affected raid from "Import Raids" in the editor.
+- Fixed voice announcements doubling when the Settings window's Overlay Preview tab was open during a real fight. The preview panel now stays silent during a live fight so only the overlay window announces.
+- Debug strip at the bottom of the editor now logs everything the app does internally — PeerJS connection events, gate matching, fight lifecycle (start /heartbeat hide / 60s reset), difficulty changes, settings/raid sync between windows, overlay show/hide/auto-resize, Discord webhook fires, and TTS announcements. Useful when something doesn't fire as expected. Strip now holds 200 lines (was 15).
+- Heads-up: existing raid imports keep their previous mechanic data unchanged. Re-import the affected raid from "Import Raids" to pick up the updated mechanics.
 
 <!-- @release-end -->
 
