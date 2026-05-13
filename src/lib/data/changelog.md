@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Fixed overlay flicker during multi-target phases where the overlay would briefly hide because only the sub-target was reporting HP. The overlay now stays put as long as the fight is still going.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.11 -->
