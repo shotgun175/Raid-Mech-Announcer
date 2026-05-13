@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.1.12 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.12 - May 13th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Once every mechanic for the current gate has fired and the boss is still alive, the overlay now shows a short "push" message instead of going blank. One of a few short lines (e.g. "Push! Kill the boss.", "Execute phase, go go go!") is picked per fight.
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -19,14 +35,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.11 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.11 - May 12th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.11 - May 12th, 2026
 
 #### NEW FEATURES
 
