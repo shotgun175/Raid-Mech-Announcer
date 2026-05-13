@@ -328,6 +328,22 @@ export const mechStore = (() => {
     },
 
     setBossStatus(data: BossStatusData | null) {
+      // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
+      // liveGateId is kept so the sticky match survives the gap.
+      const onTier1Timeout = () => {
+        dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
+        liveBar = null;
+        liveTotalBars = null;
+        liveBossName = null;
+        broadcastBossStatus(null);
+        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
+      };
+      // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
+      const onTier2Timeout = () => {
+        dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
+        liveGateId = null;
+      };
+
       if (!data || data.isDead) {
         // If a gate is already locked in, ignore isDead events from unrelated bosses
         // (e.g. Alcaone dying during Echidna G2 stagger). Only process if the dying boss
@@ -336,6 +352,10 @@ export const mechStore = (() => {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
           if (!matchedGate || matchedGate.id !== liveGateId) {
             dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
+            // Packets are still flowing → fight is alive (e.g. Aegir's Heart-DPS phase
+            // where Pulsating Giant's Heart reports HP while Aegir is silent).
+            // Push both heartbeats out so the overlay doesn't flicker.
+            startHeartbeat(onTier1Timeout, onTier2Timeout);
             return;
           }
         }
@@ -348,10 +368,7 @@ export const mechStore = (() => {
         // Keep liveGateId — phase transitions send isDead=true but the fight continues.
         // The 60s tier-2 timer clears liveGateId if no HP data resumes.
         if (gateResetTimer) clearTimeout(gateResetTimer);
-        gateResetTimer = setTimeout(() => {
-          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
-          liveGateId = null;
-        }, GATE_RESET_MS);
+        gateResetTimer = setTimeout(onTier2Timeout, GATE_RESET_MS);
         return;
       }
       liveBar = data.currentBars;
@@ -374,23 +391,7 @@ export const mechStore = (() => {
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
       if (mechSettings.autoShowHide) broadcastOverlayControl(true);
 
-      startHeartbeat(
-        // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
-        // liveGateId is kept so the sticky match survives the gap.
-        () => {
-          dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
-          liveBar = null;
-          liveTotalBars = null;
-          liveBossName = null;
-          broadcastBossStatus(null);
-          if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-        },
-        // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
-        () => {
-          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
-          liveGateId = null;
-        }
-      );
+      startHeartbeat(onTier1Timeout, onTier2Timeout);
     },
 
     moveRaidUp(raidName: string) {
