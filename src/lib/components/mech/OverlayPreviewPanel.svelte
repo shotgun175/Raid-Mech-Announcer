@@ -122,6 +122,9 @@
       if (newActive) startSimTimer(newActive);
       else clearSimTimer();
     }
+
+    // Drive the encouragement state from the sim — setBossStatus only runs during live.
+    mechStore.recomputeEncourage(_simBar, gate.id);
   });
 
   function fireAnnouncement(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {

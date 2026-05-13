@@ -173,6 +173,30 @@ export const mechStore = (() => {
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
 
+  // Recompute the "all mechs past" state for a given (gate, currentBars) pair.
+  // Called both from the live path (setBossStatus) and from the Overlay Preview panel.
+  // Picks one line from the pool on transition INTO the empty-upcoming state and
+  // clears on transition OUT, so dragging the preview slider back and forth doesn't
+  // strand a stale message.
+  function recomputeEncourage(currentBars: number | null, gateId: string | null) {
+    if (gateId == null || currentBars == null || currentBars <= 0) {
+      if (liveEncourageMessage != null) liveEncourageMessage = null;
+      return;
+    }
+    const gate = raids.find((r) => r.id === gateId);
+    const mechs = gate?.mechanics ?? [];
+    const hasMechs = mechs.some((m) => m.hpBar != null);
+    const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
+    if (hasMechs && !anyUpcoming) {
+      if (liveEncourageMessage == null) {
+        liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
+        dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
+      }
+    } else if (liveEncourageMessage != null) {
+      liveEncourageMessage = null;
+    }
+  }
+
   function saveRaids() {
     localStorage.setItem(RAIDS_KEY, JSON.stringify(raids));
     broadcastRaids(raids);
@@ -407,22 +431,15 @@ export const mechStore = (() => {
 
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
       if (mechSettings.autoShowHide) broadcastOverlayControl(true);
-
-      // Once every mech in the live gate has fired and HP is still ticking, drop in
-      // an encouragement line so the overlay isn't just a bare HP bar.
-      if (liveGateId && data.currentBars > 0 && !liveEncourageMessage) {
-        const liveGate = raids.find((r) => r.id === liveGateId);
-        const mechs = liveGate?.mechanics ?? [];
-        const hasMechs = mechs.some((m) => m.hpBar != null);
-        const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= data.currentBars);
-        if (hasMechs && !anyUpcoming) {
-          liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
-          dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
-        }
-      }
+      recomputeEncourage(data.currentBars, liveGateId);
 
       startHeartbeat(onTier1Timeout, onTier2Timeout);
     },
+
+    // Drives the encouragement state from the Overlay Preview panel's local sim
+    // (the preview bypasses setBossStatus). Safe to call repeatedly — it only mutates
+    // on transition into/out of the empty-upcoming state.
+    recomputeEncourage,
 
     moveRaidUp(raidName: string) {
       const names = Array.from(new Set(raids.map((r) => r.raid)));
