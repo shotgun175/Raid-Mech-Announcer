@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- Once every mechanic for the current gate has fired and the boss is still alive, the overlay now shows a short "push" message instead of going blank. One of a few short lines (e.g. "Push! Kill the boss.", "Execute phase, go go go!") is picked per fight.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 - Fixed overlay flicker during multi-target phases where the overlay would briefly hide because only the sub-target was reporting HP. The overlay now stays put as long as the fight is still going.
