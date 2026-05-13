@@ -86,6 +86,16 @@ function bestGateMatch(raids: Gate[], bossName: string): Gate | null {
 const OVERLAY_HIDE_MS = 8_000;
 const GATE_RESET_MS = 60_000;
 
+// Shown in the overlay's primary slot once every mech in the live gate has fired and the
+// fight is still going (execute phase). One line is picked per fight; cleared on encounter end.
+const ENCOURAGE_POOL = [
+  "Push! Kill the boss.",
+  "Burn it down.",
+  "Execute phase, go go go!",
+  "Finish it!",
+  "Hit it 'til it dies."
+];
+
 let overlayHideTimer: ReturnType<typeof setTimeout> | null = null;
 let gateResetTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -160,6 +170,8 @@ export const mechStore = (() => {
   // mechId → timestamp (ms) of the last user-confirmed fire for that mechanic
   let confirmedAt = $state<Record<string, number>>({});
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
+  // Set once per fight when every mech has fired and HP is still ticking down.
+  let liveEncourageMessage = $state<string | null>(null);
 
   function saveRaids() {
     localStorage.setItem(RAIDS_KEY, JSON.stringify(raids));
@@ -197,6 +209,9 @@ export const mechStore = (() => {
     },
     get confirmedAt() {
       return confirmedAt;
+    },
+    get liveEncourageMessage() {
+      return liveEncourageMessage;
     },
 
     // Record that a repeating mechanic just visually fired — resets its cycle from now.
@@ -342,6 +357,7 @@ export const mechStore = (() => {
       const onTier2Timeout = () => {
         dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
         liveGateId = null;
+        liveEncourageMessage = null;
       };
 
       if (!data || data.isDead) {
@@ -363,6 +379,7 @@ export const mechStore = (() => {
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
+        liveEncourageMessage = null;
         broadcastBossStatus(null);
         if (mechSettings.autoShowHide) broadcastOverlayControl(false);
         // Keep liveGateId — phase transitions send isDead=true but the fight continues.
@@ -390,6 +407,19 @@ export const mechStore = (() => {
 
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
       if (mechSettings.autoShowHide) broadcastOverlayControl(true);
+
+      // Once every mech in the live gate has fired and HP is still ticking, drop in
+      // an encouragement line so the overlay isn't just a bare HP bar.
+      if (liveGateId && data.currentBars > 0 && !liveEncourageMessage) {
+        const liveGate = raids.find((r) => r.id === liveGateId);
+        const mechs = liveGate?.mechanics ?? [];
+        const hasMechs = mechs.some((m) => m.hpBar != null);
+        const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= data.currentBars);
+        if (hasMechs && !anyUpcoming) {
+          liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
+          dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
+        }
+      }
 
       startHeartbeat(onTier1Timeout, onTier2Timeout);
     },

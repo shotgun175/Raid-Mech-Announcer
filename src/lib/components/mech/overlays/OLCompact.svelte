@@ -22,7 +22,7 @@
 </script>
 
 <div style="display: flex; flex-direction: column; gap: 4px; font-family: Inter, sans-serif;">
-  {#if upcoming.length === 0}
+  {#if upcoming.length === 0 && !mechStore.liveEncourageMessage}
     <div
       style="background: rgba(23,23,23,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(64,64,64,0.5); border-radius: 4px; padding: 8px 14px; color: #a3a3a3; font-size: 12px;"
     >
@@ -71,6 +71,17 @@
               ? '#f87171'
               : '#a78bfa'}; flex-shrink: 0;">↻ {formatTimer(repeatCountdown)}</span
           >
+        </div>
+      {/if}
+      {#if upcoming.length === 0 && mechStore.liveEncourageMessage}
+        <div
+          style="padding: 9px 12px; background: rgba(16,185,129,0.08); border-left: 2px solid #10b981; display: flex; align-items: center; gap: 10px;"
+        >
+          <span
+            style="font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #10b981; text-transform: uppercase; flex-shrink: 0;"
+            >push</span
+          >
+          <span style="font-size: 12.5px; font-weight: 700; color: #fafafa;">{mechStore.liveEncourageMessage}</span>
         </div>
       {/if}
       {#each upcoming as m, i (m.id)}
