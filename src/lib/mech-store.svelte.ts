@@ -86,6 +86,16 @@ function bestGateMatch(raids: Gate[], bossName: string): Gate | null {
 const OVERLAY_HIDE_MS = 8_000;
 const GATE_RESET_MS = 60_000;
 
+// Shown in the overlay's primary slot once every mech in the live gate has fired and the
+// fight is still going (execute phase). One line is picked per fight; cleared on encounter end.
+const ENCOURAGE_POOL = [
+  "Push! Kill the boss.",
+  "Burn it down.",
+  "Execute phase, go go go!",
+  "Finish it!",
+  "Hit it 'til it dies."
+];
+
 let overlayHideTimer: ReturnType<typeof setTimeout> | null = null;
 let gateResetTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -160,6 +170,32 @@ export const mechStore = (() => {
   // mechId → timestamp (ms) of the last user-confirmed fire for that mechanic
   let confirmedAt = $state<Record<string, number>>({});
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
+  // Set once per fight when every mech has fired and HP is still ticking down.
+  let liveEncourageMessage = $state<string | null>(null);
+
+  // Recompute the "all mechs past" state for a given (gate, currentBars) pair.
+  // Called both from the live path (setBossStatus) and from the Overlay Preview panel.
+  // Picks one line from the pool on transition INTO the empty-upcoming state and
+  // clears on transition OUT, so dragging the preview slider back and forth doesn't
+  // strand a stale message.
+  function recomputeEncourage(currentBars: number | null, gateId: string | null) {
+    if (gateId == null || currentBars == null || currentBars <= 0) {
+      if (liveEncourageMessage != null) liveEncourageMessage = null;
+      return;
+    }
+    const gate = raids.find((r) => r.id === gateId);
+    const mechs = gate?.mechanics ?? [];
+    const hasMechs = mechs.some((m) => m.hpBar != null);
+    const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
+    if (hasMechs && !anyUpcoming) {
+      if (liveEncourageMessage == null) {
+        liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
+        dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
+      }
+    } else if (liveEncourageMessage != null) {
+      liveEncourageMessage = null;
+    }
+  }
 
   function saveRaids() {
     localStorage.setItem(RAIDS_KEY, JSON.stringify(raids));
@@ -197,6 +233,9 @@ export const mechStore = (() => {
     },
     get confirmedAt() {
       return confirmedAt;
+    },
+    get liveEncourageMessage() {
+      return liveEncourageMessage;
     },
 
     // Record that a repeating mechanic just visually fired — resets its cycle from now.
@@ -328,6 +367,23 @@ export const mechStore = (() => {
     },
 
     setBossStatus(data: BossStatusData | null) {
+      // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
+      // liveGateId is kept so the sticky match survives the gap.
+      const onTier1Timeout = () => {
+        dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
+        liveBar = null;
+        liveTotalBars = null;
+        liveBossName = null;
+        broadcastBossStatus(null);
+        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
+      };
+      // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
+      const onTier2Timeout = () => {
+        dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
+        liveGateId = null;
+        liveEncourageMessage = null;
+      };
+
       if (!data || data.isDead) {
         // If a gate is already locked in, ignore isDead events from unrelated bosses
         // (e.g. Alcaone dying during Echidna G2 stagger). Only process if the dying boss
@@ -336,6 +392,10 @@ export const mechStore = (() => {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
           if (!matchedGate || matchedGate.id !== liveGateId) {
             dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
+            // Packets are still flowing → fight is alive (e.g. Aegir's Heart-DPS phase
+            // where Pulsating Giant's Heart reports HP while Aegir is silent).
+            // Push both heartbeats out so the overlay doesn't flicker.
+            startHeartbeat(onTier1Timeout, onTier2Timeout);
             return;
           }
         }
@@ -343,15 +403,13 @@ export const mechStore = (() => {
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
+        liveEncourageMessage = null;
         broadcastBossStatus(null);
         if (mechSettings.autoShowHide) broadcastOverlayControl(false);
         // Keep liveGateId — phase transitions send isDead=true but the fight continues.
         // The 60s tier-2 timer clears liveGateId if no HP data resumes.
         if (gateResetTimer) clearTimeout(gateResetTimer);
-        gateResetTimer = setTimeout(() => {
-          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
-          liveGateId = null;
-        }, GATE_RESET_MS);
+        gateResetTimer = setTimeout(onTier2Timeout, GATE_RESET_MS);
         return;
       }
       liveBar = data.currentBars;
@@ -373,25 +431,15 @@ export const mechStore = (() => {
 
       broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
       if (mechSettings.autoShowHide) broadcastOverlayControl(true);
+      recomputeEncourage(data.currentBars, liveGateId);
 
-      startHeartbeat(
-        // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
-        // liveGateId is kept so the sticky match survives the gap.
-        () => {
-          dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
-          liveBar = null;
-          liveTotalBars = null;
-          liveBossName = null;
-          broadcastBossStatus(null);
-          if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-        },
-        // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
-        () => {
-          dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
-          liveGateId = null;
-        }
-      );
+      startHeartbeat(onTier1Timeout, onTier2Timeout);
     },
+
+    // Drives the encouragement state from the Overlay Preview panel's local sim
+    // (the preview bypasses setBossStatus). Safe to call repeatedly — it only mutates
+    // on transition into/out of the empty-upcoming state.
+    recomputeEncourage,
 
     moveRaidUp(raidName: string) {
       const names = Array.from(new Set(raids.map((r) => r.raid)));

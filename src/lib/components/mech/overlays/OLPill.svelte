@@ -70,5 +70,16 @@
         >
       {/if}
     </div>
+  {:else if mechStore.liveEncourageMessage}
+    <div
+      style="background: rgba(16,185,129,0.12); backdrop-filter: blur(10px); border: 1px solid #10b981; border-radius: 24px; padding: 7px 18px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 0 20px rgba(16,185,129,0.4), 0 4px 20px rgba(0,0,0,0.6); user-select: none;"
+    >
+      <div
+        style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; flex-shrink: 0;"
+      ></div>
+      <span style="font-size: 13px; font-weight: 700; color: #10b981; white-space: nowrap;"
+        >{mechStore.liveEncourageMessage}</span
+      >
+    </div>
   {/if}
 </div>
