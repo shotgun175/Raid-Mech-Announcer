@@ -8,13 +8,18 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { speakTts } from "$lib/utils/tts";
+  import { filterByDifficulty } from "$lib/utils/difficulty";
   import { onDestroy } from "svelte";
-  import type { Mechanic } from "$lib/mech-types";
+  import type { Difficulty, Mechanic } from "$lib/mech-types";
 
   type VariantId = "standard" | "compact" | "hud" | "card" | "pill";
 
   const gate = $derived(mechStore.selectedGate);
   const isLive = $derived(mechStore.isLive);
+  const activeDifficulty = $derived<Difficulty | null>(
+    gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
+  );
+  const visibleMechanics = $derived(gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
 
   let variant = $state<VariantId>((mechStore.mechSettings.overlayVariant as VariantId) ?? "standard");
   // svelte-ignore state_referenced_locally
@@ -91,7 +96,7 @@
   $effect(() => {
     if (!gate || isLive) return;
     const cfg = mechStore.mechSettings;
-    gate.mechanics.forEach((m) => {
+    visibleMechanics.forEach((m) => {
       if (m.hpBar == null) return;
 
       // HP trigger: fires once as _simBar enters the lead window before the mechanic
@@ -114,7 +119,7 @@
 
     // Detect active hp+timer mechanic in sim
     const newActive =
-      [...gate.mechanics]
+      [...visibleMechanics]
         .filter((m) => m.repeatSecs != null && m.hpBar != null && _simBar < (m.hpBar ?? 0))
         .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
         .at(-1) ?? null;
@@ -364,7 +369,7 @@
       >
         {#if variant === "standard"}
           <OLCombined
-            mechanics={gate.mechanics}
+            mechanics={visibleMechanics}
             currentBar={simBar}
             totalBars={gate.totalBars}
             {gateName}
@@ -374,7 +379,7 @@
           />
         {:else if variant === "compact"}
           <OLCompact
-            mechanics={gate.mechanics}
+            mechanics={visibleMechanics}
             currentBar={simBar}
             totalBars={gate.totalBars}
             {gateName}
@@ -384,7 +389,7 @@
           />
         {:else if variant === "hud"}
           <OLHudStrip
-            mechanics={gate.mechanics}
+            mechanics={visibleMechanics}
             currentBar={simBar}
             totalBars={gate.totalBars}
             {gateName}
@@ -394,7 +399,7 @@
           />
         {:else if variant === "card"}
           <OLCardStack
-            mechanics={gate.mechanics}
+            mechanics={visibleMechanics}
             currentBar={simBar}
             totalBars={gate.totalBars}
             {gateName}
@@ -403,7 +408,7 @@
           />
         {:else}
           <OLPill
-            mechanics={gate.mechanics}
+            mechanics={visibleMechanics}
             currentBar={simBar}
             totalBars={gate.totalBars}
             {gateName}

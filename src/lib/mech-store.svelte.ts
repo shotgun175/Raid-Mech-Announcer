@@ -1,6 +1,7 @@
 import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
-import type { BossStatusData, Gate, MechSettings } from "./mech-types";
+import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
+import { filterByDifficulty } from "./utils/difficulty";
 
 // Fire-and-forget log into the in-app debug strip. Works from any window via
 // the main window's "tts:debug" listener in (app)/+layout.svelte.
@@ -184,7 +185,8 @@ export const mechStore = (() => {
       return;
     }
     const gate = raids.find((r) => r.id === gateId);
-    const mechs = gate?.mechanics ?? [];
+    const activeDifficulty = gate ? ((difficultyMap[gate.raid] as Difficulty | undefined) ?? null) : null;
+    const mechs = gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : [];
     const hasMechs = mechs.some((m) => m.hpBar != null);
     const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
     if (hasMechs && !anyUpcoming) {
