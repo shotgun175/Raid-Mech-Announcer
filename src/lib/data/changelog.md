@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- New app icon - a custom character portrait now appears in the taskbar, system tray, and Windows shortcut instead of the previous default.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.12 -->
