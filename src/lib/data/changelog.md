@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- App updates now refresh the taskbar icon on their own going forward.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.13 -->
