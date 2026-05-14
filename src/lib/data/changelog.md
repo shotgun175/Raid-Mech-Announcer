@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- App updates now refresh the taskbar icon on their own going forward.
-
 <!-- @release-end -->
 
-<!-- @release v0.1.13 -->
+<!-- @release v0.1.14 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.13 - May 14th, 2026
+    v0.1.14 - May 14th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- App updates now refresh the taskbar icon on their own going forward.
+
+<!-- @release-end -->
+
+<!-- @release v0.1.13 -->
+### v0.1.13 - May 14th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
