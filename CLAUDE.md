@@ -106,16 +106,14 @@ src-tauri/
   src/
     main.rs                 App entry point + Tauri builder
     tts_cmd.rs              speak_tts and list_tts_voices Tauri commands
-    live/                   Encounter state machine (packet-driven, feature-gated)
     handlers/               Tauri invoke handlers (thin wrappers)
-    models/                 Shared Rust data models (all serde-derived)
     settings/               Settings file manager
     ui/                     Tray icon, window events, WebView extensions
     app/loa_detect.rs       LOA Logs install detection; find_loa_meter_data() -> Option<PathBuf>
     app/log_watch.rs        Log file watcher; emits loa:fight-end Tauri event on fight end
+  nsis/                     NSIS installer template (installer.nsi) + post-install hook (hooks.nsh)
   WinDivert.dll             WinDivert binaries — compiled into the binary via include_bytes!
   WinDivert64.sys           Required at compile time; extracted to disk on first run if missing
-  meter-core-stub/          Stub crate replacing private meter-core-rs for open builds
 ```
 
 ## Build / Run Commands
@@ -174,7 +172,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - No `.unwrap()` in handler code — propagate with `?`
 
 ## Common Gotchas
-- **No live meter in dev builds**: `meter-core-rs` is private; dev builds patch it with `meter-core-stub`. Live packet capture is disabled.
+- **No live damage metering**: this app reuses LOA Logs infrastructure (packet capture via WinDivert, encounter detection) but only consumes the parts needed to drive mechanic announcements. There is no DPS-meter UI or live combat readout.
 - **Overlay window (`"main"`) starts hidden**: `tauri.conf.json` sets `"visible": false`; the Rust backend controls show/hide. The settings window (`"settings"`) starts visible.
 - **Settings window close button hides, not exits**: closing the settings window hides it rather than quitting the app. Restore via tray → Show Settings or the overlay's gear button.
 - **WinDivert**: `WinDivert.dll` / `WinDivert64.sys` are compiled into the binary via `include_bytes!` and extracted to disk on first run. Antivirus often quarantines them — add a folder exception.

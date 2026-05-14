@@ -1,7 +1,7 @@
 [package]
 name = "app"
 version = "0.1.13"
-description = "Raid mechanic announcer and DPS meter for Lost Ark"
+description = "Raid mechanic announcer for Lost Ark"
 authors = ["shotgun175"]
 license = "GNU General Public License v3.0"
 repository = "https://github.com/shotgun175/Raid-Mech-Announcer"
@@ -14,40 +14,26 @@ rust-version = "1.90.0"
 [build-dependencies]
 tauri-build = { version = "2.5.3", features = [] }
 
-[dev-dependencies]
-rand = "0.9.0"
-
 [dependencies]
 anyhow = "1.0.100"
 chrono = "0.4.42"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "2.9.5", features = ["image-png", "tray-icon"] }
-bitflags = "2.10.0"
 window-vibrancy = "0.7.1"
-hashbrown = { version = "0.16.0", features = ["serde"] }
-r2d2_sqlite = "0.31.0"
-r2d2 = "0.8.10"
-rusqlite = { version = "0.37.0", features = ["bundled", "serde_json"] }
 tokio = { version = "1.48.0", features = ["rt", "macros"] }
-serde_with = "3.12.0"
 log = "0.4.18"
 flexi_logger = { version = "0.31.7", default-features = false }
 reqwest = { version = "0.13.1", features = ["json", "gzip"] }
 uuid = { version = "1.17.0", features = ["v4"] }
-moka = { version = "0.12.7", features = ["sync"] }
 notify = "7"
 rfd = { version = "0.17.2", features = ["common-controls-v6"] }
-rsntp = { version = "4.0.0", default-features = false, features = ["chrono"] }
-flate2 = "1.0.30"
 sysinfo = "0.37.2"
 thiserror = "2.0.17"
 strum = "0.27.2"
 strum_macros = "0.27.2"
-semver = "1.0.27"
 url = "2"
 dirs = "6.0.0"
-sha2 = "0.10.9"
 rodio = { version = "0.19", default-features = false, features = ["mp3"] }
 
 
@@ -56,18 +42,10 @@ tauri-plugin-shell = "2.3.1"
 tauri-plugin-clipboard-manager = "2.3.0"
 tauri-plugin-updater = "2.9.0"
 tauri-plugin-opener = "2.5.0"
-tauri-plugin-log = "2.7.0"
 tauri-plugin-window-state = "2.4.0"
 tauri-plugin-process = "2.3.0"
 tauri-plugin-global-shortcut = "2.3.0"
 tauri-plugin-single-instance = "2.3.4"
-
-[target.'cfg(target_os = "windows")'.dependencies]
-nt_version = "0.1.3"
-winsafe = { version = "0.0.27", features = ["taskschd"] }
-
-[target.'cfg(target_os = "linux")'.dependencies]
-auto-launch = "0.5.0"
 
 [features]
 # by default Tauri runs in production mode
