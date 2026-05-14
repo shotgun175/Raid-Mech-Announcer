@@ -12,6 +12,20 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.1.13 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.1.13 - May 14th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - New app icon - a custom character portrait now appears in the taskbar, system tray, and Windows shortcut instead of the previous default.
 - Overlay Preview: announcements and the post-mechanic "Push" card now respect the active difficulty, matching what fires during a real fight.
 - Overlay Preview: dragging the simulate HP slider down to 0 no longer jitters or snaps back.
@@ -19,14 +33,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.12 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.12 - May 13th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.12 - May 13th, 2026
 
 #### NEW FEATURES
 
