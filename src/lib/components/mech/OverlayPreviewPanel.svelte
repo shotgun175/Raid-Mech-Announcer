@@ -316,7 +316,7 @@
             ? '#fb923c60'
             : 'rgba(56,189,248,0.3)'}; border-radius: 3px; padding: 4px 12px; color: {playing
             ? '#fb923c'
-            : '#38bdf8'}; cursor: pointer; font-size: 12px; font-weight: 700; font-family: inherit; flex-shrink: 0;"
+            : '#38bdf8'}; cursor: pointer; font-size: 12px; font-weight: 700; font-family: inherit; flex-shrink: 0; min-width: 92px; text-align: center;"
           >{playing ? "⏸ PAUSE" : _simBar <= 0 ? "↺ RESTART" : "▶ PLAY"}</button
         >
       {:else}
