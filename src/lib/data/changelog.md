@@ -13,6 +13,8 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - New app icon - a custom character portrait now appears in the taskbar, system tray, and Windows shortcut instead of the previous default.
+- Overlay Preview: announcements and the post-mechanic "Push" card now respect the active difficulty, matching what fires during a real fight.
+- Overlay Preview: dragging the simulate HP slider down to 0 no longer jitters or snaps back.
 
 <!-- @release-end -->
 
