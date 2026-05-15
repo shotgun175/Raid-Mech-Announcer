@@ -7,6 +7,7 @@
   import { emit, listen } from "@tauri-apps/api/event";
   import { settings } from "$lib/stores.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
+  import { mechStore } from "$lib/mech-store.svelte";
   import { checkForUpdate } from "$lib/utils/updater";
   import { registerShortcuts } from "$lib/utils/shortcuts";
   import { getVersion } from "@tauri-apps/api/app";
@@ -45,6 +46,13 @@
       if (typeof event.payload === "string") peerState.pushDebugLog(event.payload);
     });
 
+    // LOA Logs writes a "saving to db" line on true encounter end (not phase transitions).
+    // Clear the sticky gate now so a back-to-back fight re-matches against the new boss.
+    const unlistenFightEnd = listen("loa:fight-end", () => {
+      mechStore.endEncounter();
+      emit("mech:encounter-end").catch(() => {});
+    });
+
     const pollId = setInterval(async () => {
       if (peerState.status === "connecting" || peerState.isConnected) return;
       try {
@@ -58,6 +66,7 @@
     return () => {
       clearInterval(pollId);
       unlistenTts.then((fn) => fn()).catch(() => {});
+      unlistenFightEnd.then((fn) => fn()).catch(() => {});
     };
   });
 </script>

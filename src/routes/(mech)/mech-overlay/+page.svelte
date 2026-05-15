@@ -224,6 +224,8 @@
         if (currentBar !== null) ttsLog(`[TTS][overlay] boss-status cleared (was ${currentBar})`);
         currentBar = null;
         gateId = null;
+        clearRepeatTimer();
+        lastFiredKey = new Set();
         return;
       }
       currentBar = data.currentBars;
@@ -287,7 +289,28 @@
       peerConnected = event.payload.isConnected;
     });
 
-    unlisteners.push(unBoss, unShow, unPreview, unHide, unSettings, unRaids, unFightStart, unConfirm, unDiff, unPeer);
+    // Main window has cleared its sticky liveGateId on a real LOA Logs encounter end.
+    // Drop our local gateId so the next boss-status event re-binds against the new gate.
+    const unEnd = await listen("mech:encounter-end", () => {
+      ttsLog(`[overlay] encounter-end → clear gateId`);
+      gateId = null;
+      clearRepeatTimer();
+      lastFiredKey = new Set();
+    });
+
+    unlisteners.push(
+      unBoss,
+      unShow,
+      unPreview,
+      unHide,
+      unSettings,
+      unRaids,
+      unFightStart,
+      unConfirm,
+      unDiff,
+      unPeer,
+      unEnd
+    );
   });
 
   onDestroy(() => {
