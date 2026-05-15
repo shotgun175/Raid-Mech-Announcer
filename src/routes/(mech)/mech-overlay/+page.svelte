@@ -224,6 +224,8 @@
         if (currentBar !== null) ttsLog(`[TTS][overlay] boss-status cleared (was ${currentBar})`);
         currentBar = null;
         gateId = null;
+        clearRepeatTimer();
+        lastFiredKey = new Set();
         return;
       }
       currentBar = data.currentBars;

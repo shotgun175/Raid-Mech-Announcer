@@ -13,6 +13,7 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Fix overlay getting stuck on the previous gate's mechanics when you start a new fight right after finishing one.
+- Stop repeating mechanic announcements from firing after the boss dies.
 
 <!-- @release-end -->
 
