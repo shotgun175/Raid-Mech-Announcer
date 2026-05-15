@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Fix overlay getting stuck on the previous gate's mechanics when you start a new fight right after finishing one.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.14 -->

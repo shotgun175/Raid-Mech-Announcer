@@ -262,6 +262,18 @@ export const mechStore = (() => {
       liveGateId = id;
     },
 
+    // Authoritative encounter-end signal (driven by LOA Logs' "saving to db" log line).
+    // Clears the sticky gate so the next fight re-matches immediately — without this,
+    // the GATE_RESET_MS timer keeps getting renewed by the next fight's HP events and
+    // the previous gate's mechanics stay pinned to the overlay.
+    endEncounter() {
+      if (liveGateId == null) return;
+      dbg(`[fight] loa fight-end → liveGateId cleared`);
+      liveGateId = null;
+      liveEncourageMessage = null;
+      stopHeartbeat();
+    },
+
     upsertMechanic(gateId: string, mech: Gate["mechanics"][number]) {
       raids = raids.map((r) => {
         if (r.id !== gateId) return r;
