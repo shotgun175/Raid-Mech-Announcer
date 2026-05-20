@@ -165,4 +165,53 @@ describe("reconcile", () => {
     expect(raids[0].mechanics.some((m) => m.name === "My Reminder")).toBe(true);
     expect(changedGateIds.has(user[0].id)).toBe(false);
   });
+
+  it("Step C: library adds a new mech → appears in user gate with origin:library", () => {
+    const lib = [
+      libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])
+    ];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics).toHaveLength(2);
+    const added = raids[0].mechanics.find((m) => m.key === "test-g1-b")!;
+    expect(added).toBeDefined();
+    expect(added.origin).toBe("library");
+    expect(added.userEdited).toBe(false);
+    expect(added.name).toBe("B");
+    expect(changedGateIds.has(user[0].id)).toBe(true);
+  });
+
+  it("Step C: respects deletedLibraryKeys → does NOT re-add", () => {
+    const lib = [
+      libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])
+    ];
+    const user = [
+      userGate(
+        "Test",
+        1,
+        [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })],
+        { deletedLibraryKeys: ["test-g1-b"] }
+      )
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics).toHaveLength(1);
+    expect(raids[0].mechanics[0].key).toBe("test-g1-a");
+    expect(changedGateIds.has(user[0].id)).toBe(false);
+  });
+
+  it("Step C: prunes stale deletedLibraryKeys (key no longer in library)", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
+    const user = [
+      userGate(
+        "Test",
+        1,
+        [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })],
+        { deletedLibraryKeys: ["test-g1-stale", "test-g1-zombie"] }
+      )
+    ];
+    const { raids } = reconcile(lib, user);
+    expect(raids[0].deletedLibraryKeys).toEqual([]);
+  });
 });

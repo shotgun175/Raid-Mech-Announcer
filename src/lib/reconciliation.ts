@@ -104,10 +104,45 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
       if (mechFieldsDiffer(um, merged)) gateChanged = true;
       reconciledMechs.push(merged);
     }
+    // ---- Step C: add library mechs not yet present, respect deletedLibraryKeys
+    const userKeys = new Set(reconciledMechs.map((m) => m.key).filter(Boolean) as string[]);
+    const deletedKeys = new Set(ug.deletedLibraryKeys ?? []);
+    for (const lm of libGate.mechanics) {
+      if (userKeys.has(lm.key)) continue;
+      if (deletedKeys.has(lm.key)) continue;
+      reconciledMechs.push({
+        id: `lib-${lm.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        key: lm.key,
+        origin: "library",
+        userEdited: false,
+        name: lm.name,
+        severity: lm.severity,
+        hpBar: lm.hpBar ?? null,
+        timerSecs: lm.timerSecs ?? null,
+        phase: null,
+        repeatSecs: lm.repeatSecs ?? null,
+        triggerType: lm.triggerType,
+        ttsEnabled: true,
+        ttsText: lm.name,
+        notes: lm.notes ?? "",
+        difficulties: lm.difficulties?.length ? lm.difficulties : undefined
+      });
+      gateChanged = true;
+    }
     const nextMechanics = reconciledMechs;
 
+    // Stale deletedLibraryKeys cleanup: drop entries whose keys no longer exist
+    // in the current library version (dead weight from prior library removals).
+    const liveLibKeys = new Set(libGate.mechanics.map((m) => m.key));
+    const prunedDeleted = (ug.deletedLibraryKeys ?? []).filter((k) => liveLibKeys.has(k));
+
     if (gateChanged) changedGateIds.add(ug.id);
-    return { ...ug, ...nextGateFields, mechanics: nextMechanics };
+    return {
+      ...ug,
+      ...nextGateFields,
+      mechanics: nextMechanics,
+      deletedLibraryKeys: prunedDeleted
+    };
   });
 
   return { raids, changedGateIds };
