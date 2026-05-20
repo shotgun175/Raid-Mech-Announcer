@@ -12,6 +12,13 @@ async function broadcastBossStatus(payload: BossStatusData | null) {
     await emit("mech:boss-status", payload);
   } catch {}
 }
+// Tells the overlay to drop per-fight state (gate id, fired-mech keys, repeat timer).
+// Fired alongside broadcastBossStatus(null) on any path that clears liveGateId.
+async function broadcastEncounterEnd() {
+  try {
+    await emit("mech:encounter-end", null);
+  } catch {}
+}
 async function broadcastOverlayControl(show: boolean) {
   dbg(`[overlay] broadcast ${show ? "show" : "hide"}`);
   try {
@@ -263,15 +270,21 @@ export const mechStore = (() => {
     },
 
     // Authoritative encounter-end signal (driven by LOA Logs' "saving to db" log line).
-    // Clears the sticky gate so the next fight re-matches immediately — without this,
-    // the GATE_RESET_MS timer keeps getting renewed by the next fight's HP events and
-    // the previous gate's mechanics stay pinned to the overlay.
+    // Clears the sticky gate so the next fight re-matches immediately. Also broadcasts
+    // encounter-end + hides the overlay (autoShowHide-gated) so post-fight auto-hide
+    // happens once, here — never in the middle of a fight from a heartbeat timeout.
     endEncounter() {
       if (liveGateId == null) return;
       dbg(`[fight] loa fight-end → liveGateId cleared`);
+      liveBar = null;
+      liveTotalBars = null;
+      liveBossName = null;
       liveGateId = null;
       liveEncourageMessage = null;
       stopHeartbeat();
+      broadcastBossStatus(null);
+      broadcastEncounterEnd();
+      if (mechSettings.autoShowHide) broadcastOverlayControl(false);
     },
 
     upsertMechanic(gateId: string, mech: Gate["mechanics"][number]) {
@@ -376,62 +389,77 @@ export const mechStore = (() => {
       difficultyMap = map;
     },
 
+    // Applied in the overlay window when a mech:boss-status payload carries the
+    // encouragement line chosen by the main window — bypasses local recompute so
+    // both windows display the same message.
+    applyRemoteEncourageMessage(msg: string | null) {
+      liveEncourageMessage = msg;
+    },
+
     findBestGate(bossName: string): Gate | null {
       return bestGateMatch(raids, bossName);
     },
 
     setBossStatus(data: BossStatusData | null) {
-      // Tier 1 (8s): hide overlay + clear HP display — covers phase transitions / stagger gaps.
-      // liveGateId is kept so the sticky match survives the gap.
+      // Tier 1 (8s): clear HP display only — covers brief phase silences (e.g. Aegir's
+      // Heart-DPS phase, Echidna phase transitions). The overlay window STAYS visible
+      // and renders a "Phase transition…" placeholder using the preserved gateId; we
+      // never auto-hide mid-fight because the gate is still active.
       const onTier1Timeout = () => {
-        dbg(`[fight] tier-1 timeout (8s) → hide overlay + clear HP (gateId kept)`);
+        dbg(`[fight] tier-1 timeout (8s) → clear HP display (gate stays, overlay stays visible)`);
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
         broadcastBossStatus(null);
-        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
       };
-      // Tier 2 (60s): full reset — silence this long means a real wipe/clear/logout.
+      // Tier 2 (60s): safety net for the case where isDead never fires (LOA disconnects,
+      // packet loss). Treats prolonged silence as a true encounter end: clears the gate,
+      // broadcasts encounter-end, and hides the overlay (autoShowHide-gated).
       const onTier2Timeout = () => {
-        dbg(`[fight] tier-2 timeout (60s) → liveGateId cleared`);
+        dbg(`[fight] tier-2 timeout (60s) → encounter ended (gate cleared, overlay hidden)`);
         liveGateId = null;
         liveEncourageMessage = null;
+        broadcastEncounterEnd();
+        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
       };
 
       if (!data || data.isDead) {
         // If a gate is already locked in, ignore isDead events from unrelated bosses
-        // (e.g. Alcaone dying during Echidna G2 stagger). Only process if the dying boss
-        // matches the active gate, or if no gate is locked yet.
+        // (e.g. Alcaone dying during Echidna G2 stagger, or the Heart during Aegir's
+        // Heart-DPS phase). Push both heartbeats out so the overlay doesn't flicker.
         if (liveGateId && data?.isDead) {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
           if (!matchedGate || matchedGate.id !== liveGateId) {
             dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
-            // Packets are still flowing → fight is alive (e.g. Aegir's Heart-DPS phase
-            // where Pulsating Giant's Heart reports HP while Aegir is silent).
-            // Push both heartbeats out so the overlay doesn't flicker.
             startHeartbeat(onTier1Timeout, onTier2Timeout);
             return;
           }
         }
-        dbg(`[fight] end → boss "${data?.name ?? "null"}" cleared (gateId kept for 60s)`);
+        // Either PeerJS dropped (data is null) or the active gate's boss died. Treat as
+        // a real encounter end: clear gate immediately so the next HP event re-matches
+        // fresh (handles G1→G2 transitions and same-gate repulls). The live-data flip
+        // block below is the safety net for cases where isDead never fires.
+        dbg(`[fight] end → boss "${data?.name ?? "null"}" cleared (gate cleared, overlay hidden)`);
         liveBar = null;
         liveTotalBars = null;
         liveBossName = null;
+        liveGateId = null;
         liveEncourageMessage = null;
+        stopHeartbeat();
         broadcastBossStatus(null);
+        broadcastEncounterEnd();
         if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-        // Keep liveGateId — phase transitions send isDead=true but the fight continues.
-        // The 60s tier-2 timer clears liveGateId if no HP data resumes.
-        if (gateResetTimer) clearTimeout(gateResetTimer);
-        gateResetTimer = setTimeout(onTier2Timeout, GATE_RESET_MS);
         return;
       }
       liveBar = data.currentBars;
       liveTotalBars = data.totalBars;
       liveBossName = data.name;
 
-      // Only match on the first event of a new fight — once a gate is locked in,
-      // keep it even if the boss name changes mid-phase (e.g. Echidna → Covetous Master Echidna).
+      // Gate matching: sticky by default to survive mid-phase name changes
+      // (e.g. Echidna → Covetous Master Echidna), but re-match when the new boss
+      // name resolves to a DIFFERENT valid gate — that's a real raid/gate transition
+      // (e.g. G1 ends and G2 starts within the 60s GATE_RESET_MS window before the
+      // sticky liveGateId would have cleared on its own).
       if (!liveGateId) {
         const matched = bestGateMatch(raids, data.name);
         if (matched) {
@@ -441,11 +469,28 @@ export const mechStore = (() => {
         } else {
           dbg(`[gate] NO MATCH for boss "${data.name}" — overlay won't fire mechs`);
         }
+      } else {
+        const candidate = bestGateMatch(raids, data.name);
+        if (candidate && candidate.id !== liveGateId) {
+          dbg(
+            `[gate] boss "${data.name}" resolves to a different gate (${candidate.raid} G${candidate.gate}) → re-match`
+          );
+          liveGateId = candidate.id;
+          liveEncourageMessage = null;
+          broadcastFightStart();
+        }
       }
 
-      broadcastBossStatus({ ...data, gateId: liveGateId ?? null });
-      if (mechSettings.autoShowHide) broadcastOverlayControl(true);
+      // Compute encouragement before broadcasting so the overlay window receives the
+      // chosen line in the payload — each Tauri window has its own mechStore instance,
+      // so rolling the dice on the overlay side would diverge from the debug log.
       recomputeEncourage(data.currentBars, liveGateId);
+      broadcastBossStatus({
+        ...data,
+        gateId: liveGateId ?? null,
+        encourageMessage: liveEncourageMessage
+      });
+      if (mechSettings.autoShowHide) broadcastOverlayControl(true);
 
       startHeartbeat(onTier1Timeout, onTier2Timeout);
     },

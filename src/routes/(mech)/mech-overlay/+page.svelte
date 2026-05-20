@@ -221,11 +221,14 @@
     const unBoss = await listen<BossStatusData | null>("mech:boss-status", (event) => {
       const data = event.payload;
       if (!data || data.isDead) {
+        // HP-only clear — the boss went silent but the gate may still be active
+        // (phase transition, brief stagger gap). gateId, lastFiredKey, and repeat
+        // timer are preserved so mid-fight HP resumption picks up cleanly. Per-fight
+        // teardown is the mech:encounter-end listener's job.
         if (currentBar !== null) ttsLog(`[TTS][overlay] boss-status cleared (was ${currentBar})`);
         currentBar = null;
-        gateId = null;
-        clearRepeatTimer();
-        lastFiredKey = new Set();
+        bossName = "";
+        mechStore.applyRemoteEncourageMessage(null);
         return;
       }
       currentBar = data.currentBars;
@@ -239,6 +242,8 @@
         const matched = mechStore.findBestGate(data.name);
         if (matched) gateId = matched.id;
       }
+      // Encouragement line is picked in the main window so both windows agree.
+      mechStore.applyRemoteEncourageMessage(data.encourageMessage ?? null);
     });
 
     // Show on live connection — no focus steal
@@ -289,11 +294,15 @@
       peerConnected = event.payload.isConnected;
     });
 
-    // Main window has cleared its sticky liveGateId on a real LOA Logs encounter end.
-    // Drop our local gateId so the next boss-status event re-binds against the new gate.
+    // Main window signals a true encounter end (LOA fight-end, boss isDead matching
+    // active gate, or Tier-2 silence safety net). Drop all per-fight state so the next
+    // boss-status event re-binds against the new gate cleanly.
     const unEnd = await listen("mech:encounter-end", () => {
-      ttsLog(`[overlay] encounter-end → clear gateId`);
+      ttsLog(`[overlay] encounter-end → clear gateId + fired keys + repeat timer`);
       gateId = null;
+      currentBar = null;
+      bossName = "";
+      mechStore.applyRemoteEncourageMessage(null);
       clearRepeatTimer();
       lastFiredKey = new Set();
     });
@@ -327,8 +336,28 @@
 
   When not live, show a preview pill so the user can position and check scale.
 -->
-{#if currentBar == null}
-  <!-- No data: waiting for LOA Logs connection -->
+{#if currentBar == null && gate}
+  <!-- Gate is active but boss went silent (phase transition / brief stagger gap).
+       Overlay stays visible with a placeholder until HP resumes. -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+    onmousedown={startDrag}
+    class="absolute top-8 left-1/2 -translate-x-1/2 select-none"
+    style="cursor: grab; width: max-content;"
+  >
+    <div
+      style="background: rgba(23,23,23,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(167,139,250,0.3); border-radius: 8px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif;"
+    >
+      <div
+        style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa; animation: mech-pulse 2s ease-in-out infinite;"
+      ></div>
+      <span style="font-size: 13px; color: #c4b5fd; font-weight: 500;"
+        >{gate.boss.split(",")[0]} - phase transition…</span
+      >
+    </div>
+  </div>
+{:else if currentBar == null}
+  <!-- No data and no gate: truly idle, waiting for LOA Logs / fight start. -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     onmousedown={startDrag}

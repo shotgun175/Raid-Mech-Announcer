@@ -12,6 +12,18 @@
   let confirmEverything = $state(false);
   let confirmEverythingTimer: ReturnType<typeof setTimeout> | null = null;
   let openDiffDropdown = $state<string | null>(null);
+  let openDiffDirection = $state<"down" | "up">("down");
+
+  // Estimated panel height: up to 5 rows (All + Solo/Normal/Hard/Nightmare) × ~22px + borders.
+  const DIFF_PANEL_EST_HEIGHT = 130;
+
+  function chooseDiffDirection(trigger: HTMLElement): "down" | "up" {
+    const rect = trigger.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    if (spaceBelow < DIFF_PANEL_EST_HEIGHT && spaceAbove > spaceBelow) return "up";
+    return "down";
+  }
 
   function openResetPopover() {
     showResetPopover = true;
@@ -194,7 +206,12 @@
             <button
               onclick={(e) => {
                 e.stopPropagation();
-                openDiffDropdown = openDiffDropdown === raidName ? null : raidName;
+                if (openDiffDropdown === raidName) {
+                  openDiffDropdown = null;
+                } else {
+                  openDiffDirection = chooseDiffDirection(e.currentTarget as HTMLElement);
+                  openDiffDropdown = raidName;
+                }
               }}
               title="Select difficulty"
               style="
@@ -223,7 +240,10 @@
               <!-- Floating panel -->
               <div
                 style="
-                  position: absolute; right: 0; top: 100%; margin-top: 3px; z-index: 20;
+                  position: absolute; right: 0; z-index: 20;
+                  {openDiffDirection === 'up'
+                  ? 'bottom: 100%; margin-bottom: 3px;'
+                  : 'top: 100%; margin-top: 3px;'}
                   background: #1a1a1a; border: 1px solid #333; border-radius: 4px;
                   min-width: 100px; overflow: hidden;
                   box-shadow: 0 4px 14px rgba(0,0,0,0.6);
