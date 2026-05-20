@@ -649,9 +649,23 @@
         {:else}
           <!-- Customs-aware sub-state: pick wipe-all vs preserve-customs -->
           <div
-            style="font-size: 10px; color: #525252; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 10px;"
+            style="display: flex; align-items: center; gap: 9px; padding: 9px 11px; margin-bottom: 10px;
+                   background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); border-radius: 6px;"
           >
-            {promptResetTarget.customsCount} custom mech{promptResetTarget.customsCount === 1 ? "" : "s"} found
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="flex-shrink: 0;">
+              <path
+                d="M10 2 L18 16 L2 16 Z"
+                stroke="#fbbf24"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+                fill="rgba(251,191,36,0.15)"
+              />
+              <line x1="10" y1="8" x2="10" y2="11.5" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" />
+              <circle cx="10" cy="14" r="0.9" fill="#fbbf24" />
+            </svg>
+            <div style="font-size: 12.5px; font-weight: 600; color: #fbbf24; line-height: 1.35;">
+              {promptResetTarget.customsCount} custom mech{promptResetTarget.customsCount === 1 ? "" : "s"} at risk
+            </div>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 5px;">
