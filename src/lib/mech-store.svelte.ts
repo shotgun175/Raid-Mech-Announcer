@@ -127,6 +127,7 @@ function stopHeartbeat() {
 
 const RAIDS_KEY = "mech-announcer-raids";
 const SETTINGS_KEY = "mech-announcer-settings";
+const CHANGED_GATES_KEY = "mech-announcer-changed-gates";
 
 function loadRaids(): Gate[] {
   try {
@@ -135,6 +136,23 @@ function loadRaids(): Gate[] {
   } catch {
     return buildDefaultRaids();
   }
+}
+
+function loadChangedGateIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(CHANGED_GATES_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveChangedGateIds(s: Set<string>) {
+  try {
+    localStorage.setItem(CHANGED_GATES_KEY, JSON.stringify([...s]));
+  } catch {}
 }
 
 function loadSettings(): MechSettings {
@@ -180,6 +198,10 @@ export const mechStore = (() => {
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
+  // Gates that received library updates in the last reconciliation pass, surfaced
+  // as a small dot in the sidebar. Persists across app restarts until user opens
+  // that gate. Cleared by selectGate.
+  let changedGateIds = $state<Set<string>>(loadChangedGateIds());
 
   // Recompute the "all mechs past" state for a given (gate, currentBars) pair.
   // Called both from the live path (setBossStatus) and from the Overlay Preview panel.
@@ -246,6 +268,9 @@ export const mechStore = (() => {
     get liveEncourageMessage() {
       return liveEncourageMessage;
     },
+    get changedGateIds() {
+      return changedGateIds;
+    },
 
     // Record that a repeating mechanic just visually fired — resets its cycle from now.
     confirmMech(mechId: string) {
@@ -263,6 +288,25 @@ export const mechStore = (() => {
 
     selectGate(id: string) {
       selectedGateId = id;
+      if (changedGateIds.has(id)) {
+        const next = new Set(changedGateIds);
+        next.delete(id);
+        changedGateIds = next;
+        saveChangedGateIds(changedGateIds);
+      }
+    },
+
+    // Applied once on app startup after reconcile() against the bundled library.
+    // Merges newChangedIds with any pre-existing badges from a prior session that
+    // the user hasn't opened yet.
+    applyReconciledRaids(nextRaids: Gate[], newChangedIds: Set<string>) {
+      raids = nextRaids;
+      saveRaids();
+      if (newChangedIds.size > 0) {
+        const merged = new Set([...changedGateIds, ...newChangedIds]);
+        changedGateIds = merged;
+        saveChangedGateIds(changedGateIds);
+      }
     },
 
     setLiveGate(id: string | null) {
