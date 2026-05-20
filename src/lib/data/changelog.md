@@ -17,7 +17,6 @@
 - Auto-hide now only fires at true end of fight, not from short mid-fight silences.
 - Going straight from G1 into G2 now flips the overlay to the new gate instead of staying stuck on the previous gate for up to 60 seconds.
 - Difficulty picker in the raid sidebar now opens upward when it would otherwise be clipped at the bottom of the list, so the choices stay on-screen for every raid.
-- Act 2: Brelshaza G2 now recognizes its first phase ("Phantom Legion Commander Brelshaza") so the overlay binds at fight start instead of waiting for phase 2. Re-import Act 2: Brelshaza from "Import Raids" to pick up the fix.
 
 <!-- @release-end -->
 
