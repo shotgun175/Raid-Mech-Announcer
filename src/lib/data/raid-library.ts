@@ -3037,3 +3037,22 @@ export function buildDefaultRaids(): Gate[] {
 }
 
 export { LIBRARY };
+
+// Module-load assertion: catches the maintainer mistake of pasting a mech and
+// forgetting to give it a unique key. Throws at app startup, not at runtime
+// during reconciliation, so failures surface during dev rather than in prod.
+(function assertUniqueLibraryKeys() {
+  const seen = new Map<string, string>();
+  for (const gate of LIBRARY) {
+    for (const mech of gate.mechanics) {
+      const prior = seen.get(mech.key);
+      if (prior) {
+        throw new Error(
+          `[raid-library] Duplicate mech key "${mech.key}" in "${prior}" and "${gate.encounterKey}". ` +
+            `Library keys must be unique across all gates.`
+        );
+      }
+      seen.set(mech.key, gate.encounterKey);
+    }
+  }
+})();
