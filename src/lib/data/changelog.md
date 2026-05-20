@@ -20,15 +20,25 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.1.14 -->
+<!-- @release v0.1.15 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.1.14 - May 14th, 2026
+    v0.1.15 - May 15th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Fix overlay getting stuck on the previous gate's mechanics when you start a new fight right after finishing one.
+- Stop repeating mechanic announcements from firing after the boss dies.
+
+<!-- @release-end -->
+
+<!-- @release v0.1.14 -->
+### v0.1.14 - May 14th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
