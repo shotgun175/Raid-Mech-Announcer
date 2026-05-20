@@ -77,4 +77,37 @@ describe("reconcile", () => {
     expect(changedGateIds.size).toBe(0);
     expect(raids[0]).toEqual(user[0]);
   });
+
+  it("Step A: overwrites mismatched gate-level fields (boss)", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)], { boss: "New Boss Name" })];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })], {
+        boss: "Old Boss Name"
+      })
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].boss).toBe("New Boss Name");
+    expect(changedGateIds.has(user[0].id)).toBe(true);
+  });
+
+  it("Step A: overwrites mismatched totalBars via LibraryGate.totalBars override", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)], { totalBars: 420 })];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })], {
+        totalBars: 300
+      })
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].totalBars).toBe(420);
+    expect(changedGateIds.has(user[0].id)).toBe(true);
+  });
+
+  it("Step A: no-op when all gate-level fields match", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])
+    ];
+    const { changedGateIds } = reconcile(lib, user);
+    expect(changedGateIds.size).toBe(0);
+  });
 });
