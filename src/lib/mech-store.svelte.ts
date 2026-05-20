@@ -348,6 +348,36 @@ export const mechStore = (() => {
       saveRaids();
     },
 
+    // Reverts a single user-edited library mech back to the library version.
+    // Wired to the "↺" button on each mech row in the editor. Does NOT touch
+    // deletedLibraryKeys (per-mech reset is scoped to one mech only).
+    resetMechToLibraryDefault(gateId: string, mechId: string) {
+      const gate = raids.find((r) => r.id === gateId);
+      if (!gate) return;
+      const userMech = gate.mechanics.find((m) => m.id === mechId);
+      if (!userMech || userMech.origin !== "library" || !userMech.key) return;
+      const libEntry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
+      if (!libEntry) return;
+      const libMech = libEntry.mechanics.find((m) => m.key === userMech.key);
+      if (!libMech) return;
+      const restored: Gate["mechanics"][number] = {
+        ...userMech,
+        name: libMech.name,
+        severity: libMech.severity,
+        hpBar: libMech.hpBar ?? null,
+        timerSecs: libMech.timerSecs ?? null,
+        repeatSecs: libMech.repeatSecs ?? null,
+        triggerType: libMech.triggerType,
+        notes: libMech.notes ?? "",
+        difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
+        userEdited: false
+      };
+      raids = raids.map((r) =>
+        r.id !== gateId ? r : { ...r, mechanics: r.mechanics.map((m) => (m.id === mechId ? restored : m)) }
+      );
+      saveRaids();
+    },
+
     addGate(gate: Gate) {
       raids = [...raids, gate];
       saveRaids();
