@@ -334,17 +334,38 @@ export const mechStore = (() => {
     upsertMechanic(gateId: string, mech: Gate["mechanics"][number]) {
       raids = raids.map((r) => {
         if (r.id !== gateId) return r;
-        const exists = r.mechanics.some((m) => m.id === mech.id);
+        const existing = r.mechanics.find((m) => m.id === mech.id);
+        // Editing a library-origin mech flips userEdited so reconciliation
+        // doesn't overwrite the user's change on next app start. New mechs and
+        // custom-origin edits pass through unchanged (MechModal already stamps
+        // new mechs as origin:custom, userEdited:true).
+        const next: Gate["mechanics"][number] =
+          existing && existing.origin === "library"
+            ? { ...mech, key: existing.key, origin: "library", userEdited: true }
+            : mech;
         return {
           ...r,
-          mechanics: exists ? r.mechanics.map((m) => (m.id === mech.id ? mech : m)) : [...r.mechanics, mech]
+          mechanics: existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next]
         };
       });
       saveRaids();
     },
 
     deleteMechanic(gateId: string, mechId: string) {
-      raids = raids.map((r) => (r.id !== gateId ? r : { ...r, mechanics: r.mechanics.filter((m) => m.id !== mechId) }));
+      raids = raids.map((r) => {
+        if (r.id !== gateId) return r;
+        const target = r.mechanics.find((m) => m.id === mechId);
+        const nextMechanics = r.mechanics.filter((m) => m.id !== mechId);
+        // Deleting a library mech adds its key to deletedLibraryKeys so the
+        // next reconciliation doesn't zombie-add it back. Custom-mech deletes
+        // need no tracking — they have no library entry to be re-added from.
+        if (target && target.origin === "library" && target.key) {
+          const existing = r.deletedLibraryKeys ?? [];
+          const nextDeleted = existing.includes(target.key) ? existing : [...existing, target.key];
+          return { ...r, mechanics: nextMechanics, deletedLibraryKeys: nextDeleted };
+        }
+        return { ...r, mechanics: nextMechanics };
+      });
       saveRaids();
     },
 
