@@ -430,7 +430,7 @@ export const mechStore = (() => {
       const entry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
       if (!entry) return; // custom gate — no library version, no-op
       const fresh = buildLibraryGate(entry);
-      raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id } : r));
+      raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id, deletedLibraryKeys: undefined } : r));
       saveRaids();
     },
 
@@ -439,7 +439,37 @@ export const mechStore = (() => {
         if (r.raid !== raidName) return r;
         const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
         if (!entry) return r; // custom gate — preserve as-is
-        return { ...buildLibraryGate(entry), id: r.id };
+        return { ...buildLibraryGate(entry), id: r.id, deletedLibraryKeys: undefined };
+      });
+      saveRaids();
+    },
+
+    // "Keep custom mechs" variant of resetGate: rebuilds library mechs from the
+    // current library but appends any origin:"custom" mechs from the existing
+    // gate. Clears deletedLibraryKeys for a clean library restore.
+    resetGatePreservingCustoms(gateId: string) {
+      const gate = raids.find((r) => r.id === gateId);
+      if (!gate) return;
+      const entry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
+      if (!entry) return;
+      const fresh = buildLibraryGate(entry);
+      const customs = gate.mechanics.filter((m) => m.origin === "custom");
+      raids = raids.map((r) =>
+        r.id === gateId
+          ? { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined }
+          : r
+      );
+      saveRaids();
+    },
+
+    resetRaidPreservingCustoms(raidName: string) {
+      raids = raids.map((r) => {
+        if (r.raid !== raidName) return r;
+        const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
+        if (!entry) return r;
+        const fresh = buildLibraryGate(entry);
+        const customs = r.mechanics.filter((m) => m.origin === "custom");
+        return { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined };
       });
       saveRaids();
     },

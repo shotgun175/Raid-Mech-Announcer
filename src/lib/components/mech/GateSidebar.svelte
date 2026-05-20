@@ -13,6 +13,14 @@
   let confirmEverythingTimer: ReturnType<typeof setTimeout> | null = null;
   let openDiffDropdown = $state<string | null>(null);
   let openDiffDirection = $state<"down" | "up">("down");
+  // When Reset Gate/Raid is clicked and customs exist, swap the popover content
+  // for a "Wipe all / Keep customs" sub-state instead of resetting immediately.
+  let promptResetTarget = $state<{
+    kind: "gate" | "raid";
+    id: string;
+    raidName?: string;
+    customsCount: number;
+  } | null>(null);
 
   // Estimated panel height: up to 5 rows (All + Solo/Normal/Hard/Nightmare) × ~22px + borders.
   const DIFF_PANEL_EST_HEIGHT = 130;
@@ -33,6 +41,7 @@
   function closeResetPopover() {
     showResetPopover = false;
     confirmEverything = false;
+    promptResetTarget = null;
     if (confirmEverythingTimer) {
       clearTimeout(confirmEverythingTimer);
       confirmEverythingTimer = null;
@@ -42,6 +51,11 @@
   function handleResetGate() {
     const gate = mechStore.selectedGate;
     if (!gate) return;
+    const customsCount = gate.mechanics.filter((m) => m.origin === "custom").length;
+    if (customsCount > 0) {
+      promptResetTarget = { kind: "gate", id: gate.id, customsCount };
+      return;
+    }
     mechStore.resetGate(gate.id);
     closeResetPopover();
   }
@@ -49,7 +63,30 @@
   function handleResetRaid() {
     const gate = mechStore.selectedGate;
     if (!gate) return;
+    const customsCount = mechStore.raids
+      .filter((r) => r.raid === gate.raid)
+      .reduce((sum, r) => sum + r.mechanics.filter((m) => m.origin === "custom").length, 0);
+    if (customsCount > 0) {
+      promptResetTarget = { kind: "raid", id: gate.id, raidName: gate.raid, customsCount };
+      return;
+    }
     mechStore.resetRaid(gate.raid);
+    closeResetPopover();
+  }
+
+  function confirmResetWipeAll() {
+    const t = promptResetTarget;
+    if (!t) return;
+    if (t.kind === "gate") mechStore.resetGate(t.id);
+    else if (t.kind === "raid" && t.raidName) mechStore.resetRaid(t.raidName);
+    closeResetPopover();
+  }
+
+  function confirmResetKeepCustoms() {
+    const t = promptResetTarget;
+    if (!t) return;
+    if (t.kind === "gate") mechStore.resetGatePreservingCustoms(t.id);
+    else if (t.kind === "raid" && t.raidName) mechStore.resetRaidPreservingCustoms(t.raidName);
     closeResetPopover();
   }
 
@@ -389,6 +426,7 @@
                     border-right: 1px solid #383838; border-bottom: 1px solid #383838;"
         ></div>
 
+        {#if promptResetTarget == null}
         <div
           style="font-size: 10px; color: #525252; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 10px;"
         >
@@ -608,6 +646,24 @@
             </div>
           </button>
         </div>
+        {:else}
+          <!-- Customs-aware sub-state: pick wipe-all vs preserve-customs -->
+          <div
+            style="font-size: 11px; color: #d4d4d4; margin-bottom: 10px; line-height: 1.4;"
+          >
+            {promptResetTarget.customsCount} custom mech{promptResetTarget.customsCount === 1 ? "" : "s"} in this {promptResetTarget.kind}. What should I do?
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <button
+              onclick={confirmResetWipeAll}
+              style="padding: 9px 12px; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); border-radius: 6px; color: #f87171; cursor: pointer; font-size: 12.5px; font-weight: 600; font-family: inherit; text-align: left;"
+            >Wipe all</button>
+            <button
+              onclick={confirmResetKeepCustoms}
+              style="padding: 9px 12px; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3); border-radius: 6px; color: #4ade80; cursor: pointer; font-size: 12.5px; font-weight: 600; font-family: inherit; text-align: left;"
+            >Keep custom mechs</button>
+          </div>
+        {/if}
       </div>
     {/if}
 
