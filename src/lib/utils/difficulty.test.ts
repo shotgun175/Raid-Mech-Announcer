@@ -5,6 +5,8 @@ import type { Mechanic } from "../mech-types";
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
   return {
     id: "m1",
+    origin: "library",
+    userEdited: false,
     name: "Test",
     severity: "major",
     hpBar: 100,

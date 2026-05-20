@@ -11,8 +11,9 @@
     availableDifficulties: Difficulty[];
     onEdit: (m: Mechanic) => void;
     onDelete: (id: string) => void;
+    onResetToLibrary: (id: string) => void;
   }
-  let { mech, isNext, isPast, availableDifficulties, onEdit, onDelete }: Props = $props();
+  let { mech, isNext, isPast, availableDifficulties, onEdit, onDelete, onResetToLibrary }: Props = $props();
 
   let hovered = $state(false);
   const sev = $derived(SEVERITY[mech.severity]);
@@ -124,6 +125,21 @@
 
   <!-- Actions -->
   <div style="display: flex; justify-content: flex-end;">
+    {#if mech.origin === "library" && mech.userEdited}
+      <button
+        onclick={() => onResetToLibrary(mech.id)}
+        title="Reset to library default"
+        style="background: transparent; border: none; cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 13px; color: #a3a3a3; transition: color 0.15s, background 0.15s;"
+        onmouseenter={(e) => {
+          (e.currentTarget as HTMLElement).style.color = "var(--color-accent-500)";
+          (e.currentTarget as HTMLElement).style.background = "#262626";
+        }}
+        onmouseleave={(e) => {
+          (e.currentTarget as HTMLElement).style.color = "#a3a3a3";
+          (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}>↺</button
+      >
+    {/if}
     <button
       onclick={() => onEdit(mech)}
       title="Edit"

@@ -10,6 +10,14 @@
 
 #### NEW FEATURES
 
+- Raid library updates (boss name fixes, mechanic tweaks, new mechs added per patch) now flow into your already-imported raids automatically on app launch. No more re-importing a raid every time a mechanic detail changes.
+- Your edits are preserved. If you've renamed a mech or tweaked an HP threshold, that mech gets a small "↺" button next to its edit/delete buttons and stops auto-updating. Click ↺ at any time to revert it to the library default.
+- Custom mechs you added yourself are always preserved. Library updates never touch them.
+- Sidebar shows a small accent-colored dot next to gates that received updates. The dot clears when you open that gate.
+- `Reset to Defaults > Gate` and `Reset to Defaults > Raid` now ask "Keep custom mechs / Wipe all" when you've added custom mechs to those gates, so a one-click reset doesn't accidentally erase your work.
+- `Reset to Defaults > Everything` keeps its existing 2-click confirm and remains the full nuclear-reset path.
+- Heads-up for existing users: click `Reset to Defaults > Everything` in the sidebar once after installing this update. This stamps your existing raids with the new tracking fields so future library updates flow in cleanly. Anything that wasn't stamped is silently skipped (no duplicates, no broken state).
+
 #### BUG FIXES AND IMPROVEMENTS
 
 - The "push" encouragement message ("Push! Kill the boss.", "Execute phase, go go go!", etc.) now actually appears in the overlay window during the execute phase.

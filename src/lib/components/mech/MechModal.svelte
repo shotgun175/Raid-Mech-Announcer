@@ -61,8 +61,15 @@
 
   function save() {
     if (!form.name.trim()) return;
+    // For new mechs, mark as user-created custom. For edits, preserve the original's
+    // key/origin; the store's upsertMechanic will flip userEdited:true if the original
+    // was a library mech.
+    const originFields: Pick<Mechanic, "key" | "origin" | "userEdited"> = mech
+      ? { key: mech.key, origin: mech.origin, userEdited: mech.userEdited }
+      : { origin: "custom", userEdited: true };
     onSave({
       ...(mech ?? {}),
+      ...originFields,
       id: mech?.id || `m-${Date.now()}`,
       name: form.name.trim(),
       severity: form.severity,

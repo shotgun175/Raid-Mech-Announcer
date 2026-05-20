@@ -127,6 +127,7 @@ function stopHeartbeat() {
 
 const RAIDS_KEY = "mech-announcer-raids";
 const SETTINGS_KEY = "mech-announcer-settings";
+const CHANGED_GATES_KEY = "mech-announcer-changed-gates";
 
 function loadRaids(): Gate[] {
   try {
@@ -135,6 +136,23 @@ function loadRaids(): Gate[] {
   } catch {
     return buildDefaultRaids();
   }
+}
+
+function loadChangedGateIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(CHANGED_GATES_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveChangedGateIds(s: Set<string>) {
+  try {
+    localStorage.setItem(CHANGED_GATES_KEY, JSON.stringify([...s]));
+  } catch {}
 }
 
 function loadSettings(): MechSettings {
@@ -180,6 +198,10 @@ export const mechStore = (() => {
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
+  // Gates that received library updates in the last reconciliation pass, surfaced
+  // as a small dot in the sidebar. Persists across app restarts until user opens
+  // that gate. Cleared by selectGate.
+  let changedGateIds = $state<Set<string>>(loadChangedGateIds());
 
   // Recompute the "all mechs past" state for a given (gate, currentBars) pair.
   // Called both from the live path (setBossStatus) and from the Overlay Preview panel.
@@ -246,6 +268,9 @@ export const mechStore = (() => {
     get liveEncourageMessage() {
       return liveEncourageMessage;
     },
+    get changedGateIds() {
+      return changedGateIds;
+    },
 
     // Record that a repeating mechanic just visually fired — resets its cycle from now.
     confirmMech(mechId: string) {
@@ -263,6 +288,25 @@ export const mechStore = (() => {
 
     selectGate(id: string) {
       selectedGateId = id;
+      if (changedGateIds.has(id)) {
+        const next = new Set(changedGateIds);
+        next.delete(id);
+        changedGateIds = next;
+        saveChangedGateIds(changedGateIds);
+      }
+    },
+
+    // Applied once on app startup after reconcile() against the bundled library.
+    // Merges newChangedIds with any pre-existing badges from a prior session that
+    // the user hasn't opened yet.
+    applyReconciledRaids(nextRaids: Gate[], newChangedIds: Set<string>) {
+      raids = nextRaids;
+      saveRaids();
+      if (newChangedIds.size > 0) {
+        const merged = new Set([...changedGateIds, ...newChangedIds]);
+        changedGateIds = merged;
+        saveChangedGateIds(changedGateIds);
+      }
     },
 
     setLiveGate(id: string | null) {
@@ -290,17 +334,68 @@ export const mechStore = (() => {
     upsertMechanic(gateId: string, mech: Gate["mechanics"][number]) {
       raids = raids.map((r) => {
         if (r.id !== gateId) return r;
-        const exists = r.mechanics.some((m) => m.id === mech.id);
+        const existing = r.mechanics.find((m) => m.id === mech.id);
+        // Editing a library-origin mech flips userEdited so reconciliation
+        // doesn't overwrite the user's change on next app start. New mechs and
+        // custom-origin edits pass through unchanged (MechModal already stamps
+        // new mechs as origin:custom, userEdited:true).
+        const next: Gate["mechanics"][number] =
+          existing && existing.origin === "library"
+            ? { ...mech, key: existing.key, origin: "library", userEdited: true }
+            : mech;
         return {
           ...r,
-          mechanics: exists ? r.mechanics.map((m) => (m.id === mech.id ? mech : m)) : [...r.mechanics, mech]
+          mechanics: existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next]
         };
       });
       saveRaids();
     },
 
     deleteMechanic(gateId: string, mechId: string) {
-      raids = raids.map((r) => (r.id !== gateId ? r : { ...r, mechanics: r.mechanics.filter((m) => m.id !== mechId) }));
+      raids = raids.map((r) => {
+        if (r.id !== gateId) return r;
+        const target = r.mechanics.find((m) => m.id === mechId);
+        const nextMechanics = r.mechanics.filter((m) => m.id !== mechId);
+        // Deleting a library mech adds its key to deletedLibraryKeys so the
+        // next reconciliation doesn't zombie-add it back. Custom-mech deletes
+        // need no tracking — they have no library entry to be re-added from.
+        if (target && target.origin === "library" && target.key) {
+          const existing = r.deletedLibraryKeys ?? [];
+          const nextDeleted = existing.includes(target.key) ? existing : [...existing, target.key];
+          return { ...r, mechanics: nextMechanics, deletedLibraryKeys: nextDeleted };
+        }
+        return { ...r, mechanics: nextMechanics };
+      });
+      saveRaids();
+    },
+
+    // Reverts a single user-edited library mech back to the library version.
+    // Wired to the "↺" button on each mech row in the editor. Does NOT touch
+    // deletedLibraryKeys (per-mech reset is scoped to one mech only).
+    resetMechToLibraryDefault(gateId: string, mechId: string) {
+      const gate = raids.find((r) => r.id === gateId);
+      if (!gate) return;
+      const userMech = gate.mechanics.find((m) => m.id === mechId);
+      if (!userMech || userMech.origin !== "library" || !userMech.key) return;
+      const libEntry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
+      if (!libEntry) return;
+      const libMech = libEntry.mechanics.find((m) => m.key === userMech.key);
+      if (!libMech) return;
+      const restored: Gate["mechanics"][number] = {
+        ...userMech,
+        name: libMech.name,
+        severity: libMech.severity,
+        hpBar: libMech.hpBar ?? null,
+        timerSecs: libMech.timerSecs ?? null,
+        repeatSecs: libMech.repeatSecs ?? null,
+        triggerType: libMech.triggerType,
+        notes: libMech.notes ?? "",
+        difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
+        userEdited: false
+      };
+      raids = raids.map((r) =>
+        r.id !== gateId ? r : { ...r, mechanics: r.mechanics.map((m) => (m.id === mechId ? restored : m)) }
+      );
       saveRaids();
     },
 
@@ -335,7 +430,7 @@ export const mechStore = (() => {
       const entry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
       if (!entry) return; // custom gate — no library version, no-op
       const fresh = buildLibraryGate(entry);
-      raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id } : r));
+      raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id, deletedLibraryKeys: undefined } : r));
       saveRaids();
     },
 
@@ -344,7 +439,37 @@ export const mechStore = (() => {
         if (r.raid !== raidName) return r;
         const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
         if (!entry) return r; // custom gate — preserve as-is
-        return { ...buildLibraryGate(entry), id: r.id };
+        return { ...buildLibraryGate(entry), id: r.id, deletedLibraryKeys: undefined };
+      });
+      saveRaids();
+    },
+
+    // "Keep custom mechs" variant of resetGate: rebuilds library mechs from the
+    // current library but appends any origin:"custom" mechs from the existing
+    // gate. Clears deletedLibraryKeys for a clean library restore.
+    resetGatePreservingCustoms(gateId: string) {
+      const gate = raids.find((r) => r.id === gateId);
+      if (!gate) return;
+      const entry = LIBRARY.find((e) => e.raid === gate.raid && e.gate === gate.gate);
+      if (!entry) return;
+      const fresh = buildLibraryGate(entry);
+      const customs = gate.mechanics.filter((m) => m.origin === "custom");
+      raids = raids.map((r) =>
+        r.id === gateId
+          ? { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined }
+          : r
+      );
+      saveRaids();
+    },
+
+    resetRaidPreservingCustoms(raidName: string) {
+      raids = raids.map((r) => {
+        if (r.raid !== raidName) return r;
+        const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
+        if (!entry) return r;
+        const fresh = buildLibraryGate(entry);
+        const customs = r.mechanics.filter((m) => m.origin === "custom");
+        return { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined };
       });
       saveRaids();
     },

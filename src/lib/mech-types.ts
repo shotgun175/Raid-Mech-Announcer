@@ -5,6 +5,9 @@ export type Phase = 1 | 2 | 3 | 4 | null;
 
 export interface Mechanic {
   id: string;
+  key?: string;
+  origin: "library" | "custom";
+  userEdited: boolean;
   name: string;
   severity: Severity;
   hpBar: number | null;
@@ -28,6 +31,7 @@ export interface Gate {
   tauntable: boolean;
   totalBars: number;
   mechanics: Mechanic[];
+  deletedLibraryKeys?: string[];
 }
 
 export type TtsVoice = "Andrew" | "Jenny";

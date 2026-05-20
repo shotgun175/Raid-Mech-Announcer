@@ -58,6 +58,10 @@
     if (gate) mechStore.deleteMechanic(gate.id, id);
   }
 
+  function resetMechToLibrary(id: string) {
+    if (gate) mechStore.resetMechToLibraryDefault(gate.id, id);
+  }
+
   const bossTypeColor = $derived(
     !gate ? "#fbbf24" : gate.bossType === "HUMAN" ? "#fbbf24" : gate.bossType === "ANCIENT" ? "#a78bfa" : "#f87171"
   );
@@ -177,6 +181,7 @@
               {availableDifficulties}
               onEdit={openEdit}
               onDelete={deleteMechanic}
+              onResetToLibrary={resetMechToLibrary}
             />
           {/each}
         {/if}

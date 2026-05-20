@@ -8,6 +8,8 @@
   import { settings } from "$lib/stores.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { mechStore } from "$lib/mech-store.svelte";
+  import { reconcile } from "$lib/reconciliation";
+  import { LIBRARY } from "$lib/data/raid-library";
   import { checkForUpdate } from "$lib/utils/updater";
   import { registerShortcuts } from "$lib/utils/shortcuts";
   import { getVersion } from "@tauri-apps/api/app";
@@ -23,6 +25,16 @@
   let lastSeenClip = "";
 
   onMount(() => {
+    // Reconcile library updates into user's localStorage-backed gates before
+    // anything else (broadcasts to overlay, route navigation, etc). Pure +
+    // synchronous; wrapped in try/catch so a malformed gate can't take down boot.
+    try {
+      const { raids: nextRaids, changedGateIds } = reconcile(LIBRARY, mechStore.raids);
+      mechStore.applyReconciledRaids(nextRaids, changedGateIds);
+    } catch (e) {
+      console.warn("[reconcile] failed, leaving raids untouched:", e);
+    }
+
     (async () => {
       const data = await getSettings();
       if (data) settings.app = data;
