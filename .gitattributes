@@ -1,1 +1,7 @@
 * text=auto
+
+# Rust toolchain files are LF-only on Linux CI (release workflow runs there).
+# Pinning them stops Git for Windows' autocrlf=true from emitting phantom
+# "LF will be replaced by CRLF" warnings on every status/diff.
+*.toml text eol=lf
+Cargo.lock text eol=lf
