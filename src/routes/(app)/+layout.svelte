@@ -47,10 +47,10 @@
     });
 
     // LOA Logs writes a "saving to db" line on true encounter end (not phase transitions).
-    // Clear the sticky gate now so a back-to-back fight re-matches against the new boss.
+    // endEncounter() clears the sticky gate and broadcasts mech:encounter-end itself,
+    // so the back-to-back fight re-matches against the new boss.
     const unlistenFightEnd = listen("loa:fight-end", () => {
       mechStore.endEncounter();
-      emit("mech:encounter-end").catch(() => {});
     });
 
     const pollId = setInterval(async () => {

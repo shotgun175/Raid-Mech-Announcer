@@ -12,6 +12,12 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- The "push" encouragement message ("Push! Kill the boss.", "Execute phase, go go go!", etc.) now actually appears in the overlay window during the execute phase.
+- Overlay now stays visible during brief phase transitions instead of disappearing.
+- Auto-hide now only fires at true end of fight, not from short mid-fight silences.
+- Going straight from G1 into G2 now flips the overlay to the new gate instead of staying stuck on the previous gate for up to 60 seconds.
+- Difficulty picker in the raid sidebar now opens upward when it would otherwise be clipped at the bottom of the list, so the choices stay on-screen for every raid.
+
 <!-- @release-end -->
 
 <!-- @release v0.1.15 -->

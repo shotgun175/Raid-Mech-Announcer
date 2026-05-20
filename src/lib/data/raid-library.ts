@@ -57,7 +57,6 @@ const bossHpMap: Record<string, number> = {
   "Akkan, Lord of Death": 220,
   "Aegir, the Oppressor": 300,
   "Narok the Butcher": 300,
-  "Phantom Manifester Brelshaza": 420,
   "Thaemine, Master of Darkness": 300,
   "Infernas": 300,
   "Blossoming Fear, Naitreya": 300,
@@ -98,6 +97,11 @@ interface LibraryGate {
   tauntable: boolean;
   mechanics: LibraryMechanic[];
   availableDifficulties?: Difficulty[]; // omitted = ["Normal", "Hard"]
+  // Per-gate HP override. Use when two gates legitimately share a boss name in
+  // LOA Logs' encounters.json (e.g. "Phantom Legion Commander Brelshaza" appears
+  // in both old Brelshaza G4 and Act 2: Brelshaza G2 with different bar counts)
+  // and bossHpMap can't disambiguate.
+  totalBars?: number;
 }
 
 const LIBRARY: LibraryGate[] = [
@@ -1889,7 +1893,10 @@ const LIBRARY: LibraryGate[] = [
     gate: 2,
     releaseOrder: 12,
     availableDifficulties: ["Solo", "Normal", "Hard"],
-    boss: "Phantom Manifester Brelshaza",
+    // LOA Logs reports the P1 boss name first; P2 ("Phantom Manifester Brelshaza")
+    // appears later but the sticky gate match keeps us bound through the transition.
+    boss: "Phantom Legion Commander Brelshaza",
+    totalBars: 420,
     bossType: "DEMONIC",
     weakness: "Weak to Lightning",
     tauntable: false,
@@ -2722,7 +2729,7 @@ export function buildLibraryGate(entry: LibraryGate): Gate {
     bossType: entry.bossType,
     weakness: entry.weakness,
     tauntable: entry.tauntable,
-    totalBars: bossHpMap[entry.boss] ?? 300,
+    totalBars: entry.totalBars ?? bossHpMap[entry.boss] ?? 300,
     mechanics: makeMechanics(entry.mechanics, slug)
   };
 }
@@ -2762,7 +2769,7 @@ function stableGate(entry: LibraryGate): Gate {
     bossType: entry.bossType,
     weakness: entry.weakness,
     tauntable: entry.tauntable,
-    totalBars: bossHpMap[entry.boss] ?? 300,
+    totalBars: entry.totalBars ?? bossHpMap[entry.boss] ?? 300,
     mechanics: entry.mechanics.map((m, i) => ({
       id: `default-${slug}-m${i}`,
       name: m.name,
