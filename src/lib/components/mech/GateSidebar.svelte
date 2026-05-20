@@ -655,6 +655,42 @@
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 5px;">
+            <!-- Keep customs option (safer default, listed first) -->
+            <button
+              onclick={confirmResetKeepCustoms}
+              style="display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 7px;
+                     border: 1px solid #272727; background: #141414;
+                     cursor: pointer; font-family: inherit; text-align: left; width: 100%; transition: all 0.15s;"
+            >
+              <div
+                style="width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+                          flex-shrink: 0; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.22);"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M10 3 L4 5 L4 11 C4 14 6 16 10 17 C14 16 16 14 16 11 L16 5 Z"
+                    stroke="#4ade80"
+                    stroke-width="1.5"
+                    fill="rgba(74,222,128,0.1)"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M7 10 L9.5 12.5 L13 8"
+                    stroke="#4ade80"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13px; font-weight: 600; color: #4ade80;">Keep custom mechs</div>
+                <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">
+                  Rebuild library mechs, your customs survive
+                </div>
+              </div>
+            </button>
+
             <!-- Wipe all option -->
             <button
               onclick={confirmResetWipeAll}
@@ -708,42 +744,6 @@
                 <div style="font-size: 13px; font-weight: 600; color: #f87171;">Wipe all</div>
                 <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">
                   Rebuild from library, custom mechs gone
-                </div>
-              </div>
-            </button>
-
-            <!-- Keep customs option -->
-            <button
-              onclick={confirmResetKeepCustoms}
-              style="display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 7px;
-                     border: 1px solid #272727; background: #141414;
-                     cursor: pointer; font-family: inherit; text-align: left; width: 100%; transition: all 0.15s;"
-            >
-              <div
-                style="width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
-                          flex-shrink: 0; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.22);"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M10 3 L4 5 L4 11 C4 14 6 16 10 17 C14 16 16 14 16 11 L16 5 Z"
-                    stroke="#4ade80"
-                    stroke-width="1.5"
-                    fill="rgba(74,222,128,0.1)"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M7 10 L9.5 12.5 L13 8"
-                    stroke="#4ade80"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </div>
-              <div style="flex: 1; min-width: 0;">
-                <div style="font-size: 13px; font-weight: 600; color: #4ade80;">Keep custom mechs</div>
-                <div style="font-size: 10px; color: #a3a3a3; margin-top: 2px;">
-                  Rebuild library mechs, your customs survive
                 </div>
               </div>
             </button>
