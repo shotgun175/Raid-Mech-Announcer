@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.2.0 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.0 - May 20th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Raid library updates (boss name fixes, mechanic tweaks, new mechs added per patch) now flow into your already-imported raids automatically on app launch. No more re-importing a raid every time a mechanic detail changes.
 - Your edits are preserved. If you've renamed a mech or tweaked an HP threshold, that mech gets a small "↺" button next to its edit/delete buttons and stops auto-updating. Click ↺ at any time to revert it to the library default.
 - Custom mechs you added yourself are always preserved. Library updates never touch them.
@@ -29,14 +45,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.15 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.1.15 - May 15th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.1.15 - May 15th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
