@@ -214,4 +214,48 @@ describe("reconcile", () => {
     const { raids } = reconcile(lib, user);
     expect(raids[0].deletedLibraryKeys).toEqual([]);
   });
+
+  it("mech ordering: library order first, customs at end (preserving custom insertion order)", () => {
+    const lib = [
+      libGate("Test", 1, [
+        libMech("test-g1-a", "A", 300),
+        libMech("test-g1-b", "B", 200),
+        libMech("test-g1-c", "C", 100)
+      ])
+    ];
+    const user = [
+      userGate("Test", 1, [
+        userMech({ key: "test-g1-c", name: "C", hpBar: 100, origin: "library" }),
+        userMech({ name: "Custom1", hpBar: 50, origin: "custom", userEdited: true }),
+        userMech({ key: "test-g1-a", name: "A", hpBar: 300, origin: "library" }),
+        userMech({ name: "Custom2", hpBar: 40, origin: "custom", userEdited: true }),
+        userMech({ key: "test-g1-b", name: "B", hpBar: 200, origin: "library" })
+      ])
+    ];
+    const { raids } = reconcile(lib, user);
+    const names = raids[0].mechanics.map((m) => m.name);
+    expect(names).toEqual(["A", "B", "C", "Custom1", "Custom2"]);
+  });
+
+  it("defensive guard: gate with any unstamped mech (no origin) → skipped entirely", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "Renamed A", 250)])];
+    const unstamped: Mechanic = {
+      id: "user-test-g1-a",
+      name: "Old",
+      severity: "major",
+      hpBar: 200,
+      timerSecs: null,
+      phase: null,
+      repeatSecs: null,
+      triggerType: "hp",
+      ttsEnabled: true,
+      ttsText: "",
+      notes: "",
+      // origin and userEdited intentionally missing (simulates pre-migration data)
+    } as unknown as Mechanic;
+    const user = [userGate("Test", 1, [unstamped])];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics[0].name).toBe("Old");
+    expect(changedGateIds.has(user[0].id)).toBe(false);
+  });
 });

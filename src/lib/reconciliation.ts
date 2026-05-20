@@ -129,6 +129,19 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
       });
       gateChanged = true;
     }
+
+    // Sort to library order (custom mechs at end, preserving insertion order).
+    // No user-facing reorder feature today, so this enforces consistent display.
+    const libOrderIndex = new Map<string, number>();
+    libGate.mechanics.forEach((m, i) => libOrderIndex.set(m.key, i));
+    reconciledMechs.sort((a, b) => {
+      const aIdx = a.key ? libOrderIndex.get(a.key) : undefined;
+      const bIdx = b.key ? libOrderIndex.get(b.key) : undefined;
+      if (aIdx !== undefined && bIdx !== undefined) return aIdx - bIdx;
+      if (aIdx !== undefined) return -1; // library before custom
+      if (bIdx !== undefined) return 1;
+      return 0; // both custom — JS sort is stable, preserves insertion order
+    });
     const nextMechanics = reconciledMechs;
 
     // Stale deletedLibraryKeys cleanup: drop entries whose keys no longer exist
