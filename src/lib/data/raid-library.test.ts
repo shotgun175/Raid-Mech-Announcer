@@ -8,9 +8,7 @@ describe("LIBRARY key uniqueness", () => {
       for (const mech of gate.mechanics) {
         const prior = seen.get(mech.key);
         if (prior) {
-          throw new Error(
-            `Duplicate library key "${mech.key}" appears in both "${prior}" and "${gate.encounterKey}"`
-          );
+          throw new Error(`Duplicate library key "${mech.key}" appears in both "${prior}" and "${gate.encounterKey}"`);
         }
         seen.set(mech.key, gate.encounterKey);
       }

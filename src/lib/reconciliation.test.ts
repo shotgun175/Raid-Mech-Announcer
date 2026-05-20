@@ -62,9 +62,7 @@ function userGate(raid: string, gate: number, mechs: Mechanic[], over: Partial<G
 describe("reconcile", () => {
   it("returns unchanged when user gate exactly matches library", () => {
     const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
-    const user = [
-      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])
-    ];
+    const user = [userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])];
     const { raids, changedGateIds } = reconcile(lib, user);
     expect(changedGateIds.size).toBe(0);
     expect(raids[0].mechanics[0].name).toBe("A");
@@ -104,9 +102,7 @@ describe("reconcile", () => {
 
   it("Step A: no-op when all gate-level fields match", () => {
     const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
-    const user = [
-      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])
-    ];
+    const user = [userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])];
     const { changedGateIds } = reconcile(lib, user);
     expect(changedGateIds.size).toBe(0);
   });
@@ -114,9 +110,7 @@ describe("reconcile", () => {
   it("Step B path 1: library mech, userEdited:false → overwrites fields", () => {
     const lib = [libGate("Test", 1, [libMech("test-g1-a", "Renamed A", 250)])];
     const user = [
-      userGate("Test", 1, [
-        userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library", userEdited: false })
-      ])
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library", userEdited: false })])
     ];
     const { raids, changedGateIds } = reconcile(lib, user);
     expect(raids[0].mechanics[0].name).toBe("Renamed A");
@@ -167,12 +161,8 @@ describe("reconcile", () => {
   });
 
   it("Step C: library adds a new mech → appears in user gate with origin:library", () => {
-    const lib = [
-      libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])
-    ];
-    const user = [
-      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])
-    ];
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])];
+    const user = [userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })])];
     const { raids, changedGateIds } = reconcile(lib, user);
     expect(raids[0].mechanics).toHaveLength(2);
     const added = raids[0].mechanics.find((m) => m.key === "test-g1-b")!;
@@ -184,16 +174,11 @@ describe("reconcile", () => {
   });
 
   it("Step C: respects deletedLibraryKeys → does NOT re-add", () => {
-    const lib = [
-      libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])
-    ];
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200), libMech("test-g1-b", "B", 100)])];
     const user = [
-      userGate(
-        "Test",
-        1,
-        [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })],
-        { deletedLibraryKeys: ["test-g1-b"] }
-      )
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })], {
+        deletedLibraryKeys: ["test-g1-b"]
+      })
     ];
     const { raids, changedGateIds } = reconcile(lib, user);
     expect(raids[0].mechanics).toHaveLength(1);
@@ -204,12 +189,9 @@ describe("reconcile", () => {
   it("Step C: prunes stale deletedLibraryKeys (key no longer in library)", () => {
     const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
     const user = [
-      userGate(
-        "Test",
-        1,
-        [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })],
-        { deletedLibraryKeys: ["test-g1-stale", "test-g1-zombie"] }
-      )
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })], {
+        deletedLibraryKeys: ["test-g1-stale", "test-g1-zombie"]
+      })
     ];
     const { raids } = reconcile(lib, user);
     expect(raids[0].deletedLibraryKeys).toEqual([]);
@@ -250,7 +232,7 @@ describe("reconcile", () => {
       triggerType: "hp",
       ttsEnabled: true,
       ttsText: "",
-      notes: "",
+      notes: ""
       // origin and userEdited intentionally missing (simulates pre-migration data)
     } as unknown as Mechanic;
     const user = [userGate("Test", 1, [unstamped])];
