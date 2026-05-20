@@ -62,12 +62,66 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
       gateChanged = true;
     }
 
-    // ---- Step B/C placeholders (added in subsequent tasks) -----------------
-    const nextMechanics = ug.mechanics;
+    // ---- Step B: reconcile existing mechs ----------------------------------
+    const libMechByKey = new Map<string, LibraryMechanic>();
+    for (const m of libGate.mechanics) libMechByKey.set(m.key, m);
+
+    const reconciledMechs: Mechanic[] = [];
+    for (const um of ug.mechanics) {
+      if (um.origin === "custom") {
+        reconciledMechs.push(um);
+        continue;
+      }
+      // origin: "library"
+      if (!um.key) {
+        // Library-origin mech without a key is data corruption; drop it so
+        // reconciliation doesn't infinitely re-add it.
+        gateChanged = true;
+        continue;
+      }
+      const libMech = libMechByKey.get(um.key);
+      if (!libMech) {
+        // Library removed this key — drop from user gate.
+        gateChanged = true;
+        continue;
+      }
+      if (um.userEdited) {
+        reconciledMechs.push(um);
+        continue;
+      }
+      // Overwrite from library; preserve id/key/origin/userEdited.
+      const merged: Mechanic = {
+        ...um,
+        name: libMech.name,
+        severity: libMech.severity,
+        hpBar: libMech.hpBar ?? null,
+        timerSecs: libMech.timerSecs ?? null,
+        repeatSecs: libMech.repeatSecs ?? null,
+        triggerType: libMech.triggerType,
+        notes: libMech.notes ?? "",
+        difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
+      };
+      if (mechFieldsDiffer(um, merged)) gateChanged = true;
+      reconciledMechs.push(merged);
+    }
+    const nextMechanics = reconciledMechs;
 
     if (gateChanged) changedGateIds.add(ug.id);
     return { ...ug, ...nextGateFields, mechanics: nextMechanics };
   });
 
   return { raids, changedGateIds };
+}
+
+function mechFieldsDiffer(a: Mechanic, b: Mechanic): boolean {
+  return (
+    a.name !== b.name ||
+    a.severity !== b.severity ||
+    a.hpBar !== b.hpBar ||
+    a.timerSecs !== b.timerSecs ||
+    a.repeatSecs !== b.repeatSecs ||
+    a.triggerType !== b.triggerType ||
+    a.notes !== b.notes ||
+    JSON.stringify(a.difficulties) !== JSON.stringify(b.difficulties)
+  );
 }

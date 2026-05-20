@@ -110,4 +110,59 @@ describe("reconcile", () => {
     const { changedGateIds } = reconcile(lib, user);
     expect(changedGateIds.size).toBe(0);
   });
+
+  it("Step B path 1: library mech, userEdited:false → overwrites fields", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "Renamed A", 250)])];
+    const user = [
+      userGate("Test", 1, [
+        userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library", userEdited: false })
+      ])
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics[0].name).toBe("Renamed A");
+    expect(raids[0].mechanics[0].hpBar).toBe(250);
+    expect(raids[0].mechanics[0].userEdited).toBe(false);
+    expect(changedGateIds.has(user[0].id)).toBe(true);
+  });
+
+  it("Step B path 2: library mech, userEdited:true → preserved", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "Renamed A", 250)])];
+    const user = [
+      userGate("Test", 1, [
+        userMech({ key: "test-g1-a", name: "My A", hpBar: 200, origin: "library", userEdited: true })
+      ])
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics[0].name).toBe("My A");
+    expect(raids[0].mechanics[0].hpBar).toBe(200);
+    expect(changedGateIds.has(user[0].id)).toBe(false);
+  });
+
+  it("Step B path 3: library removes a mech → dropped from user gate", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-b", "B", 100)])];
+    const user = [
+      userGate("Test", 1, [
+        userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" }),
+        userMech({ key: "test-g1-b", name: "B", hpBar: 100, origin: "library" })
+      ])
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics).toHaveLength(1);
+    expect(raids[0].mechanics[0].key).toBe("test-g1-b");
+    expect(changedGateIds.has(user[0].id)).toBe(true);
+  });
+
+  it("Step B: custom mech preserved untouched", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
+    const user = [
+      userGate("Test", 1, [
+        userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" }),
+        userMech({ name: "My Reminder", hpBar: 150, origin: "custom", userEdited: true })
+      ])
+    ];
+    const { raids, changedGateIds } = reconcile(lib, user);
+    expect(raids[0].mechanics).toHaveLength(2);
+    expect(raids[0].mechanics.some((m) => m.name === "My Reminder")).toBe(true);
+    expect(changedGateIds.has(user[0].id)).toBe(false);
+  });
 });
