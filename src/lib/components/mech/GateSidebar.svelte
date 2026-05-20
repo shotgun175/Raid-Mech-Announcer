@@ -343,6 +343,12 @@
             }}
           >
             <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+              {#if mechStore.changedGateIds.has(gate.id)}
+                <span
+                  title="Library updates applied - open to view"
+                  style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-500); flex-shrink: 0;"
+                ></span>
+              {/if}
               <span>{gateLabel(gate.gate)}</span>
               {#if isLive}
                 <span
