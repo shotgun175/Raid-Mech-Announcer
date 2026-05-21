@@ -11,6 +11,7 @@
 #### NEW FEATURES
 
 - Master TTS toggle in Settings → Announcements. Flip it off to silence all spoken mechanic callouts in one click; the rest of the Announcements tab dims so it's clear nothing is going to speak. Discord webhook posts (if configured) still fire independently.
+- Master Discord Webhook toggle in Settings → Discord. Flip it off to pause webhook posts without losing your webhook URL or other settings.
 
 #### BUG FIXES AND IMPROVEMENTS
 

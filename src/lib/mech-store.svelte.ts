@@ -163,6 +163,7 @@ function loadSettings(): MechSettings {
     ttsRate: 1.0,
     voice: "Andrew",
     announcementsEnabled: true,
+    webhookEnabled: true,
     confirmHotkey: "F9",
     overlayVariant: "standard",
     hook: "",

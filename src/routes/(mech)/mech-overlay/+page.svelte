@@ -126,7 +126,7 @@
     if (ttsEnabled && cfg.announcementsEnabled !== false) {
       speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.ttsRate ?? 1.0);
     }
-    if (cfg.hook) {
+    if (cfg.hook && cfg.webhookEnabled !== false) {
       const colorMap: Record<string, number> = { normal: 0x38bdf8, major: 0xfb923c, wipe: 0xf87171 };
       const emoji = severity === "wipe" ? "💀" : severity === "major" ? "⚠️" : "ℹ️";
       fetch(cfg.hook, {

@@ -44,6 +44,7 @@ export interface MechSettings {
   ttsRate: number;
   voice: TtsVoice;
   announcementsEnabled: boolean;
+  webhookEnabled: boolean;
   confirmHotkey: string;
   overlayVariant: OverlayVariant;
   hook: string;

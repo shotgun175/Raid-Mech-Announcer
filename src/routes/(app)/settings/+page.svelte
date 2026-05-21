@@ -491,6 +491,20 @@
 
         <!-- ── Discord ───────────────────────────────────────────── -->
       {:else if currentTab === "Discord"}
+        <!-- Master toggle (always interactive) -->
+        {@render checkField(
+          "Enable Discord Webhook",
+          "When off, no embeds will be posted to your webhook URL. The URL and other settings below are preserved but inert until you turn this back on.",
+          s.webhookEnabled !== false,
+          (v) => upd("webhookEnabled", v)
+        )}
+
+        <div
+          class="flex flex-col gap-4 transition-opacity {s.webhookEnabled === false
+            ? 'pointer-events-none opacity-40 select-none'
+            : ''}"
+          aria-disabled={s.webhookEnabled === false}
+        >
         <!-- CONNECTION section -->
         <div class="flex items-center gap-3 pt-1">
           <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Connection</span>
@@ -538,6 +552,7 @@
             <div class="pt-1 text-[10px] text-neutral-600">Mech Announcer · Serca G1</div>
           </div>
         </div>
+        </div><!-- /webhookEnabled wrapper -->
 
         <!-- ── Overlay Preview ─────────────────────────────────── -->
       {:else if currentTab === "Overlay Preview"}
