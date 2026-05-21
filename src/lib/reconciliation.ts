@@ -96,8 +96,11 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
         severity: libMech.severity,
         hpBar: libMech.hpBar ?? null,
         timerSecs: libMech.timerSecs ?? null,
+        phase: null,
         repeatSecs: libMech.repeatSecs ?? null,
         triggerType: libMech.triggerType,
+        ttsEnabled: true,
+        ttsText: libMech.name,
         notes: libMech.notes ?? "",
         difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
       };
