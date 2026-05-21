@@ -29,8 +29,8 @@
     // anything else (broadcasts to overlay, route navigation, etc). Pure +
     // synchronous; wrapped in try/catch so a malformed gate can't take down boot.
     try {
-      const { raids: nextRaids, changedGateIds } = reconcile(LIBRARY, mechStore.raids);
-      mechStore.applyReconciledRaids(nextRaids, changedGateIds);
+      const { raids: nextRaids, changedGateIds, changedMechIds } = reconcile(LIBRARY, mechStore.raids);
+      mechStore.applyReconciledRaids(nextRaids, changedGateIds, changedMechIds);
     } catch (e) {
       console.warn("[reconcile] failed, leaving raids untouched:", e);
     }
