@@ -13,6 +13,7 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Truing up solo modes for Thaemine, Echidna, Aegir, Brelshaza, and Mordum
+- Modal windows now close when you press Esc
 
 <!-- @release-end -->
 
