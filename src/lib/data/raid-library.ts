@@ -1,4 +1,5 @@
 import type { Difficulty, Gate, Mechanic, Severity, TriggerType } from "$lib/mech-types";
+import { gateSortKey } from "$lib/mech-constants";
 
 // Hand-curated boss HP bar counts. Intentionally NOT sourced from Npc.json hpBars
 // since those start far above the first mechanic threshold. These values place
@@ -3106,7 +3107,7 @@ export const libraryByRaid: Record<string, LibraryGate[]> = Object.fromEntries(
       },
       {} as Record<string, LibraryGate[]>
     )
-  ).map(([raid, gates]) => [raid, [...gates].sort((a, b) => a.gate - b.gate)])
+  ).map(([raid, gates]) => [raid, [...gates].sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate))])
 );
 
 /** Check if a gate (by encounterKey) is already in the user's raid list */
@@ -3152,7 +3153,7 @@ export function buildDefaultRaids(): Gate[] {
   const newest3 = sortedRaidNames.slice(0, 3).reverse(); // oldest→newest order
   return newest3.flatMap((raidName) =>
     LIBRARY.filter((g) => g.raid === raidName)
-      .sort((a, b) => a.gate - b.gate)
+      .sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate))
       .map(stableGate)
   );
 }

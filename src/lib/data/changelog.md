@@ -17,6 +17,7 @@
 - Add Raid form: typing an existing raid name auto-fills the next available gate number (so adding a 3rd gate to a raid with G1 and G2 already defaults to G3). Auto-fill only counts whole-numbered gates; split gates like G2.1 don't bump the suggestion. The Gate field also accepts `1.2` or `1-2` for split gates (used to require typing the encoded `12`), with a live preview underneath showing how it'll display.
 - Gate sidebar: each gate row now has a small X button to remove just that gate, so you no longer have to delete a whole raid to drop a single bad/extra gate (custom mechs in your other gates are preserved).
 - Sidebar no longer renders "Gate null" for malformed gate values - shows "Gate ?" instead so you can spot and delete the bad row.
+- Gates in the sidebar now sort by display order, so split gates interleave correctly: G1, G1.2, G2, G3, G4.2, G5 (previously G1.2 landed at the end because the encoded integer 12 compared higher than 5).
 
 <!-- @release-end -->
 

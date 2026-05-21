@@ -3,7 +3,7 @@
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
   import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
-  import { formatGate, gateLabel } from "$lib/mech-constants";
+  import { formatGate, gateLabel, gateSortKey } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -113,7 +113,7 @@
   const raidsByName = $derived(
     raidNames.reduce(
       (acc, n) => {
-        acc[n] = mechStore.raids.filter((r) => r.raid === n).sort((a, b) => a.gate - b.gate);
+        acc[n] = mechStore.raids.filter((r) => r.raid === n).sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate));
         return acc;
       },
       {} as Record<string, typeof mechStore.raids>

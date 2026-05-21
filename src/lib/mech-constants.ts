@@ -25,6 +25,15 @@ export function gateLabel(gate: number): string {
   return `Gate ${formatGate(gate)}`;
 }
 
+// Sort key for gates so split-gate encodings (12 = G1.2, 42 = G4.2) interleave
+// with whole gates in display order: 1, 1.2, 2, 3, 4.2, 5. A raw a.gate - b.gate
+// would put 12 after 5 because 12 > 5 as an integer.
+export function gateSortKey(gate: number): number {
+  if (!Number.isFinite(gate)) return Number.POSITIVE_INFINITY;
+  if (gate < 10) return gate;
+  return Math.floor(gate / 10) + (gate % 10) / 10;
+}
+
 export function formatTimer(secs: number | null): string {
   if (secs == null) return "";
   const m = Math.floor(secs / 60);
