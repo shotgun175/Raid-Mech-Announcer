@@ -10,11 +10,16 @@
     isNext: boolean;
     isPast: boolean;
     availableDifficulties: Difficulty[];
+    // True only when this mech's gate has a matching library entry AND this
+    // mech's key exists in that library entry. Hides the ↺ for orphaned
+    // library mechs (e.g. moved into a custom raid) where reset would no-op.
+    canResetToLibrary: boolean;
     onEdit: (m: Mechanic) => void;
     onDelete: (id: string) => void;
     onResetToLibrary: (id: string) => void;
   }
-  let { mech, isNext, isPast, availableDifficulties, onEdit, onDelete, onResetToLibrary }: Props = $props();
+  let { mech, isNext, isPast, availableDifficulties, canResetToLibrary, onEdit, onDelete, onResetToLibrary }: Props =
+    $props();
 
   let hovered = $state(false);
   const sev = $derived(SEVERITY[mech.severity]);
@@ -141,7 +146,7 @@
 
   <!-- Actions -->
   <div style="display: flex; justify-content: flex-end;">
-    {#if mech.origin === "library" && mech.userEdited}
+    {#if mech.origin === "library" && mech.userEdited && canResetToLibrary}
       <button
         onclick={() => onResetToLibrary(mech.id)}
         title="Reset to library default"

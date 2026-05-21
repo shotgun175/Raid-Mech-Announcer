@@ -22,6 +22,18 @@
     gate?.availableDifficulties ?? libraryByRaid[gate?.raid ?? ""]?.[0]?.availableDifficulties ?? ["Normal", "Hard"]
   );
 
+  // Set of library mech keys for THIS gate's library entry (if any). Drives
+  // whether the per-mech reset (↺) button shows: a library-origin mech moved
+  // into a custom raid (or whose gate has no library entry anymore) has no
+  // library default to revert to, so the button would be a no-op — hide it.
+  const libraryMechKeysForGate = $derived<Set<string>>(
+    new Set(
+      (gate ? libraryByRaid[gate.raid] ?? [] : [])
+        .find((e) => e.gate === gate?.gate)
+        ?.mechanics.map((m) => m.key) ?? []
+    )
+  );
+
   // svelte-ignore state_referenced_locally
   let _manualBar = $state(gate?.totalBars ?? 300);
   $effect(() => {
@@ -182,6 +194,7 @@
               isNext={m.id === nextId}
               isPast={m.hpBar != null && (m.hpBar ?? 0) > simBar}
               {availableDifficulties}
+              canResetToLibrary={!!m.key && libraryMechKeysForGate.has(m.key)}
               onEdit={openEdit}
               onDelete={deleteMechanic}
               onResetToLibrary={resetMechToLibrary}
