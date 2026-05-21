@@ -399,10 +399,14 @@ export const mechStore = (() => {
           existing && existing.origin === "library"
             ? { ...mech, key: existing.key, origin: "library", userEdited: true }
             : mech;
-        return {
-          ...r,
-          mechanics: existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next]
-        };
+        const nextMechanics = existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next];
+        // Guardrail: if any mechanic's hpBar exceeds the gate's totalBars, bump
+        // totalBars to (max hpBar) + 30 so the mech can actually trigger during
+        // a fight (bosses start at totalBars; an out-of-range mech would never fire).
+        // +30 leaves headroom so the highest-threshold mech still has visible runway.
+        const maxHpBar = nextMechanics.reduce((m, x) => Math.max(m, x.hpBar ?? 0), 0);
+        const nextTotalBars = maxHpBar > r.totalBars ? maxHpBar + 30 : r.totalBars;
+        return { ...r, mechanics: nextMechanics, totalBars: nextTotalBars };
       });
       saveRaids();
     },
@@ -469,6 +473,20 @@ export const mechStore = (() => {
       saveRaids();
     },
 
+    // Patch-update an existing gate's metadata. The gate's id and mechanics
+    // are preserved; everything in the patch overwrites. Caller is responsible
+    // for ensuring raid+gate moves don't collide with other user gates or
+    // library slots (the Edit Gate UI enforces both).
+    updateGate(
+      gateId: string,
+      patch: Partial<
+        Pick<Gate, "raid" | "gate" | "boss" | "bossType" | "weakness" | "totalBars" | "tauntable" | "availableDifficulties">
+      >
+    ) {
+      raids = raids.map((r) => (r.id === gateId ? { ...r, ...patch } : r));
+      saveRaids();
+    },
+
     removeGate(gateId: string) {
       raids = raids.filter((r) => r.id !== gateId);
       if (selectedGateId === gateId) selectedGateId = raids[0]?.id ?? "";
@@ -506,12 +524,23 @@ export const mechStore = (() => {
     },
 
     resetRaid(raidName: string) {
+      // Step 1: reset existing user gates under this raid name to their
+      // library version (custom gates under this raid name with no library
+      // match are preserved as user additions).
       raids = raids.map((r) => {
         if (r.raid !== raidName) return r;
         const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
-        if (!entry) return r; // custom gate — preserve as-is
+        if (!entry) return r;
         return { ...buildLibraryGate(entry), id: r.id, deletedLibraryKeys: undefined };
       });
+      // Step 2: add back any library gates that aren't currently in the user's
+      // data for this raid (covers gates the user previously deleted or moved
+      // out to a custom raid via the Edit Gate flow). Moved gates keep their
+      // new home and identity; the re-added gate gets a fresh id from
+      // buildLibraryGate so it's a clean library copy with no stale state.
+      const present = new Set(raids.filter((r) => r.raid === raidName).map((r) => r.gate));
+      const missing = LIBRARY.filter((e) => e.raid === raidName && !present.has(e.gate));
+      if (missing.length > 0) raids = [...raids, ...missing.map(buildLibraryGate)];
       saveRaids();
       pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },
@@ -536,6 +565,7 @@ export const mechStore = (() => {
     },
 
     resetRaidPreservingCustoms(raidName: string) {
+      // Step 1: rebuild existing user gates with library mechs + their own custom mechs.
       raids = raids.map((r) => {
         if (r.raid !== raidName) return r;
         const entry = LIBRARY.find((e) => e.raid === r.raid && e.gate === r.gate);
@@ -544,6 +574,12 @@ export const mechStore = (() => {
         const customs = r.mechanics.filter((m) => m.origin === "custom");
         return { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined };
       });
+      // Step 2: add back any library gates missing from the user's data for this
+      // raid (deleted or moved). Newly re-added gates start with library mechs
+      // only — nothing to preserve since they weren't in the user's data.
+      const present = new Set(raids.filter((r) => r.raid === raidName).map((r) => r.gate));
+      const missing = LIBRARY.filter((e) => e.raid === raidName && !present.has(e.gate));
+      if (missing.length > 0) raids = [...raids, ...missing.map(buildLibraryGate)];
       saveRaids();
       pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },

@@ -10,13 +10,40 @@
     isNext: boolean;
     isPast: boolean;
     availableDifficulties: Difficulty[];
+    // True only when this mech's gate has a matching library entry AND this
+    // mech's key exists in that library entry. Hides the ↺ for orphaned
+    // library mechs (e.g. moved into a custom raid) where reset would no-op.
+    canResetToLibrary: boolean;
     onEdit: (m: Mechanic) => void;
     onDelete: (id: string) => void;
     onResetToLibrary: (id: string) => void;
   }
-  let { mech, isNext, isPast, availableDifficulties, onEdit, onDelete, onResetToLibrary }: Props = $props();
+  let { mech, isNext, isPast, availableDifficulties, canResetToLibrary, onEdit, onDelete, onResetToLibrary }: Props =
+    $props();
 
   let hovered = $state(false);
+  // Click-to-confirm guard for the mech ✕ delete button. First click flips
+  // the X into a "Confirm?" pill; second click within DELETE_CONFIRM_MS
+  // actually calls onDelete. Auto-reverts on timeout.
+  let pendingDelete = $state(false);
+  let pendingDeleteTimer: ReturnType<typeof setTimeout> | null = null;
+  const DELETE_CONFIRM_MS = 3000;
+
+  function requestDelete() {
+    if (pendingDelete) {
+      if (pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+      pendingDeleteTimer = null;
+      pendingDelete = false;
+      onDelete(mech.id);
+      return;
+    }
+    if (pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+    pendingDelete = true;
+    pendingDeleteTimer = setTimeout(() => {
+      pendingDelete = false;
+      pendingDeleteTimer = null;
+    }, DELETE_CONFIRM_MS);
+  }
   const sev = $derived(SEVERITY[mech.severity]);
   const phaseColor = $derived(mech.phase ? PHASE_COLORS[mech.phase] : null);
   // Only show difficulty badges when the mech is restricted to a strict subset
@@ -141,7 +168,7 @@
 
   <!-- Actions -->
   <div style="display: flex; justify-content: flex-end;">
-    {#if mech.origin === "library" && mech.userEdited}
+    {#if mech.origin === "library" && mech.userEdited && canResetToLibrary}
       <button
         onclick={() => onResetToLibrary(mech.id)}
         title="Reset to library default"
@@ -169,9 +196,23 @@
         (e.currentTarget as HTMLElement).style.background = "transparent";
       }}>✎</button
     >
+    {#if pendingDelete}
+      <button
+        onclick={(e) => {
+          e.stopPropagation();
+          requestDelete();
+        }}
+        title="Click again to confirm deletion"
+        style="background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); border-radius: 3px; cursor: pointer; color: #f87171; font-size: 10px; padding: 3px 8px; line-height: 1; font-weight: 700; letter-spacing: 0.04em; font-family: inherit; animation: mech-pulse 1.2s ease-in-out infinite;"
+        >Confirm?</button
+      >
+    {:else}
     <button
-      onclick={() => onDelete(mech.id)}
-      title="Delete"
+      onclick={(e) => {
+        e.stopPropagation();
+        requestDelete();
+      }}
+      title="Delete. Click twice to confirm."
       style="background: transparent; border: none; cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 12px; color: #f87171; transition: color 0.15s, background 0.15s;"
       onmouseenter={(e) => {
         (e.currentTarget as HTMLElement).style.color = "#fca5a5";
@@ -182,5 +223,6 @@
         (e.currentTarget as HTMLElement).style.background = "transparent";
       }}>✕</button
     >
+    {/if}
   </div>
 </div>

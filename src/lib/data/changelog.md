@@ -9,14 +9,25 @@
 </div>
 
 #### NEW FEATURES
-
 - Master TTS toggle in Settings → Announcements. Flip it off to silence all spoken mechanic callouts in one click; the rest of the Announcements tab dims so it's clear nothing is going to speak. Discord webhook posts (if configured) still fire independently.
 - Master Discord Webhook toggle in Settings → Discord. Flip it off to pause webhook posts without losing your webhook URL or other settings.
 
 #### BUG FIXES AND IMPROVEMENTS
-
-- Reset arrow on a customized mech now also restores Phase, the per-mech TTS toggle, and the TTS announcement text back to library defaults (previously those three fields stayed at whatever you'd last set them).
+- Reset arrow on a customized mech now also restores Phase, the per-mech TTS toggle, and the TTS announcement text back to library defaults.
 - When a library update changes (or adds) a specific mech, a small accent dot appears next to that mech's name so you can spot what changed inside a gate without scrolling the full list.
+- Required fields in the Add Mechanic and Add Raid forms are now marked with a red asterisk.
+- Adding a mech with an HP threshold higher than the gate's total HP bars now bumps the gate's total HP bars automatically, so the mech can actually trigger during a fight.
+- Typing an existing raid name auto-fills the next available gate number. The Gate field also accepts '1.2' or '1-2' for split gates, with a live preview underneath showing how it'll display.
+- Each gate row now has a small X button to remove just that gate, so you no longer have to delete a whole raid to drop a single bad/extra gate.
+- Sidebar no longer renders "Gate null" for malformed gate values - shows "Gate ?" instead so you can spot and delete the bad row.
+- Gates in the sidebar now sort by display order, so split gates display correctly: G1, G1.2, G2, G3, G4.2, G5
+- Add Raid now lets you pick which difficulties the new gate offers. The choice drives the raid's difficulty picker and which checkboxes show in the mech editor for that gate. Picking a single difficulty locks the mech editor to that difficulty
+- Each gate row in the sidebar now has a small pencil button to open an Edit Gate dialog. If you try to move a gate onto a raid + gate combo that already exists (yours or in the library), Save blocks with an inline warning.
+- A two-click "Confirm?" delete pattern has been added to cover the raid-header X, the per-gate X, and the per-mech X in the editor. First click arms the pill; second within 3 seconds actually deletes.
+- Reset Raid now also restores any gates you previously deleted or moved out to a custom raid, not just the ones still present. Moved gates keep their new home; the re-populated library gate comes back as a fresh copy.
+- The per-mech reset arrow (↺) now hides on mechs that have been moved into a custom raid (or whose gate no longer matches a library entry).
+- Raid names are now treated case-insensitively. Typing "Serza" and "serza" no longer creates two separate raids that look identical in the sidebar - the second variant snaps to the first variant's casing. Existing dirty data now collapses into a single sidebar group.
+- Add Raid / Edit Gate dialog now resets on close. Closing the dialog without saving wipes any in-progress field values so the next time you open Add Raid you get a fresh form instead of leftover data from the previous edit.
 
 <!-- @release-end -->
 

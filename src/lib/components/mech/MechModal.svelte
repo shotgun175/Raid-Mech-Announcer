@@ -59,8 +59,23 @@
         }
   );
 
+  // Required-field validation, mirrors the red-asterisk markers in the template.
+  // `name` is always required. The numeric fields are required per the trigger type:
+  //   hp        → hpBar
+  //   hp+timer  → hpBar + repeatSecs
+  //   timer     → timerSecs
+  const needsHpBar = $derived(form.triggerType === "hp" || form.triggerType === "hp+timer");
+  const needsRepeatSecs = $derived(form.triggerType === "hp+timer");
+  const needsTimerSecs = $derived(form.triggerType === "timer");
+  const isValid = $derived(
+    form.name.trim() !== "" &&
+      (!needsHpBar || form.hpBar !== "") &&
+      (!needsRepeatSecs || form.repeatSecs !== "") &&
+      (!needsTimerSecs || form.timerSecs !== "")
+  );
+
   function save() {
-    if (!form.name.trim()) return;
+    if (!isValid) return;
     // For new mechs, mark as user-created custom. For edits, preserve the original's
     // key/origin; the store's upsertMechanic will flip userEdited:true if the original
     // was a library mech.
@@ -128,7 +143,7 @@
     <div style="padding: 18px;">
       <!-- Name -->
       <div style="margin-bottom: 14px;">
-        <div class="field-label">Mechanic Name</div>
+        <div class="field-label">Mechanic Name<span class="req-asterisk">*</span></div>
         <input style={inp} bind:value={form.name} placeholder="e.g. Saws & Spikes" />
       </div>
 
@@ -156,7 +171,7 @@
       {#if form.triggerType === "hp" || form.triggerType === "hp+timer"}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
           <div>
-            <div class="field-label">HP Bar Threshold</div>
+            <div class="field-label">HP Bar Threshold<span class="req-asterisk">*</span></div>
             <input type="number" style={inp} bind:value={form.hpBar} placeholder="/{totalBars}" />
           </div>
           <div>
@@ -175,7 +190,7 @@
       <!-- Repeat interval (hp+timer) -->
       {#if form.triggerType === "hp+timer"}
         <div style="margin-bottom: 14px;">
-          <div class="field-label">Repeat Interval (seconds)</div>
+          <div class="field-label">Repeat Interval (seconds)<span class="req-asterisk">*</span></div>
           <input type="number" style={inp} bind:value={form.repeatSecs} placeholder="e.g. 60" />
           {#if form.repeatSecs}
             <div style="font-size: 12px; color: #8a8a8a; margin-top: 3px; font-family: ui-monospace, monospace;">
@@ -188,7 +203,7 @@
       <!-- Timer -->
       {#if form.triggerType === "timer"}
         <div style="margin-bottom: 14px;">
-          <div class="field-label">Timer (seconds from pull)</div>
+          <div class="field-label">Timer (seconds from pull)<span class="req-asterisk">*</span></div>
           <input type="number" style={inp} bind:value={form.timerSecs} placeholder="e.g. 510 for 8:30" />
           {#if form.timerSecs}
             <div style="font-size: 12px; color: #8a8a8a; margin-top: 3px; font-family: ui-monospace, monospace;">
@@ -221,7 +236,21 @@
       </div>
 
       <!-- Difficulties -->
-      {#if availableDifficulties.length > 1}
+      {#if availableDifficulties.length === 1}
+        {@const onlySty = DIFFICULTY_STYLE[availableDifficulties[0]]}
+        <div style="margin-bottom: 14px;">
+          <div class="field-label">Difficulty</div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+            <span
+              style="background: {onlySty.bg}; border: 1px solid {onlySty.border}; border-radius: 3px; padding: 2px 8px; color: {onlySty.color}; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;"
+              >{onlySty.label}</span
+            >
+            <span style="font-size: 11px; color: #737373;"
+              >Locked - this raid only offers one difficulty.</span
+            >
+          </div>
+        </div>
+      {:else if availableDifficulties.length > 1}
         <div style="margin-bottom: 14px;">
           <div class="field-label">Difficulties</div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
@@ -272,10 +301,10 @@
       >
       <button
         onclick={save}
-        disabled={!form.name.trim()}
-        style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 7px 14px; color: #38bdf8; cursor: {form.name.trim()
+        disabled={!isValid}
+        style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 7px 14px; color: #38bdf8; cursor: {isValid
           ? 'pointer'
-          : 'not-allowed'}; font-size: 12.5px; font-weight: 600; opacity: {form.name.trim()
+          : 'not-allowed'}; font-size: 12.5px; font-weight: 600; opacity: {isValid
           ? 1
           : 0.5}; font-family: inherit;">{isEdit ? "Save" : "Add"}</button
       >
@@ -291,5 +320,9 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+  .req-asterisk {
+    color: #f87171;
+    margin-left: 4px;
   }
 </style>
