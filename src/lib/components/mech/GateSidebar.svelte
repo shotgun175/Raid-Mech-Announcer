@@ -22,14 +22,37 @@
     customsCount: number;
   } | null>(null);
 
-  // Estimated panel height: up to 5 rows (All + Solo/Normal/Hard/Nightmare) × ~22px + borders.
-  const DIFF_PANEL_EST_HEIGHT = 130;
+  // Per-row height estimate × (All + N difficulties) + a small fudge for borders/padding.
+  // Used to decide whether the dropdown will fit below its trigger or needs to flip up.
+  function estDiffPanelHeight(numDifficulties: number): number {
+    const ROW = 22;
+    const ROWS = 1 + numDifficulties; // "All" row + each difficulty
+    return ROW * ROWS + 12;
+  }
 
-  function chooseDiffDirection(trigger: HTMLElement): "down" | "up" {
+  // The dropdown lives inside the gates list which has its own overflow:auto
+  // boundary. Using viewport space (window.innerHeight) as the constraint lets
+  // the panel get clipped by the scroll container's bottom edge for raids near
+  // the end of the list. Walk up to the nearest scrollable ancestor and use
+  // its bottom as the real downward boundary.
+  function clipBottom(trigger: HTMLElement): number {
+    let el: HTMLElement | null = trigger.parentElement;
+    while (el && el !== document.body) {
+      const overflowY = getComputedStyle(el).overflowY;
+      if (overflowY === "auto" || overflowY === "scroll") {
+        return el.getBoundingClientRect().bottom;
+      }
+      el = el.parentElement;
+    }
+    return window.innerHeight;
+  }
+
+  function chooseDiffDirection(trigger: HTMLElement, numDifficulties: number): "down" | "up" {
     const rect = trigger.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceBelow = clipBottom(trigger) - rect.bottom;
     const spaceAbove = rect.top;
-    if (spaceBelow < DIFF_PANEL_EST_HEIGHT && spaceAbove > spaceBelow) return "up";
+    const needed = estDiffPanelHeight(numDifficulties);
+    if (spaceBelow < needed && spaceAbove > spaceBelow) return "up";
     return "down";
   }
 
@@ -314,7 +337,10 @@
                 if (openDiffDropdown === raidName) {
                   openDiffDropdown = null;
                 } else {
-                  openDiffDirection = chooseDiffDirection(e.currentTarget as HTMLElement);
+                  openDiffDirection = chooseDiffDirection(
+                    e.currentTarget as HTMLElement,
+                    availableDifficultiesFor(raidName).length
+                  );
                   openDiffDropdown = raidName;
                 }
               }}
