@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Truing up solo modes for Thaemine, Echidna, Aegir, Brelshaza, and Mordum
+
 <!-- @release-end -->
 
 <!-- @release v0.2.0 -->
@@ -45,6 +47,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.15 -->
+
 ### v0.1.15 - May 15th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -55,6 +58,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.14 -->
+
 ### v0.1.14 - May 14th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -64,6 +68,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.13 -->
+
 ### v0.1.13 - May 14th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -75,6 +80,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.12 -->
+
 ### v0.1.12 - May 13th, 2026
 
 #### NEW FEATURES
@@ -88,6 +94,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.11 -->
+
 ### v0.1.11 - May 12th, 2026
 
 #### NEW FEATURES
@@ -110,6 +117,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.1.10 -->
+
 ### v0.1.10 - May 12th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS

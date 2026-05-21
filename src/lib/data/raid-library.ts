@@ -1346,7 +1346,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
-        notes: "Marked players stand in craters; same crater is targeted twice — hold position"
+        notes:
+          "Marked players stand in craters; same crater is targeted twice - hold position. Solo: craters explode at trigger (stay clear of the twice-hit crater for the boss knockup); destruction-bomb a spawned tentacle, then take the yellow-telegraph grab to finish."
       },
       {
         key: "thaemine-g1-destroy-grab",
@@ -1366,7 +1367,7 @@ const LIBRARY: LibraryGate[] = [
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes. Solo: eyes move toward you rather than spreading."
+          "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes. Solo: eyes stop and point toward the safe direction; commonly skipped by using Balthor sidereal to trigger endorphin (25s shield burn DPS check)."
       },
       {
         key: "thaemine-g1-eye-black-hole",
@@ -1401,14 +1402,24 @@ const LIBRARY: LibraryGate[] = [
         notes: "Hard Mode only; top or bottom arena side breaks off — reposition accordingly"
       },
       {
-        key: "thaemine-g2-8-counters-run",
-        name: "8 Counters & Run",
+        key: "thaemine-g2-bridge-counter-solo",
+        name: "Bridge Counter Orb, then Boss",
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Solo"],
         notes:
-          "Counter in party order (Party 1 then Party 2); 3s window; avoid red flash counters (= wipe); use Azena after wings and shockwave. Solo: counter single orb, then boss."
+          "Solo: short intermission - boss destroys the side platforms, leaving only the center bridge. Counter the blue-glowing orb that travels along the bottom (miss = knockup + fatal damage), then counter the boss only when he glows BLUE (red glow is a fake counter - do NOT counter). Dodge the follow-up yellow telegraph (gravity-save grants 1 free knockoff recovery every 7 min across G2/G3)."
+      },
+      {
+        key: "thaemine-g2-8-counters-run",
+        name: "8 Counters",
+        hpBar: 135,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Counter in party order (Party 1 then Party 2); 3s window; avoid red flash counters (= wipe); use Azena after wings and shockwave. (Run portion is now skipped via QoL update.)"
       },
       {
         key: "thaemine-g2-black-or-blue-stagger",
@@ -1472,12 +1483,22 @@ const LIBRARY: LibraryGate[] = [
           "Dodge the pizza, bait boss sword to 9 o'clock then kill it. Hard: also dodge spinning tether ball rotating counter-clockwise."
       },
       {
+        key: "thaemine-g3-safe-spot-solo",
+        name: "Safe Spot",
+        hpBar: 225,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss centers, dialog, then darkness wave - spacebar through it (this debuff still lets you see red telegraphs, unlike the x275 one). Red telegraphs with safe spots fill in quickly; reach a remaining safe spot before the cutscene or it's a wipe."
+      },
+      {
         key: "thaemine-g3-safe-spot",
         name: "Safe Spot",
         hpBar: 225,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Puddle player goes to top; all others go to bottom. Navigate red telegraphs with inverted visibility."
       },
       {
@@ -1618,14 +1639,24 @@ const LIBRARY: LibraryGate[] = [
           "Timed platforming; must pass stagger check to reach boss before timer expires; use Azena when 3+ segments available"
       },
       {
+        key: "echidna-g1-opposite-line-counter-solo",
+        name: "Clone Split - 2 lines into Counter",
+        hpBar: 135,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss vanishes; lines appear with one opposite color from the rest - stand on the odd-colored line and wait for the boss to charge past. Repeat once. After the 2nd line, boss appears at the edge for a counter (horizontal line = boss on right; vertical line = boss on top). Failed counter = wipe."
+      },
+      {
         key: "echidna-g1-clone-split",
         name: "Clone Split",
         hpBar: 135,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Safe spot on odd-colored lines; 4th line shows directional counter indicator. Normal/Solo: no inter-party communication. Hard: inter-party communication required for overlapping safe spots."
+          "Safe spot on odd-colored lines; 4th line shows directional counter indicator. Normal: no inter-party communication. Hard: inter-party communication required for overlapping safe spots."
       },
       {
         key: "echidna-g1-invasion",
@@ -1690,12 +1721,22 @@ const LIBRARY: LibraryGate[] = [
           "Counter the mirror showing Echidna's portrait in odd direction; NM: dodge horizontal lasers; HM: also dodge red side-shooting lasers; use Azena after stagger. Solo: blue-glowing mirror with correct portrait direction."
       },
       {
+        key: "echidna-g2-bigger-echidna-stagger-solo",
+        name: "Huge Echidna Stagger + Clash",
+        hpBar: 137,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: cutscene (do not skip) then fight Bigger Echidna. Dodge or spacebar the 2 outward blue lines (electrocute = charm stack); dodge 3 lasers (each = charm stack); counter when she stands up after the 3rd laser. Stagger her hard while countered (Thor sidereal helps). If stagger fails before she recovers, she does 1-2 attacks then triggers a single-key Clash - press it or take heavy damage."
+      },
+      {
         key: "echidna-g2-huge-echidna",
         name: "Huge Echidna",
         hpBar: 137,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "3-man co-op counter (2-man NM); HM: spacebar through 2nd mirror laser; flying hearts pull toward boss; use Thar for stagger then Azena after clash"
       },
@@ -1825,13 +1866,13 @@ const LIBRARY: LibraryGate[] = [
     mechanics: [
       {
         key: "aegir-g1-aegir-appears-banishment",
-        name: "Aegir Appears + Banishment",
+        name: "Boulder Dodge",
         hpBar: 195,
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Aegir appears and banishes players into individual realms (10s imprisonment); fight back to rejoin main arena"
+          "Dodge the boulder shadow (instakill if hit); boss teleports behind for a pull + slash follow-up. Normal/Hard: banishment phase places players into individual realms (10s imprisonment) before the rejoin."
       },
       {
         key: "aegir-g1-ghost-phase",
@@ -1872,12 +1913,22 @@ const LIBRARY: LibraryGate[] = [
           "Break Aegir's shield; Valtan's ghost assists — coordinate destruction skills. Solo: counter the Valtan Ghost, then use an ally skill."
       },
       {
+        key: "aegir-g1-donut-pizza-solo",
+        name: "Donut + Pizza",
+        hpBar: 85,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: cutscene then donut telegraph - spacebar the first wave to dodge; follow-up pizza telegraph with 2 safe spots, then boss returns to center."
+      },
+      {
         key: "aegir-g1-aegir-attack",
         name: "Aegir Attack",
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Dodge Aegir's red telegraphed attacks; maintain positioning for next mechanic"
       },
       {
@@ -1921,7 +1972,7 @@ const LIBRARY: LibraryGate[] = [
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Destroy Aegir's heart to proceed, then Armor Break opens immediately after. Normal: Party 1 at 12→3, Party 2 at 6→9 rotation. Hard: 3 positions with counter → auto-attack → stagger sequence; supports place golden target puddle at right corners. Solo: stand in safe area while lasers rotate clockwise."
+          "Destroy Aegir's heart to proceed, then Armor Break opens immediately after. Normal: Party 1 at 12→3, Party 2 at 6→9 rotation. Hard: 3 positions with counter → auto-attack → stagger sequence; supports place golden target puddle at right corners. Solo: stand in safe area while lasers rotate clockwise; afterward hug top/bottom edge as a leg drags top-to-bottom (stun if hit), then stagger 1 of 2 spears to remove the 33% damage reduction buff (repeats until boss reaches 250 or timer)."
       },
       {
         key: "aegir-g2-distorted-space-1st",
@@ -1944,13 +1995,23 @@ const LIBRARY: LibraryGate[] = [
           "Second Heart (repeat burst DPS — can be skipped if damage was pushed), then Armor Break window. Solo: remove Aegir's shield, destroy heart within 80s using ally skills. Hard: supports place golden target puddle at right corners."
       },
       {
+        key: "aegir-g2-spear-leg-conditional-solo",
+        name: "Spear + Leg (Conditional)",
+        hpBar: 153,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: only triggers if you didn't push past 153 during the 2nd Heart. Repeat of the 260->250 spear/leg sequence - stagger 1 of 2 spears to remove the 33% DR buff. Avel sidereal at the 2nd Heart can skip this entirely."
+      },
+      {
         key: "aegir-g2-distorted-space-2nd",
         name: "Distorted Space (2nd)",
         hpBar: 153,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
-        notes: "Second distorted space; routes may differ from 1st — stay alert"
+        difficulties: ["Normal", "Hard"],
+        notes: "Second distorted space; routes may differ from 1st - stay alert"
       },
       {
         key: "aegir-g2-stage-break",
@@ -2002,7 +2063,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 240,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Bait Narok's laser toward the ice wall to destroy it; coordinate positioning across the arena"
       },
       {
@@ -2011,7 +2072,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 215,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Post-Ice Wall (~70s delay): dodge follow-up laser sweep"
       },
       {
@@ -2075,9 +2136,19 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 280,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Ice Field & Crystal Break: white vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars). Solo: succeed typing test, place crystal at 6 o'clock, destroy it."
+          "Ice Field & Crystal Break: white vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars)."
+      },
+      {
+        key: "act-2-brelshaza-g2-clockwise-orbs-solo",
+        name: "Clockwise Orbs",
+        hpBar: 185,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: scythes spawn and rotate clockwise around the arena - dodge them. Two sets, then cutscene and brief freeze, then rush to boss center for stagger check."
       },
       {
         key: "act-2-brelshaza-g2-clockwise-orbs",
@@ -2085,7 +2156,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 145,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Rotate clockwise destroying orbs at 3x or 3x+1 positions; avoid AoEs; HM: dodge scythes as well"
       },
       {
@@ -2095,9 +2166,19 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 240,
         triggerType: "hp+timer",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss. Freeze AoE recurs every ~240s — guard before yellow reaches end; failure = freeze + teleport + wave + typing test again."
+          "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss. Freeze AoE recurs every ~240s - guard before yellow reaches end; failure = freeze + teleport + wave + typing test again."
+      },
+      {
+        key: "act-2-brelshaza-g2-scythes-solo",
+        name: "Scythes",
+        hpBar: 80,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: small red telegraphs spawn; the last two on opposite axes indicate the beam axis. A plus-sign telegraph follows - dodge into the safe slice before the wide beam fires."
       }
     ]
   },
@@ -2157,7 +2238,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 150,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "Red telegraph surrounds arena; dodge blue lines, stand in pizza safe spot, wait for fog before dashing inside"
       },
@@ -2167,7 +2248,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 75,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "Boss glows white and disappears in a direction; just-guard sequence — precise timing against fast attack chains"
       },
@@ -2204,14 +2285,34 @@ const LIBRARY: LibraryGate[] = [
         notes: "Alberhastic joins; passive infection/poison stacks throughout x300–x235 window (stacks last 60s)"
       },
       {
+        key: "act-3-mordum-g2-shield-memory-solo",
+        name: "Shield Memory",
+        hpBar: 235,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: dialogue + boss centers; yellow or white shield surrounds you. Memorize 4 in/out safe spots (always In/Out/In/Out or Out/In/Out/In), then complete stagger check. Failure triggers Makoko buff (auto-wipe if already active)."
+      },
+      {
         key: "act-3-mordum-g2-alberhastic-memory",
         name: "Alberhastic Memory",
         hpBar: 235,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Memorize Alberhastic's color sequence and burst the shield. Normal/Solo: all players share same shield color; Solo follows In→Out→In→Out (or Out→In→Out→In) safe spot order. Hard: 4 Yellow + 4 White shields split by party (P1 Yellow, P2 White)."
+          "Memorize Alberhastic's color sequence and burst the shield. Normal: all players share same shield color. Hard: 4 Yellow + 4 White shields split by party (P1 Yellow, P2 White)."
+      },
+      {
+        key: "act-3-mordum-g2-clone-stagger-solo",
+        name: "Clone Stagger Check",
+        hpBar: 105,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss jumps and disappears - move to center (outside not safe). 4 clones spawn; 2 fire targeted telegraphs - wait for lock-on then dodge. Boss reappears in middle for stagger check (Whirlwind grenade helps). Cutscene transitions to final phase."
       },
       {
         key: "act-3-mordum-g2-illusion-clone-velga-pizza",
@@ -2220,9 +2321,9 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 90,
         triggerType: "hp+timer",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Identify the real clone vs illusion (gold puddle marker), then attack the real one. Velganos final phase pizza recurs every ~90s. Normal: 5-tile spread. Solo: 3-tile spread. Hard: 3 random black tiles that change direction. DPS race — Team Meter rises throughout."
+          "Identify the real clone vs illusion (gold puddle marker), then attack the real one. Velganos final phase pizza recurs every ~90s. Normal: 5-tile spread. Hard: 3 random black tiles that change direction. DPS race - Team Meter rises throughout."
       }
     ]
   },
@@ -2252,7 +2353,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 450,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Second twister; coordinate position with party"
       },
       {
@@ -2261,8 +2362,18 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 425,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Rotating laser chases players; stay ahead of the pattern, don't cut corners"
+      },
+      {
+        key: "act-3-mordum-g3-color-pizza-orbs-solo",
+        name: "Color Pizza + Orbs",
+        hpBar: 400,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss smashes ground 4 times. 2 rotating orbs fire periodic laser bursts (electrocute on hit). On each smash a blue or red pizza slice spawns - stand on the slice matching your color icon (wrong color = damage)."
       },
       {
         key: "act-3-mordum-g3-twister-3",
@@ -2270,7 +2381,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 400,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Third twister; continues the chase pattern"
       },
       {
@@ -2353,7 +2464,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 125,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Second charged field; same pattern as the first — match color, traverse arena"
       },
       {
@@ -2375,6 +2486,16 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Fourth and final Break Duel (~1:40 after 3rd break in Solo); use Hidden Balthor or complete Just Guards with Shandi for damage"
+      },
+      {
+        key: "act-3-mordum-g3-final-counter-solo",
+        name: "Final Counter",
+        hpBar: 70,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss charges a lethal attack and glows blue - counter to interrupt. Same pattern as x300; failure deals heavy damage."
       },
       {
         key: "act-3-mordum-g3-last-stand-bastion",
