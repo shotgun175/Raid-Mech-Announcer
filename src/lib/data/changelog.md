@@ -12,20 +12,27 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.2.1 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.1 - May 21st, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - Truing up solo modes for Thaemine, Echidna, Aegir, Brelshaza, and Mordum
 - Modal windows now close when you press Esc
 
 <!-- @release-end -->
 
 <!-- @release v0.2.0 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.0 - May 20th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.0 - May 20th, 2026
 
 #### NEW FEATURES
 
