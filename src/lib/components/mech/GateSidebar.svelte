@@ -190,7 +190,7 @@
     states: { open }
   } = createDialog();
 
-  let form = $state<{
+  type AddRaidForm = {
     raid: string;
     gate: number;
     boss: string;
@@ -199,16 +199,22 @@
     tauntable: boolean;
     totalBars: number;
     availableDifficulties: Difficulty[];
-  }>({
-    raid: "",
-    gate: 1,
-    boss: "",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    totalBars: 300,
-    availableDifficulties: ["Normal", "Hard"]
-  });
+  };
+
+  function blankForm(): AddRaidForm {
+    return {
+      raid: "",
+      gate: 1,
+      boss: "",
+      bossType: "HUMAN",
+      weakness: "No Weakness",
+      tauntable: false,
+      totalBars: 300,
+      availableDifficulties: ["Normal", "Hard"]
+    };
+  }
+
+  let form = $state<AddRaidForm>(blankForm());
   // Separate text state for the Gate input so users can type "1", "1.2", or
   // "1-2" instead of remembering the encoded form. The form.gate integer below
   // is what's actually saved; gateInput is the display value.
@@ -303,11 +309,15 @@
     gateInput = formatGate(nextGate);
   });
 
-  // When the modal closes via any path (✕, Esc, melt overlay click), clear
-  // edit-mode flags so the next "+ Add Raid" click starts fresh.
+  // When the modal closes via any path (✕, Esc, melt overlay click, Cancel),
+  // wipe edit-mode flags AND form state so the next "+ Add Raid" click starts
+  // from a blank form instead of inheriting the previous edit/add session.
   $effect(() => {
     if (!$open) {
       editingGateId = null;
+      form = blankForm();
+      gateInput = "1";
+      prevRaidForStair = "";
     }
   });
 
@@ -404,16 +414,7 @@
         availableDifficulties: [...form.availableDifficulties]
       });
     }
-    form = {
-      raid: "",
-      gate: 1,
-      boss: "",
-      bossType: "HUMAN",
-      weakness: "No Weakness",
-      tauntable: false,
-      totalBars: 300,
-      availableDifficulties: ["Normal", "Hard"]
-    };
+    form = blankForm();
     gateInput = "1";
     prevRaidForStair = "";
     editingGateId = null;
