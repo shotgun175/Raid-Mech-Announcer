@@ -1639,14 +1639,24 @@ const LIBRARY: LibraryGate[] = [
           "Timed platforming; must pass stagger check to reach boss before timer expires; use Azena when 3+ segments available"
       },
       {
+        key: "echidna-g1-opposite-line-counter-solo",
+        name: "Opposite Line + Edge Counter",
+        hpBar: 135,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss vanishes; lines appear with one opposite color from the rest - stand on the odd-colored line and wait for the boss to charge past. Repeat once. After the 2nd line, boss appears at the edge for a counter (horizontal line = boss on right; vertical line = boss on top). Failed counter = wipe."
+      },
+      {
         key: "echidna-g1-clone-split",
         name: "Clone Split",
         hpBar: 135,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Safe spot on odd-colored lines; 4th line shows directional counter indicator. Normal/Solo: no inter-party communication. Hard: inter-party communication required for overlapping safe spots."
+          "Safe spot on odd-colored lines; 4th line shows directional counter indicator. Normal: no inter-party communication. Hard: inter-party communication required for overlapping safe spots."
       },
       {
         key: "echidna-g1-invasion",
@@ -1711,12 +1721,22 @@ const LIBRARY: LibraryGate[] = [
           "Counter the mirror showing Echidna's portrait in odd direction; NM: dodge horizontal lasers; HM: also dodge red side-shooting lasers; use Azena after stagger. Solo: blue-glowing mirror with correct portrait direction."
       },
       {
+        key: "echidna-g2-bigger-echidna-stagger-solo",
+        name: "Bigger Echidna Stagger + Clash",
+        hpBar: 137,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: cutscene (do not skip) then fight Bigger Echidna. Dodge or spacebar the 2 outward blue lines (electrocute = charm stack); dodge 3 lasers (each = charm stack); counter when she stands up after the 3rd laser. Stagger her hard while countered (Thor sidereal helps). If stagger fails before she recovers, she does 1-2 attacks then triggers a single-key Clash - press it or take heavy damage."
+      },
+      {
         key: "echidna-g2-huge-echidna",
         name: "Huge Echidna",
         hpBar: 137,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "3-man co-op counter (2-man NM); HM: spacebar through 2nd mirror laser; flying hearts pull toward boss; use Thar for stagger then Azena after clash"
       },
