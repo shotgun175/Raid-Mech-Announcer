@@ -10,7 +10,13 @@
 
 #### NEW FEATURES
 
+- Master TTS toggle in Settings → Announcements. Flip it off to silence all spoken mechanic callouts in one click; the rest of the Announcements tab dims so it's clear nothing is going to speak. Discord webhook posts (if configured) still fire independently.
+- Master Discord Webhook toggle in Settings → Discord. Flip it off to pause webhook posts without losing your webhook URL or other settings.
+
 #### BUG FIXES AND IMPROVEMENTS
+
+- Reset arrow on a customized mech now also restores Phase, the per-mech TTS toggle, and the TTS announcement text back to library defaults (previously those three fields stayed at whatever you'd last set them).
+- When a library update changes (or adds) a specific mech, a small accent dot appears next to that mech's name so you can spot what changed inside a gate without scrolling the full list.
 
 <!-- @release-end -->
 

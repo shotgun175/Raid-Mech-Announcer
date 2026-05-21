@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatTimer, PHASE_COLORS, SEVERITY } from "$lib/mech-constants";
   import type { Difficulty, Mechanic } from "$lib/mech-types";
+  import { mechStore } from "$lib/mech-store.svelte";
   import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import MechBadge from "./MechBadge.svelte";
 
@@ -32,9 +33,11 @@
   );
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
   onmouseenter={() => (hovered = true)}
   onmouseleave={() => (hovered = false)}
+  onclick={() => mechStore.clearChangedMech(mech.id)}
   role="row"
   tabindex="0"
   style="
@@ -76,6 +79,12 @@
   <!-- Name + notes -->
   <div style="padding-right: 12px; min-width: 0;">
     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+      {#if mechStore.changedMechIds.has(mech.id)}
+        <span
+          title="This mech was updated by the latest library version. Click anywhere on the row to dismiss this dot."
+          style="flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent-500); box-shadow: 0 0 4px var(--color-accent-500);"
+        ></span>
+      {/if}
       <span
         style="font-weight: 600; font-size: 13px; color: {isNext
           ? 'var(--color-accent-500)'
@@ -119,7 +128,14 @@
       <span style="color: #a78bfa;">↻{formatTimer(mech.repeatSecs)}</span>
     {/if}
     {#if mech.ttsEnabled}
-      <span title="TTS enabled" style="color: var(--color-accent-500);">🔊</span>
+      {#if mechStore.mechSettings.announcementsEnabled === false}
+        <span
+          title="TTS announcements are off globally. Enable in Settings → Announcements to hear this mech."
+          style="color: #737373;">🔇</span
+        >
+      {:else}
+        <span title="TTS enabled" style="color: var(--color-accent-500);">🔊</span>
+      {/if}
     {/if}
   </div>
 

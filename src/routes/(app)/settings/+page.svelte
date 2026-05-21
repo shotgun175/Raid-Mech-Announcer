@@ -29,14 +29,17 @@
   let installedVoices = $state<string[]>([]);
   let showVoices = $state(false);
 
-  async function loadInstalledVoices() {
+  async function toggleInstalledVoices() {
+    if (showVoices) {
+      showVoices = false;
+      return;
+    }
     try {
       installedVoices = await listTtsVoices();
-      showVoices = true;
     } catch {
       installedVoices = ["Could not read installed voices"];
-      showVoices = true;
     }
+    showVoices = true;
   }
 
   // ── Discord webhook ─────────────────────────────────────────────────
@@ -267,8 +270,8 @@
         class="form-checkbox size-5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
       />
       <div class="ml-5">
-        <div class="text-sm">{label}</div>
-        {#if description}<div class="text-xs text-neutral-300">{description}</div>{/if}
+        <div class="text-sm font-semibold">{label}</div>
+        {#if description}<div class="text-xs text-neutral-400">{description}</div>{/if}
       </div>
     </label>
   </div>
@@ -318,6 +321,20 @@
     <div class="flex flex-col gap-4 px-4 py-2">
       <!-- ── Announcements ─────────────────────────────────────── -->
       {#if currentTab === "Announcements"}
+        <!-- Master toggle (always interactive) -->
+        {@render checkField(
+          "Enable TTS Announcements",
+          "When off, no mechanic announcements will be spoken. Per-mech TTS settings and the other controls below are preserved but inert until you turn this back on.",
+          s.announcementsEnabled !== false,
+          (v) => upd("announcementsEnabled", v)
+        )}
+
+        <div
+          class="flex flex-col gap-4 transition-opacity {s.announcementsEnabled === false
+            ? 'pointer-events-none opacity-40 select-none'
+            : ''}"
+          aria-disabled={s.announcementsEnabled === false}
+        >
         <!-- TIMING section -->
         <div class="flex items-center gap-3 pt-1">
           <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Timing</span>
@@ -446,10 +463,10 @@
             🔊 Test Announcement
           </button>
           <button
-            onclick={loadInstalledVoices}
+            onclick={toggleInstalledVoices}
             class="text-xs text-neutral-500 underline underline-offset-2 transition hover:text-neutral-300"
           >
-            Show installed voices
+            {showVoices ? "Hide installed voices" : "Show installed voices"}
           </button>
         </div>
 
@@ -470,9 +487,24 @@
             {/each}
           </div>
         {/if}
+        </div><!-- /announcementsEnabled wrapper -->
 
         <!-- ── Discord ───────────────────────────────────────────── -->
       {:else if currentTab === "Discord"}
+        <!-- Master toggle (always interactive) -->
+        {@render checkField(
+          "Enable Discord Webhook",
+          "When off, no embeds will be posted to your webhook URL. The URL and other settings below are preserved but inert until you turn this back on.",
+          s.webhookEnabled !== false,
+          (v) => upd("webhookEnabled", v)
+        )}
+
+        <div
+          class="flex flex-col gap-4 transition-opacity {s.webhookEnabled === false
+            ? 'pointer-events-none opacity-40 select-none'
+            : ''}"
+          aria-disabled={s.webhookEnabled === false}
+        >
         <!-- CONNECTION section -->
         <div class="flex items-center gap-3 pt-1">
           <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Connection</span>
@@ -520,6 +552,7 @@
             <div class="pt-1 text-[10px] text-neutral-600">Mech Announcer · Serca G1</div>
           </div>
         </div>
+        </div><!-- /webhookEnabled wrapper -->
 
         <!-- ── Overlay Preview ─────────────────────────────────── -->
       {:else if currentTab === "Overlay Preview"}

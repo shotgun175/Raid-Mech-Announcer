@@ -128,6 +128,7 @@ function stopHeartbeat() {
 const RAIDS_KEY = "mech-announcer-raids";
 const SETTINGS_KEY = "mech-announcer-settings";
 const CHANGED_GATES_KEY = "mech-announcer-changed-gates";
+const CHANGED_MECHS_KEY = "mech-announcer-changed-mechs";
 
 function loadRaids(): Gate[] {
   try {
@@ -155,6 +156,23 @@ function saveChangedGateIds(s: Set<string>) {
   } catch {}
 }
 
+function loadChangedMechIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(CHANGED_MECHS_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveChangedMechIds(s: Set<string>) {
+  try {
+    localStorage.setItem(CHANGED_MECHS_KEY, JSON.stringify([...s]));
+  } catch {}
+}
+
 function loadSettings(): MechSettings {
   const defaults: MechSettings = {
     lead: 10,
@@ -162,6 +180,8 @@ function loadSettings(): MechSettings {
     vol: 80,
     ttsRate: 1.0,
     voice: "Andrew",
+    announcementsEnabled: true,
+    webhookEnabled: true,
     confirmHotkey: "F9",
     overlayVariant: "standard",
     hook: "",
@@ -202,6 +222,7 @@ export const mechStore = (() => {
   // as a small dot in the sidebar. Persists across app restarts until user opens
   // that gate. Cleared by selectGate.
   let changedGateIds = $state<Set<string>>(loadChangedGateIds());
+  let changedMechIds = $state<Set<string>>(loadChangedMechIds());
 
   // Recompute the "all mechs past" state for a given (gate, currentBars) pair.
   // Called both from the live path (setBossStatus) and from the Overlay Preview panel.
@@ -235,6 +256,22 @@ export const mechStore = (() => {
 
   function saveSettings() {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(mechSettings));
+  }
+
+  // Internal: prune changedMechIds for mechs that no longer exist (called after
+  // gate/raid rebuilds, where buildLibraryGate stamps fresh mech ids and the old
+  // ids in changedMechIds become orphaned).
+  function pruneChangedMechIdsAgainst(remainingMechIds: Set<string>) {
+    let dirty = false;
+    const next = new Set<string>();
+    for (const id of changedMechIds) {
+      if (remainingMechIds.has(id)) next.add(id);
+      else dirty = true;
+    }
+    if (dirty) {
+      changedMechIds = next;
+      saveChangedMechIds(changedMechIds);
+    }
   }
 
   return {
@@ -271,6 +308,20 @@ export const mechStore = (() => {
     get changedGateIds() {
       return changedGateIds;
     },
+    get changedMechIds() {
+      return changedMechIds;
+    },
+
+    // Clears the per-mech update dot. Fires when the user clicks anywhere
+    // on the affected mech row (acknowledged-by-interaction). The gate-level
+    // dot already cleared on selectGate; this is the finer signal.
+    clearChangedMech(mechId: string) {
+      if (!changedMechIds.has(mechId)) return;
+      const next = new Set(changedMechIds);
+      next.delete(mechId);
+      changedMechIds = next;
+      saveChangedMechIds(changedMechIds);
+    },
 
     // Record that a repeating mechanic just visually fired — resets its cycle from now.
     confirmMech(mechId: string) {
@@ -297,15 +348,20 @@ export const mechStore = (() => {
     },
 
     // Applied once on app startup after reconcile() against the bundled library.
-    // Merges newChangedIds with any pre-existing badges from a prior session that
-    // the user hasn't opened yet.
-    applyReconciledRaids(nextRaids: Gate[], newChangedIds: Set<string>) {
+    // Merges newChangedGateIds / newChangedMechIds with any pre-existing badges
+    // from a prior session that the user hasn't opened yet.
+    applyReconciledRaids(nextRaids: Gate[], newChangedGateIds: Set<string>, newChangedMechIds: Set<string>) {
       raids = nextRaids;
       saveRaids();
-      if (newChangedIds.size > 0) {
-        const merged = new Set([...changedGateIds, ...newChangedIds]);
+      if (newChangedGateIds.size > 0) {
+        const merged = new Set([...changedGateIds, ...newChangedGateIds]);
         changedGateIds = merged;
         saveChangedGateIds(changedGateIds);
+      }
+      if (newChangedMechIds.size > 0) {
+        const merged = new Set([...changedMechIds, ...newChangedMechIds]);
+        changedMechIds = merged;
+        saveChangedMechIds(changedMechIds);
       }
     },
 
@@ -387,8 +443,11 @@ export const mechStore = (() => {
         severity: libMech.severity,
         hpBar: libMech.hpBar ?? null,
         timerSecs: libMech.timerSecs ?? null,
+        phase: null,
         repeatSecs: libMech.repeatSecs ?? null,
         triggerType: libMech.triggerType,
+        ttsEnabled: true,
+        ttsText: libMech.name,
         notes: libMech.notes ?? "",
         difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
         userEdited: false
@@ -397,6 +456,12 @@ export const mechStore = (() => {
         r.id !== gateId ? r : { ...r, mechanics: r.mechanics.map((m) => (m.id === mechId ? restored : m)) }
       );
       saveRaids();
+      if (changedMechIds.has(mechId)) {
+        const next = new Set(changedMechIds);
+        next.delete(mechId);
+        changedMechIds = next;
+        saveChangedMechIds(changedMechIds);
+      }
     },
 
     addGate(gate: Gate) {
@@ -422,6 +487,11 @@ export const mechStore = (() => {
       raids = fresh;
       selectedGateId = fresh[0]?.id ?? "";
       saveRaids();
+      // All previous mech IDs are now stale (buildDefaultRaids stamps fresh ids).
+      if (changedMechIds.size > 0) {
+        changedMechIds = new Set();
+        saveChangedMechIds(changedMechIds);
+      }
     },
 
     resetGate(gateId: string) {
@@ -432,6 +502,7 @@ export const mechStore = (() => {
       const fresh = buildLibraryGate(entry);
       raids = raids.map((r) => (r.id === gateId ? { ...fresh, id: r.id, deletedLibraryKeys: undefined } : r));
       saveRaids();
+      pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },
 
     resetRaid(raidName: string) {
@@ -442,6 +513,7 @@ export const mechStore = (() => {
         return { ...buildLibraryGate(entry), id: r.id, deletedLibraryKeys: undefined };
       });
       saveRaids();
+      pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },
 
     // "Keep custom mechs" variant of resetGate: rebuilds library mechs from the
@@ -460,6 +532,7 @@ export const mechStore = (() => {
           : r
       );
       saveRaids();
+      pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },
 
     resetRaidPreservingCustoms(raidName: string) {
@@ -472,6 +545,7 @@ export const mechStore = (() => {
         return { ...fresh, id: r.id, mechanics: [...fresh.mechanics, ...customs], deletedLibraryKeys: undefined };
       });
       saveRaids();
+      pruneChangedMechIdsAgainst(new Set(raids.flatMap((r) => r.mechanics.map((m) => m.id))));
     },
 
     updateSetting<K extends keyof MechSettings>(key: K, value: MechSettings[K]) {
