@@ -2177,7 +2177,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 150,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "Red telegraph surrounds arena; dodge blue lines, stand in pizza safe spot, wait for fog before dashing inside"
       },
@@ -2187,7 +2187,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 75,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
           "Boss glows white and disappears in a direction; just-guard sequence — precise timing against fast attack chains"
       },
@@ -2224,14 +2224,34 @@ const LIBRARY: LibraryGate[] = [
         notes: "Alberhastic joins; passive infection/poison stacks throughout x300–x235 window (stacks last 60s)"
       },
       {
+        key: "act-3-mordum-g2-shield-memory-solo",
+        name: "Shield Memory",
+        hpBar: 235,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: dialogue + boss centers; yellow or white shield surrounds you. Memorize 4 in/out safe spots (always In/Out/In/Out or Out/In/Out/In), then complete stagger check. Failure triggers Makoko buff (auto-wipe if already active)."
+      },
+      {
         key: "act-3-mordum-g2-alberhastic-memory",
         name: "Alberhastic Memory",
         hpBar: 235,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Memorize Alberhastic's color sequence and burst the shield. Normal/Solo: all players share same shield color; Solo follows In→Out→In→Out (or Out→In→Out→In) safe spot order. Hard: 4 Yellow + 4 White shields split by party (P1 Yellow, P2 White)."
+          "Memorize Alberhastic's color sequence and burst the shield. Normal: all players share same shield color. Hard: 4 Yellow + 4 White shields split by party (P1 Yellow, P2 White)."
+      },
+      {
+        key: "act-3-mordum-g2-clone-stagger-solo",
+        name: "Clone Stagger Check",
+        hpBar: 105,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss jumps and disappears - move to center (outside not safe). 4 clones spawn; 2 fire targeted telegraphs - wait for lock-on then dodge. Boss reappears in middle for stagger check (Whirlwind grenade helps). Cutscene transitions to final phase."
       },
       {
         key: "act-3-mordum-g2-illusion-clone-velga-pizza",
@@ -2240,9 +2260,9 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 90,
         triggerType: "hp+timer",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Identify the real clone vs illusion (gold puddle marker), then attack the real one. Velganos final phase pizza recurs every ~90s. Normal: 5-tile spread. Solo: 3-tile spread. Hard: 3 random black tiles that change direction. DPS race — Team Meter rises throughout."
+          "Identify the real clone vs illusion (gold puddle marker), then attack the real one. Velganos final phase pizza recurs every ~90s. Normal: 5-tile spread. Hard: 3 random black tiles that change direction. DPS race - Team Meter rises throughout."
       }
     ]
   },
@@ -2272,7 +2292,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 450,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Second twister; coordinate position with party"
       },
       {
@@ -2281,8 +2301,18 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 425,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Rotating laser chases players; stay ahead of the pattern, don't cut corners"
+      },
+      {
+        key: "act-3-mordum-g3-color-pizza-orbs-solo",
+        name: "Color Pizza + Orbs",
+        hpBar: 400,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss smashes ground 4 times. 2 rotating orbs fire periodic laser bursts (electrocute on hit). On each smash a blue or red pizza slice spawns - stand on the slice matching your color icon (wrong color = damage)."
       },
       {
         key: "act-3-mordum-g3-twister-3",
@@ -2290,7 +2320,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 400,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Third twister; continues the chase pattern"
       },
       {
@@ -2373,7 +2403,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 125,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Second charged field; same pattern as the first — match color, traverse arena"
       },
       {
@@ -2395,6 +2425,16 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
           "Fourth and final Break Duel (~1:40 after 3rd break in Solo); use Hidden Balthor or complete Just Guards with Shandi for damage"
+      },
+      {
+        key: "act-3-mordum-g3-final-counter-solo",
+        name: "Final Counter",
+        hpBar: 70,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss charges a lethal attack and glows blue - counter to interrupt. Same pattern as x300; failure deals heavy damage."
       },
       {
         key: "act-3-mordum-g3-last-stand-bastion",
