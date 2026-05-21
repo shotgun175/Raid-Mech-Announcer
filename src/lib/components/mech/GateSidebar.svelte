@@ -161,6 +161,44 @@
     tauntable: false,
     totalBars: 300
   });
+  // Separate text state for the Gate input so users can type "1", "1.2", or
+  // "1-2" instead of remembering the encoded form. The form.gate integer below
+  // is what's actually saved; gateInput is the display value.
+  let gateInput = $state("1");
+
+  // Parse user-typed gate notation into the encoded integer used by the rest of
+  // the app (formatGate's inverse). Accepts "N", "N.M", or "N-M" where M is 1-9.
+  // Returns null for inputs that can't be interpreted (caller keeps last value).
+  function parseGateInput(s: string): number | null {
+    const t = s.trim();
+    if (t === "") return null;
+    if (/^\d+$/.test(t)) {
+      const n = parseInt(t, 10);
+      return n > 0 ? n : null;
+    }
+    const m = t.match(/^(\d+)[.\-](\d)$/);
+    if (m) {
+      const major = parseInt(m[1], 10);
+      const minor = parseInt(m[2], 10);
+      if (major > 0) return major * 10 + minor;
+    }
+    return null;
+  }
+
+  // Stair-step: as the user types a raid name that matches an existing raid,
+  // default the gate to (highest existing gate + 1). Manual edits to the gate
+  // input after that are preserved — this effect only re-fires when raid changes.
+  let prevRaidForStair = "";
+  $effect(() => {
+    const trimmed = form.raid.trim();
+    if (trimmed === prevRaidForStair) return;
+    prevRaidForStair = trimmed;
+    if (!trimmed) return;
+    const existing = raidsByName[trimmed];
+    const nextGate = existing && existing.length > 0 ? Math.max(...existing.map((g) => g.gate)) + 1 : 1;
+    form.gate = nextGate;
+    gateInput = formatGate(nextGate);
+  });
 
   function availableDifficultiesFor(raidName: string): Difficulty[] {
     return libraryByRaid[raidName]?.[0]?.availableDifficulties ?? ["Normal", "Hard"];
@@ -195,6 +233,8 @@
       tauntable: false,
       totalBars: 300
     };
+    gateInput = "1";
+    prevRaidForStair = "";
     $open = false;
   }
 </script>
@@ -815,8 +855,25 @@
           </div>
           <div>
             <div style={fieldLabel}>Gate</div>
-            <input type="number" style={inp} bind:value={form.gate} min={1} max={8} />
+            <input
+              type="text"
+              style={inp}
+              bind:value={gateInput}
+              oninput={(e) => {
+                const parsed = parseGateInput((e.target as HTMLInputElement).value);
+                if (parsed != null) form.gate = parsed;
+              }}
+              placeholder="1 or 1.2"
+              title="Single gates: 1, 2, 3. Split gates: type 1.2 or 1-2 for G1.2."
+            />
           </div>
+        </div>
+        <div style="font-size: 11px; color: #737373; margin-top: -8px;">
+          Type a number for single gates. For split gates, type <code>1.2</code> or
+          <code>1-2</code> to mean G1.2.
+          {#if form.gate >= 10}
+            <span style="color: var(--color-accent-500); margin-left: 6px;">→ G{formatGate(form.gate)}</span>
+          {/if}
         </div>
         <div>
           <div style={fieldLabel}>Boss Name<span style="color: #f87171; margin-left: 4px;">*</span></div>
