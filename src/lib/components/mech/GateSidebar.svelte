@@ -810,7 +810,7 @@
       <div style="padding: 18px; display: flex; flex-direction: column; gap: 14px;">
         <div style="display: grid; grid-template-columns: 1fr 80px; gap: 12px;">
           <div>
-            <div style={fieldLabel}>Raid Name</div>
+            <div style={fieldLabel}>Raid Name<span style="color: #f87171; margin-left: 4px;">*</span></div>
             <input style={inp} bind:value={form.raid} placeholder="e.g. Serca" />
           </div>
           <div>
@@ -819,7 +819,7 @@
           </div>
         </div>
         <div>
-          <div style={fieldLabel}>Boss Name</div>
+          <div style={fieldLabel}>Boss Name<span style="color: #f87171; margin-left: 4px;">*</span></div>
           <input style={inp} bind:value={form.boss} placeholder="e.g. Witch of Agony, Serca" />
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">

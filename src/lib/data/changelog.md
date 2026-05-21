@@ -12,6 +12,9 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Required fields in the Add Mechanic and Add Raid forms are now marked with a red asterisk, and Save stays disabled until those fields are filled in. For mechs, the HP Bar Threshold or Timer field flips between required and optional based on the chosen trigger type.
+- Adding a mech with an HP threshold higher than the gate's total HP bars now bumps the gate's total HP bars to (mech threshold + 30) automatically, so the mech can actually trigger during a fight.
+
 <!-- @release-end -->
 
 <!-- @release v0.2.1 -->

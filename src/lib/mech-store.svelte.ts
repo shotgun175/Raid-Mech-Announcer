@@ -343,10 +343,14 @@ export const mechStore = (() => {
           existing && existing.origin === "library"
             ? { ...mech, key: existing.key, origin: "library", userEdited: true }
             : mech;
-        return {
-          ...r,
-          mechanics: existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next]
-        };
+        const nextMechanics = existing ? r.mechanics.map((m) => (m.id === mech.id ? next : m)) : [...r.mechanics, next];
+        // Guardrail: if any mechanic's hpBar exceeds the gate's totalBars, bump
+        // totalBars to (max hpBar) + 30 so the mech can actually trigger during
+        // a fight (bosses start at totalBars; an out-of-range mech would never fire).
+        // +30 leaves headroom so the highest-threshold mech still has visible runway.
+        const maxHpBar = nextMechanics.reduce((m, x) => Math.max(m, x.hpBar ?? 0), 0);
+        const nextTotalBars = maxHpBar > r.totalBars ? maxHpBar + 30 : r.totalBars;
+        return { ...r, mechanics: nextMechanics, totalBars: nextTotalBars };
       });
       saveRaids();
     },
