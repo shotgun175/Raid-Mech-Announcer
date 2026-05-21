@@ -1403,7 +1403,7 @@ const LIBRARY: LibraryGate[] = [
       },
       {
         key: "thaemine-g2-bridge-counter-solo",
-        name: "Bridge Counter Orb -> Boss",
+        name: "Bridge Counter Orb, then Boss",
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
