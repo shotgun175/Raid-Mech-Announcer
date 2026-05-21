@@ -1825,13 +1825,13 @@ const LIBRARY: LibraryGate[] = [
     mechanics: [
       {
         key: "aegir-g1-aegir-appears-banishment",
-        name: "Aegir Appears + Banishment",
+        name: "Boulder Dodge",
         hpBar: 195,
         triggerType: "hp",
         severity: "wipe",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Aegir appears and banishes players into individual realms (10s imprisonment); fight back to rejoin main arena"
+          "Dodge the boulder shadow (instakill if hit); boss teleports behind for a pull + slash follow-up. Normal/Hard: banishment phase places players into individual realms (10s imprisonment) before the rejoin."
       },
       {
         key: "aegir-g1-ghost-phase",
@@ -1872,12 +1872,22 @@ const LIBRARY: LibraryGate[] = [
           "Break Aegir's shield; Valtan's ghost assists — coordinate destruction skills. Solo: counter the Valtan Ghost, then use an ally skill."
       },
       {
+        key: "aegir-g1-donut-pizza-solo",
+        name: "Donut + Pizza",
+        hpBar: 85,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: cutscene then donut telegraph - spacebar the first wave to dodge; follow-up pizza telegraph with 2 safe spots, then boss returns to center."
+      },
+      {
         key: "aegir-g1-aegir-attack",
         name: "Aegir Attack",
         hpBar: 85,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Dodge Aegir's red telegraphed attacks; maintain positioning for next mechanic"
       },
       {
@@ -1921,7 +1931,7 @@ const LIBRARY: LibraryGate[] = [
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Destroy Aegir's heart to proceed, then Armor Break opens immediately after. Normal: Party 1 at 12→3, Party 2 at 6→9 rotation. Hard: 3 positions with counter → auto-attack → stagger sequence; supports place golden target puddle at right corners. Solo: stand in safe area while lasers rotate clockwise."
+          "Destroy Aegir's heart to proceed, then Armor Break opens immediately after. Normal: Party 1 at 12→3, Party 2 at 6→9 rotation. Hard: 3 positions with counter → auto-attack → stagger sequence; supports place golden target puddle at right corners. Solo: stand in safe area while lasers rotate clockwise; afterward hug top/bottom edge as a leg drags top-to-bottom (stun if hit), then stagger 1 of 2 spears to remove the 33% damage reduction buff (repeats until boss reaches 250 or timer)."
       },
       {
         key: "aegir-g2-distorted-space-1st",
@@ -1944,13 +1954,23 @@ const LIBRARY: LibraryGate[] = [
           "Second Heart (repeat burst DPS — can be skipped if damage was pushed), then Armor Break window. Solo: remove Aegir's shield, destroy heart within 80s using ally skills. Hard: supports place golden target puddle at right corners."
       },
       {
+        key: "aegir-g2-spear-leg-conditional-solo",
+        name: "Spear + Leg (Conditional)",
+        hpBar: 153,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: only triggers if you didn't push past 153 during the 2nd Heart. Repeat of the 260->250 spear/leg sequence - stagger 1 of 2 spears to remove the 33% DR buff. Avel sidereal at the 2nd Heart can skip this entirely."
+      },
+      {
         key: "aegir-g2-distorted-space-2nd",
         name: "Distorted Space (2nd)",
         hpBar: 153,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
-        notes: "Second distorted space; routes may differ from 1st — stay alert"
+        difficulties: ["Normal", "Hard"],
+        notes: "Second distorted space; routes may differ from 1st - stay alert"
       },
       {
         key: "aegir-g2-stage-break",
