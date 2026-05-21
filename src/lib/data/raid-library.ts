@@ -2002,7 +2002,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 240,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Bait Narok's laser toward the ice wall to destroy it; coordinate positioning across the arena"
       },
       {
@@ -2011,7 +2011,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 215,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Post-Ice Wall (~70s delay): dodge follow-up laser sweep"
       },
       {
@@ -2075,9 +2075,19 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 280,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Ice Field & Crystal Break: white vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars). Solo: succeed typing test, place crystal at 6 o'clock, destroy it."
+          "Ice Field & Crystal Break: white vs purple IQ test + typing test; marked players spawn crystals at 6 o'clock; use Azena (4 bars) or Nineveh (3 bars)."
+      },
+      {
+        key: "act-2-brelshaza-g2-clockwise-orbs-solo",
+        name: "Clockwise Orbs",
+        hpBar: 185,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: scythes spawn and rotate clockwise around the arena - dodge them. Two sets, then cutscene and brief freeze, then rush to boss center for stagger check."
       },
       {
         key: "act-2-brelshaza-g2-clockwise-orbs",
@@ -2085,7 +2095,7 @@ const LIBRARY: LibraryGate[] = [
         hpBar: 145,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Rotate clockwise destroying orbs at 3x or 3x+1 positions; avoid AoEs; HM: dodge scythes as well"
       },
       {
@@ -2095,9 +2105,19 @@ const LIBRARY: LibraryGate[] = [
         repeatSecs: 240,
         triggerType: "hp+timer",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes:
-          "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss. Freeze AoE recurs every ~240s — guard before yellow reaches end; failure = freeze + teleport + wave + typing test again."
+          "Phase 3 begins; move to correct position, complete typing test, identify real clone, stagger boss. Freeze AoE recurs every ~240s - guard before yellow reaches end; failure = freeze + teleport + wave + typing test again."
+      },
+      {
+        key: "act-2-brelshaza-g2-scythes-solo",
+        name: "Scythes",
+        hpBar: 80,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: small red telegraphs spawn; the last two on opposite axes indicate the beam axis. A plus-sign telegraph follows - dodge into the safe slice before the wide beam fires."
       }
     ]
   },
