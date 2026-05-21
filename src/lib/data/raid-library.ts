@@ -1346,7 +1346,8 @@ const LIBRARY: LibraryGate[] = [
         triggerType: "hp",
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
-        notes: "Marked players stand in craters; same crater is targeted twice — hold position"
+        notes:
+          "Marked players stand in craters; same crater is targeted twice - hold position. Solo: craters explode at trigger (stay clear of the twice-hit crater for the boss knockup); destruction-bomb a spawned tentacle, then take the yellow-telegraph grab to finish."
       },
       {
         key: "thaemine-g1-destroy-grab",
@@ -1366,7 +1367,7 @@ const LIBRARY: LibraryGate[] = [
         severity: "major",
         difficulties: ["Solo", "Normal", "Hard"],
         notes:
-          "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes. Solo: eyes move toward you rather than spreading."
+          "Boss hands transform to claws; eyes indicate incoming direction; safe spot appears after two dashes. Solo: eyes stop and point toward the safe direction; commonly skipped by using Balthor sidereal to trigger endorphin (25s shield burn DPS check)."
       },
       {
         key: "thaemine-g1-eye-black-hole",
@@ -1401,14 +1402,24 @@ const LIBRARY: LibraryGate[] = [
         notes: "Hard Mode only; top or bottom arena side breaks off — reposition accordingly"
       },
       {
-        key: "thaemine-g2-8-counters-run",
-        name: "8 Counters & Run",
+        key: "thaemine-g2-bridge-counter-solo",
+        name: "Bridge Counter",
         hpBar: 135,
         triggerType: "hp",
         severity: "wipe",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Solo"],
         notes:
-          "Counter in party order (Party 1 then Party 2); 3s window; avoid red flash counters (= wipe); use Azena after wings and shockwave. Solo: counter single orb, then boss."
+          "Solo: short intermission - boss destroys the side platforms, leaving only the center bridge. Counter the blue-glowing orb that travels along the bottom (miss = knockup + fatal damage), then counter the boss only when he glows BLUE (red glow is a fake counter - do NOT counter). Dodge the follow-up yellow telegraph (gravity-save grants 1 free knockoff recovery every 7 min across G2/G3)."
+      },
+      {
+        key: "thaemine-g2-8-counters-run",
+        name: "8 Counters",
+        hpBar: 135,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard"],
+        notes:
+          "Counter in party order (Party 1 then Party 2); 3s window; avoid red flash counters (= wipe); use Azena after wings and shockwave. (Run portion is now skipped via QoL update.)"
       },
       {
         key: "thaemine-g2-black-or-blue-stagger",
@@ -1472,12 +1483,22 @@ const LIBRARY: LibraryGate[] = [
           "Dodge the pizza, bait boss sword to 9 o'clock then kill it. Hard: also dodge spinning tether ball rotating counter-clockwise."
       },
       {
+        key: "thaemine-g3-safe-spot-solo",
+        name: "Safe Spot",
+        hpBar: 225,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Solo"],
+        notes:
+          "Solo: boss centers, dialog, then darkness wave - spacebar through it (this debuff still lets you see red telegraphs, unlike the x275 one). Red telegraphs with safe spots fill in quickly; reach a remaining safe spot before the cutscene or it's a wipe."
+      },
+      {
         key: "thaemine-g3-safe-spot",
         name: "Safe Spot",
         hpBar: 225,
         triggerType: "hp",
         severity: "major",
-        difficulties: ["Solo", "Normal", "Hard"],
+        difficulties: ["Normal", "Hard"],
         notes: "Puddle player goes to top; all others go to bottom. Navigate red telegraphs with inverted visibility."
       },
       {
