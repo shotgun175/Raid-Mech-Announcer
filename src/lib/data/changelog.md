@@ -16,7 +16,7 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Reset arrow on a customized mech now also restores Phase, the per-mech TTS toggle, and the TTS announcement text back to library defaults (previously those three fields stayed at whatever you'd last set them).
-- Update dots in the mech editor: when a library update changes (or adds) a specific mech, a small accent dot appears next to that mech's name so you can spot what changed inside a gate without scrolling the full list. Click anywhere on the row to dismiss the dot. Resetting a mech, gate, or everything to defaults clears these dots automatically.
+- When a library update changes (or adds) a specific mech, a small accent dot appears next to that mech's name so you can spot what changed inside a gate without scrolling the full list.
 
 <!-- @release-end -->
 
