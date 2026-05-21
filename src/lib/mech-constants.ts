@@ -14,6 +14,10 @@ export const PHASE_COLORS: Record<number, string> = {
 export const BOSS_HP_COLORS = ["#D16F23", "#9F3930", "#582469", "#2B3A63", "#246977", "#798816", "#E7B826"];
 
 export function formatGate(gate: number): string {
+  // Defensive guard: malformed data (null/undefined/NaN) used to render as
+  // literal "null" via String() coercion. Show a "?" placeholder instead so
+  // users can spot the bad row and delete it via the per-gate X.
+  if (gate == null || !Number.isFinite(gate)) return "?";
   return gate < 10 ? String(gate) : `${Math.floor(gate / 10)}.${gate % 10}`;
 }
 

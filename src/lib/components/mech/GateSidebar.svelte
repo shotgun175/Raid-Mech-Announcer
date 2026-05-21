@@ -186,16 +186,19 @@
   }
 
   // Stair-step: as the user types a raid name that matches an existing raid,
-  // default the gate to (highest existing gate + 1). Manual edits to the gate
-  // input after that are preserved — this effect only re-fires when raid changes.
+  // default the gate to (highest existing whole-numbered gate + 1). Split gates
+  // (encoded as XY like 21 = G2.1) are ignored for stair-step purposes — the
+  // user opts in to those by typing them manually. Manual edits to the gate
+  // input after auto-fill are preserved; this effect only fires on raid change.
   let prevRaidForStair = "";
   $effect(() => {
     const trimmed = form.raid.trim();
     if (trimmed === prevRaidForStair) return;
     prevRaidForStair = trimmed;
     if (!trimmed) return;
-    const existing = raidsByName[trimmed];
-    const nextGate = existing && existing.length > 0 ? Math.max(...existing.map((g) => g.gate)) + 1 : 1;
+    const existing = raidsByName[trimmed] ?? [];
+    const wholeGates = existing.filter((g) => Number.isFinite(g.gate) && g.gate > 0 && g.gate < 10);
+    const nextGate = wholeGates.length > 0 ? Math.max(...wholeGates.map((g) => g.gate)) + 1 : 1;
     form.gate = nextGate;
     gateInput = formatGate(nextGate);
   });
@@ -432,9 +435,21 @@
                 >
               {/if}
             </div>
-            <span style="font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; flex-shrink: 0;"
-              >{gate.mechanics.length}</span
-            >
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+              <span style="font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace;"
+                >{gate.mechanics.length}</span
+              >
+              <button
+                onclick={(e) => {
+                  e.stopPropagation();
+                  mechStore.removeGate(gate.id);
+                }}
+                title="Remove gate (other gates in this raid are preserved)"
+                style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
+                onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
+                onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+              >
+            </div>
           </div>
         {/each}
       </div>
