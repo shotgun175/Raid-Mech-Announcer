@@ -270,8 +270,8 @@
         class="form-checkbox size-5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
       />
       <div class="ml-5">
-        <div class="text-sm">{label}</div>
-        {#if description}<div class="text-xs text-neutral-300">{description}</div>{/if}
+        <div class="text-sm font-semibold">{label}</div>
+        {#if description}<div class="text-xs text-neutral-400">{description}</div>{/if}
       </div>
     </label>
   </div>
