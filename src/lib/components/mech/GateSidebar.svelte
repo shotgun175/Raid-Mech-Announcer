@@ -250,6 +250,28 @@
     }, DELETE_CONFIRM_MS);
   }
 
+  // Same click-to-confirm pattern for the raid header's ✕ (removes the whole
+  // raid — every gate under it). Even more important to confirm here since
+  // the blast radius is larger.
+  let pendingDeleteRaidName = $state<string | null>(null);
+  let pendingDeleteRaidTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function requestDeleteRaid(raidName: string) {
+    if (pendingDeleteRaidName === raidName) {
+      if (pendingDeleteRaidTimer) clearTimeout(pendingDeleteRaidTimer);
+      pendingDeleteRaidTimer = null;
+      pendingDeleteRaidName = null;
+      mechStore.removeRaid(raidName);
+      return;
+    }
+    if (pendingDeleteRaidTimer) clearTimeout(pendingDeleteRaidTimer);
+    pendingDeleteRaidName = raidName;
+    pendingDeleteRaidTimer = setTimeout(() => {
+      pendingDeleteRaidName = null;
+      pendingDeleteRaidTimer = null;
+    }, DELETE_CONFIRM_MS);
+  }
+
   function openEditGate(g: typeof mechStore.raids[number]) {
     editingGateId = g.id;
     form = {
@@ -554,16 +576,28 @@
             {/if}
           </div>
 
-          <button
-            onclick={(e) => {
-              e.stopPropagation();
-              mechStore.removeRaid(raidName);
-            }}
-            title="Remove raid"
-            style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s; flex-shrink: 0;"
-            onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
-            onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
-          >
+          {#if pendingDeleteRaidName === raidName}
+            <button
+              onclick={(e) => {
+                e.stopPropagation();
+                requestDeleteRaid(raidName);
+              }}
+              title="Click again to confirm removing the entire raid (all its gates)"
+              style="background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); border-radius: 3px; cursor: pointer; color: #f87171; font-size: 10px; padding: 1px 5px; line-height: 1; font-weight: 700; letter-spacing: 0.04em; font-family: inherit; flex-shrink: 0; animation: mech-pulse 1.2s ease-in-out infinite;"
+              >Confirm?</button
+            >
+          {:else}
+            <button
+              onclick={(e) => {
+                e.stopPropagation();
+                requestDeleteRaid(raidName);
+              }}
+              title="Remove raid (all its gates). Click twice to confirm."
+              style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s; flex-shrink: 0;"
+              onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
+              onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+            >
+          {/if}
         </div>
         {#each raidsByName[raidName] as gate (gate.id)}
           {@const sel = gate.id === mechStore.selectedGateId}
