@@ -1640,7 +1640,7 @@ const LIBRARY: LibraryGate[] = [
       },
       {
         key: "echidna-g1-opposite-line-counter-solo",
-        name: "Opposite Line + Edge Counter",
+        name: "Clone Split - 2 lines into Counter",
         hpBar: 135,
         triggerType: "hp",
         severity: "major",
@@ -1722,7 +1722,7 @@ const LIBRARY: LibraryGate[] = [
       },
       {
         key: "echidna-g2-bigger-echidna-stagger-solo",
-        name: "Bigger Echidna Stagger + Clash",
+        name: "Huge Echidna Stagger + Clash",
         hpBar: 137,
         triggerType: "hp",
         severity: "wipe",
