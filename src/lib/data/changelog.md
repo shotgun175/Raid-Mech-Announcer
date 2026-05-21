@@ -18,6 +18,7 @@
 - Each gate row now has a small X button to remove just that gate, so you no longer have to delete a whole raid to drop a single bad/extra gate.
 - Sidebar no longer renders "Gate null" for malformed gate values - shows "Gate ?" instead so you can spot and delete the bad row.
 - Gates in the sidebar now sort by display order, so split gates display correctly: G1, G1.2, G2, G3, G4.2, G5
+- Add Raid form now lets you pick which difficulties the new gate offers (Solo / Normal / Hard / Nightmare / Extreme / TFM). Defaults to Normal + Hard. The choice drives the raid's difficulty picker and which checkboxes show in the mech editor for that gate. Picking a single difficulty locks the mech editor to that difficulty (shown as a small "Locked" badge).
 
 <!-- @release-end -->
 

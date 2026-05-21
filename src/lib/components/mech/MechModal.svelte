@@ -236,7 +236,21 @@
       </div>
 
       <!-- Difficulties -->
-      {#if availableDifficulties.length > 1}
+      {#if availableDifficulties.length === 1}
+        {@const onlySty = DIFFICULTY_STYLE[availableDifficulties[0]]}
+        <div style="margin-bottom: 14px;">
+          <div class="field-label">Difficulty</div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+            <span
+              style="background: {onlySty.bg}; border: 1px solid {onlySty.border}; border-radius: 3px; padding: 2px 8px; color: {onlySty.color}; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;"
+              >{onlySty.label}</span
+            >
+            <span style="font-size: 11px; color: #737373;"
+              >Locked - this raid only offers one difficulty.</span
+            >
+          </div>
+        </div>
+      {:else if availableDifficulties.length > 1}
         <div style="margin-bottom: 14px;">
           <div class="field-label">Difficulties</div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">

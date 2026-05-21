@@ -1,4 +1,4 @@
-export type Difficulty = "Solo" | "Normal" | "Hard" | "Nightmare";
+export type Difficulty = "Solo" | "Normal" | "Hard" | "Nightmare" | "Extreme" | "TFM";
 export type Severity = "normal" | "major" | "wipe";
 export type TriggerType = "hp" | "timer" | "hp+timer";
 export type Phase = 1 | 2 | 3 | 4 | null;
@@ -32,6 +32,11 @@ export interface Gate {
   totalBars: number;
   mechanics: Mechanic[];
   deletedLibraryKeys?: string[];
+  // Per-gate difficulty offering. Set when a user creates a custom raid via
+  // the Add Raid form. Library gates use the LibraryGate.availableDifficulties
+  // field instead; when this field is omitted the lookup falls back to library
+  // by raid-name, then to ["Normal", "Hard"] as a final default.
+  availableDifficulties?: Difficulty[];
 }
 
 export type TtsVoice = "Andrew" | "Jenny";

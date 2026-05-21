@@ -2,7 +2,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
-  import { DIFFICULTY_STYLE } from "$lib/utils/difficulty";
+  import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import { formatGate, gateLabel, gateSortKey } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
@@ -152,14 +152,24 @@
     states: { open }
   } = createDialog();
 
-  let form = $state({
+  let form = $state<{
+    raid: string;
+    gate: number;
+    boss: string;
+    bossType: string;
+    weakness: string;
+    tauntable: boolean;
+    totalBars: number;
+    availableDifficulties: Difficulty[];
+  }>({
     raid: "",
     gate: 1,
     boss: "",
     bossType: "HUMAN",
     weakness: "No Weakness",
     tauntable: false,
-    totalBars: 300
+    totalBars: 300,
+    availableDifficulties: ["Normal", "Hard"]
   });
   // Separate text state for the Gate input so users can type "1", "1.2", or
   // "1-2" instead of remembering the encoded form. The form.gate integer below
@@ -203,7 +213,20 @@
     gateInput = formatGate(nextGate);
   });
 
+  const canSaveRaid = $derived(
+    form.raid.trim() !== "" && form.boss.trim() !== "" && form.availableDifficulties.length > 0
+  );
+
   function availableDifficultiesFor(raidName: string): Difficulty[] {
+    // For the raid-level picker, take the union across all gates in this raid
+    // that have an availableDifficulties set (custom raids set this via the
+    // Add Raid form). If none of the raid's gates declare one, fall back to
+    // the library entry, then to ["Normal", "Hard"].
+    const own = (raidsByName[raidName] ?? []).flatMap((g) => g.availableDifficulties ?? []);
+    if (own.length > 0) {
+      const set = new Set(own);
+      return DIFFICULTY_ORDER.filter((d) => set.has(d));
+    }
     return libraryByRaid[raidName]?.[0]?.availableDifficulties ?? ["Normal", "Hard"];
   }
 
@@ -215,7 +238,7 @@
     "font-size: 12px; color: #a3a3a3; margin-bottom: 5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;";
 
   function saveRaid() {
-    if (!form.raid.trim() || !form.boss.trim()) return;
+    if (!form.raid.trim() || !form.boss.trim() || form.availableDifficulties.length === 0) return;
     mechStore.addGate({
       id: `${form.raid.toLowerCase().replace(/\s+/g, "-")}-g${form.gate}-${Date.now()}`,
       raid: form.raid.trim(),
@@ -225,7 +248,8 @@
       weakness: form.weakness.trim() || "No Weakness",
       tauntable: form.tauntable,
       totalBars: form.totalBars,
-      mechanics: []
+      mechanics: [],
+      availableDifficulties: [...form.availableDifficulties]
     });
     form = {
       raid: "",
@@ -234,7 +258,8 @@
       bossType: "HUMAN",
       weakness: "No Weakness",
       tauntable: false,
-      totalBars: 300
+      totalBars: 300,
+      availableDifficulties: ["Normal", "Hard"]
     };
     gateInput = "1";
     prevRaidForStair = "";
@@ -915,6 +940,41 @@
           <div style={fieldLabel}>Weakness (optional)</div>
           <input style={inp} bind:value={form.weakness} placeholder="e.g. Weak to Light" />
         </div>
+        <div>
+          <div style={fieldLabel}>
+            Available Difficulties<span style="color: #f87171; margin-left: 4px;">*</span>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+            {#each DIFFICULTY_ORDER as d (d)}
+              {@const sty = DIFFICULTY_STYLE[d]}
+              {@const isOn = form.availableDifficulties.includes(d)}
+              <label
+                style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 11px; color: {isOn
+                  ? sty.color
+                  : '#737373'}; background: {isOn
+                  ? sty.bg
+                  : 'transparent'}; border: 1px solid {isOn
+                  ? sty.border
+                  : '#262626'}; border-radius: 3px; padding: 3px 8px; transition: all 0.15s; font-weight: 700; letter-spacing: 0.04em;"
+              >
+                <input
+                  type="checkbox"
+                  checked={isOn}
+                  onchange={(e) => {
+                    const on = (e.target as HTMLInputElement).checked;
+                    if (on) form.availableDifficulties = [...form.availableDifficulties, d];
+                    else form.availableDifficulties = form.availableDifficulties.filter((x) => x !== d);
+                  }}
+                  style="accent-color: {sty.color}; width: 12px; height: 12px;"
+                />
+                <span>{sty.label}</span>
+              </label>
+            {/each}
+          </div>
+          <div style="font-size: 11px; color: #737373; margin-top: 6px;">
+            Pick at least one. Drives the raid's difficulty picker and the difficulty checkboxes in the mech editor.
+          </div>
+        </div>
         <label
           style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12.5px; color: #fafafa;"
         >
@@ -936,17 +996,16 @@
         >
         <button
           onclick={saveRaid}
-          disabled={!form.raid.trim() || !form.boss.trim()}
-          style="background: {form.raid.trim() && form.boss.trim()
+          disabled={!canSaveRaid}
+          style="background: {canSaveRaid
             ? 'color-mix(in oklch, var(--color-accent-500) 10%, transparent)'
-            : '#1a1a1a'}; border: 1px solid {form.raid.trim() && form.boss.trim()
+            : '#1a1a1a'}; border: 1px solid {canSaveRaid
             ? 'color-mix(in oklch, var(--color-accent-500) 30%, transparent)'
-            : '#262626'}; border-radius: 4px; padding: 7px 14px; color: {form.raid.trim() && form.boss.trim()
+            : '#262626'}; border-radius: 4px; padding: 7px 14px; color: {canSaveRaid
             ? 'var(--color-accent-500)'
-            : '#8a8a8a'}; cursor: {form.raid.trim() && form.boss.trim()
+            : '#8a8a8a'}; cursor: {canSaveRaid
             ? 'pointer'
-            : 'not-allowed'}; font-size: 12.5px; font-weight: 600; font-family: inherit; opacity: {form.raid.trim() &&
-          form.boss.trim()
+            : 'not-allowed'}; font-size: 12.5px; font-weight: 600; font-family: inherit; opacity: {canSaveRaid
             ? 1
             : 0.5};"
         >

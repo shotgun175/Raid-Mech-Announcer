@@ -15,8 +15,11 @@
   let editMech = $state<Mechanic | null>(null);
 
   const gate = $derived(mechStore.selectedGate);
+  // Prefer the gate's own availableDifficulties (set when the user adds a
+  // custom raid via the sidebar), then fall back to the library entry by
+  // raid-name, then to ["Normal", "Hard"] for legacy data.
   const availableDifficulties = $derived<Difficulty[]>(
-    libraryByRaid[gate?.raid ?? ""]?.[0]?.availableDifficulties ?? ["Normal", "Hard"]
+    gate?.availableDifficulties ?? libraryByRaid[gate?.raid ?? ""]?.[0]?.availableDifficulties ?? ["Normal", "Hard"]
   );
 
   // svelte-ignore state_referenced_locally
