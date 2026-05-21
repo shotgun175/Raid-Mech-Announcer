@@ -26,6 +26,7 @@
 - Add Raid form now lets you pick which difficulties the new gate offers (Solo / Normal / Hard / Nightmare / Extreme / TFM). Defaults to Normal + Hard. The choice drives the raid's difficulty picker and which checkboxes show in the mech editor for that gate. Picking a single difficulty locks the mech editor to that difficulty (shown as a small "Locked" badge).
 - Each gate row in the sidebar now has a small pencil button to open an Edit Gate dialog (same form as Add Raid, pre-populated with the gate's current values). All metadata is editable - boss, type, weakness, total HP bars, taunt, available difficulties, and even the raid name / gate number. If you try to move a gate onto a raid + gate combo that already exists (yours or in the library), Save blocks with an inline warning.
 - Per-gate delete now requires a two-click confirm. The first click flips the X into a "Confirm?" pill; clicking it again within 3 seconds actually removes the gate. Otherwise it reverts on its own.
+- Reset Raid now also restores any gates you previously deleted or moved out to a custom raid, not just the ones still present. Moved gates keep their new home; the re-populated library gate comes back as a fresh copy.
 
 <!-- @release-end -->
 
