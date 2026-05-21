@@ -408,6 +408,20 @@ export const mechStore = (() => {
       saveRaids();
     },
 
+    // Patch-update an existing gate's metadata. The gate's id and mechanics
+    // are preserved; everything in the patch overwrites. Caller is responsible
+    // for ensuring raid+gate moves don't collide with other user gates or
+    // library slots (the Edit Gate UI enforces both).
+    updateGate(
+      gateId: string,
+      patch: Partial<
+        Pick<Gate, "raid" | "gate" | "boss" | "bossType" | "weakness" | "totalBars" | "tauntable" | "availableDifficulties">
+      >
+    ) {
+      raids = raids.map((r) => (r.id === gateId ? { ...r, ...patch } : r));
+      saveRaids();
+    },
+
     removeGate(gateId: string) {
       raids = raids.filter((r) => r.id !== gateId);
       if (selectedGateId === gateId) selectedGateId = raids[0]?.id ?? "";

@@ -19,6 +19,8 @@
 - Sidebar no longer renders "Gate null" for malformed gate values - shows "Gate ?" instead so you can spot and delete the bad row.
 - Gates in the sidebar now sort by display order, so split gates display correctly: G1, G1.2, G2, G3, G4.2, G5
 - Add Raid form now lets you pick which difficulties the new gate offers (Solo / Normal / Hard / Nightmare / Extreme / TFM). Defaults to Normal + Hard. The choice drives the raid's difficulty picker and which checkboxes show in the mech editor for that gate. Picking a single difficulty locks the mech editor to that difficulty (shown as a small "Locked" badge).
+- Each gate row in the sidebar now has a small pencil button to open an Edit Gate dialog (same form as Add Raid, pre-populated with the gate's current values). All metadata is editable - boss, type, weakness, total HP bars, taunt, available difficulties, and even the raid name / gate number. If you try to move a gate onto a raid + gate combo that already exists (yours or in the library), Save blocks with an inline warning.
+- Per-gate delete now requires a two-click confirm. The first click flips the X into a "Confirm?" pill; clicking it again within 3 seconds actually removes the gate. Otherwise it reverts on its own.
 
 <!-- @release-end -->
 

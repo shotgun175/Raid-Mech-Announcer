@@ -199,6 +199,55 @@
   // is what's actually saved; gateInput is the display value.
   let gateInput = $state("1");
 
+  // When non-null, the Add Raid modal is in "edit gate" mode: the form is
+  // pre-populated with the target gate's values and Save calls updateGate
+  // instead of addGate. Raid Name and Gate inputs are locked while editing.
+  let editingGateId = $state<string | null>(null);
+
+  // Click-to-confirm guard for the gate row's ✕ delete button. The first
+  // click sets pendingDeleteGateId; a second click within DELETE_CONFIRM_MS
+  // actually removes the gate. Resets on timeout or clicking a different gate.
+  let pendingDeleteGateId = $state<string | null>(null);
+  let pendingDeleteTimer: ReturnType<typeof setTimeout> | null = null;
+  const DELETE_CONFIRM_MS = 3000;
+
+  function requestDeleteGate(gateId: string) {
+    if (pendingDeleteGateId === gateId) {
+      // Second click within the window — actually delete.
+      if (pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+      pendingDeleteTimer = null;
+      pendingDeleteGateId = null;
+      mechStore.removeGate(gateId);
+      return;
+    }
+    // First click — arm the confirmation, replacing any other pending arm.
+    if (pendingDeleteTimer) clearTimeout(pendingDeleteTimer);
+    pendingDeleteGateId = gateId;
+    pendingDeleteTimer = setTimeout(() => {
+      pendingDeleteGateId = null;
+      pendingDeleteTimer = null;
+    }, DELETE_CONFIRM_MS);
+  }
+
+  function openEditGate(g: typeof mechStore.raids[number]) {
+    editingGateId = g.id;
+    form = {
+      raid: g.raid,
+      gate: g.gate,
+      boss: g.boss,
+      bossType: g.bossType,
+      weakness: g.weakness,
+      tauntable: g.tauntable,
+      totalBars: g.totalBars,
+      availableDifficulties: g.availableDifficulties
+        ? [...g.availableDifficulties]
+        : (libraryByRaid[g.raid]?.[0]?.availableDifficulties ?? ["Normal", "Hard"])
+    };
+    gateInput = formatGate(g.gate);
+    prevRaidForStair = g.raid; // suppress stair-step effect while editing
+    $open = true;
+  }
+
   // Parse user-typed gate notation into the encoded integer used by the rest of
   // the app (formatGate's inverse). Accepts "N", "N.M", or "N-M" where M is 1-9.
   // Returns null for inputs that can't be interpreted (caller keeps last value).
@@ -223,11 +272,14 @@
   // (encoded as XY like 21 = G2.1) are ignored for stair-step purposes — the
   // user opts in to those by typing them manually. Manual edits to the gate
   // input after auto-fill are preserved; this effect only fires on raid change.
+  // Skipped entirely in edit mode — auto-incrementing the gate while a user
+  // edits an existing gate's raid name would override their intentional value.
   let prevRaidForStair = "";
   $effect(() => {
     const trimmed = form.raid.trim();
     if (trimmed === prevRaidForStair) return;
     prevRaidForStair = trimmed;
+    if (editingGateId) return;
     if (!trimmed) return;
     const existing = raidsByName[trimmed] ?? [];
     const wholeGates = existing.filter((g) => Number.isFinite(g.gate) && g.gate > 0 && g.gate < 10);
@@ -236,8 +288,47 @@
     gateInput = formatGate(nextGate);
   });
 
+  // When the modal closes via any path (✕, Esc, melt overlay click), clear
+  // edit-mode flags so the next "+ Add Raid" click starts fresh.
+  $effect(() => {
+    if (!$open) {
+      editingGateId = null;
+    }
+  });
+
+  // Collision detection for the Edit Gate flow. Blocks save if the chosen
+  // raid+gate combo matches another user gate OR a library gate slot. The
+  // library guard is intentional — custom gates shouldn't shadow library
+  // content even if the library slot is empty in the user's data; the right
+  // recovery path is Import Raids, not "type the canonical name yourself".
+  const collisionWarning = $derived.by(() => {
+    const raidName = form.raid.trim();
+    if (!raidName) return null;
+    const myId = editingGateId;
+    // If editing and the raid+gate combo is unchanged, the user is only
+    // tweaking metadata of this same slot — skip both collision checks.
+    if (myId) {
+      const me = mechStore.raids.find((g) => g.id === myId);
+      if (me && me.raid === raidName && me.gate === form.gate) return null;
+    }
+    const userConflict = mechStore.raids.find(
+      (g) => g.id !== myId && g.raid === raidName && g.gate === form.gate
+    );
+    if (userConflict) {
+      return `${raidName} G${formatGate(form.gate)} already exists in your list. Pick a different gate or remove the existing one first.`;
+    }
+    const libConflict = LIBRARY.find((e) => e.raid === raidName && e.gate === form.gate);
+    if (libConflict) {
+      return `${raidName} G${formatGate(form.gate)} is part of the raid library. Use Import Raids to add it instead of a custom copy.`;
+    }
+    return null;
+  });
+
   const canSaveRaid = $derived(
-    form.raid.trim() !== "" && form.boss.trim() !== "" && form.availableDifficulties.length > 0
+    form.raid.trim() !== "" &&
+      form.boss.trim() !== "" &&
+      form.availableDifficulties.length > 0 &&
+      collisionWarning == null
   );
 
   function availableDifficultiesFor(raidName: string): Difficulty[] {
@@ -262,18 +353,31 @@
 
   function saveRaid() {
     if (!form.raid.trim() || !form.boss.trim() || form.availableDifficulties.length === 0) return;
-    mechStore.addGate({
-      id: `${form.raid.toLowerCase().replace(/\s+/g, "-")}-g${form.gate}-${Date.now()}`,
-      raid: form.raid.trim(),
-      gate: form.gate,
-      boss: form.boss.trim(),
-      bossType: form.bossType,
-      weakness: form.weakness.trim() || "No Weakness",
-      tauntable: form.tauntable,
-      totalBars: form.totalBars,
-      mechanics: [],
-      availableDifficulties: [...form.availableDifficulties]
-    });
+    if (editingGateId) {
+      mechStore.updateGate(editingGateId, {
+        raid: form.raid.trim(),
+        gate: form.gate,
+        boss: form.boss.trim(),
+        bossType: form.bossType,
+        weakness: form.weakness.trim() || "No Weakness",
+        tauntable: form.tauntable,
+        totalBars: form.totalBars,
+        availableDifficulties: [...form.availableDifficulties]
+      });
+    } else {
+      mechStore.addGate({
+        id: `${form.raid.toLowerCase().replace(/\s+/g, "-")}-g${form.gate}-${Date.now()}`,
+        raid: form.raid.trim(),
+        gate: form.gate,
+        boss: form.boss.trim(),
+        bossType: form.bossType,
+        weakness: form.weakness.trim() || "No Weakness",
+        tauntable: form.tauntable,
+        totalBars: form.totalBars,
+        mechanics: [],
+        availableDifficulties: [...form.availableDifficulties]
+      });
+    }
     form = {
       raid: "",
       gate: 1,
@@ -286,6 +390,7 @@
     };
     gateInput = "1";
     prevRaidForStair = "";
+    editingGateId = null;
     $open = false;
   }
 </script>
@@ -493,13 +598,35 @@
               <button
                 onclick={(e) => {
                   e.stopPropagation();
-                  mechStore.removeGate(gate.id);
+                  openEditGate(gate);
                 }}
-                title="Remove gate (other gates in this raid are preserved)"
-                style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
-                onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
-                onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+                title="Edit gate (boss, total HP bars, difficulties, etc.)"
+                style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 11px; padding: 0 2px; line-height: 1; transition: color 0.15s;"
+                onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--color-accent-500)")}
+                onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✎</button
               >
+              {#if pendingDeleteGateId === gate.id}
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    requestDeleteGate(gate.id);
+                  }}
+                  title="Click again to confirm deletion"
+                  style="background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); border-radius: 3px; cursor: pointer; color: #f87171; font-size: 10px; padding: 1px 5px; line-height: 1; font-weight: 700; letter-spacing: 0.04em; font-family: inherit; animation: mech-pulse 1.2s ease-in-out infinite;"
+                  >Confirm?</button
+                >
+              {:else}
+                <button
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    requestDeleteGate(gate.id);
+                  }}
+                  title="Remove gate (other gates in this raid are preserved). Click twice to confirm."
+                  style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
+                  onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
+                  onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+                >
+              {/if}
             </div>
           </div>
         {/each}
@@ -906,7 +1033,9 @@
       <div
         style="padding: 14px 18px; border-bottom: 1px solid #262626; display: flex; justify-content: space-between; align-items: center;"
       >
-        <span use:melt={$title} style="font-weight: 600; font-size: 14px; color: #fafafa;">Add Raid Gate</span>
+        <span use:melt={$title} style="font-weight: 600; font-size: 14px; color: #fafafa;"
+          >{editingGateId ? "Edit Gate" : "Add Raid Gate"}</span
+        >
         <button
           use:melt={$close}
           style="background: transparent; border: none; cursor: pointer; color: #a3a3a3; font-size: 16px; padding: 2px 6px;"
@@ -1012,6 +1141,13 @@
           Tauntable
         </label>
       </div>
+      {#if collisionWarning}
+        <div
+          style="margin: 0 18px 14px 18px; padding: 8px 12px; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3); border-radius: 4px; color: #f87171; font-size: 12px; line-height: 1.5;"
+        >
+          {collisionWarning}
+        </div>
+      {/if}
       <div
         style="padding: 12px 18px; border-top: 1px solid #262626; display: flex; justify-content: flex-end; gap: 8px;"
       >
@@ -1035,7 +1171,7 @@
             ? 1
             : 0.5};"
         >
-          Add Raid
+          {editingGateId ? "Save Changes" : "Add Raid"}
         </button>
       </div>
     </div>
