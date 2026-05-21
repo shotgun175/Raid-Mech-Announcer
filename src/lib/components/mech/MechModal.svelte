@@ -60,11 +60,18 @@
   );
 
   // Required-field validation, mirrors the red-asterisk markers in the template.
-  // `name` is always required. `hpBar` and `timerSecs` flip based on triggerType.
+  // `name` is always required. The numeric fields are required per the trigger type:
+  //   hp        → hpBar
+  //   hp+timer  → hpBar + repeatSecs
+  //   timer     → timerSecs
   const needsHpBar = $derived(form.triggerType === "hp" || form.triggerType === "hp+timer");
-  const needsTimerSecs = $derived(form.triggerType === "timer" || form.triggerType === "hp+timer");
+  const needsRepeatSecs = $derived(form.triggerType === "hp+timer");
+  const needsTimerSecs = $derived(form.triggerType === "timer");
   const isValid = $derived(
-    form.name.trim() !== "" && (!needsHpBar || form.hpBar !== "") && (!needsTimerSecs || form.timerSecs !== "")
+    form.name.trim() !== "" &&
+      (!needsHpBar || form.hpBar !== "") &&
+      (!needsRepeatSecs || form.repeatSecs !== "") &&
+      (!needsTimerSecs || form.timerSecs !== "")
   );
 
   function save() {
@@ -183,7 +190,7 @@
       <!-- Repeat interval (hp+timer) -->
       {#if form.triggerType === "hp+timer"}
         <div style="margin-bottom: 14px;">
-          <div class="field-label">Repeat Interval (seconds)</div>
+          <div class="field-label">Repeat Interval (seconds)<span class="req-asterisk">*</span></div>
           <input type="number" style={inp} bind:value={form.repeatSecs} placeholder="e.g. 60" />
           {#if form.repeatSecs}
             <div style="font-size: 12px; color: #8a8a8a; margin-top: 3px; font-family: ui-monospace, monospace;">
