@@ -20,10 +20,12 @@ import { bossHpMap, type LibraryGate, type LibraryMechanic } from "./data/raid-l
 export interface ReconcileResult {
   raids: Gate[];
   changedGateIds: Set<string>;
+  changedMechIds: Set<string>;
 }
 
 export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileResult {
   const changedGateIds = new Set<string>();
+  const changedMechIds = new Set<string>();
   const libraryByGate = new Map<string, LibraryGate>();
   for (const g of library) libraryByGate.set(`${g.raid}::${g.gate}`, g);
 
@@ -96,12 +98,18 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
         severity: libMech.severity,
         hpBar: libMech.hpBar ?? null,
         timerSecs: libMech.timerSecs ?? null,
+        phase: null,
         repeatSecs: libMech.repeatSecs ?? null,
         triggerType: libMech.triggerType,
+        ttsEnabled: true,
+        ttsText: libMech.name,
         notes: libMech.notes ?? "",
         difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
       };
-      if (mechFieldsDiffer(um, merged)) gateChanged = true;
+      if (mechFieldsDiffer(um, merged)) {
+        gateChanged = true;
+        changedMechIds.add(merged.id);
+      }
       reconciledMechs.push(merged);
     }
     // ---- Step C: add library mechs not yet present, respect deletedLibraryKeys
@@ -110,8 +118,10 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
     for (const lm of libGate.mechanics) {
       if (userKeys.has(lm.key)) continue;
       if (deletedKeys.has(lm.key)) continue;
+      const newId = `lib-${lm.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      changedMechIds.add(newId);
       reconciledMechs.push({
-        id: `lib-${lm.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        id: newId,
         key: lm.key,
         origin: "library",
         userEdited: false,
@@ -158,7 +168,7 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
     };
   });
 
-  return { raids, changedGateIds };
+  return { raids, changedGateIds, changedMechIds };
 }
 
 function mechFieldsDiffer(a: Mechanic, b: Mechanic): boolean {
