@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatTimer, PHASE_COLORS, SEVERITY } from "$lib/mech-constants";
   import type { Difficulty, Mechanic } from "$lib/mech-types";
+  import { mechStore } from "$lib/mech-store.svelte";
   import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import MechBadge from "./MechBadge.svelte";
 
@@ -119,7 +120,14 @@
       <span style="color: #a78bfa;">↻{formatTimer(mech.repeatSecs)}</span>
     {/if}
     {#if mech.ttsEnabled}
-      <span title="TTS enabled" style="color: var(--color-accent-500);">🔊</span>
+      {#if mechStore.mechSettings.announcementsEnabled === false}
+        <span
+          title="TTS announcements are off globally. Enable in Settings → Announcements to hear this mech."
+          style="color: #737373;">🔇</span
+        >
+      {:else}
+        <span title="TTS enabled" style="color: var(--color-accent-500);">🔊</span>
+      {/if}
     {/if}
   </div>
 

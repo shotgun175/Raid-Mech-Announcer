@@ -162,6 +162,7 @@ function loadSettings(): MechSettings {
     vol: 80,
     ttsRate: 1.0,
     voice: "Andrew",
+    announcementsEnabled: true,
     confirmHotkey: "F9",
     overlayVariant: "standard",
     hook: "",

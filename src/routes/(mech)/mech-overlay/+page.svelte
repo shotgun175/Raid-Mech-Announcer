@@ -123,7 +123,7 @@
   function announce(name: string, severity: string, ttsEnabled: boolean, ttsText: string) {
     ttsLog(`[TTS][overlay] speakTts "${name}" tts=${ttsEnabled} bar=${currentBar} text="${ttsText}"`);
     const cfg = mechStore.mechSettings;
-    if (ttsEnabled) {
+    if (ttsEnabled && cfg.announcementsEnabled !== false) {
       speakTts(ttsText || name, cfg.voice ?? "Andrew", cfg.vol ?? 80, cfg.ttsRate ?? 1.0);
     }
     if (cfg.hook) {
