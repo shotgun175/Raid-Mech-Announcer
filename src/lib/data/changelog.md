@@ -15,7 +15,6 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Reset arrow on a customized mech now also restores Phase, the per-mech TTS toggle, and the TTS announcement text back to library defaults (previously those three fields stayed at whatever you'd last set them).
-- "Show installed voices" link in Settings → Announcements now toggles - click again to hide the list.
 
 <!-- @release-end -->
 
