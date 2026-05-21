@@ -51,6 +51,12 @@
     "border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: opacity 0.15s;";
 </script>
 
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === "Escape") onClose();
+  }}
+/>
+
 <!-- Backdrop -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
