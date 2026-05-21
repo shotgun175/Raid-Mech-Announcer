@@ -884,11 +884,13 @@
           </div>
         </div>
         <div style="font-size: 11px; color: #737373; margin-top: -8px;">
-          Type a number for single gates. For split gates, type <code>1.2</code> or
-          <code>1-2</code> to mean G1.2.
-          {#if form.gate >= 10}
-            <span style="color: var(--color-accent-500); margin-left: 6px;">→ G{formatGate(form.gate)}</span>
-          {/if}
+          <div>Type a number for single gates.</div>
+          <div>
+            For split gates, type <code>1.2</code> or <code>1-2</code> to mean G1.2.
+            {#if form.gate >= 10}
+              <span style="color: var(--color-accent-500); margin-left: 6px;">→ G{formatGate(form.gate)}</span>
+            {/if}
+          </div>
         </div>
         <div>
           <div style={fieldLabel}>Boss Name<span style="color: #f87171; margin-left: 4px;">*</span></div>
