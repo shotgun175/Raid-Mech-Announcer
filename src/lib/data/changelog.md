@@ -28,6 +28,7 @@
 - Per-gate delete now requires a two-click confirm. The first click flips the X into a "Confirm?" pill; clicking it again within 3 seconds actually removes the gate. Otherwise it reverts on its own.
 - Reset Raid now also restores any gates you previously deleted or moved out to a custom raid, not just the ones still present. Moved gates keep their new home; the re-populated library gate comes back as a fresh copy.
 - The per-mech reset arrow (↺) now hides on mechs that have been moved into a custom raid (or whose gate no longer matches a library entry). Previously the arrow showed but the click silently did nothing because there was no library default to revert to.
+- Raid names are now treated case-insensitively. Typing "Serza" and "serza" no longer creates two separate raids that look identical in the sidebar - the second variant snaps to the first variant's casing. Existing dirty data (two casings already in your list) now collapses into a single sidebar group.
 
 <!-- @release-end -->
 

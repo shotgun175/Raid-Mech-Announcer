@@ -126,17 +126,32 @@
     }
   }
 
-  const raidNames = $derived(
-    Array.from(new Set(mechStore.raids.map((r) => r.raid))).sort((a, b) => {
+  // Raid name comparisons are case-insensitive throughout the sidebar:
+  // "Serza" and "serza" should be treated as one raid (the display layer
+  // already uppercases via CSS, so two stored variants would look identical
+  // but live as separate groups otherwise). The first-seen casing for a
+  // case-insensitive key wins as the canonical display form.
+  const raidNameKey = (n: string) => n.trim().toLowerCase();
+
+  const raidNames = $derived.by(() => {
+    const canonicalByKey = new Map<string, string>();
+    for (const r of mechStore.raids) {
+      const key = raidNameKey(r.raid);
+      if (!canonicalByKey.has(key)) canonicalByKey.set(key, r.raid);
+    }
+    return [...canonicalByKey.values()].sort((a, b) => {
       const orderA = libraryByRaid[a]?.[0]?.releaseOrder ?? 0;
       const orderB = libraryByRaid[b]?.[0]?.releaseOrder ?? 0;
       return orderB - orderA; // newest first; custom raids (order 0) fall to bottom
-    })
-  );
+    });
+  });
   const raidsByName = $derived(
     raidNames.reduce(
       (acc, n) => {
-        acc[n] = mechStore.raids.filter((r) => r.raid === n).sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate));
+        const key = raidNameKey(n);
+        acc[n] = mechStore.raids
+          .filter((r) => raidNameKey(r.raid) === key)
+          .sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate));
         return acc;
       },
       {} as Record<string, typeof mechStore.raids>
@@ -304,22 +319,24 @@
   const collisionWarning = $derived.by(() => {
     const raidName = form.raid.trim();
     if (!raidName) return null;
+    const key = raidNameKey(raidName);
     const myId = editingGateId;
-    // If editing and the raid+gate combo is unchanged, the user is only
-    // tweaking metadata of this same slot — skip both collision checks.
+    // If editing and the raid+gate combo is unchanged (case-insensitive), the
+    // user is only tweaking metadata of this same slot — skip both collision
+    // checks.
     if (myId) {
       const me = mechStore.raids.find((g) => g.id === myId);
-      if (me && me.raid === raidName && me.gate === form.gate) return null;
+      if (me && raidNameKey(me.raid) === key && me.gate === form.gate) return null;
     }
     const userConflict = mechStore.raids.find(
-      (g) => g.id !== myId && g.raid === raidName && g.gate === form.gate
+      (g) => g.id !== myId && raidNameKey(g.raid) === key && g.gate === form.gate
     );
     if (userConflict) {
       return `${raidName} G${formatGate(form.gate)} already exists in your list. Pick a different gate or remove the existing one first.`;
     }
-    const libConflict = LIBRARY.find((e) => e.raid === raidName && e.gate === form.gate);
+    const libConflict = LIBRARY.find((e) => raidNameKey(e.raid) === key && e.gate === form.gate);
     if (libConflict) {
-      return `${raidName} G${formatGate(form.gate)} is part of the raid library. Use Import Raids to add it instead of a custom copy.`;
+      return `${libConflict.raid} G${formatGate(form.gate)} is part of the raid library. Use Import Raids to add it instead of a custom copy.`;
     }
     return null;
   });
@@ -353,9 +370,18 @@
 
   function saveRaid() {
     if (!form.raid.trim() || !form.boss.trim() || form.availableDifficulties.length === 0) return;
+    // Normalize: if the user typed a raid name that already exists case-
+    // insensitively (in their data OR the library), use the existing
+    // canonical casing instead of creating a new variant.
+    const typedKey = raidNameKey(form.raid);
+    const existingUserName = mechStore.raids.find(
+      (r) => r.id !== editingGateId && raidNameKey(r.raid) === typedKey
+    )?.raid;
+    const existingLibName = LIBRARY.find((e) => raidNameKey(e.raid) === typedKey)?.raid;
+    const canonicalRaid = existingUserName ?? existingLibName ?? form.raid.trim();
     if (editingGateId) {
       mechStore.updateGate(editingGateId, {
-        raid: form.raid.trim(),
+        raid: canonicalRaid,
         gate: form.gate,
         boss: form.boss.trim(),
         bossType: form.bossType,
@@ -366,8 +392,8 @@
       });
     } else {
       mechStore.addGate({
-        id: `${form.raid.toLowerCase().replace(/\s+/g, "-")}-g${form.gate}-${Date.now()}`,
-        raid: form.raid.trim(),
+        id: `${canonicalRaid.toLowerCase().replace(/\s+/g, "-")}-g${form.gate}-${Date.now()}`,
+        raid: canonicalRaid,
         gate: form.gate,
         boss: form.boss.trim(),
         bossType: form.bossType,
