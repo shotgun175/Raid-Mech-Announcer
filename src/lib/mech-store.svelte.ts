@@ -1,5 +1,5 @@
 import { emit } from "@tauri-apps/api/event";
-import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
+import { buildDefaultRaids, buildLibraryGate, gateSwapsBoss, isBossSwapPhase, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty } from "./utils/difficulty";
 import { bestGateMatch } from "./utils/gate-match";
@@ -223,7 +223,7 @@ export const mechStore = (() => {
   // Picks one line from the pool on transition INTO the empty-upcoming state and
   // clears on transition OUT, so dragging the preview slider back and forth doesn't
   // strand a stale message.
-  function recomputeEncourage(currentBars: number | null, gateId: string | null) {
+  function recomputeEncourage(currentBars: number | null, gateId: string | null, inSwapPhase = false) {
     if (gateId == null || currentBars == null || currentBars <= 0) {
       if (liveEncourageMessage != null) liveEncourageMessage = null;
       return;
@@ -233,7 +233,9 @@ export const mechStore = (() => {
     const mechs = gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : [];
     const hasMechs = mechs.some((m) => m.hpBar != null);
     const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
-    if (hasMechs && !anyUpcoming) {
+    // During a boss-swap phase the listed mechs belong to the first boss and aren't shown,
+    // so the swap boss's bar is effectively an execute phase — keep the encouragement up.
+    if (inSwapPhase || (hasMechs && !anyUpcoming)) {
       if (liveEncourageMessage == null) {
         liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
         dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
@@ -661,6 +663,21 @@ export const mechStore = (() => {
             startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
             return;
           }
+          // The live gate's OWN boss died, but this gate's listed boss isn't the finisher —
+          // it swaps to a different boss mid-fight (Act 4: Armoche G1: Echidna dies at x30,
+          // Brelshaza takes over). Treat it like a phase transition: keep the gate sticky so
+          // the follow-up boss (which matches no other gate) stays bound, clear only the HP
+          // display, and preserve fired-mech keys so the first boss's mechs don't re-fire.
+          const liveGate = raids.find((r) => r.id === liveGateId);
+          if (liveGate && gateSwapsBoss(liveGate.raid, liveGate.gate)) {
+            dbg(`[gate] boss "${data.name}" died — ${liveGate.raid} G${liveGate.gate} swaps bosses, keeping gate`);
+            liveBar = null;
+            liveTotalBars = null;
+            liveBossName = null;
+            broadcastBossStatus(null);
+            startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
+            return;
+          }
         }
         // Either PeerJS dropped (data is null) or the active gate's boss died. Treat as
         // a real encounter end: clear gate immediately so the next HP event re-matches
@@ -711,7 +728,9 @@ export const mechStore = (() => {
       // Compute encouragement before broadcasting so the overlay window receives the
       // chosen line in the payload — each Tauri window has its own mechStore instance,
       // so rolling the dice on the overlay side would diverge from the debug log.
-      recomputeEncourage(data.currentBars, liveGateId);
+      const liveGate = liveGateId ? raids.find((r) => r.id === liveGateId) : null;
+      const swapPhase = liveGate ? isBossSwapPhase(liveGate, data.name) : false;
+      recomputeEncourage(data.currentBars, liveGateId, swapPhase);
       broadcastBossStatus({
         ...data,
         gateId: liveGateId ?? null,

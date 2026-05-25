@@ -17,6 +17,7 @@
 - Two mechanics on the same HP threshold no longer both speak at once; only the higher-priority one is announced, and both still show on the overlay
 - Fixed the confirmation hotkey sometimes not being recognized; it could get dropped on app launch or when changing another shortcut, and is now registered reliably
 - Fixed bosses with a comma in their name (like Armoche, Sentinel of the Abyss) not being recognized even when the imported gate's boss name matched exactly
+- Act 4: Armoche G1 now stays recognized through the Echidna-to-Brelshaza swap; the overlay names whichever boss is active instead of dropping the gate when Brelshaza takes over
 
 <!-- @release-end -->
 

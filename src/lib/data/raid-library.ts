@@ -104,6 +104,11 @@ export interface LibraryGate {
   // in both old Brelshaza G4 and Act 2: Brelshaza G2 with different bar counts)
   // and bossHpMap can't disambiguate.
   totalBars?: number;
+  // Set when the gate's listed boss is NOT the finisher: it dies mid-fight and a
+  // different boss takes over on its own HP pool (e.g. Act 4: Armoche G1 — Echidna
+  // dies at x30 and Brelshaza invades). Tells setBossStatus to treat that death as a
+  // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
+  swapsBoss?: boolean;
 }
 
 const LIBRARY: LibraryGate[] = [
@@ -2521,6 +2526,8 @@ const LIBRARY: LibraryGate[] = [
     bossType: "DEMONIC",
     weakness: "No Weakness",
     tauntable: false,
+    // Echidna dies at x30 and Brelshaza (her own 450-bar pool) takes over to finish G1.
+    swapsBoss: true,
     mechanics: [
       {
         key: "act-4-armoche-g1-spotlight",
@@ -3109,6 +3116,25 @@ export const libraryByRaid: Record<string, LibraryGate[]> = Object.fromEntries(
     )
   ).map(([raid, gates]) => [raid, [...gates].sort((a, b) => gateSortKey(a.gate) - gateSortKey(b.gate))])
 );
+
+/**
+ * True if the gate's listed boss swaps to a different boss mid-fight (LibraryGate.swapsBoss).
+ * Looked up from the library at use time (like releaseOrder ordering) so the flag needs no
+ * storage in the user's saved gates and no reconciliation pass to reach existing users.
+ */
+export function gateSwapsBoss(raid: string, gate: number): boolean {
+  return (libraryByRaid[raid] ?? []).some((g) => g.gate === gate && g.swapsBoss === true);
+}
+
+/**
+ * True when a swapsBoss gate is in its post-swap phase: the live boss is no longer the
+ * gate's listed (first) boss. In this phase the listed mechs don't apply (different boss,
+ * different HP pool), so callers render no mechs and treat it as an execute phase.
+ */
+export function isBossSwapPhase(gate: Gate, liveBoss: string): boolean {
+  if (!liveBoss || !gateSwapsBoss(gate.raid, gate.gate)) return false;
+  return liveBoss.split(",")[0].trim().toLowerCase() !== gate.boss.split(",")[0].trim().toLowerCase();
+}
 
 /** Check if a gate (by encounterKey) is already in the user's raid list */
 export function isImported(raids: Gate[], encounterKey: string): boolean {
