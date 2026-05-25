@@ -1,5 +1,5 @@
 import { emit } from "@tauri-apps/api/event";
-import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
+import { buildDefaultRaids, buildLibraryGate, gateSwapsBoss, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty } from "./utils/difficulty";
 import { bestGateMatch } from "./utils/gate-match";
@@ -658,6 +658,21 @@ export const mechStore = (() => {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
           if (!matchedGate || matchedGate.id !== liveGateId) {
             dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
+            startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
+            return;
+          }
+          // The live gate's OWN boss died, but this gate's listed boss isn't the finisher —
+          // it swaps to a different boss mid-fight (Act 4: Armoche G1: Echidna dies at x30,
+          // Brelshaza takes over). Treat it like a phase transition: keep the gate sticky so
+          // the follow-up boss (which matches no other gate) stays bound, clear only the HP
+          // display, and preserve fired-mech keys so the first boss's mechs don't re-fire.
+          const liveGate = raids.find((r) => r.id === liveGateId);
+          if (liveGate && gateSwapsBoss(liveGate.raid, liveGate.gate)) {
+            dbg(`[gate] boss "${data.name}" died — ${liveGate.raid} G${liveGate.gate} swaps bosses, keeping gate`);
+            liveBar = null;
+            liveTotalBars = null;
+            liveBossName = null;
+            broadcastBossStatus(null);
             startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
             return;
           }

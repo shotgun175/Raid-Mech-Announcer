@@ -7,6 +7,7 @@
   import OverlayControls from "$lib/components/mech/overlays/OverlayControls.svelte";
   import { formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
+  import { gateSwapsBoss } from "$lib/data/raid-library";
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
@@ -36,7 +37,15 @@
   const gate = $derived(gateId ? (mechStore.raids.find((r) => r.id === gateId) ?? null) : null);
   const variant = $derived(mechStore.mechSettings.overlayVariant);
   const gateName = $derived(gate ? `G${formatGate(gate.gate)} · ${gate.raid.toUpperCase()}` : "");
-  const displayBossName = $derived(gate ? gate.boss.split(",")[0] : bossName);
+  // On a boss-swap gate (e.g. Armoche G1), the live boss differs from the gate's listed primary
+  // once the swap happens (Echidna → Brelshaza). In that phase we name the live boss and render
+  // no mechs — the listed mechs belong to the first boss and run on a different HP pool.
+  const inSwapPhase = $derived.by(() => {
+    if (!gate || !bossName || !gateSwapsBoss(gate.raid, gate.gate)) return false;
+    const primaryCore = gate.boss.split(",")[0].trim().toLowerCase();
+    return bossName.split(",")[0].trim().toLowerCase() !== primaryCore;
+  });
+  const displayBossName = $derived(inSwapPhase ? bossName.split(",")[0] : gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
   // True when LOA Logs reports a tiny HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 bars
@@ -48,7 +57,7 @@
   const activeDifficulty = $derived<Difficulty | null>(
     gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
   );
-  const visibleMechanics = $derived(gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
+  const visibleMechanics = $derived(gate && !inSwapPhase ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
   let contentEl = $state<HTMLElement | null>(null);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { LIBRARY } from "./raid-library";
+import { LIBRARY, gateSwapsBoss } from "./raid-library";
 
 describe("LIBRARY key uniqueness", () => {
   it("every mech has a unique key across all gates", () => {
@@ -22,5 +22,20 @@ describe("LIBRARY key uniqueness", () => {
         expect(mech.key.length, `${gate.encounterKey} has empty-key mech "${mech.name}"`).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe("gateSwapsBoss", () => {
+  it("is true for Act 4: Armoche G1 (Echidna swaps to Brelshaza)", () => {
+    expect(gateSwapsBoss("Act 4: Armoche", 1)).toBe(true);
+  });
+
+  it("is false for a normal single-boss gate", () => {
+    expect(gateSwapsBoss("Act 4: Armoche", 2)).toBe(false);
+  });
+
+  it("is false for an unknown raid or gate", () => {
+    expect(gateSwapsBoss("Not A Raid", 1)).toBe(false);
+    expect(gateSwapsBoss("Act 4: Armoche", 99)).toBe(false);
   });
 });
