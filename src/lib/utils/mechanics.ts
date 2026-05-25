@@ -20,3 +20,36 @@ export function activeRepeatMech(mechanics: Mechanic[], bar: number): Mechanic |
       .at(0) ?? null
   );
 }
+
+const SEVERITY_RANK: Record<string, number> = { wipe: 3, major: 2, normal: 1 };
+
+function outranksForAnnounce(a: Mechanic, b: Mechanic): boolean {
+  const ra = SEVERITY_RANK[a.severity] ?? 0;
+  const rb = SEVERITY_RANK[b.severity] ?? 0;
+  if (ra !== rb) return ra > rb;
+  // Tie on severity: prefer the repeating mech — it owns the live countdown.
+  const aRepeats = a.repeatSecs != null;
+  const bRepeats = b.repeatSecs != null;
+  if (aRepeats !== bRepeats) return aRepeats;
+  return false; // still tied: keep the earlier one (stable)
+}
+
+/**
+ * Collapses mechs that share an `hpBar` to a single "winner" so two mechs on the same
+ * threshold don't announce over each other (e.g. Serca G1's Safe Zone and Maiden Bingo,
+ * both x100, which otherwise speak back-to-back). The winner is the highest severity,
+ * ties broken toward the repeating mech, then toward input order. Mechs on distinct
+ * thresholds all pass through; null-`hpBar` mechs are dropped.
+ *
+ * Intended for the set of mechs entering their hp-initial lead window on a single tick:
+ * the caller marks them all fired, then announces only these winners.
+ */
+export function topMechPerThreshold(mechs: Mechanic[]): Mechanic[] {
+  const byBar = new Map<number, Mechanic>();
+  for (const m of mechs) {
+    if (m.hpBar == null) continue;
+    const cur = byBar.get(m.hpBar);
+    if (cur == null || outranksForAnnounce(m, cur)) byBar.set(m.hpBar, m);
+  }
+  return [...byBar.values()];
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { activeRepeatMech } from "./mechanics";
+import { activeRepeatMech, topMechPerThreshold } from "./mechanics";
 import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
@@ -55,5 +55,37 @@ describe("activeRepeatMech", () => {
 
   it("returns null when the gate has no repeating mechanics", () => {
     expect(activeRepeatMech([spikeGuard], 100)).toBeNull();
+  });
+});
+
+describe("topMechPerThreshold", () => {
+  it("collapses two mechs sharing an hpBar to one (tie on severity → repeating mech)", () => {
+    // Serca G1: Safe Zone (hp, x100) and Maiden Bingo (hp+timer, x100), both major.
+    const safeZone = mech({ id: "safe", name: "Safe Zone", hpBar: 100, severity: "major", repeatSecs: null });
+    const maiden = mech({ id: "maiden", name: "Maiden Bingo", hpBar: 100, severity: "major", repeatSecs: 60 });
+    expect(topMechPerThreshold([safeZone, maiden]).map((m) => m.id)).toEqual(["maiden"]);
+    // Order-independent.
+    expect(topMechPerThreshold([maiden, safeZone]).map((m) => m.id)).toEqual(["maiden"]);
+  });
+
+  it("picks the highest severity on a shared threshold regardless of order", () => {
+    const a = mech({ id: "a", hpBar: 100, severity: "normal" });
+    const b = mech({ id: "b", hpBar: 100, severity: "wipe" });
+    expect(topMechPerThreshold([a, b]).map((m) => m.id)).toEqual(["b"]);
+    expect(topMechPerThreshold([b, a]).map((m) => m.id)).toEqual(["b"]);
+  });
+
+  it("keeps mechs on distinct thresholds", () => {
+    const a = mech({ id: "a", hpBar: 105, severity: "major" });
+    const b = mech({ id: "b", hpBar: 100, severity: "major" });
+    const ids = topMechPerThreshold([a, b]).map((m) => m.id);
+    expect(ids).toHaveLength(2);
+    expect(ids).toContain("a");
+    expect(ids).toContain("b");
+  });
+
+  it("drops mechs with a null hpBar and returns empty for no input", () => {
+    expect(topMechPerThreshold([mech({ id: "x", hpBar: null })])).toHaveLength(0);
+    expect(topMechPerThreshold([])).toHaveLength(0);
   });
 });
