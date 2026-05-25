@@ -7,7 +7,7 @@
   import OverlayControls from "$lib/components/mech/overlays/OverlayControls.svelte";
   import { formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
-  import { gateSwapsBoss } from "$lib/data/raid-library";
+  import { isBossSwapPhase } from "$lib/data/raid-library";
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
@@ -38,13 +38,9 @@
   const variant = $derived(mechStore.mechSettings.overlayVariant);
   const gateName = $derived(gate ? `G${formatGate(gate.gate)} · ${gate.raid.toUpperCase()}` : "");
   // On a boss-swap gate (e.g. Armoche G1), the live boss differs from the gate's listed primary
-  // once the swap happens (Echidna → Brelshaza). In that phase we name the live boss and render
-  // no mechs — the listed mechs belong to the first boss and run on a different HP pool.
-  const inSwapPhase = $derived.by(() => {
-    if (!gate || !bossName || !gateSwapsBoss(gate.raid, gate.gate)) return false;
-    const primaryCore = gate.boss.split(",")[0].trim().toLowerCase();
-    return bossName.split(",")[0].trim().toLowerCase() !== primaryCore;
-  });
+  // once the swap happens (Echidna -> Brelshaza). In that phase we name the live boss and render
+  // no mechs (the listed mechs belong to the first boss, on a different HP pool).
+  const inSwapPhase = $derived(!!gate && isBossSwapPhase(gate, bossName));
   const displayBossName = $derived(inSwapPhase ? bossName.split(",")[0] : gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);

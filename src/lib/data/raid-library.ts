@@ -3126,6 +3126,16 @@ export function gateSwapsBoss(raid: string, gate: number): boolean {
   return (libraryByRaid[raid] ?? []).some((g) => g.gate === gate && g.swapsBoss === true);
 }
 
+/**
+ * True when a swapsBoss gate is in its post-swap phase: the live boss is no longer the
+ * gate's listed (first) boss. In this phase the listed mechs don't apply (different boss,
+ * different HP pool), so callers render no mechs and treat it as an execute phase.
+ */
+export function isBossSwapPhase(gate: Gate, liveBoss: string): boolean {
+  if (!liveBoss || !gateSwapsBoss(gate.raid, gate.gate)) return false;
+  return liveBoss.split(",")[0].trim().toLowerCase() !== gate.boss.split(",")[0].trim().toLowerCase();
+}
+
 /** Check if a gate (by encounterKey) is already in the user's raid list */
 export function isImported(raids: Gate[], encounterKey: string): boolean {
   const entry = LIBRARY.find((g) => g.encounterKey === encounterKey);
