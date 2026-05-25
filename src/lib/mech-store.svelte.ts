@@ -25,6 +25,14 @@ async function broadcastOverlayControl(show: boolean) {
     await emit(show ? "mech:overlay-show" : "mech:overlay-hide", null);
   } catch {}
 }
+// Tells the overlay to stop showing the "phase transition…" placeholder after prolonged
+// silence, WITHOUT tearing down per-fight state (gate id, fired keys). HP resuming before
+// GATE_RESET_MS restores the live display cleanly. broadcastEncounterEnd is the full teardown.
+async function broadcastOverlayQuiet() {
+  try {
+    await emit("mech:overlay-quiet", null);
+  } catch {}
+}
 async function broadcastSettings(settings: MechSettings) {
   dbg(`[sync] broadcast settings → variant=${settings.overlayVariant} clickThrough=${settings.clickThrough}`);
   try {
@@ -87,11 +95,17 @@ function bestGateMatch(raids: Gate[], bossName: string): Gate | null {
   return bestScore >= MATCH_THRESHOLD ? best : null;
 }
 
-// Two-tier silence detection:
-// - OVERLAY_HIDE_MS: hide the overlay and clear HP display (phase transition / stagger gap)
-// - GATE_RESET_MS: full encounter reset — only after silence long enough to be a real wipe/clear
+// Three-tier silence detection (no instant wipe signal exists — on a wipe the boss stays
+// alive and simply stops sending HP, so end-of-fight is inferred from silence):
+// - OVERLAY_HIDE_MS (8s): clear HP display; the overlay keeps showing a "phase transition…"
+//   placeholder via the preserved gateId (covers brief stagger / transition gaps).
+// - PLACEHOLDER_HIDE_MS (20s): hide that placeholder (and, with autoShowHide, the window) via
+//   mech:overlay-quiet, but KEEP liveGateId + fired-mech keys so HP resuming before 60s picks
+//   up without a re-match / re-fire. Stops a wipe sitting on "phase transition…" for the full 60s.
+// - GATE_RESET_MS (60s): full encounter reset — safety net for when isDead/loa:fight-end never fire.
 // Keeping liveGateId alive through short gaps prevents re-matching on mid-phase boss name changes.
 const OVERLAY_HIDE_MS = 8_000;
+const PLACEHOLDER_HIDE_MS = 20_000;
 const GATE_RESET_MS = 60_000;
 
 // Shown in the overlay's primary slot once every mech in the live gate has fired and the
@@ -105,12 +119,15 @@ const ENCOURAGE_POOL = [
 ];
 
 let overlayHideTimer: ReturnType<typeof setTimeout> | null = null;
+let placeholderQuietTimer: ReturnType<typeof setTimeout> | null = null;
 let gateResetTimer: ReturnType<typeof setTimeout> | null = null;
 
-function startHeartbeat(onHide: () => void, onReset: () => void) {
+function startHeartbeat(onHide: () => void, onQuiet: () => void, onReset: () => void) {
   if (overlayHideTimer) clearTimeout(overlayHideTimer);
+  if (placeholderQuietTimer) clearTimeout(placeholderQuietTimer);
   if (gateResetTimer) clearTimeout(gateResetTimer);
   overlayHideTimer = setTimeout(onHide, OVERLAY_HIDE_MS);
+  placeholderQuietTimer = setTimeout(onQuiet, PLACEHOLDER_HIDE_MS);
   gateResetTimer = setTimeout(onReset, GATE_RESET_MS);
 }
 
@@ -118,6 +135,10 @@ function stopHeartbeat() {
   if (overlayHideTimer) {
     clearTimeout(overlayHideTimer);
     overlayHideTimer = null;
+  }
+  if (placeholderQuietTimer) {
+    clearTimeout(placeholderQuietTimer);
+    placeholderQuietTimer = null;
   }
   if (gateResetTimer) {
     clearTimeout(gateResetTimer);
@@ -480,7 +501,10 @@ export const mechStore = (() => {
     updateGate(
       gateId: string,
       patch: Partial<
-        Pick<Gate, "raid" | "gate" | "boss" | "bossType" | "weakness" | "totalBars" | "tauntable" | "availableDifficulties">
+        Pick<
+          Gate,
+          "raid" | "gate" | "boss" | "bossType" | "weakness" | "totalBars" | "tauntable" | "availableDifficulties"
+        >
       >
     ) {
       raids = raids.map((r) => (r.id === gateId ? { ...r, ...patch } : r));
@@ -657,6 +681,14 @@ export const mechStore = (() => {
         broadcastEncounterEnd();
         if (mechSettings.autoShowHide) broadcastOverlayControl(false);
       };
+      // Middle stage (20s): prolonged silence — drop the "phase transition…" placeholder so a
+      // wipe doesn't sit on it for the full 60s, but keep liveGateId + fired keys so a genuine
+      // long transition that resumes HP before 60s picks up without re-matching or re-firing.
+      const onPlaceholderQuiet = () => {
+        dbg(`[fight] silence (20s) → hide placeholder (gate + mech state kept)`);
+        broadcastOverlayQuiet();
+        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
+      };
 
       if (!data || data.isDead) {
         // If a gate is already locked in, ignore isDead events from unrelated bosses
@@ -666,7 +698,7 @@ export const mechStore = (() => {
           const matchedGate = bestGateMatch(raids, data.name ?? "");
           if (!matchedGate || matchedGate.id !== liveGateId) {
             dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
-            startHeartbeat(onTier1Timeout, onTier2Timeout);
+            startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
             return;
           }
         }
@@ -727,7 +759,7 @@ export const mechStore = (() => {
       });
       if (mechSettings.autoShowHide) broadcastOverlayControl(true);
 
-      startHeartbeat(onTier1Timeout, onTier2Timeout);
+      startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
     },
 
     // Drives the encouragement state from the Overlay Preview panel's local sim

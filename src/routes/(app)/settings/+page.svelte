@@ -335,159 +335,160 @@
             : ''}"
           aria-disabled={s.announcementsEnabled === false}
         >
-        <!-- TIMING section -->
-        <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Timing</span>
-          <div class="h-px flex-1 bg-accent-500/20"></div>
-        </div>
-
-        <!-- HP Trigger Lead Time -->
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">HP Trigger Lead Time</div>
-          <div class="text-xs text-neutral-400">
-            How many HP bars before an HP-triggered mechanic fires to announce it
-          </div>
+          <!-- TIMING section -->
           <div class="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min={1}
-              max={30}
-              step={1}
-              value={s.lead}
-              oninput={(e) => upd("lead", parseInt((e.target as HTMLInputElement).value))}
-              class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
-            />
-            <div
-              class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
-            >
-              {s.lead} bars
+            <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Timing</span>
+            <div class="h-px flex-1 bg-accent-500/20"></div>
+          </div>
+
+          <!-- HP Trigger Lead Time -->
+          <div class="flex flex-col gap-1">
+            <div class="text-sm font-semibold">HP Trigger Lead Time</div>
+            <div class="text-xs text-neutral-400">
+              How many HP bars before an HP-triggered mechanic fires to announce it
             </div>
-          </div>
-        </div>
-
-        <!-- Repeating Pattern Lead Time -->
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">Repeating Pattern Lead Time</div>
-          <div class="text-xs text-neutral-400">
-            How many seconds before a repeating mechanic fires again to announce it
-          </div>
-          <div class="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min={1}
-              max={30}
-              step={1}
-              value={s.repeatLead}
-              oninput={(e) => upd("repeatLead", parseInt((e.target as HTMLInputElement).value))}
-              class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
-            />
-            <div
-              class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
-            >
-              {s.repeatLead}s
-            </div>
-          </div>
-        </div>
-
-        <!-- VOICE section -->
-        <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Voice</span>
-          <div class="h-px flex-1 bg-accent-500/20"></div>
-        </div>
-
-        <!-- Volume -->
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">Volume</div>
-          <div class="text-xs text-neutral-400">TTS announcement volume</div>
-          <div class="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              value={s.vol}
-              oninput={(e) => upd("vol", parseInt((e.target as HTMLInputElement).value))}
-              class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
-            />
-            <div
-              class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
-            >
-              {s.vol}%
-            </div>
-          </div>
-        </div>
-
-        <!-- Speech Rate -->
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">Speech Rate</div>
-          <div class="text-xs text-neutral-400">How fast the TTS voice speaks. 1.0× is normal speed.</div>
-          <div class="flex items-center gap-3 pt-1">
-            <input
-              type="range"
-              min={0.5}
-              max={2.0}
-              step={0.1}
-              value={s.ttsRate ?? 1.0}
-              oninput={(e) => upd("ttsRate", parseFloat((e.target as HTMLInputElement).value))}
-              class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
-            />
-            <div
-              class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
-            >
-              {(s.ttsRate ?? 1.0).toFixed(1)}×
-            </div>
-          </div>
-        </div>
-
-        <!-- Voice picker + Test button on same row -->
-        <div class="flex items-center gap-4 pt-1">
-          <div class="flex items-center gap-2">
-            {#each ["Andrew", "Jenny"] as const as voiceName}
-              <button
-                onclick={() => upd("voice", voiceName)}
-                class="rounded-sm px-4 py-1.5 text-sm font-medium transition {s.voice === voiceName
-                  ? 'bg-accent-600/80 text-white'
-                  : 'bg-neutral-700/60 text-neutral-300 hover:bg-neutral-700'}">{voiceName}</button
-              >
-            {/each}
-            <span class="pl-1 text-sm text-neutral-400">Voice</span>
-          </div>
-        </div>
-
-        <!-- Test button + voice debug -->
-        <div class="flex flex-wrap items-center gap-3">
-          <button
-            onclick={testTTS}
-            class="flex items-center gap-2 rounded-md border border-accent-500/40 bg-accent-600/20 px-4 py-2 text-sm font-semibold text-accent-400 transition hover:bg-accent-600/30"
-          >
-            🔊 Test Announcement
-          </button>
-          <button
-            onclick={toggleInstalledVoices}
-            class="text-xs text-neutral-500 underline underline-offset-2 transition hover:text-neutral-300"
-          >
-            {showVoices ? "Hide installed voices" : "Show installed voices"}
-          </button>
-        </div>
-
-        {#if showVoices}
-          <div class="rounded-md border border-neutral-700 bg-neutral-800/60 px-4 py-3">
-            <div class="mb-1 text-xs font-semibold tracking-wide text-neutral-400 uppercase">Installed Voices</div>
-            {#each installedVoices as v}
+            <div class="flex items-center gap-3 pt-1">
+              <input
+                type="range"
+                min={1}
+                max={30}
+                step={1}
+                value={s.lead}
+                oninput={(e) => upd("lead", parseInt((e.target as HTMLInputElement).value))}
+                class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
+              />
               <div
-                class="py-0.5 text-xs text-neutral-400 {v.toLowerCase().includes('andrew') ||
-                v.toLowerCase().includes('jenny')
-                  ? 'font-medium text-accent-400'
-                  : ''}"
+                class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
               >
-                {v}
+                {s.lead} bars
               </div>
-            {:else}
-              <div class="text-xs text-neutral-500">No voices found</div>
-            {/each}
+            </div>
           </div>
-        {/if}
-        </div><!-- /announcementsEnabled wrapper -->
+
+          <!-- Repeating Pattern Lead Time -->
+          <div class="flex flex-col gap-1">
+            <div class="text-sm font-semibold">Repeating Pattern Lead Time</div>
+            <div class="text-xs text-neutral-400">
+              How many seconds before a repeating mechanic fires again to announce it
+            </div>
+            <div class="flex items-center gap-3 pt-1">
+              <input
+                type="range"
+                min={1}
+                max={30}
+                step={1}
+                value={s.repeatLead}
+                oninput={(e) => upd("repeatLead", parseInt((e.target as HTMLInputElement).value))}
+                class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
+              />
+              <div
+                class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
+              >
+                {s.repeatLead}s
+              </div>
+            </div>
+          </div>
+
+          <!-- VOICE section -->
+          <div class="flex items-center gap-3 pt-2">
+            <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Voice</span>
+            <div class="h-px flex-1 bg-accent-500/20"></div>
+          </div>
+
+          <!-- Volume -->
+          <div class="flex flex-col gap-1">
+            <div class="text-sm font-semibold">Volume</div>
+            <div class="text-xs text-neutral-400">TTS announcement volume</div>
+            <div class="flex items-center gap-3 pt-1">
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={s.vol}
+                oninput={(e) => upd("vol", parseInt((e.target as HTMLInputElement).value))}
+                class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
+              />
+              <div
+                class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
+              >
+                {s.vol}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Speech Rate -->
+          <div class="flex flex-col gap-1">
+            <div class="text-sm font-semibold">Speech Rate</div>
+            <div class="text-xs text-neutral-400">How fast the TTS voice speaks. 1.0× is normal speed.</div>
+            <div class="flex items-center gap-3 pt-1">
+              <input
+                type="range"
+                min={0.5}
+                max={2.0}
+                step={0.1}
+                value={s.ttsRate ?? 1.0}
+                oninput={(e) => upd("ttsRate", parseFloat((e.target as HTMLInputElement).value))}
+                class="h-[3px] flex-1 appearance-none rounded bg-neutral-700 accent-accent-500"
+              />
+              <div
+                class="w-20 shrink-0 rounded border border-neutral-700 bg-neutral-800 px-2 py-1 text-center font-mono text-sm text-accent-400"
+              >
+                {(s.ttsRate ?? 1.0).toFixed(1)}×
+              </div>
+            </div>
+          </div>
+
+          <!-- Voice picker + Test button on same row -->
+          <div class="flex items-center gap-4 pt-1">
+            <div class="flex items-center gap-2">
+              {#each ["Andrew", "Jenny"] as const as voiceName}
+                <button
+                  onclick={() => upd("voice", voiceName)}
+                  class="rounded-sm px-4 py-1.5 text-sm font-medium transition {s.voice === voiceName
+                    ? 'bg-accent-600/80 text-white'
+                    : 'bg-neutral-700/60 text-neutral-300 hover:bg-neutral-700'}">{voiceName}</button
+                >
+              {/each}
+              <span class="pl-1 text-sm text-neutral-400">Voice</span>
+            </div>
+          </div>
+
+          <!-- Test button + voice debug -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              onclick={testTTS}
+              class="flex items-center gap-2 rounded-md border border-accent-500/40 bg-accent-600/20 px-4 py-2 text-sm font-semibold text-accent-400 transition hover:bg-accent-600/30"
+            >
+              🔊 Test Announcement
+            </button>
+            <button
+              onclick={toggleInstalledVoices}
+              class="text-xs text-neutral-500 underline underline-offset-2 transition hover:text-neutral-300"
+            >
+              {showVoices ? "Hide installed voices" : "Show installed voices"}
+            </button>
+          </div>
+
+          {#if showVoices}
+            <div class="rounded-md border border-neutral-700 bg-neutral-800/60 px-4 py-3">
+              <div class="mb-1 text-xs font-semibold tracking-wide text-neutral-400 uppercase">Installed Voices</div>
+              {#each installedVoices as v}
+                <div
+                  class="py-0.5 text-xs text-neutral-400 {v.toLowerCase().includes('andrew') ||
+                  v.toLowerCase().includes('jenny')
+                    ? 'font-medium text-accent-400'
+                    : ''}"
+                >
+                  {v}
+                </div>
+              {:else}
+                <div class="text-xs text-neutral-500">No voices found</div>
+              {/each}
+            </div>
+          {/if}
+        </div>
+        <!-- /announcementsEnabled wrapper -->
 
         <!-- ── Discord ───────────────────────────────────────────── -->
       {:else if currentTab === "Discord"}
@@ -505,54 +506,55 @@
             : ''}"
           aria-disabled={s.webhookEnabled === false}
         >
-        <!-- CONNECTION section -->
-        <div class="flex items-center gap-3 pt-1">
-          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Connection</span>
-          <div class="h-px flex-1 bg-accent-500/20"></div>
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <div class="text-sm font-semibold">Webhook URL</div>
-          <div class="text-xs text-neutral-400">
-            Announcements are posted as Discord embeds each time a mechanic fires
+          <!-- CONNECTION section -->
+          <div class="flex items-center gap-3 pt-1">
+            <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Connection</span>
+            <div class="h-px flex-1 bg-accent-500/20"></div>
           </div>
-          <input
-            type="url"
-            value={s.hook}
-            oninput={(e) => upd("hook", (e.target as HTMLInputElement).value)}
-            placeholder="https://discord.com/api/webhooks/..."
-            class="mt-2 w-full rounded-md border-0 bg-neutral-700 px-3 py-2 text-sm placeholder-neutral-500 outline-none focus:ring-1 focus:ring-accent-500"
-          />
-        </div>
 
-        <div>
-          <button
-            onclick={testWebhook}
-            disabled={!s.hook}
-            class="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition {s.hook
-              ? 'cursor-pointer border border-indigo-500/40 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30'
-              : 'cursor-not-allowed border border-neutral-700 bg-neutral-800 text-neutral-500 opacity-50'}"
-          >
-            Test Webhook
-          </button>
-        </div>
+          <div class="flex flex-col gap-1">
+            <div class="text-sm font-semibold">Webhook URL</div>
+            <div class="text-xs text-neutral-400">
+              Announcements are posted as Discord embeds each time a mechanic fires
+            </div>
+            <input
+              type="url"
+              value={s.hook}
+              oninput={(e) => upd("hook", (e.target as HTMLInputElement).value)}
+              placeholder="https://discord.com/api/webhooks/..."
+              class="mt-2 w-full rounded-md border-0 bg-neutral-700 px-3 py-2 text-sm placeholder-neutral-500 outline-none focus:ring-1 focus:ring-accent-500"
+            />
+          </div>
 
-        <!-- PREVIEW section -->
-        <div class="flex items-center gap-3 pt-2">
-          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Preview</span>
-          <div class="h-px flex-1 bg-accent-500/20"></div>
-        </div>
+          <div>
+            <button
+              onclick={testWebhook}
+              disabled={!s.hook}
+              class="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition {s.hook
+                ? 'cursor-pointer border border-indigo-500/40 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30'
+                : 'cursor-not-allowed border border-neutral-700 bg-neutral-800 text-neutral-500 opacity-50'}"
+            >
+              Test Webhook
+            </button>
+          </div>
 
-        <div class="rounded-md border border-neutral-700 bg-neutral-800/60 p-4">
-          <div class="mb-2 text-xs font-semibold tracking-wide text-indigo-400 uppercase">Embed Preview</div>
-          <div class="space-y-1 rounded border-l-4 border-orange-400 bg-neutral-900 px-3 py-2 font-mono text-xs">
-            <div class="font-bold text-orange-400">⚠️ Bomberman · Major</div>
-            <div class="text-neutral-400">HP Bar: 175/300 · Phase 2 · Repeats: 1:10</div>
-            <div class="text-neutral-500">P2 starts. Every ~70s. Move/explode to x shape on edge.</div>
-            <div class="pt-1 text-[10px] text-neutral-600">Mech Announcer · Serca G1</div>
+          <!-- PREVIEW section -->
+          <div class="flex items-center gap-3 pt-2">
+            <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Preview</span>
+            <div class="h-px flex-1 bg-accent-500/20"></div>
+          </div>
+
+          <div class="rounded-md border border-neutral-700 bg-neutral-800/60 p-4">
+            <div class="mb-2 text-xs font-semibold tracking-wide text-indigo-400 uppercase">Embed Preview</div>
+            <div class="space-y-1 rounded border-l-4 border-orange-400 bg-neutral-900 px-3 py-2 font-mono text-xs">
+              <div class="font-bold text-orange-400">⚠️ Bomberman · Major</div>
+              <div class="text-neutral-400">HP Bar: 175/300 · Phase 2 · Repeats: 1:10</div>
+              <div class="text-neutral-500">P2 starts. Every ~70s. Move/explode to x shape on edge.</div>
+              <div class="pt-1 text-[10px] text-neutral-600">Mech Announcer · Serca G1</div>
+            </div>
           </div>
         </div>
-        </div><!-- /webhookEnabled wrapper -->
+        <!-- /webhookEnabled wrapper -->
 
         <!-- ── Overlay Preview ─────────────────────────────────── -->
       {:else if currentTab === "Overlay Preview"}

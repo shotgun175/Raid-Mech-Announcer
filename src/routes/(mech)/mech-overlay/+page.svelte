@@ -26,6 +26,11 @@
   let bossName = $state("");
   let gateId = $state<string | null>(null);
   let peerConnected = $state(false);
+  // Set when the main window signals prolonged silence (~20s): stop showing the
+  // "phase transition…" placeholder while keeping gateId, so HP resuming before the
+  // 60s reset restores the live display without a re-match. Cleared when HP resumes
+  // (boss-status with data) or on fight-start / encounter-end.
+  let extendedSilence = $state(false);
 
   const gate = $derived(gateId ? (mechStore.raids.find((r) => r.id === gateId) ?? null) : null);
   const variant = $derived(mechStore.mechSettings.overlayVariant);
@@ -221,19 +226,22 @@
     const unBoss = await listen<BossStatusData | null>("mech:boss-status", (event) => {
       const data = event.payload;
       if (!data || data.isDead) {
-        // HP-only clear — the boss went silent but the gate may still be active
-        // (phase transition, brief stagger gap). gateId, lastFiredKey, and repeat
-        // timer are preserved so mid-fight HP resumption picks up cleanly. Per-fight
-        // teardown is the mech:encounter-end listener's job.
+        // HP went silent (tier-1, 8s+) but the gate may still be active (phase transition,
+        // brief stagger gap), so gateId and lastFiredKey are preserved for a clean resume.
+        // The repeat timer IS stopped here: without live HP we can't know a repeating mech is
+        // still due, and leaving it running announced a mech after a wipe. It restarts from the
+        // HP-watching effect if HP resumes. Per-fight teardown is mech:encounter-end's job.
         if (currentBar !== null) ttsLog(`[TTS][overlay] boss-status cleared (was ${currentBar})`);
         currentBar = null;
         bossName = "";
         mechStore.applyRemoteEncourageMessage(null);
+        clearRepeatTimer();
         return;
       }
       currentBar = data.currentBars;
       totalBars = data.totalBars;
       bossName = data.name;
+      extendedSilence = false; // HP resumed — exit the extended-silence (placeholder-hidden) state
       // Prefer the gateId already resolved by the main window to avoid re-matching
       // against a potentially stale or differently-ordered raids snapshot here.
       if (data.gateId) {
@@ -277,6 +285,15 @@
       ttsLog(`[TTS][overlay] fight-start → reset firedKey + repeatTimer`);
       lastFiredKey = new Set();
       clearRepeatTimer();
+      extendedSilence = false;
+    });
+
+    // Prolonged silence (~20s): drop the "phase transition…" placeholder but keep gateId +
+    // fired keys. The main window keeps the gate alive until the 60s reset, so HP resuming
+    // before then restores the live display cleanly (handled by the boss-status listener).
+    const unQuiet = await listen("mech:overlay-quiet", () => {
+      ttsLog(`[overlay] overlay-quiet → hide placeholder (gate state kept)`);
+      extendedSilence = true;
     });
 
     const unConfirm = await listen("mech:confirm", () => {
@@ -305,6 +322,7 @@
       mechStore.applyRemoteEncourageMessage(null);
       clearRepeatTimer();
       lastFiredKey = new Set();
+      extendedSilence = false;
     });
 
     unlisteners.push(
@@ -315,6 +333,7 @@
       unSettings,
       unRaids,
       unFightStart,
+      unQuiet,
       unConfirm,
       unDiff,
       unPeer,
@@ -336,9 +355,11 @@
 
   When not live, show a preview pill so the user can position and check scale.
 -->
-{#if currentBar == null && gate}
+{#if currentBar == null && gate && !extendedSilence}
   <!-- Gate is active but boss went silent (phase transition / brief stagger gap).
-       Overlay stays visible with a placeholder until HP resumes. -->
+       Overlay stays visible with a placeholder until HP resumes — but only until the
+       ~20s extended-silence mark (extendedSilence), after which it falls through to the
+       idle pill so a wipe doesn't sit on this for the full 60s. -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     onmousedown={startDrag}

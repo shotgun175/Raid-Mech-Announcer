@@ -207,22 +207,22 @@
         >Confirm?</button
       >
     {:else}
-    <button
-      onclick={(e) => {
-        e.stopPropagation();
-        requestDelete();
-      }}
-      title="Delete. Click twice to confirm."
-      style="background: transparent; border: none; cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 12px; color: #f87171; transition: color 0.15s, background 0.15s;"
-      onmouseenter={(e) => {
-        (e.currentTarget as HTMLElement).style.color = "#fca5a5";
-        (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.1)";
-      }}
-      onmouseleave={(e) => {
-        (e.currentTarget as HTMLElement).style.color = "#f87171";
-        (e.currentTarget as HTMLElement).style.background = "transparent";
-      }}>✕</button
-    >
+      <button
+        onclick={(e) => {
+          e.stopPropagation();
+          requestDelete();
+        }}
+        title="Delete. Click twice to confirm."
+        style="background: transparent; border: none; cursor: pointer; padding: 4px 7px; border-radius: 4px; font-size: 12px; color: #f87171; transition: color 0.15s, background 0.15s;"
+        onmouseenter={(e) => {
+          (e.currentTarget as HTMLElement).style.color = "#fca5a5";
+          (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.1)";
+        }}
+        onmouseleave={(e) => {
+          (e.currentTarget as HTMLElement).style.color = "#f87171";
+          (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}>✕</button
+      >
     {/if}
   </div>
 </div>

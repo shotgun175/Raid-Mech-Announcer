@@ -28,9 +28,8 @@
   // library default to revert to, so the button would be a no-op — hide it.
   const libraryMechKeysForGate = $derived<Set<string>>(
     new Set(
-      (gate ? libraryByRaid[gate.raid] ?? [] : [])
-        .find((e) => e.gate === gate?.gate)
-        ?.mechanics.map((m) => m.key) ?? []
+      (gate ? (libraryByRaid[gate.raid] ?? []) : []).find((e) => e.gate === gate?.gate)?.mechanics.map((m) => m.key) ??
+        []
     )
   );
 
