@@ -10,6 +10,7 @@
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
+  import { activeRepeatMech } from "$lib/utils/mechanics";
   import { setClickthrough } from "$lib/api";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
 
@@ -180,12 +181,11 @@
       }
     });
 
-    // Detect the most recently triggered hp+timer mechanic; reset timer when it changes
-    const newActive =
-      [...visibleMechanics]
-        .filter((m) => m.repeatSecs != null && m.hpBar != null && bar < (m.hpBar ?? 0))
-        .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
-        .at(-1) ?? null;
+    // The active repeating mech is the one whose HP threshold was crossed most recently
+    // (lowest hpBar the bar has dropped below). Crossing a later threshold overrides the
+    // current one even if the user has been resetting its timer via confirm — confirm only
+    // touches repeatCountdown, and this re-runs on every HP update.
+    const newActive = activeRepeatMech(visibleMechanics, bar);
     if (newActive?.id !== activeMech?.id) {
       if (newActive) startRepeatTimer(newActive);
       else clearRepeatTimer();
