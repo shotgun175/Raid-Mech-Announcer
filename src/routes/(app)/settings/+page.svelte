@@ -161,12 +161,8 @@
     try {
       await register(key, (event) => {
         if (event.state !== "Pressed") return;
-        const gate = mechStore.selectedGate;
-        if (!gate) return;
-        const next = [...gate.mechanics]
-          .filter((m) => m.repeatSecs != null)
-          .sort((a, b) => (b.hpBar ?? 0) - (a.hpBar ?? 0))[0];
-        if (next) mechStore.confirmMech(next.id);
+        // The overlay resyncs whichever repeating mech is currently active (see its
+        // mech:confirm listener) — no need to pick one here.
         emit("mech:confirm", null).catch(() => {});
       });
     } catch (e) {

@@ -234,8 +234,6 @@ export const mechStore = (() => {
   let liveTotalBars = $state<number | null>(null);
   let liveBossName = $state<string | null>(null);
   let mechSettings = $state<MechSettings>(loadSettings());
-  // mechId → timestamp (ms) of the last user-confirmed fire for that mechanic
-  let confirmedAt = $state<Record<string, number>>({});
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
@@ -320,9 +318,6 @@ export const mechStore = (() => {
     get mechSettings() {
       return mechSettings;
     },
-    get confirmedAt() {
-      return confirmedAt;
-    },
     get liveEncourageMessage() {
       return liveEncourageMessage;
     },
@@ -342,16 +337,6 @@ export const mechStore = (() => {
       next.delete(mechId);
       changedMechIds = next;
       saveChangedMechIds(changedMechIds);
-    },
-
-    // Record that a repeating mechanic just visually fired — resets its cycle from now.
-    confirmMech(mechId: string) {
-      confirmedAt = { ...confirmedAt, [mechId]: Date.now() };
-    },
-
-    // Clear all confirmations (e.g. on encounter reset / gate change)
-    clearConfirmed() {
-      confirmedAt = {};
     },
 
     get selectedGate(): Gate | null {
