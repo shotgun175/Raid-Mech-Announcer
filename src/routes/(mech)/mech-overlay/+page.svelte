@@ -10,7 +10,7 @@
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
-  import { activeRepeatMech } from "$lib/utils/mechanics";
+  import { activeRepeatMech, topMechPerThreshold } from "$lib/utils/mechanics";
   import { setClickthrough } from "$lib/api";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
 
@@ -162,23 +162,23 @@
     if (currentBar == null || !gate || isPhaseTransition) return;
     const bar = currentBar;
     const cfg = mechStore.mechSettings;
-    visibleMechanics.forEach((m) => {
-      if (m.hpBar == null) return;
-
-      // HP trigger: fires once as bar enters the lead window before the mechanic
-      const fireAt = m.hpBar + cfg.lead;
-      const initKey = `${m.id}-initial`;
-      if (bar <= fireAt && bar > m.hpBar && !lastFiredKey.has(initKey)) {
-        lastFiredKey.add(initKey);
-        const barsLeft = bar - m.hpBar;
-        ttsLog(`[TTS][overlay] hp-initial fire "${m.name}" bar=${bar} hpBar=${m.hpBar}`);
-        announce(
-          m.name,
-          m.severity,
-          m.ttsEnabled,
-          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
-        );
-      }
+    // Mechs entering their hp-initial lead window this tick that haven't fired yet.
+    const firing = visibleMechanics.filter(
+      (m) => m.hpBar != null && bar <= m.hpBar + cfg.lead && bar > m.hpBar && !lastFiredKey.has(`${m.id}-initial`)
+    );
+    // Mark every entering mech fired so suppressed ones don't re-announce later, but only
+    // speak one per shared hpBar — two mechs on the same threshold (e.g. Serca G1 Safe Zone +
+    // Maiden Bingo at x100) would otherwise announce over each other. Losers still render.
+    firing.forEach((m) => lastFiredKey.add(`${m.id}-initial`));
+    topMechPerThreshold(firing).forEach((m) => {
+      const barsLeft = bar - m.hpBar!;
+      ttsLog(`[TTS][overlay] hp-initial fire "${m.name}" bar=${bar} hpBar=${m.hpBar}`);
+      announce(
+        m.name,
+        m.severity,
+        m.ttsEnabled,
+        `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
+      );
     });
 
     // The active repeating mech is the one whose HP threshold was crossed most recently

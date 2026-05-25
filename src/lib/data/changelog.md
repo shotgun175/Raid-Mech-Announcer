@@ -14,6 +14,7 @@
 
 - Added a new tier for boss silence so wiping doesn't keep overlay stuck in the prior fight
 - Repeating mechanic callouts now hand off to the next mechanic when its HP threshold is reached, instead of staying stuck on the earlier one
+- Two mechanics on the same HP threshold no longer both speak at once; only the higher-priority one is announced, and both still show on the overlay
 
 <!-- @release-end -->
 
