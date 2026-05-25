@@ -272,7 +272,7 @@
     }, DELETE_CONFIRM_MS);
   }
 
-  function openEditGate(g: typeof mechStore.raids[number]) {
+  function openEditGate(g: (typeof mechStore.raids)[number]) {
     editingGateId = g.id;
     form = {
       raid: g.raid,
@@ -1167,9 +1167,7 @@
               <label
                 style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 11px; color: {isOn
                   ? sty.color
-                  : '#737373'}; background: {isOn
-                  ? sty.bg
-                  : 'transparent'}; border: 1px solid {isOn
+                  : '#737373'}; background: {isOn ? sty.bg : 'transparent'}; border: 1px solid {isOn
                   ? sty.border
                   : '#262626'}; border-radius: 3px; padding: 3px 8px; transition: all 0.15s; font-weight: 700; letter-spacing: 0.04em;"
               >

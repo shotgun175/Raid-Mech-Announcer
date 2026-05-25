@@ -245,9 +245,7 @@
               style="background: {onlySty.bg}; border: 1px solid {onlySty.border}; border-radius: 3px; padding: 2px 8px; color: {onlySty.color}; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;"
               >{onlySty.label}</span
             >
-            <span style="font-size: 11px; color: #737373;"
-              >Locked - this raid only offers one difficulty.</span
-            >
+            <span style="font-size: 11px; color: #737373;">Locked - this raid only offers one difficulty.</span>
           </div>
         </div>
       {:else if availableDifficulties.length > 1}
@@ -304,9 +302,8 @@
         disabled={!isValid}
         style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; padding: 7px 14px; color: #38bdf8; cursor: {isValid
           ? 'pointer'
-          : 'not-allowed'}; font-size: 12.5px; font-weight: 600; opacity: {isValid
-          ? 1
-          : 0.5}; font-family: inherit;">{isEdit ? "Save" : "Add"}</button
+          : 'not-allowed'}; font-size: 12.5px; font-weight: 600; opacity: {isValid ? 1 : 0.5}; font-family: inherit;"
+        >{isEdit ? "Save" : "Add"}</button
       >
     </div>
   </div>
