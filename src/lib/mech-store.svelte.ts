@@ -2,6 +2,7 @@ import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty } from "./utils/difficulty";
+import { bestGateMatch } from "./utils/gate-match";
 
 // Fire-and-forget log into the in-app debug strip. Works from any window via
 // the main window's "tts:debug" listener in (app)/+layout.svelte.
@@ -67,32 +68,6 @@ async function broadcastFightStart() {
   try {
     await emit("mech:fight-start", null);
   } catch {}
-}
-
-// Score-based boss matching: exact = 1.0, partial = overlap ratio, no match = 0.
-// Minimum threshold of 0.25 prevents short names like "Echidna" from weakly
-// matching unrelated long names like "Act 4: Covetous Master Echidna" (score ~0.23)
-// while still allowing phase-name variants like "Desire in Full Bloom, Echidna"
-// to match the "Echidna" gate (score ~0.24 — just above the cutoff).
-const MATCH_THRESHOLD = 0.24;
-function bestGateMatch(raids: Gate[], bossName: string): Gate | null {
-  const live = bossName.toLowerCase().trim();
-  let best: Gate | null = null;
-  let bestScore = 0;
-  for (const gate of raids) {
-    const stored = gate.boss.split(",")[0].toLowerCase().trim();
-    let score = 0;
-    if (stored === live) {
-      score = 1.0;
-    } else if (stored.includes(live) || live.includes(stored)) {
-      score = Math.min(stored.length, live.length) / Math.max(stored.length, live.length);
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      best = gate;
-    }
-  }
-  return bestScore >= MATCH_THRESHOLD ? best : null;
 }
 
 // Three-tier silence detection (no instant wipe signal exists — on a wipe the boss stays
