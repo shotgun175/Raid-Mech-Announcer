@@ -6,7 +6,6 @@
   import { settings } from "$lib/stores.svelte";
   import { registerShortcuts, shortcuts } from "$lib/utils/shortcuts";
   import { speakTts } from "$lib/utils/tts";
-  import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { onMount, onDestroy } from "svelte";
   import { fade } from "svelte/transition";
@@ -148,34 +147,17 @@
     if (!shortcutRecordTarget || !shortcutKeys) return;
     if (shortcutRecordTarget === "__confirmHotkey__") {
       upd("confirmHotkey", shortcutKeys);
-      registerConfirmShortcut(shortcutKeys);
     } else {
       settings.app.shortcuts[shortcutRecordTarget as keyof typeof settings.app.shortcuts] = shortcutKeys;
-      registerShortcuts();
     }
+    // registerShortcuts() is the single path — it unregisters all and re-registers every
+    // shortcut including the confirm hotkey, so it covers both branches above.
+    registerShortcuts();
   }
 
-  // ── Confirm Pattern Hotkey ──────────────────────────────────────────
-  async function registerConfirmShortcut(key: string) {
-    if (!key) return;
-    try {
-      await register(key, (event) => {
-        if (event.state !== "Pressed") return;
-        // The overlay resyncs whichever repeating mech is currently active (see its
-        // mech:confirm listener) — no need to pick one here.
-        emit("mech:confirm", null).catch(() => {});
-      });
-    } catch (e) {
-      console.warn("Shortcut registration failed:", e);
-    }
-  }
-
-  async function clearConfirmKey() {
+  function clearConfirmKey() {
     upd("confirmHotkey", "");
-    try {
-      await unregisterAll();
-    } catch {}
-    registerShortcuts(); // re-register the app shortcuts
+    registerShortcuts(); // re-registers everything; confirm is now blank so it's simply dropped
   }
 
   onMount(async () => {
@@ -185,7 +167,6 @@
   onDestroy(() => {
     document.removeEventListener("keydown", handleScKeydown);
     document.removeEventListener("keyup", handleScKeyUp);
-    registerConfirmShortcut(s.confirmHotkey);
     registerShortcuts();
   });
 </script>
