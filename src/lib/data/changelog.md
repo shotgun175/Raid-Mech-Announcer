@@ -13,6 +13,7 @@
 #### BUG FIXES AND IMPROVEMENTS
 
 - Added a new tier for boss silence so wiping doesn't keep overlay stuck in the prior fight
+- Repeating mechanic callouts now hand off to the next mechanic when its HP threshold is reached, instead of staying stuck on the earlier one
 
 <!-- @release-end -->
 
