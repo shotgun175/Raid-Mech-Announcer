@@ -12,6 +12,20 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.2.3 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.3 - May 25th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - Added a new tier for boss silence so wiping doesn't keep overlay stuck in the prior fight
 - Repeating mechanic callouts now hand off to the next mechanic when its HP threshold is reached, instead of staying stuck on the earlier one
 - Two mechanics on the same HP threshold no longer both speak at once; only the higher-priority one is announced, and both still show on the overlay
@@ -22,14 +36,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.2 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.2 - May 21st, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.2 - May 21st, 2026
 
 #### NEW FEATURES
 
