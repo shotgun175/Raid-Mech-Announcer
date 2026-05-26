@@ -12,3 +12,8 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 /src-tauri
+
+# Machine-stamped by the release workflow (.github/workflows/release.yml), which mutates
+# this file before npm install runs and so can't run prettier on it; exclude it from the
+# format gate rather than let the workflow's output trip `npm run lint` each release.
+src/lib/data/changelog.md

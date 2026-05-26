@@ -33,7 +33,7 @@ pub fn parse_fight_end(line: &str) -> Option<FightEndEvent> {
 
     let after_diff = after.split("difficulty: ").nth(1)?;
     let difficulty = after_diff.split(']').next()?.trim_start_matches('[').to_string();
-    let boss = after_diff.splitn(2, "] ").nth(1)?.trim().to_string();
+    let boss = after_diff.split_once("] ")?.1.trim().to_string();
 
     if boss.is_empty() {
         return None;
