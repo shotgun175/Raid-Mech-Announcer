@@ -8,8 +8,9 @@
   import type { Difficulty, Mechanic } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
   import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
+  import { gatePhases, isPhasedGate, scopeToPhase } from "$lib/utils/mechanics";
   import Header from "../Header.svelte";
-  import { formatGate } from "$lib/mech-constants";
+  import { formatGate, PHASE_COLORS } from "$lib/mech-constants";
 
   let showModal = $state(false);
   let editMech = $state<Mechanic | null>(null);
@@ -42,10 +43,35 @@
   const simBar = $derived(mechStore.liveBar ?? _manualBar);
   const isLive = $derived(mechStore.isLive);
 
+  // Phase-aware editor: a gate is "phased" only when it spans 2+ distinct phases
+  // (Kazeros G2-2 today). `activePhase` is the user's manual tab choice; `effectivePhase`
+  // is what the view actually scopes to - it prefers the live overlay's phase when this
+  // gate is the live fight (auto-follow), else the manual choice, else the lowest phase.
+  const phases = $derived(gate ? gatePhases(gate.mechanics) : []);
+  const isPhased = $derived(gate ? isPhasedGate(gate.mechanics) : false);
+  let activePhase = $state<number | null>(null);
+
+  const autoFollowingLive = $derived(
+    isPhased &&
+      mechStore.isLive &&
+      !!gate &&
+      mechStore.liveGateId === gate.id &&
+      mechStore.livePhase != null &&
+      phases.includes(mechStore.livePhase)
+  );
+
+  const effectivePhase = $derived.by(() => {
+    if (!isPhased) return null;
+    if (autoFollowingLive) return mechStore.livePhase;
+    return activePhase != null && phases.includes(activePhase) ? activePhase : phases[0];
+  });
+
   const activeDifficulty = $derived(activeDifficultyForGate(mechStore.difficultyMap, gate?.raid ?? ""));
   const sorted = $derived(
     gate
-      ? filterByDifficulty([...gate.mechanics], activeDifficulty).sort((a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1))
+      ? filterByDifficulty(scopeToPhase(gate.mechanics, effectivePhase), activeDifficulty).sort(
+          (a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1)
+        )
       : []
   );
   const nextId = $derived(sorted.find((m) => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null);
@@ -132,6 +158,37 @@
         class="border-b border-accent-500/20"
         style="padding: 10px 22px 14px; background: rgba(20,20,20,0.4); flex-shrink: 0;"
       >
+        {#if isPhased}
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span
+              style="font-size: 12px; color: #8a8a8a; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; font-family: ui-monospace, monospace;"
+              >Phase</span
+            >
+            <div style="display: flex; gap: 4px;">
+              {#each phases as p (p)}
+                {@const pc = PHASE_COLORS[p] ?? "var(--color-accent-500)"}
+                {@const active = p === effectivePhase}
+                <button
+                  onclick={() => {
+                    if (!autoFollowingLive) activePhase = p;
+                  }}
+                  disabled={autoFollowingLive}
+                  style="background: {active ? `${pc}20` : 'transparent'}; border: 1px solid {active
+                    ? `${pc}80`
+                    : '#262626'}; border-radius: 4px; padding: 3px 12px; color: {active
+                    ? pc
+                    : '#8a8a8a'}; cursor: {autoFollowingLive
+                    ? 'not-allowed'
+                    : 'pointer'}; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; font-family: inherit; transition: color 0.15s, background 0.15s, border-color 0.15s;"
+                  >Phase {p}</button
+                >
+              {/each}
+            </div>
+            {#if autoFollowingLive}
+              <span style="font-size: 11px; color: #4ade80; font-weight: 700; letter-spacing: 0.06em;">● LIVE</span>
+            {/if}
+          </div>
+        {/if}
         <HPTimeline mechanics={sorted} totalBars={gate.totalBars} currentBar={simBar} />
         <div
           style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace; font-weight: 600;"
