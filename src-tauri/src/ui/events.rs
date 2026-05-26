@@ -102,10 +102,10 @@ pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()>
 
             let app_handle = window.app_handle();
 
-            if let Some(overlay_window) = app_handle.get_overlay_window() {
-                if overlay_window.is_minimized()? {
-                    overlay_window.unminimize()?;
-                }
+            if let Some(overlay_window) = app_handle.get_overlay_window()
+                && overlay_window.is_minimized()?
+            {
+                overlay_window.unminimize()?;
             }
 
             teardown(app_handle);
