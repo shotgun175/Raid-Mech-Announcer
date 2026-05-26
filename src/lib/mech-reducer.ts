@@ -57,6 +57,30 @@ function nextEncourage(
   return null;
 }
 
+// A revival is a large upward HP jump on the SAME pool (totalBars unchanged). A third of the
+// pool cleanly separates a real revival from bar jitter, and the unchanged-totalBars guard
+// keeps the tiny-pool stagger case (which switches pools) from counting as a revival.
+function isRevival(prevBar: number | null, prevTotal: number | null, data: BossStatusData): boolean {
+  return (
+    prevBar != null &&
+    prevTotal != null &&
+    data.totalBars === prevTotal &&
+    data.currentBars - prevBar > data.totalBars / 3
+  );
+}
+
+function lowestPhase(gate: Gate | undefined): number | null {
+  if (!gate) return null;
+  const phases = gate.mechanics.map((m) => m.phase).filter((p): p is 1 | 2 | 3 | 4 => p != null);
+  return phases.length ? Math.min(...phases) : null;
+}
+
+function nextPhaseAfter(gate: Gate | undefined, current: number | null): number | null {
+  if (!gate || current == null) return current;
+  const higher = gate.mechanics.map((m) => m.phase).filter((p): p is 1 | 2 | 3 | 4 => p != null && p > current);
+  return higher.length ? Math.min(...higher) : current;
+}
+
 /**
  * Pure decision logic for the live boss-status pipeline. Given the current per-fight state
  * and an event (a boss-status update, or one of the three silence-timer ticks), returns the
@@ -192,6 +216,21 @@ export function reduceBossStatus(
   }
 
   const liveGate = next.liveGateId ? ctx.raids.find((r) => r.id === next.liveGateId) : undefined;
+
+  // Phase: seed to the gate's lowest tag on (re)bind, advance on a same-pool revival, else keep.
+  if (next.liveGateId !== state.liveGateId) {
+    next.livePhase = lowestPhase(liveGate);
+  } else if (liveGate && isRevival(state.liveBar, state.liveTotalBars, data)) {
+    const advanced = nextPhaseAfter(liveGate, state.livePhase);
+    if (advanced !== state.livePhase) {
+      next.livePhase = advanced;
+      effects.push({
+        type: "log",
+        msg: `[fight] revival (HP +${data.currentBars - (state.liveBar ?? 0)}) → phase ${advanced}`
+      });
+    }
+  }
+
   const swapPhase = liveGate ? isBossSwapPhase(liveGate, data.name) : false;
   const prevEnc = next.liveEncourageMessage;
   next.liveEncourageMessage = nextEncourage(
@@ -208,7 +247,12 @@ export function reduceBossStatus(
 
   effects.push({
     type: "broadcast-status",
-    payload: { ...data, gateId: next.liveGateId ?? null, encourageMessage: next.liveEncourageMessage }
+    payload: {
+      ...data,
+      gateId: next.liveGateId ?? null,
+      encourageMessage: next.liveEncourageMessage,
+      activePhase: next.livePhase
+    }
   });
   if (ctx.autoShowHide) effects.push({ type: "overlay-show" });
   effects.push({ type: "start-heartbeat" });
