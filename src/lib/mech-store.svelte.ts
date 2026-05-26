@@ -1,8 +1,9 @@
 import { emit } from "@tauri-apps/api/event";
-import { buildDefaultRaids, buildLibraryGate, gateSwapsBoss, isBossSwapPhase, LIBRARY } from "./data/raid-library";
+import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty } from "./utils/difficulty";
 import { bestGateMatch } from "./utils/gate-match";
+import { reduceBossStatus, type BossEvent, type Effect, type FightState } from "./mech-reducer";
 
 // Fire-and-forget log into the in-app debug strip. Works from any window via
 // the main window's "tts:debug" listener in (app)/+layout.svelte.
@@ -268,6 +269,68 @@ export const mechStore = (() => {
       changedMechIds = next;
       saveChangedMechIds(changedMechIds);
     }
+  }
+
+  // setBossStatus runs the pure reducer (mech-reducer.ts), applies the returned state to the
+  // local $state, and dispatches the returned effects. The three silence-timer callbacks feed
+  // tier1/quiet/tier2 events back through the same path. Keeps all decision logic in the reducer.
+  function applyState(s: FightState) {
+    liveGateId = s.liveGateId;
+    liveBar = s.liveBar;
+    liveTotalBars = s.liveTotalBars;
+    liveBossName = s.liveBossName;
+    liveEncourageMessage = s.liveEncourageMessage;
+  }
+
+  function runEffect(e: Effect) {
+    switch (e.type) {
+      case "broadcast-status":
+        broadcastBossStatus(e.payload);
+        break;
+      case "encounter-end":
+        broadcastEncounterEnd();
+        break;
+      case "fight-start":
+        broadcastFightStart();
+        break;
+      case "overlay-quiet":
+        broadcastOverlayQuiet();
+        break;
+      case "overlay-show":
+        broadcastOverlayControl(true);
+        break;
+      case "overlay-hide":
+        broadcastOverlayControl(false);
+        break;
+      case "start-heartbeat":
+        startHeartbeat(
+          () => dispatch({ type: "tier1" }),
+          () => dispatch({ type: "quiet" }),
+          () => dispatch({ type: "tier2" })
+        );
+        break;
+      case "stop-heartbeat":
+        stopHeartbeat();
+        break;
+      case "log":
+        dbg(e.msg);
+        break;
+    }
+  }
+
+  function dispatch(event: BossEvent) {
+    const { state, effects } = reduceBossStatus(
+      { liveGateId, liveBar, liveTotalBars, liveBossName, liveEncourageMessage },
+      event,
+      {
+        raids,
+        difficultyMap,
+        autoShowHide: mechSettings.autoShowHide,
+        pickEncourage: () => ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)]
+      }
+    );
+    applyState(state);
+    for (const eff of effects) runEffect(eff);
   }
 
   return {
@@ -622,123 +685,7 @@ export const mechStore = (() => {
     },
 
     setBossStatus(data: BossStatusData | null) {
-      // Tier 1 (8s): clear HP display only — covers brief phase silences (e.g. Aegir's
-      // Heart-DPS phase, Echidna phase transitions). The overlay window STAYS visible
-      // and renders a "Phase transition…" placeholder using the preserved gateId; we
-      // never auto-hide mid-fight because the gate is still active.
-      const onTier1Timeout = () => {
-        dbg(`[fight] tier-1 timeout (8s) → clear HP display (gate stays, overlay stays visible)`);
-        liveBar = null;
-        liveTotalBars = null;
-        liveBossName = null;
-        broadcastBossStatus(null);
-      };
-      // Tier 2 (60s): safety net for the case where isDead never fires (LOA disconnects,
-      // packet loss). Treats prolonged silence as a true encounter end: clears the gate,
-      // broadcasts encounter-end, and hides the overlay (autoShowHide-gated).
-      const onTier2Timeout = () => {
-        dbg(`[fight] tier-2 timeout (60s) → encounter ended (gate cleared, overlay hidden)`);
-        liveGateId = null;
-        liveEncourageMessage = null;
-        broadcastEncounterEnd();
-        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-      };
-      // Middle stage (20s): prolonged silence — drop the "phase transition…" placeholder so a
-      // wipe doesn't sit on it for the full 60s, but keep liveGateId + fired keys so a genuine
-      // long transition that resumes HP before 60s picks up without re-matching or re-firing.
-      const onPlaceholderQuiet = () => {
-        dbg(`[fight] silence (20s) → hide placeholder (gate + mech state kept)`);
-        broadcastOverlayQuiet();
-        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-      };
-
-      if (!data || data.isDead) {
-        // If a gate is already locked in, ignore isDead events from unrelated bosses
-        // (e.g. Alcaone dying during Echidna G2 stagger, or the Heart during Aegir's
-        // Heart-DPS phase). Push both heartbeats out so the overlay doesn't flicker.
-        if (liveGateId && data?.isDead) {
-          const matchedGate = bestGateMatch(raids, data.name ?? "");
-          if (!matchedGate || matchedGate.id !== liveGateId) {
-            dbg(`[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)`);
-            startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
-            return;
-          }
-          // The live gate's OWN boss died, but this gate's listed boss isn't the finisher —
-          // it swaps to a different boss mid-fight (Act 4: Armoche G1: Echidna dies at x30,
-          // Brelshaza takes over). Treat it like a phase transition: keep the gate sticky so
-          // the follow-up boss (which matches no other gate) stays bound, clear only the HP
-          // display, and preserve fired-mech keys so the first boss's mechs don't re-fire.
-          const liveGate = raids.find((r) => r.id === liveGateId);
-          if (liveGate && gateSwapsBoss(liveGate.raid, liveGate.gate)) {
-            dbg(`[gate] boss "${data.name}" died — ${liveGate.raid} G${liveGate.gate} swaps bosses, keeping gate`);
-            liveBar = null;
-            liveTotalBars = null;
-            liveBossName = null;
-            broadcastBossStatus(null);
-            startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
-            return;
-          }
-        }
-        // Either PeerJS dropped (data is null) or the active gate's boss died. Treat as
-        // a real encounter end: clear gate immediately so the next HP event re-matches
-        // fresh (handles G1→G2 transitions and same-gate repulls). The live-data flip
-        // block below is the safety net for cases where isDead never fires.
-        dbg(`[fight] end → boss "${data?.name ?? "null"}" cleared (gate cleared, overlay hidden)`);
-        liveBar = null;
-        liveTotalBars = null;
-        liveBossName = null;
-        liveGateId = null;
-        liveEncourageMessage = null;
-        stopHeartbeat();
-        broadcastBossStatus(null);
-        broadcastEncounterEnd();
-        if (mechSettings.autoShowHide) broadcastOverlayControl(false);
-        return;
-      }
-      liveBar = data.currentBars;
-      liveTotalBars = data.totalBars;
-      liveBossName = data.name;
-
-      // Gate matching: sticky by default to survive mid-phase name changes
-      // (e.g. Echidna → Covetous Master Echidna), but re-match when the new boss
-      // name resolves to a DIFFERENT valid gate — that's a real raid/gate transition
-      // (e.g. G1 ends and G2 starts within the 60s GATE_RESET_MS window before the
-      // sticky liveGateId would have cleared on its own).
-      if (!liveGateId) {
-        const matched = bestGateMatch(raids, data.name);
-        if (matched) {
-          liveGateId = matched.id;
-          dbg(`[gate] matched boss "${data.name}" → ${matched.raid} G${matched.gate} (${matched.id})`);
-          broadcastFightStart();
-        } else {
-          dbg(`[gate] NO MATCH for boss "${data.name}" — overlay won't fire mechs`);
-        }
-      } else {
-        const candidate = bestGateMatch(raids, data.name);
-        if (candidate && candidate.id !== liveGateId) {
-          dbg(
-            `[gate] boss "${data.name}" resolves to a different gate (${candidate.raid} G${candidate.gate}) → re-match`
-          );
-          liveGateId = candidate.id;
-          liveEncourageMessage = null;
-          broadcastFightStart();
-        }
-      }
-
-      // Compute encouragement before broadcasting so the overlay window receives the
-      // chosen line in the payload — each Tauri window has its own mechStore instance,
-      // so rolling the dice on the overlay side would diverge from the debug log.
-      const liveGate = liveGateId ? raids.find((r) => r.id === liveGateId) : null;
-      const swapPhase = liveGate ? isBossSwapPhase(liveGate, data.name) : false;
-      recomputeEncourage(data.currentBars, liveGateId, swapPhase);
-      broadcastBossStatus({
-        ...data,
-        gateId: liveGateId ?? null,
-        encourageMessage: liveEncourageMessage
-      });
-      if (mechSettings.autoShowHide) broadcastOverlayControl(true);
-
-      startHeartbeat(onTier1Timeout, onPlaceholderQuiet, onTier2Timeout);
+      dispatch({ type: "status", data });
     },
 
     // Drives the encouragement state from the Overlay Preview panel's local sim
