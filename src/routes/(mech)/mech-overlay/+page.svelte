@@ -200,14 +200,14 @@
     }
   });
 
-  // Window size follows the overlay's live state. While a fight is showing live HP, wrap the
-  // window to its content — measured once per live transition (the ResizeObserver disconnects
-  // after the first read) so manual mid-fight resizes aren't fought. The moment HP goes silent
-  // (wipe, death, or a phase gap) or the overlay is idle, collapse to the compact waiting size
-  // rather than staying expanded until the 60s gate reset (gateId is preserved that long for a
-  // clean resume, but the window shouldn't sit large on idle content meanwhile).
+  // Window size follows the overlay's live state. It only expands for the full mech overlay (a
+  // matched gate showing real live HP). Every other state renders just a small pill (idle, no
+  // gate matched, HP silent/placeholder, or a tiny-pool stagger phase such as a 1/1-bar clone
+  // like "Abyssal Afterimage"), so it collapses to the compact waiting size instead of sitting
+  // large. Content is measured once per expand (the ResizeObserver disconnects after the first
+  // read) so manual mid-fight resizes aren't fought, and it re-expands when real HP resumes.
   $effect(() => {
-    if (!gate || !hasLiveHp) {
+    if (!gate || !hasLiveHp || isPhaseTransition) {
       getCurrentWebviewWindow()
         .setSize(new LogicalSize(500, 100))
         .catch(() => {});
