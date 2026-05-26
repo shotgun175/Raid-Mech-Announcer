@@ -1149,6 +1149,7 @@
               <option value="GOD">God</option>
               <option value="HUMAN">Human</option>
               <option value="INSECT">Insect</option>
+              <option value="MATTER">Matter</option>
               <option value="PLANT">Plant</option>
               <option value="UNDEAD">Undead</option>
             </select>

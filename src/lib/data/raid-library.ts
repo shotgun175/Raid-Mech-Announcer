@@ -120,7 +120,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 1,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Dark Mountain Predator",
-    bossType: "DEMON",
+    bossType: "BEAST",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -618,7 +618,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 4,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Gehenna Helkasirs",
-    bossType: "ANCIENT",
+    bossType: "MATTER",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -651,7 +651,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 4,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Ashtarot",
-    bossType: "ANCIENT",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -763,7 +763,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 4,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Phantom Legion Commander Brelshaza",
-    bossType: "ANCIENT",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -2197,7 +2197,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 13,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Thaemine, Master of Darkness",
-    bossType: "HUMAN",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
