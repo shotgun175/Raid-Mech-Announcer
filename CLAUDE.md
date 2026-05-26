@@ -60,7 +60,7 @@ The app has two primary surfaces:
 - **Settings** (`/settings`) — TTS voice, Discord webhook, overlay variant, shortcuts, preview
 
 ## Stack
-- **Frontend**: Svelte 5 (runes API), SvelteKit 2, TypeScript, TailwindCSS 4, ECharts, Melt UI
+- **Frontend**: Svelte 5 (runes API), SvelteKit 2, TypeScript, TailwindCSS 4, Melt UI
 - **Desktop shell**: Tauri v2, Rust edition 2024 (min 1.90)
 - **Backend**: Rust + Tokio async (no database — all user data in WebView2 localStorage)
 - **Node**: ≥ 24.0.0 / npm ≥ 11.0.0
@@ -186,7 +186,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - **`$derived.by()` vs `$derived(() => ...)`**: `$derived(() => fn)` stores the arrow function as a reactive value — the body is never re-evaluated. Always use `$derived.by(() => { ... })` for multi-statement derivations.
 - **Shortcut registration**: shortcuts are registered on app startup (in the layout's `onMount`) and re-registered when leaving the Settings page. If a key conflicts with another app's global hotkey, registration fails silently with a `console.warn`.
 - **Rust edition 2024**: requires rustc ≥ 1.90 — `rustup update stable` if build fails.
-- **Updater plugin disabled**: `tauri_plugin_updater` is commented out in `main.rs`. Do not re-enable until signing keys and endpoints are configured (see TODO above).
+- **Updater plugin is enabled**: `tauri_plugin_updater` is registered in `main.rs` and wired against GitHub Releases (keys/endpoint in the Releases section above).
 - **LOA Logs has no local API**: port 6040 in LOA Logs `settings.json` is a packet-capture config value, not a server port. The only real-time data path from LOA Logs into this app is the PeerJS share URL.
 - **Boss names change mid-fight**: e.g. Echidna G2 cycles through multiple phase names. Gate matching is sticky (first-match-wins per fight) so the overlay does not flip to a different raid on a phase transition.
 - **`loa:fight-end` Tauri event**: emitted by `log_watch` whenever LOA Logs writes a fight-end line. Payload: `{ boss: string, difficulty: string, cleared: boolean }`. Only fires when LOA Logs is installed and running.
