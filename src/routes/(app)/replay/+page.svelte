@@ -81,6 +81,13 @@
       <button onclick={loadFights} class="rounded-md bg-neutral-700 px-3 py-1.5 text-sm transition hover:bg-neutral-600"
         >Refresh</button
       >
+      {#if replayingId}
+        <button
+          onclick={stopReplay}
+          class="rounded-md bg-red-500/30 px-3 py-1.5 text-sm font-medium text-red-300 transition hover:bg-red-500/40"
+          >Stop</button
+        >
+      {/if}
       {#if pendingClear}
         <button
           onclick={requestClear}
