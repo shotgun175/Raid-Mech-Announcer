@@ -14,6 +14,10 @@ export default defineConfig({
     })
   ],
   server: {
+    // Tauri's devUrl is pinned to http://localhost:5173, so fail loudly if that port is
+    // taken instead of silently drifting to 5174+ (which leaves Tauri loading a dead URL).
+    port: 5173,
+    strictPort: true,
     watch: { ignored: ["**/src-tauri/**"] }
   }
 });
