@@ -943,7 +943,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 6,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Griefbringer Maurug",
-    bossType: "OTHER",
+    bossType: "UNDEAD",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1022,7 +1022,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 6,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Lord of Degradation Akkan",
-    bossType: "OTHER",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1111,7 +1111,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 6,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Plague Legion Commander Akkan",
-    bossType: "OTHER",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1196,7 +1196,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 7,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kaltaya, the Blooming Chaos",
-    bossType: "OTHER",
+    bossType: "PLANT",
     weakness: "Weak to Fire",
     tauntable: false,
     mechanics: [
@@ -1228,7 +1228,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 7,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Rakathus, the Lurking Arrogance",
-    bossType: "OTHER",
+    bossType: "BEAST",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -2277,7 +2277,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 13,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Blossoming Fear, Naitreya",
-    bossType: "OTHER",
+    bossType: "INSECT",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
