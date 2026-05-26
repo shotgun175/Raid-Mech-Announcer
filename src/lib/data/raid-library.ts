@@ -2874,7 +2874,7 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g23-final-time-attack",
         name: "Final Time Attack",
-        hpBar: 525,
+        hpBar: 583,
         triggerType: "hp",
         phase: 3,
         severity: "wipe",
@@ -2884,7 +2884,7 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g23-sacrifice",
         name: "Sacrifice",
-        hpBar: 350,
+        hpBar: 389,
         triggerType: "hp",
         phase: 3,
         severity: "wipe",
@@ -2894,7 +2894,7 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g23-fake-wipe",
         name: "Fake Wipe",
-        hpBar: 175,
+        hpBar: 194,
         triggerType: "hp",
         phase: 3,
         severity: "wipe",
