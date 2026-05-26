@@ -9,6 +9,7 @@ export type FightState = {
   liveTotalBars: number | null;
   liveBossName: string | null;
   liveEncourageMessage: string | null;
+  livePhase: number | null;
 };
 
 export type BossEvent =
@@ -95,7 +96,7 @@ export function reduceBossStatus(
   }
   if (event.type === "tier2") {
     return {
-      state: { ...state, liveGateId: null, liveEncourageMessage: null },
+      state: { ...state, liveGateId: null, liveEncourageMessage: null, livePhase: null },
       effects: [
         { type: "log", msg: `[fight] tier-2 timeout (60s) → encounter ended (gate cleared, overlay hidden)` },
         { type: "encounter-end" },
@@ -138,7 +139,14 @@ export function reduceBossStatus(
     }
     // Real encounter end / teardown.
     return {
-      state: { liveGateId: null, liveBar: null, liveTotalBars: null, liveBossName: null, liveEncourageMessage: null },
+      state: {
+        liveGateId: null,
+        liveBar: null,
+        liveTotalBars: null,
+        liveBossName: null,
+        liveEncourageMessage: null,
+        livePhase: null
+      },
       effects: [
         { type: "log", msg: `[fight] end → boss "${data?.name ?? "null"}" cleared (gate cleared, overlay hidden)` },
         { type: "stop-heartbeat" },

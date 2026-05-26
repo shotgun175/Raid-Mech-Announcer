@@ -34,7 +34,8 @@ const idle: FightState = {
   liveBar: null,
   liveTotalBars: null,
   liveBossName: null,
-  liveEncourageMessage: null
+  liveEncourageMessage: null,
+  livePhase: null
 };
 
 const records = parseCapture(FIXTURE);

@@ -21,7 +21,8 @@ const idle: FightState = {
   liveBar: null,
   liveTotalBars: null,
   liveBossName: null,
-  liveEncourageMessage: null
+  liveEncourageMessage: null,
+  livePhase: null
 };
 
 function status(name: string, bars: number, isDead = false): { type: "status"; data: BossStatusData } {

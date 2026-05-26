@@ -86,6 +86,7 @@ export interface LibraryMechanic {
   repeatSecs?: number;
   notes?: string;
   difficulties?: Difficulty[];
+  phase?: 1 | 2 | 3 | 4;
 }
 
 export interface LibraryGate {
@@ -3076,7 +3077,7 @@ function makeMechanics(raw: LibraryMechanic[], prefix: string): Mechanic[] {
     hpBar: m.hpBar ?? null,
     timerSecs: m.timerSecs ?? null,
     repeatSecs: m.repeatSecs ?? null,
-    phase: null,
+    phase: m.phase ?? null,
     ttsEnabled: true,
     ttsText: m.name,
     notes: m.notes ?? "",
@@ -3165,7 +3166,7 @@ function stableGate(entry: LibraryGate): Gate {
       hpBar: m.hpBar ?? null,
       timerSecs: m.timerSecs ?? null,
       repeatSecs: m.repeatSecs ?? null,
-      phase: null,
+      phase: m.phase ?? null,
       ttsEnabled: true,
       ttsText: m.name,
       notes: m.notes ?? "",

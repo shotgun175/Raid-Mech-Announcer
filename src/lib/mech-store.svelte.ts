@@ -213,6 +213,7 @@ export const mechStore = (() => {
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
+  let livePhase = $state<number | null>(null);
   // Gates that received library updates in the last reconciliation pass, surfaced
   // as a small dot in the sidebar. Persists across app restarts until user opens
   // that gate. Cleared by selectGate.
@@ -280,6 +281,7 @@ export const mechStore = (() => {
     liveTotalBars = s.liveTotalBars;
     liveBossName = s.liveBossName;
     liveEncourageMessage = s.liveEncourageMessage;
+    livePhase = s.livePhase;
   }
 
   function runEffect(e: Effect) {
@@ -320,7 +322,7 @@ export const mechStore = (() => {
 
   function dispatch(event: BossEvent) {
     const { state, effects } = reduceBossStatus(
-      { liveGateId, liveBar, liveTotalBars, liveBossName, liveEncourageMessage },
+      { liveGateId, liveBar, liveTotalBars, liveBossName, liveEncourageMessage, livePhase },
       event,
       {
         raids,
