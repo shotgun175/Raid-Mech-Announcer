@@ -14,6 +14,8 @@
 
 - Fixed the overlay staying at full fight size during brief stagger or clone phases (such as Kazeros' 1-bar "Abyssal Afterimage" add); it now collapses to the compact size and re-expands when the real boss HP returns
 - Final Act: Kazeros Gate 2 now follows the boss's revival: it stays on one gate (no longer jumping to a mislabeled G2-3) and switches to the next phase's mechanic callouts when the boss revives
+- The Raid Editor now shows multi-phase gates (Final Act: Kazeros Gate 2) one phase at a time via a Phase selector (with an All view to see every phase grouped), so each phase reads as a clean HP descent instead of the two phases' mechanics interleaving by HP value
+- Expanded the Add Raid "Boss Type" options (Beast, Undead, Insect, Elemental, Archdemon, God, Plant, Matter) and corrected several raids' boss types to match the community reference (applies to newly imported or reset raids)
 
 <!-- @release-end -->
 

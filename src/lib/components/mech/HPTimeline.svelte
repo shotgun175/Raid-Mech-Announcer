@@ -67,24 +67,27 @@
     </div>
   {/each}
 
-  <!-- Phase boundary lines (P2+) -->
+  <!-- Phase boundary markers (P2+): label on top, line pointing up from the rail so phase
+       starts are obvious and stay clear of the mech HP numbers below the rail -->
   {#each phaseBoundaries() as { phase, bar }}
     {@const pct = (bar / totalBars) * 100}
     {@const pc = PHASE_COLORS[phase]}
     {@const drained = bar > currentBar}
-    <div style="position: absolute; left: {pct}%; top: 15px; pointer-events: none;">
-      <div
-        style="width: 1px; height: 14px; background: {pc}; opacity: {drained ? 0.25 : 0.7}; box-shadow: {drained
-          ? 'none'
-          : `0 0 4px ${pc}`};"
-      ></div>
+    <div
+      style="position: absolute; left: {pct}%; top: 0; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center;"
+    >
       <div
         style="font-size: 12px; font-family: ui-monospace, monospace; color: {pc}; opacity: {drained
           ? 0.4
-          : 0.9}; font-weight: 800; transform: translateX(-50%); white-space: nowrap; margin-top: 1px;"
+          : 0.9}; font-weight: 800; white-space: nowrap; line-height: 1;"
       >
         P{phase}
       </div>
+      <div
+        style="width: 1px; height: 18px; background: {pc}; opacity: {drained ? 0.25 : 0.7}; box-shadow: {drained
+          ? 'none'
+          : `0 0 4px ${pc}`}; margin-top: 2px;"
+      ></div>
     </div>
   {/each}
 

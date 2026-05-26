@@ -53,3 +53,46 @@ export function topMechPerThreshold(mechs: Mechanic[]): Mechanic[] {
   }
   return [...byBar.values()];
 }
+
+/**
+ * Distinct non-null phase values present in a gate's mechanics, sorted ascending.
+ * E.g. Kazeros G2-2 (phases 2 and 3) -> [2, 3]; an all-null gate -> [].
+ */
+export function gatePhases(mechanics: Mechanic[]): number[] {
+  const seen = new Set<number>();
+  for (const m of mechanics) {
+    if (m.phase != null) seen.add(m.phase);
+  }
+  return [...seen].sort((a, b) => a - b);
+}
+
+/**
+ * A gate is "phased" (worth a phase selector) only when it spans 2+ distinct phases.
+ * A gate whose mechs are all one phase, or all untagged, reads as a single descent and
+ * keeps the flat editor behavior.
+ */
+export function isPhasedGate(mechanics: Mechanic[]): boolean {
+  return gatePhases(mechanics).length >= 2;
+}
+
+/**
+ * Mechs visible/active in a given phase: the phase's own mechs plus all untagged
+ * (phase == null) mechs, mirroring the live overlay's scoping. A null `phase` means
+ * no scoping - returns the list unchanged.
+ */
+export function scopeToPhase(mechanics: Mechanic[], phase: number | null): Mechanic[] {
+  if (phase == null) return mechanics;
+  return mechanics.filter((m) => m.phase == null || m.phase === phase);
+}
+
+/**
+ * Comparator for the editor's "All phases" overview: group by phase ascending
+ * (untagged mechs last), then by hpBar descending within each phase, so each
+ * phase reads as its own clean descent instead of interleaving by raw HP.
+ */
+export function byPhaseThenHp(a: Mechanic, b: Mechanic): number {
+  const pa = a.phase ?? Infinity;
+  const pb = b.phase ?? Infinity;
+  if (pa !== pb) return pa - pb;
+  return (b.hpBar ?? -1) - (a.hpBar ?? -1);
+}
