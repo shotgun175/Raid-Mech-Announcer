@@ -33,6 +33,8 @@
   // 60s reset restores the live display without a re-match. Cleared when HP resumes
   // (boss-status with data) or on fight-start / encounter-end.
   let extendedSilence = $state(false);
+  // Active phase within the bound gate, sent by the main window; advances on a revival.
+  let activePhase = $state<number | null>(null);
 
   const gate = $derived(gateId ? (mechStore.raids.find((r) => r.id === gateId) ?? null) : null);
   const variant = $derived(mechStore.mechSettings.overlayVariant);
@@ -56,7 +58,11 @@
   const activeDifficulty = $derived<Difficulty | null>(
     gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
   );
-  const visibleMechanics = $derived(gate && !inSwapPhase ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
+  const visibleMechanics = $derived(
+    gate && !inSwapPhase
+      ? filterByDifficulty(gate.mechanics, activeDifficulty).filter((m) => m.phase == null || m.phase === activePhase)
+      : []
+  );
 
   let lastAnnounced = $state<{ name: string; severity: string } | null>(null);
   let contentEl = $state<HTMLElement | null>(null);
@@ -245,6 +251,7 @@
         currentBar = null;
         bossName = "";
         mechStore.applyRemoteEncourageMessage(null);
+        activePhase = null;
         clearRepeatTimer();
         stopTts(); // kill any queued/in-flight speech the moment HP goes silent (wipe/transition)
         return;
@@ -263,6 +270,7 @@
       }
       // Encouragement line is picked in the main window so both windows agree.
       mechStore.applyRemoteEncourageMessage(data.encourageMessage ?? null);
+      activePhase = data.activePhase ?? null;
     });
 
     // Show on live connection — no focus steal
@@ -331,6 +339,7 @@
       currentBar = null;
       bossName = "";
       mechStore.applyRemoteEncourageMessage(null);
+      activePhase = null;
       clearRepeatTimer();
       stopTts(); // flush any queued/in-flight speech so nothing leaks out after stop/clear/end
       lastFiredKey = new Set();
