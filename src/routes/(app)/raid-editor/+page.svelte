@@ -8,7 +8,7 @@
   import type { Difficulty, Mechanic } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
   import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
-  import { gatePhases, isPhasedGate, scopeToPhase } from "$lib/utils/mechanics";
+  import { gatePhases, isPhasedGate, scopeToPhase, byPhaseThenHp } from "$lib/utils/mechanics";
   import Header from "../Header.svelte";
   import { formatGate, PHASE_COLORS } from "$lib/mech-constants";
 
@@ -49,7 +49,8 @@
   // gate is the live fight (auto-follow), else the manual choice, else the lowest phase.
   const phases = $derived(gate ? gatePhases(gate.mechanics) : []);
   const isPhased = $derived(gate ? isPhasedGate(gate.mechanics) : false);
-  let activePhase = $state<number | null>(null);
+  // The user's manual tab choice: a phase number, "all" (overview), or null (none yet).
+  let activePhase = $state<number | "all" | null>(null);
 
   const autoFollowingLive = $derived(
     isPhased &&
@@ -62,19 +63,23 @@
 
   const effectivePhase = $derived.by(() => {
     if (!isPhased) return null;
-    if (autoFollowingLive) return mechStore.livePhase;
-    return activePhase != null && phases.includes(activePhase) ? activePhase : phases[0];
+    if (autoFollowingLive) return mechStore.livePhase; // a live fight always wins over a manual "All"/phase pick
+    if (activePhase === "all") return "all";
+    return typeof activePhase === "number" && phases.includes(activePhase) ? activePhase : phases[0];
   });
 
   const activeDifficulty = $derived(activeDifficultyForGate(mechStore.difficultyMap, gate?.raid ?? ""));
-  const sorted = $derived(
-    gate
-      ? filterByDifficulty([...scopeToPhase(gate.mechanics, effectivePhase)], activeDifficulty).sort(
-          (a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1)
-        )
-      : []
+  const sorted = $derived.by(() => {
+    if (!gate) return [];
+    // "All" shows every phase grouped (phase-first, then HP); a single phase scopes to that phase.
+    const scopePhase = effectivePhase === "all" ? null : effectivePhase;
+    const list = filterByDifficulty([...scopeToPhase(gate.mechanics, scopePhase)], activeDifficulty);
+    return effectivePhase === "all" ? list.sort(byPhaseThenHp) : list.sort((a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1));
+  });
+  // No single "next" mechanic makes sense across multiple phases, so suppress the highlight in All mode.
+  const nextId = $derived(
+    effectivePhase === "all" ? null : (sorted.find((m) => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null)
   );
-  const nextId = $derived(sorted.find((m) => m.hpBar != null && (m.hpBar ?? 0) <= simBar)?.id ?? null);
 
   function openAdd() {
     editMech = null;
@@ -165,6 +170,22 @@
               >Phase</span
             >
             <div style="display: flex; gap: 4px;">
+              <button
+                onclick={() => {
+                  if (!autoFollowingLive) activePhase = "all";
+                }}
+                disabled={autoFollowingLive}
+                style="background: {effectivePhase === 'all'
+                  ? 'color-mix(in oklch, var(--color-accent-500) 12%, transparent)'
+                  : 'transparent'}; border: 1px solid {effectivePhase === 'all'
+                  ? 'color-mix(in oklch, var(--color-accent-500) 50%, transparent)'
+                  : '#262626'}; border-radius: 4px; padding: 3px 12px; color: {effectivePhase === 'all'
+                  ? 'var(--color-accent-500)'
+                  : '#8a8a8a'}; cursor: {autoFollowingLive
+                  ? 'not-allowed'
+                  : 'pointer'}; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; font-family: inherit; transition: color 0.15s, background 0.15s, border-color 0.15s;"
+                >All</button
+              >
               {#each phases as p (p)}
                 {@const pc = PHASE_COLORS[p] ?? "var(--color-accent-500)"}
                 {@const active = p === effectivePhase}
@@ -267,7 +288,7 @@
     mech={editMech}
     totalBars={gate?.totalBars ?? 300}
     {availableDifficulties}
-    defaultPhase={isPhased ? effectivePhase : null}
+    defaultPhase={typeof effectivePhase === "number" ? effectivePhase : null}
     onSave={saveMechanic}
     onClose={closeModal}
   />
