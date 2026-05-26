@@ -69,7 +69,6 @@ export const bossHpMap: Record<string, number> = {
   "Brelshaza, Ember in the Ashes": 450,
   "Armoche, Sentinel of the Abyss": 450,
   "Abyss Lord Kazeros": 1000,
-  "God of Death Kazeros": 777,
   "Archdemon Kazeros": 1000,
   "Death Incarnate Kazeros": 777,
   "Witch of Agony, Serca": 300,
@@ -2749,6 +2748,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Forced Clash",
         hpBar: 950,
         triggerType: "hp",
+        phase: 1,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes: "First mechanic of G2; standard clash"
@@ -2758,6 +2758,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Colosseum",
         hpBar: 900,
         triggerType: "hp",
+        phase: 1,
         severity: "wipe",
         difficulties: ["Normal", "Hard"],
         notes:
@@ -2768,6 +2769,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Stagger Break",
         hpBar: 750,
         triggerType: "hp",
+        phase: 1,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes: "Sequence 2 begins; use Kadan or Shandi for flying rock DPS check"
@@ -2777,6 +2779,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Red Blade",
         hpBar: 600,
         triggerType: "hp",
+        phase: 1,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
         notes: "Distinguish knock-up vs grab puddle circles; supports shield/DR throughout"
@@ -2786,6 +2789,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Giant Rock",
         hpBar: 550,
         triggerType: "hp",
+        phase: 1,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes: "Co-op counter after grapple mechanic resolves"
@@ -2798,7 +2802,7 @@ const LIBRARY: LibraryGate[] = [
     gate: 22,
     releaseOrder: 17,
     availableDifficulties: ["Normal", "Hard"],
-    boss: "God of Death Kazeros",
+    boss: "Death Incarnate Kazeros",
     bossType: "HUMAN",
     weakness: "No Weakness",
     tauntable: false,
@@ -2809,6 +2813,7 @@ const LIBRARY: LibraryGate[] = [
         timerSecs: 180,
         repeatSecs: 180,
         triggerType: "timer",
+        phase: 2,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
         notes: "Repeating periodic mechanic throughout phase"
@@ -2818,6 +2823,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Kazeros Says",
         hpBar: 620,
         triggerType: "hp",
+        phase: 2,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes: "Sequence 3 (desert phase) begins — most demanding mechanics. (Maxroll calls this 'Word Command'.)"
@@ -2827,6 +2833,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Time Attack",
         hpBar: 500,
         triggerType: "hp",
+        phase: 2,
         severity: "wipe",
         difficulties: ["Normal", "Hard"],
         notes:
@@ -2837,6 +2844,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Destiny",
         hpBar: 310,
         triggerType: "hp",
+        phase: 2,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes:
@@ -2847,29 +2855,18 @@ const LIBRARY: LibraryGate[] = [
         name: "Kazeros Says",
         hpBar: 160,
         triggerType: "hp",
+        phase: 2,
         severity: "major",
         difficulties: ["Normal", "Hard"],
         notes: "Final sequence — push to end. (Maxroll calls this 'Word Command'.)"
-      }
-    ]
-  },
-  {
-    encounterKey: "Final Act: Kazeros G2-3",
-    raid: "Final Act: Kazeros",
-    gate: 23,
-    releaseOrder: 17,
-    availableDifficulties: ["Normal", "Hard"],
-    boss: "Death Incarnate Kazeros",
-    bossType: "HUMAN",
-    weakness: "No Weakness",
-    tauntable: false,
-    mechanics: [
+      },
       {
         key: "final-act-kazeros-g23-spotlight",
         name: "Spotlight",
         timerSecs: 150,
         repeatSecs: 150,
         triggerType: "timer",
+        phase: 3,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
         notes: "Periodic spotlight — bait to edge and dodge away"
@@ -2879,6 +2876,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Final Time Attack",
         hpBar: 525,
         triggerType: "hp",
+        phase: 3,
         severity: "wipe",
         difficulties: ["Normal", "Hard"],
         notes: "3-cone DPS check; use Kadan on middle cone, hyperawaken left/right cones. 40s timer."
@@ -2888,6 +2886,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Sacrifice",
         hpBar: 350,
         triggerType: "hp",
+        phase: 3,
         severity: "wipe",
         difficulties: ["Normal", "Hard"],
         notes: "Wipe if DPS is insufficient across the 3 cones"
@@ -2897,6 +2896,7 @@ const LIBRARY: LibraryGate[] = [
         name: "Fake Wipe",
         hpBar: 175,
         triggerType: "hp",
+        phase: 3,
         severity: "wipe",
         difficulties: ["Normal", "Hard"],
         notes: "Not an actual wipe — survive through the animation and keep pushing. (Maxroll calls this 'Revival'.)"
