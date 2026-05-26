@@ -6,9 +6,6 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error("UI error: {0}")]
-    Vibrancy(#[from] window_vibrancy::Error),
-
-    #[error("UI error: {0}")]
     Ui(#[from] tauri::Error),
 
     #[error("I/O error: {0}")]
