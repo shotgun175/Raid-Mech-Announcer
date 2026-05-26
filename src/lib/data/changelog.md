@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.2.4 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.4 - May 26th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Each fight is now recorded to a local capture file, so issues can be reproduced from a saved run instead of needing a fresh raid attempt
 - Added an "Open capture folder" button in Settings (Troubleshooting) so you can grab that capture file and send it along when reporting a problem
 
@@ -21,14 +37,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.3 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.3 - May 25th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.3 - May 25th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
