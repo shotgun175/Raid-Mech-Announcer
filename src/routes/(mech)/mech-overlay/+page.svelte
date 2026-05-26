@@ -12,7 +12,7 @@
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
   import { activeRepeatMech, topMechPerThreshold } from "$lib/utils/mechanics";
-  import { setClickthrough } from "$lib/api";
+  import { setClickthrough, stopTts } from "$lib/api";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
 
   // Cross-window debug log helper — the PeerJS strip lives in the main window;
@@ -43,6 +43,9 @@
   const inSwapPhase = $derived(!!gate && isBossSwapPhase(gate, bossName));
   const displayBossName = $derived(inSwapPhase ? bossName.split(",")[0] : gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
+  // A boolean (not the raw bar count) so the resize effect re-runs only when HP appears or
+  // goes silent — not on every HP tick, which would re-measure and fight manual resizes.
+  const hasLiveHp = $derived(currentBar != null);
   const clickThrough = $derived(mechStore.mechSettings.clickThrough);
   // True when LOA Logs reports a tiny HP pool mid-fight (e.g. Echidna G2 stagger phase: 1/1 bars
   // vs gate's 285). 5% threshold catches stagger bars (0.35%) without triggering on real
@@ -197,10 +200,20 @@
     }
   });
 
-  // Auto-resize to content when a gate loads. Fires once per gate — ResizeObserver
-  // disconnects after the first measurement so it doesn't fight manual resizes mid-fight.
+  // Window size follows the overlay's live state. While a fight is showing live HP, wrap the
+  // window to its content — measured once per live transition (the ResizeObserver disconnects
+  // after the first read) so manual mid-fight resizes aren't fought. The moment HP goes silent
+  // (wipe, death, or a phase gap) or the overlay is idle, collapse to the compact waiting size
+  // rather than staying expanded until the 60s gate reset (gateId is preserved that long for a
+  // clean resume, but the window shouldn't sit large on idle content meanwhile).
   $effect(() => {
-    if (!gate || !contentEl) return;
+    if (!gate || !hasLiveHp) {
+      getCurrentWebviewWindow()
+        .setSize(new LogicalSize(500, 100))
+        .catch(() => {});
+      return;
+    }
+    if (!contentEl) return;
     const el = contentEl;
     const ro = new ResizeObserver(() => {
       const { width, height } = el.getBoundingClientRect();
@@ -215,14 +228,6 @@
     });
     ro.observe(el);
     return () => ro.disconnect();
-  });
-
-  // Set compact waiting size when idle (on mount and on fight end).
-  $effect(() => {
-    if (gate) return;
-    getCurrentWebviewWindow()
-      .setSize(new LogicalSize(500, 100))
-      .catch(() => {});
   });
 
   onMount(async () => {
@@ -241,6 +246,7 @@
         bossName = "";
         mechStore.applyRemoteEncourageMessage(null);
         clearRepeatTimer();
+        stopTts(); // kill any queued/in-flight speech the moment HP goes silent (wipe/transition)
         return;
       }
       currentBar = data.currentBars;
@@ -326,6 +332,7 @@
       bossName = "";
       mechStore.applyRemoteEncourageMessage(null);
       clearRepeatTimer();
+      stopTts(); // flush any queued/in-flight speech so nothing leaks out after stop/clear/end
       lastFiredKey = new Set();
       extendedSilence = false;
     });
