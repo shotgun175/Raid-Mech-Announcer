@@ -348,6 +348,9 @@ export const mechStore = (() => {
     get liveBar() {
       return liveBar;
     },
+    get livePhase() {
+      return livePhase;
+    },
     get liveTotalBars() {
       return liveTotalBars;
     },
