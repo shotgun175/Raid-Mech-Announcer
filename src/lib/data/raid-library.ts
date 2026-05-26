@@ -120,7 +120,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 1,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Dark Mountain Predator",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -173,7 +173,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 1,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Demon Beast Commander Valtan",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -263,7 +263,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 2,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Incubus Morphe",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -314,7 +314,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 2,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Covetous Devourer Vykas",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -407,7 +407,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 3,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Saydon",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -476,7 +476,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 3,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kakul",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -546,7 +546,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 3,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Kakul-Saydon",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -1332,7 +1332,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 8,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Killineza the Dark Worshipper",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -1394,7 +1394,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 8,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Valinak, Knight of Darkness",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: true,
     mechanics: [
@@ -1456,7 +1456,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 8,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Thaemine the Lightqueller",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1557,7 +1557,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 8,
     availableDifficulties: ["Hard"],
     boss: "Darkness Legion Commander Thaemine",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1712,7 +1712,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 9,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Echidna",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -1866,7 +1866,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 11,
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Akkan, Lord of Death",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -2122,7 +2122,7 @@ const LIBRARY: LibraryGate[] = [
     // appears later but the sticky gate match keeps us bound through the transition.
     boss: "Phantom Legion Commander Brelshaza",
     totalBars: 420,
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "Weak to Lightning",
     tauntable: false,
     mechanics: [
@@ -2523,7 +2523,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 16,
     availableDifficulties: ["Normal", "Hard"],
     boss: "Act 4: Covetous Master Echidna",
-    bossType: "DEMONIC",
+    bossType: "DEMON",
     weakness: "No Weakness",
     tauntable: false,
     // Echidna dies at x30 and Brelshaza (her own 450-bar pool) takes over to finish G1.
