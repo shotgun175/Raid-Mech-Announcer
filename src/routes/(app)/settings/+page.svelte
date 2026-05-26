@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { saveSettings, getLOAMeterDataPath, listTtsVoices } from "$lib/api";
+  import { saveSettings, getLOAMeterDataPath, listTtsVoices, captureReadAll, captureClear } from "$lib/api";
   import OverlayPreviewPanel from "$lib/components/mech/OverlayPreviewPanel.svelte";
+  import { parseCapture, segmentFights, type Fight } from "$lib/utils/capture";
+  import { replayFight, type ReplayHandle, type ReplayMode } from "$lib/utils/replay";
   import { emit } from "@tauri-apps/api/event";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
@@ -160,6 +162,34 @@
     registerShortcuts(); // re-registers everything; confirm is now blank so it's simply dropped
   }
 
+  // ── Replay (dev only) ───────────────────────────────────────────────
+  const isDev = import.meta.env.DEV;
+  let fights = $state<Fight[]>([]);
+  let replayHandle: ReplayHandle | null = null;
+
+  async function loadFights() {
+    try {
+      fights = segmentFights(parseCapture(await captureReadAll())).reverse(); // newest first
+    } catch {
+      fights = [];
+    }
+  }
+
+  function startReplay(fight: Fight, mode: ReplayMode) {
+    replayHandle?.stop();
+    replayHandle = replayFight(fight.records, mode);
+  }
+
+  function stopReplay() {
+    replayHandle?.stop();
+    replayHandle = null;
+  }
+
+  async function clearCaptures() {
+    await captureClear().catch(() => {});
+    await loadFights();
+  }
+
   onMount(async () => {
     loaDataPath = await getLOAMeterDataPath().catch(() => null);
   });
@@ -292,6 +322,9 @@
       {@render tab("Announcements")}
       {@render tab("Shortcuts")}
       {@render tab("Discord")}
+      {#if isDev}
+        {@render tab("Replay")}
+      {/if}
     </div>
 
     <!-- Tab content -->
@@ -728,6 +761,51 @@
               >
             {/if}
           </div>
+        </div>
+      {:else if currentTab === "Replay"}
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <button
+              onclick={loadFights}
+              class="rounded-md bg-neutral-700 px-3 py-1.5 text-sm transition hover:bg-neutral-600"
+              >Load captures</button
+            >
+            <button
+              onclick={stopReplay}
+              class="rounded-md bg-neutral-800 px-3 py-1.5 text-sm transition hover:bg-neutral-700">Stop</button
+            >
+            <button onclick={clearCaptures} class="px-2 py-1.5 text-xs text-neutral-500 transition hover:text-red-400"
+              >Clear all</button
+            >
+          </div>
+          {#if fights.length === 0}
+            <div class="text-xs text-neutral-500">No captures yet. Connect to a fight, then Load captures.</div>
+          {/if}
+          {#each fights as f (f.id)}
+            <div
+              class="flex items-center justify-between rounded-md border border-neutral-800 bg-neutral-900 px-3 py-2"
+            >
+              <div class="flex flex-col">
+                <span class="text-sm font-medium">{f.boss}</span>
+                <span class="text-xs text-neutral-500"
+                  >{new Date(f.startedAt).toLocaleString()} · {Math.round((f.endedAt - f.startedAt) / 1000)}s · {f.outcome}
+                  · {f.records.length} events</span
+                >
+              </div>
+              <div class="flex gap-2">
+                <button
+                  onclick={() => startReplay(f, "instant")}
+                  class="rounded-md bg-accent-600/30 px-3 py-1 text-xs font-medium text-accent-400 transition hover:bg-accent-600/40"
+                  >Instant</button
+                >
+                <button
+                  onclick={() => startReplay(f, "realtime")}
+                  class="rounded-md bg-accent-600/30 px-3 py-1 text-xs font-medium text-accent-400 transition hover:bg-accent-600/40"
+                  >Real-time</button
+                >
+              </div>
+            </div>
+          {/each}
         </div>
       {/if}
     </div>
