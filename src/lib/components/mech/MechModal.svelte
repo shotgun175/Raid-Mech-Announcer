@@ -7,10 +7,11 @@
     mech: Mechanic | null;
     totalBars: number;
     availableDifficulties: Difficulty[];
+    defaultPhase?: number | null;
     onSave: (m: Mechanic) => void;
     onClose: () => void;
   }
-  let { mech, totalBars, availableDifficulties, onSave, onClose }: Props = $props();
+  let { mech, totalBars, availableDifficulties, defaultPhase, onSave, onClose }: Props = $props();
 
   const isEdit = $derived(mech != null && !!mech.id);
 
@@ -49,7 +50,7 @@
           severity: "major",
           triggerType: "hp",
           hpBar: "",
-          phase: "",
+          phase: defaultPhase != null ? String(defaultPhase) : "",
           repeatSecs: "",
           timerSecs: "",
           ttsEnabled: false,

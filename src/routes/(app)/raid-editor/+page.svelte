@@ -267,6 +267,7 @@
     mech={editMech}
     totalBars={gate?.totalBars ?? 300}
     {availableDifficulties}
+    defaultPhase={isPhased ? effectivePhase : null}
     onSave={saveMechanic}
     onClose={closeModal}
   />
