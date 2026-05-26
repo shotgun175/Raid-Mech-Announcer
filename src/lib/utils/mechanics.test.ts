@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { activeRepeatMech, topMechPerThreshold, gatePhases, isPhasedGate, scopeToPhase } from "./mechanics";
+import { activeRepeatMech, topMechPerThreshold, gatePhases, isPhasedGate, scopeToPhase, byPhaseThenHp } from "./mechanics";
 import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
@@ -137,5 +137,22 @@ describe("scopeToPhase", () => {
   it("keeps only the selected phase plus untagged mechs", () => {
     expect(scopeToPhase(all, 2).map((m) => m.id)).toEqual(["p2", "u"]);
     expect(scopeToPhase(all, 3).map((m) => m.id)).toEqual(["p3", "u"]);
+  });
+});
+
+describe("byPhaseThenHp", () => {
+  it("groups by phase ascending, then hpBar descending within a phase", () => {
+    const mechs = [
+      mech({ id: "p3hi", phase: 3, hpBar: 583 }),
+      mech({ id: "p2lo", phase: 2, hpBar: 160 }),
+      mech({ id: "p2hi", phase: 2, hpBar: 620 }),
+      mech({ id: "p3lo", phase: 3, hpBar: 194 })
+    ];
+    expect([...mechs].sort(byPhaseThenHp).map((m) => m.id)).toEqual(["p2hi", "p2lo", "p3hi", "p3lo"]);
+  });
+
+  it("sorts untagged (null phase) mechs after every phased mech", () => {
+    const mechs = [mech({ id: "untagged", phase: null, hpBar: 999 }), mech({ id: "p2", phase: 2, hpBar: 100 })];
+    expect([...mechs].sort(byPhaseThenHp).map((m) => m.id)).toEqual(["p2", "untagged"]);
   });
 });

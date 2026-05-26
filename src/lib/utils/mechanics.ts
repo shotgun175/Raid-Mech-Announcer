@@ -84,3 +84,15 @@ export function scopeToPhase(mechanics: Mechanic[], phase: number | null): Mecha
   if (phase == null) return mechanics;
   return mechanics.filter((m) => m.phase == null || m.phase === phase);
 }
+
+/**
+ * Comparator for the editor's "All phases" overview: group by phase ascending
+ * (untagged mechs last), then by hpBar descending within each phase, so each
+ * phase reads as its own clean descent instead of interleaving by raw HP.
+ */
+export function byPhaseThenHp(a: Mechanic, b: Mechanic): number {
+  const pa = a.phase ?? Infinity;
+  const pb = b.phase ?? Infinity;
+  if (pa !== pb) return pa - pb;
+  return (b.hpBar ?? -1) - (a.hpBar ?? -1);
+}
