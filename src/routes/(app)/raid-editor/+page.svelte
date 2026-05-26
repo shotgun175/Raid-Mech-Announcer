@@ -69,7 +69,7 @@
   const activeDifficulty = $derived(activeDifficultyForGate(mechStore.difficultyMap, gate?.raid ?? ""));
   const sorted = $derived(
     gate
-      ? filterByDifficulty(scopeToPhase(gate.mechanics, effectivePhase), activeDifficulty).sort(
+      ? filterByDifficulty([...scopeToPhase(gate.mechanics, effectivePhase)], activeDifficulty).sort(
           (a, b) => (b.hpBar ?? -1) - (a.hpBar ?? -1)
         )
       : []
