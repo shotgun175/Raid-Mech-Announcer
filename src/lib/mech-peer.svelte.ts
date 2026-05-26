@@ -1,6 +1,7 @@
 import { Peer, type DataConnection } from "peerjs";
 import { emit } from "@tauri-apps/api/event";
 import { mechStore } from "./mech-store.svelte";
+import { recordBossStatus } from "./utils/capture-buffer.svelte";
 import type { BossStatusData } from "./mech-types";
 
 export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
@@ -100,6 +101,7 @@ export const peerState = (() => {
         const d = msg.data;
         const entry = d ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}` : "— null";
         debugLog = [...debugLog, entry].slice(-200);
+        recordBossStatus(msg.data);
         mechStore.setBossStatus(msg.data);
       }
     });
@@ -108,6 +110,7 @@ export const peerState = (() => {
       if (connectId !== myId) return;
       debugLog = [...debugLog, `[peer] conn closed`].slice(-200);
       setStatus("disconnected");
+      recordBossStatus(null);
       mechStore.setBossStatus(null);
     });
 
@@ -117,6 +120,7 @@ export const peerState = (() => {
       debugLog = [...debugLog, `[peer] conn error: ${m}`].slice(-200);
       setStatus("error");
       errorMsg = m;
+      recordBossStatus(null);
       mechStore.setBossStatus(null);
     });
 
@@ -126,6 +130,7 @@ export const peerState = (() => {
       debugLog = [...debugLog, `[peer] peer error: ${m}`].slice(-200);
       setStatus("error");
       errorMsg = m;
+      recordBossStatus(null);
       mechStore.setBossStatus(null);
     });
   }
@@ -136,6 +141,7 @@ export const peerState = (() => {
     cleanupPeer();
     setStatus("disconnected");
     errorMsg = null;
+    recordBossStatus(null);
     mechStore.setBossStatus(null);
   }
 
