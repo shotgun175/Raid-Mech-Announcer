@@ -10,7 +10,9 @@ export type ReplayHandle = { stop: () => void };
 //   is what matters.
 // - "realtime": preserve the original gaps (scaled by `speed`, capped at 10s per gap) so
 //   the 8s/20s/60s silence tiers actually elapse. Use this to exercise wipe/teardown.
-export function replayFight(records: CaptureRecord[], mode: ReplayMode, speed = 1): ReplayHandle {
+// `onDone` fires when the records run out on their own (not when stopped), so callers can
+// clear "now playing" UI once a real-time replay finishes.
+export function replayFight(records: CaptureRecord[], mode: ReplayMode, speed = 1, onDone?: () => void): ReplayHandle {
   let cancelled = false;
   (async () => {
     let prevT: number | null = null;
@@ -24,6 +26,7 @@ export function replayFight(records: CaptureRecord[], mode: ReplayMode, speed = 
       mechStore.setBossStatus(r.d);
       prevT = r.t;
     }
+    if (!cancelled) onDone?.();
   })();
   return {
     stop: () => {

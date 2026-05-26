@@ -13,6 +13,7 @@
 
   const { title, children }: { title: string; children?: Snippet } = $props();
 
+  const isDev = import.meta.env.DEV;
   let pathname = $derived(page.url.pathname);
 
   const {
@@ -79,6 +80,9 @@
         <div class="mx-4 my-2 h-px bg-accent-500/20"></div>
         {@render route("Raid Editor", "/raid-editor")}
         {@render route("Settings", "/settings")}
+        {#if isDev}
+          {@render route("Replay", "/replay")}
+        {/if}
       </div>
       <div class="m-2 h-px bg-accent-500/20"></div>
 
