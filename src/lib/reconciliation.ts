@@ -28,145 +28,158 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
   const changedMechIds = new Set<string>();
   const libraryByGate = new Map<string, LibraryGate>();
   for (const g of library) libraryByGate.set(`${g.raid}::${g.gate}`, g);
+  const libraryRaids = new Set(library.map((g) => g.raid));
 
-  const raids = userRaids.map((ug) => {
-    const libGate = libraryByGate.get(`${ug.raid}::${ug.gate}`);
-    if (!libGate) return ug; // custom gate, skip entirely
+  const raids = userRaids
+    .filter((ug) => {
+      // A user gate whose raid is in the library but whose (raid, gate) was removed from the
+      // library (e.g. merged into another gate) and holds only library-origin mechs is a stale
+      // copy of a now-gone library gate; drop it. Custom raids and custom mechs are preserved.
+      const removedFromLibrary =
+        libraryRaids.has(ug.raid) &&
+        !libraryByGate.has(`${ug.raid}::${ug.gate}`) &&
+        ug.mechanics.length > 0 &&
+        ug.mechanics.every((m) => m.origin === "library");
+      return !removedFromLibrary;
+    })
+    .map((ug) => {
+      const libGate = libraryByGate.get(`${ug.raid}::${ug.gate}`);
+      if (!libGate) return ug; // custom gate, skip entirely
 
-    // Defensive guard: pre-migration data with no origin field — skip cleanly.
-    if (ug.mechanics.some((m) => (m as Partial<Mechanic>).origin === undefined)) {
-      return ug;
-    }
-
-    let gateChanged = false;
-
-    // ---- Step A: gate-level fields (always library wins) -------------------
-    const resolvedTotalBars = libGate.totalBars ?? bossHpMap[libGate.boss] ?? 300;
-    const nextGateFields: Partial<Gate> = {};
-    if (ug.boss !== libGate.boss) {
-      nextGateFields.boss = libGate.boss;
-      gateChanged = true;
-    }
-    if (ug.totalBars !== resolvedTotalBars) {
-      nextGateFields.totalBars = resolvedTotalBars;
-      gateChanged = true;
-    }
-    if (ug.bossType !== libGate.bossType) {
-      nextGateFields.bossType = libGate.bossType;
-      gateChanged = true;
-    }
-    if (ug.weakness !== libGate.weakness) {
-      nextGateFields.weakness = libGate.weakness;
-      gateChanged = true;
-    }
-    if (ug.tauntable !== libGate.tauntable) {
-      nextGateFields.tauntable = libGate.tauntable;
-      gateChanged = true;
-    }
-
-    // ---- Step B: reconcile existing mechs ----------------------------------
-    const libMechByKey = new Map<string, LibraryMechanic>();
-    for (const m of libGate.mechanics) libMechByKey.set(m.key, m);
-
-    const reconciledMechs: Mechanic[] = [];
-    for (const um of ug.mechanics) {
-      if (um.origin === "custom") {
-        reconciledMechs.push(um);
-        continue;
+      // Defensive guard: pre-migration data with no origin field — skip cleanly.
+      if (ug.mechanics.some((m) => (m as Partial<Mechanic>).origin === undefined)) {
+        return ug;
       }
-      // origin: "library"
-      if (!um.key) {
-        // Library-origin mech without a key is data corruption; drop it so
-        // reconciliation doesn't infinitely re-add it.
+
+      let gateChanged = false;
+
+      // ---- Step A: gate-level fields (always library wins) -------------------
+      const resolvedTotalBars = libGate.totalBars ?? bossHpMap[libGate.boss] ?? 300;
+      const nextGateFields: Partial<Gate> = {};
+      if (ug.boss !== libGate.boss) {
+        nextGateFields.boss = libGate.boss;
         gateChanged = true;
-        continue;
       }
-      const libMech = libMechByKey.get(um.key);
-      if (!libMech) {
-        // Library removed this key — drop from user gate.
+      if (ug.totalBars !== resolvedTotalBars) {
+        nextGateFields.totalBars = resolvedTotalBars;
         gateChanged = true;
-        continue;
       }
-      if (um.userEdited) {
-        reconciledMechs.push(um);
-        continue;
-      }
-      // Overwrite from library; preserve id/key/origin/userEdited.
-      const merged: Mechanic = {
-        ...um,
-        name: libMech.name,
-        severity: libMech.severity,
-        hpBar: libMech.hpBar ?? null,
-        timerSecs: libMech.timerSecs ?? null,
-        phase: null,
-        repeatSecs: libMech.repeatSecs ?? null,
-        triggerType: libMech.triggerType,
-        ttsEnabled: true,
-        ttsText: libMech.name,
-        notes: libMech.notes ?? "",
-        difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
-      };
-      if (mechFieldsDiffer(um, merged)) {
+      if (ug.bossType !== libGate.bossType) {
+        nextGateFields.bossType = libGate.bossType;
         gateChanged = true;
-        changedMechIds.add(merged.id);
       }
-      reconciledMechs.push(merged);
-    }
-    // ---- Step C: add library mechs not yet present, respect deletedLibraryKeys
-    const userKeys = new Set(reconciledMechs.map((m) => m.key).filter(Boolean) as string[]);
-    const deletedKeys = new Set(ug.deletedLibraryKeys ?? []);
-    for (const lm of libGate.mechanics) {
-      if (userKeys.has(lm.key)) continue;
-      if (deletedKeys.has(lm.key)) continue;
-      const newId = `lib-${lm.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      changedMechIds.add(newId);
-      reconciledMechs.push({
-        id: newId,
-        key: lm.key,
-        origin: "library",
-        userEdited: false,
-        name: lm.name,
-        severity: lm.severity,
-        hpBar: lm.hpBar ?? null,
-        timerSecs: lm.timerSecs ?? null,
-        phase: null,
-        repeatSecs: lm.repeatSecs ?? null,
-        triggerType: lm.triggerType,
-        ttsEnabled: true,
-        ttsText: lm.name,
-        notes: lm.notes ?? "",
-        difficulties: lm.difficulties?.length ? lm.difficulties : undefined
+      if (ug.weakness !== libGate.weakness) {
+        nextGateFields.weakness = libGate.weakness;
+        gateChanged = true;
+      }
+      if (ug.tauntable !== libGate.tauntable) {
+        nextGateFields.tauntable = libGate.tauntable;
+        gateChanged = true;
+      }
+
+      // ---- Step B: reconcile existing mechs ----------------------------------
+      const libMechByKey = new Map<string, LibraryMechanic>();
+      for (const m of libGate.mechanics) libMechByKey.set(m.key, m);
+
+      const reconciledMechs: Mechanic[] = [];
+      for (const um of ug.mechanics) {
+        if (um.origin === "custom") {
+          reconciledMechs.push(um);
+          continue;
+        }
+        // origin: "library"
+        if (!um.key) {
+          // Library-origin mech without a key is data corruption; drop it so
+          // reconciliation doesn't infinitely re-add it.
+          gateChanged = true;
+          continue;
+        }
+        const libMech = libMechByKey.get(um.key);
+        if (!libMech) {
+          // Library removed this key — drop from user gate.
+          gateChanged = true;
+          continue;
+        }
+        if (um.userEdited) {
+          reconciledMechs.push(um);
+          continue;
+        }
+        // Overwrite from library; preserve id/key/origin/userEdited.
+        const merged: Mechanic = {
+          ...um,
+          name: libMech.name,
+          severity: libMech.severity,
+          hpBar: libMech.hpBar ?? null,
+          timerSecs: libMech.timerSecs ?? null,
+          phase: libMech.phase ?? null,
+          repeatSecs: libMech.repeatSecs ?? null,
+          triggerType: libMech.triggerType,
+          ttsEnabled: true,
+          ttsText: libMech.name,
+          notes: libMech.notes ?? "",
+          difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
+        };
+        if (mechFieldsDiffer(um, merged)) {
+          gateChanged = true;
+          changedMechIds.add(merged.id);
+        }
+        reconciledMechs.push(merged);
+      }
+      // ---- Step C: add library mechs not yet present, respect deletedLibraryKeys
+      const userKeys = new Set(reconciledMechs.map((m) => m.key).filter(Boolean) as string[]);
+      const deletedKeys = new Set(ug.deletedLibraryKeys ?? []);
+      for (const lm of libGate.mechanics) {
+        if (userKeys.has(lm.key)) continue;
+        if (deletedKeys.has(lm.key)) continue;
+        const newId = `lib-${lm.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        changedMechIds.add(newId);
+        reconciledMechs.push({
+          id: newId,
+          key: lm.key,
+          origin: "library",
+          userEdited: false,
+          name: lm.name,
+          severity: lm.severity,
+          hpBar: lm.hpBar ?? null,
+          timerSecs: lm.timerSecs ?? null,
+          phase: lm.phase ?? null,
+          repeatSecs: lm.repeatSecs ?? null,
+          triggerType: lm.triggerType,
+          ttsEnabled: true,
+          ttsText: lm.name,
+          notes: lm.notes ?? "",
+          difficulties: lm.difficulties?.length ? lm.difficulties : undefined
+        });
+        gateChanged = true;
+      }
+
+      // Sort to library order (custom mechs at end, preserving insertion order).
+      // No user-facing reorder feature today, so this enforces consistent display.
+      const libOrderIndex = new Map<string, number>();
+      libGate.mechanics.forEach((m, i) => libOrderIndex.set(m.key, i));
+      reconciledMechs.sort((a, b) => {
+        const aIdx = a.key ? libOrderIndex.get(a.key) : undefined;
+        const bIdx = b.key ? libOrderIndex.get(b.key) : undefined;
+        if (aIdx !== undefined && bIdx !== undefined) return aIdx - bIdx;
+        if (aIdx !== undefined) return -1; // library before custom
+        if (bIdx !== undefined) return 1;
+        return 0; // both custom — JS sort is stable, preserves insertion order
       });
-      gateChanged = true;
-    }
+      const nextMechanics = reconciledMechs;
 
-    // Sort to library order (custom mechs at end, preserving insertion order).
-    // No user-facing reorder feature today, so this enforces consistent display.
-    const libOrderIndex = new Map<string, number>();
-    libGate.mechanics.forEach((m, i) => libOrderIndex.set(m.key, i));
-    reconciledMechs.sort((a, b) => {
-      const aIdx = a.key ? libOrderIndex.get(a.key) : undefined;
-      const bIdx = b.key ? libOrderIndex.get(b.key) : undefined;
-      if (aIdx !== undefined && bIdx !== undefined) return aIdx - bIdx;
-      if (aIdx !== undefined) return -1; // library before custom
-      if (bIdx !== undefined) return 1;
-      return 0; // both custom — JS sort is stable, preserves insertion order
+      // Stale deletedLibraryKeys cleanup: drop entries whose keys no longer exist
+      // in the current library version (dead weight from prior library removals).
+      const liveLibKeys = new Set(libGate.mechanics.map((m) => m.key));
+      const prunedDeleted = (ug.deletedLibraryKeys ?? []).filter((k) => liveLibKeys.has(k));
+
+      if (gateChanged) changedGateIds.add(ug.id);
+      return {
+        ...ug,
+        ...nextGateFields,
+        mechanics: nextMechanics,
+        deletedLibraryKeys: prunedDeleted
+      };
     });
-    const nextMechanics = reconciledMechs;
-
-    // Stale deletedLibraryKeys cleanup: drop entries whose keys no longer exist
-    // in the current library version (dead weight from prior library removals).
-    const liveLibKeys = new Set(libGate.mechanics.map((m) => m.key));
-    const prunedDeleted = (ug.deletedLibraryKeys ?? []).filter((k) => liveLibKeys.has(k));
-
-    if (gateChanged) changedGateIds.add(ug.id);
-    return {
-      ...ug,
-      ...nextGateFields,
-      mechanics: nextMechanics,
-      deletedLibraryKeys: prunedDeleted
-    };
-  });
 
   return { raids, changedGateIds, changedMechIds };
 }
@@ -177,6 +190,7 @@ function mechFieldsDiffer(a: Mechanic, b: Mechanic): boolean {
     a.severity !== b.severity ||
     a.hpBar !== b.hpBar ||
     a.timerSecs !== b.timerSecs ||
+    a.phase !== b.phase ||
     a.repeatSecs !== b.repeatSecs ||
     a.triggerType !== b.triggerType ||
     a.notes !== b.notes ||

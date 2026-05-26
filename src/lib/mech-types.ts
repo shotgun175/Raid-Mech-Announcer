@@ -71,4 +71,5 @@ export interface BossStatusData {
   currentBars: number;
   gateId?: string | null;
   encourageMessage?: string | null;
+  activePhase?: number | null;
 }

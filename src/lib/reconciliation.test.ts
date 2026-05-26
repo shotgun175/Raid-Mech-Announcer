@@ -240,4 +240,46 @@ describe("reconcile", () => {
     expect(raids[0].mechanics[0].name).toBe("Old");
     expect(changedGateIds.has(user[0].id)).toBe(false);
   });
+
+  it("carries the library phase onto a reconciled library mech", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200, { phase: 2 })])];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library", phase: null })])
+    ];
+    const { raids } = reconcile(lib, user);
+    expect(raids[0].mechanics[0].phase).toBe(2);
+  });
+
+  it("adds a new library mech with its phase", () => {
+    const lib = [
+      libGate("Test", 1, [libMech("test-g1-a", "A", 200, { phase: 2 }), libMech("test-g1-b", "B", 100, { phase: 3 })])
+    ];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library", phase: 2 })])
+    ];
+    const { raids } = reconcile(lib, user);
+    const added = raids[0].mechanics.find((m) => m.key === "test-g1-b");
+    expect(added?.phase).toBe(3);
+  });
+
+  it("drops a user library-gate whose (raid, gate) was removed from the library", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })]),
+      userGate("Test", 2, [userMech({ key: "test-g2-a", name: "Old", hpBar: 100, origin: "library" })])
+    ];
+    const { raids } = reconcile(lib, user);
+    expect(raids).toHaveLength(1);
+    expect(raids[0].gate).toBe(1);
+  });
+
+  it("keeps a user custom gate on a library raid (has custom mechs)", () => {
+    const lib = [libGate("Test", 1, [libMech("test-g1-a", "A", 200)])];
+    const user = [
+      userGate("Test", 1, [userMech({ key: "test-g1-a", name: "A", hpBar: 200, origin: "library" })]),
+      userGate("Test", 9, [userMech({ name: "Custom", hpBar: 100, origin: "custom", userEdited: true })])
+    ];
+    const { raids } = reconcile(lib, user);
+    expect(raids).toHaveLength(2);
+  });
 });

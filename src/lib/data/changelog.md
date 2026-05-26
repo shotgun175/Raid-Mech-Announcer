@@ -12,6 +12,9 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Fixed the overlay staying at full fight size during brief stagger or clone phases (such as Kazeros' 1-bar "Abyssal Afterimage" add); it now collapses to the compact size and re-expands when the real boss HP returns
+- Final Act: Kazeros Gate 2 now follows the boss's revival: it stays on one gate (no longer jumping to a mislabeled G2-3) and switches to the next phase's mechanic callouts when the boss revives
+
 <!-- @release-end -->
 
 <!-- @release v0.2.4 -->
