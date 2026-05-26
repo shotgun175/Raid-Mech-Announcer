@@ -12,6 +12,20 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.2.5 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.5 - May 26th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - Fixed the overlay staying at full fight size during brief stagger or clone phases (such as Kazeros' 1-bar "Abyssal Afterimage" add); it now collapses to the compact size and re-expands when the real boss HP returns
 - Final Act: Kazeros Gate 2 now follows the boss's revival: it stays on one gate (no longer jumping to a mislabeled G2-3) and switches to the next phase's mechanic callouts when the boss revives
 - The Raid Editor now shows multi-phase gates (Final Act: Kazeros Gate 2) one phase at a time via a Phase selector (with an All view to see every phase grouped), so each phase reads as a clean HP descent instead of the two phases' mechanics interleaving by HP value
@@ -20,14 +34,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.4 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.4 - May 26th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.4 - May 26th, 2026
 
 #### NEW FEATURES
 
