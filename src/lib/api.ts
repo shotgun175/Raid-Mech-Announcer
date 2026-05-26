@@ -11,3 +11,8 @@ export const toggleOverlayWindow = (): Promise<void> => invoke("toggle_overlay_w
 // WinDivert teardown — call before the updater replaces the bundled DLL/.sys.
 export const unloadDriver = (): Promise<void> => invoke("unload_driver");
 export const removeDriver = (): Promise<void> => invoke("remove_driver");
+
+// Fight-capture log (rolling JSONL of the raw boss-status feed, for replay/diagnostics)
+export const captureAppend = (lines: string): Promise<void> => invoke("capture_append", { lines });
+export const captureReadAll = (): Promise<string> => invoke("capture_read_all");
+export const captureClear = (): Promise<void> => invoke("capture_clear");
