@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { activeRepeatMech, topMechPerThreshold, gatePhases, isPhasedGate, scopeToPhase, byPhaseThenHp } from "./mechanics";
+import {
+  activeRepeatMech,
+  topMechPerThreshold,
+  gatePhases,
+  isPhasedGate,
+  scopeToPhase,
+  byPhaseThenHp
+} from "./mechanics";
 import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
