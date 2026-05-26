@@ -1,10 +1,15 @@
 use rodio::{Decoder, OutputStream, Sink};
 use std::io::Cursor;
+use std::sync::atomic::{AtomicU64, Ordering};
 use tauri::command;
 use uuid::Uuid;
 
 const ANDREW: &str = "en-US-AndrewNeural";
 const JENNY:  &str = "en-US-JennyNeural";
+
+// Bumped by stop_tts() to cancel all queued/in-flight speech. Each speak_tts thread captures
+// the epoch at spawn; if it changes before or during playback, that thread skips or stops.
+static TTS_EPOCH: AtomicU64 = AtomicU64::new(0);
 
 fn voice_id(name: &str) -> &'static str {
     if name.to_lowercase().contains("jenny") { JENNY } else { ANDREW }
@@ -15,16 +20,25 @@ fn voice_id(name: &str) -> &'static str {
 #[command]
 pub fn speak_tts(text: String, voice: String, volume: u8, rate: f64) {
     let vid = voice_id(&voice).to_string();
+    let epoch = TTS_EPOCH.load(Ordering::SeqCst);
     std::thread::spawn(move || {
-        if try_python_edge_tts(&text, &vid, volume, rate) {
+        if try_python_edge_tts(&text, &vid, volume, rate, epoch) {
             return;
         }
-        try_sapi(&text, &voice, volume, rate);
+        try_sapi(&text, &voice, volume, rate, epoch);
     });
 }
 
+/// Cancel all queued/in-flight TTS. Bumping the epoch makes every speak_tts thread skip
+/// playback (if still generating its audio) or stop on its next poll (if already playing),
+/// so a line generated just before a fight ended never leaks out after. Wired to stop / end.
+#[command]
+pub fn stop_tts() {
+    TTS_EPOCH.fetch_add(1, Ordering::SeqCst);
+}
+
 /// Try Python edge-tts via subprocess.
-fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> bool {
+fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch: u64) -> bool {
     // Per-call unique filename so concurrent invocations don't clobber each other's MP3.
     // (A single shared path caused thread A to read thread B's audio when calls overlapped,
     // which the user heard as the same announcement playing twice.)
@@ -63,6 +77,13 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> boo
         return false;
     }
 
+    // A stop fired while we were generating — don't play this now-stale line, and report
+    // "handled" so we don't fall through to the SAPI fallback and speak it anyway.
+    if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
+        let _ = std::fs::remove_file(&temp);
+        return true;
+    }
+
     let vol = (volume as f32 / 100.0).clamp(0.0, 1.0);
 
     let played = (|| -> bool {
@@ -72,7 +93,14 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> boo
         sink.set_volume(vol);
         let Ok(decoder) = Decoder::new(Cursor::new(file)) else { return false };
         sink.append(decoder);
-        sink.sleep_until_end();
+        // Poll instead of sleep_until_end so a stop (epoch bump) interrupts playback promptly.
+        while !sink.empty() {
+            if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
+                sink.stop();
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(25));
+        }
         true
     })();
 
@@ -81,7 +109,12 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64) -> boo
 }
 
 /// Last-resort: Windows SAPI via PowerShell.
-fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64) {
+fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64, epoch: u64) {
+    // Best-effort cancel: skip if a stop already fired. Once SAPI is speaking via PowerShell
+    // we can't easily interrupt it, but edge-tts is the normal path and is fully cancellable.
+    if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
+        return;
+    }
     let safe = text.replace('\'', "''");
     let safe_voice = voice.replace('\'', "''").replace('{', "{{").replace('}', "}}");
     // SAPI Rate: -10 (slowest) to +10 (fastest). Map 0.25-4.0 to -10..+10.

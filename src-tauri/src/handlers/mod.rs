@@ -19,7 +19,12 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         remove_driver,
         unload_driver,
         get_loa_meter_data_path,
+        capture_append,
+        capture_read_all,
+        capture_clear,
+        capture_path,
         crate::tts_cmd::speak_tts,
+        crate::tts_cmd::stop_tts,
         crate::tts_cmd::list_tts_voices,
     ])
 }
@@ -80,4 +85,27 @@ pub async fn unload_driver(shell_manager: State<'_, ShellManager>) -> Result<()>
 pub fn get_loa_meter_data_path() -> Option<String> {
     crate::app::loa_detect::find_loa_meter_data()
         .map(|p| p.display().to_string())
+}
+
+#[command]
+pub fn capture_append(lines: String) -> Result<()> {
+    crate::app::capture::append(&lines).context("appending capture")?;
+    Ok(())
+}
+
+#[command]
+pub fn capture_read_all() -> Result<String> {
+    let content = crate::app::capture::read_all().context("reading captures")?;
+    Ok(content)
+}
+
+#[command]
+pub fn capture_clear() -> Result<()> {
+    crate::app::capture::clear().context("clearing captures")?;
+    Ok(())
+}
+
+#[command]
+pub fn capture_path() -> String {
+    crate::app::capture::path().display().to_string()
 }

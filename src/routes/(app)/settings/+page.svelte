@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { saveSettings, getLOAMeterDataPath, listTtsVoices } from "$lib/api";
+  import { saveSettings, getLOAMeterDataPath, listTtsVoices, capturePath } from "$lib/api";
   import OverlayPreviewPanel from "$lib/components/mech/OverlayPreviewPanel.svelte";
+  import { revealItemInDir } from "@tauri-apps/plugin-opener";
   import { emit } from "@tauri-apps/api/event";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
@@ -158,6 +159,15 @@
   function clearConfirmKey() {
     upd("confirmHotkey", "");
     registerShortcuts(); // re-registers everything; confirm is now blank so it's simply dropped
+  }
+
+  // ── Fight capture export (user-facing troubleshooting) ──────────────
+  async function openCaptureFolder() {
+    try {
+      await revealItemInDir(await capturePath());
+    } catch (e) {
+      console.warn("could not reveal capture file", e);
+    }
   }
 
   onMount(async () => {
@@ -675,6 +685,23 @@
           {:else}
             <span class="text-amber-400">Bundled (LOA Logs not found)</span>
           {/if}
+        </div>
+
+        <!-- TROUBLESHOOTING -->
+        <div class="flex items-center gap-3 pt-2">
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">Troubleshooting</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            onclick={openCaptureFolder}
+            class="rounded-lg bg-neutral-700 px-3 py-1.5 text-sm whitespace-nowrap transition hover:bg-neutral-600"
+            >Open capture folder</button
+          >
+          <div class="max-w-md text-xs text-neutral-400">
+            Each fight is saved to a local capture file. If a mechanic misbehaves, open the folder and send us that file
+            so we can reproduce it.
+          </div>
         </div>
       {:else if currentTab === "Shortcuts"}
         <div
