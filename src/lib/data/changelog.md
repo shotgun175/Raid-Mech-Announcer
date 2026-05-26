@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- Each fight is now recorded to a local capture file, so issues can be reproduced from a saved run instead of needing a fresh raid attempt
+
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->
@@ -36,6 +38,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.2 -->
+
 ### v0.2.2 - May 21st, 2026
 
 #### NEW FEATURES
