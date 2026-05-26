@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { activeRepeatMech, topMechPerThreshold } from "./mechanics";
+import { activeRepeatMech, topMechPerThreshold, gatePhases, isPhasedGate, scopeToPhase } from "./mechanics";
 import type { Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
@@ -87,5 +87,55 @@ describe("topMechPerThreshold", () => {
   it("drops mechs with a null hpBar and returns empty for no input", () => {
     expect(topMechPerThreshold([mech({ id: "x", hpBar: null })])).toHaveLength(0);
     expect(topMechPerThreshold([])).toHaveLength(0);
+  });
+});
+
+describe("gatePhases", () => {
+  it("returns empty when no mech has a phase", () => {
+    expect(gatePhases([mech({ id: "a", phase: null }), mech({ id: "b", phase: null })])).toEqual([]);
+  });
+
+  it("returns the single phase when every mech shares it", () => {
+    expect(gatePhases([mech({ id: "a", phase: 1 }), mech({ id: "b", phase: 1 })])).toEqual([1]);
+  });
+
+  it("returns distinct phases sorted ascending, ignoring nulls and duplicates", () => {
+    const mechs = [
+      mech({ id: "a", phase: 3 }),
+      mech({ id: "b", phase: 2 }),
+      mech({ id: "c", phase: null }),
+      mech({ id: "d", phase: 3 })
+    ];
+    expect(gatePhases(mechs)).toEqual([2, 3]);
+  });
+});
+
+describe("isPhasedGate", () => {
+  it("is false for no phases", () => {
+    expect(isPhasedGate([mech({ id: "a", phase: null })])).toBe(false);
+  });
+
+  it("is false for a single phase (one tab would be useless)", () => {
+    expect(isPhasedGate([mech({ id: "a", phase: 1 }), mech({ id: "b", phase: 1 })])).toBe(false);
+  });
+
+  it("is true once two distinct phases are present", () => {
+    expect(isPhasedGate([mech({ id: "a", phase: 2 }), mech({ id: "b", phase: 3 })])).toBe(true);
+  });
+});
+
+describe("scopeToPhase", () => {
+  const p2 = mech({ id: "p2", phase: 2 });
+  const p3 = mech({ id: "p3", phase: 3 });
+  const untagged = mech({ id: "u", phase: null });
+  const all = [p2, p3, untagged];
+
+  it("returns all mechs unchanged when phase is null (no scoping)", () => {
+    expect(scopeToPhase(all, null)).toEqual(all);
+  });
+
+  it("keeps only the selected phase plus untagged mechs", () => {
+    expect(scopeToPhase(all, 2).map((m) => m.id)).toEqual(["p2", "u"]);
+    expect(scopeToPhase(all, 3).map((m) => m.id)).toEqual(["p3", "u"]);
   });
 });
