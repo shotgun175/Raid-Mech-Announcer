@@ -46,6 +46,11 @@ pub fn append(lines: &str) -> Result<()> {
     Ok(())
 }
 
+/// Absolute path to the current capture file, so the UI can reveal it for bug reports.
+pub fn path() -> PathBuf {
+    current_path()
+}
+
 /// Returns all capture content, oldest first (archive then current). Empty string if none.
 pub fn read_all() -> Result<String> {
     let mut out = String::new();

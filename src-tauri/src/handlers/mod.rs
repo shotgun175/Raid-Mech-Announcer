@@ -22,7 +22,9 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         capture_append,
         capture_read_all,
         capture_clear,
+        capture_path,
         crate::tts_cmd::speak_tts,
+        crate::tts_cmd::stop_tts,
         crate::tts_cmd::list_tts_voices,
     ])
 }
@@ -101,4 +103,9 @@ pub fn capture_read_all() -> Result<String> {
 pub fn capture_clear() -> Result<()> {
     crate::app::capture::clear().context("clearing captures")?;
     Ok(())
+}
+
+#[command]
+pub fn capture_path() -> String {
+    crate::app::capture::path().display().to_string()
 }

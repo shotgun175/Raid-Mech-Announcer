@@ -25,6 +25,7 @@
     "global-shortcut:allow-unregister-all",
     "opener:allow-open-url",
     "opener:allow-default-urls",
+    "opener:allow-reveal-item-in-dir",
     "process:allow-restart",
     "shell:allow-open",
     "shell:default",
