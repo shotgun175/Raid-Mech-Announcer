@@ -2669,7 +2669,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 17,
     availableDifficulties: ["Normal", "Hard"],
     boss: "Abyss Lord Kazeros",
-    bossType: "HUMAN",
+    bossType: "ARCHDEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -2739,7 +2739,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 17,
     availableDifficulties: ["Normal", "Hard"],
     boss: "Archdemon Kazeros",
-    bossType: "HUMAN",
+    bossType: "ARCHDEMON",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
@@ -2803,7 +2803,7 @@ const LIBRARY: LibraryGate[] = [
     releaseOrder: 17,
     availableDifficulties: ["Normal", "Hard"],
     boss: "Death Incarnate Kazeros",
-    bossType: "HUMAN",
+    bossType: "GOD",
     weakness: "No Weakness",
     tauntable: false,
     mechanics: [
