@@ -1144,6 +1144,8 @@
               <option value="HUMAN">Human</option>
               <option value="ANCIENT">Ancient</option>
               <option value="DEMONIC">Demonic</option>
+              <option value="ARCHDEMON">Archdemon</option>
+              <option value="GOD">God</option>
               <option value="OTHER">Other</option>
             </select>
           </div>
