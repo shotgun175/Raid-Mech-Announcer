@@ -11,8 +11,12 @@
 #### NEW FEATURES
 
 - Each fight is now recorded to a local capture file, so issues can be reproduced from a saved run instead of needing a fresh raid attempt
+- Added an "Open capture folder" button in Settings (Troubleshooting) so you can grab that capture file and send it along when reporting a problem
 
 #### BUG FIXES AND IMPROVEMENTS
+
+- Announcements now stop immediately when a fight ends or wipes, instead of trailing a line or two after
+- Fixed the overlay sometimes staying stuck at the previous fight's larger size after a wipe; it now shrinks back to the compact idle size when the fight goes quiet, including between boss phases
 
 <!-- @release-end -->
 
