@@ -1141,12 +1141,16 @@
           <div>
             <div style={fieldLabel}>Boss Type</div>
             <select style={selStyle} bind:value={form.bossType}>
-              <option value="HUMAN">Human</option>
               <option value="ANCIENT">Ancient</option>
-              <option value="DEMONIC">Demonic</option>
               <option value="ARCHDEMON">Archdemon</option>
+              <option value="BEAST">Beast</option>
+              <option value="DEMON">Demon</option>
+              <option value="ELEMENTAL">Elemental</option>
               <option value="GOD">God</option>
+              <option value="HUMAN">Human</option>
+              <option value="INSECT">Insect</option>
               <option value="OTHER">Other</option>
+              <option value="UNDEAD">Undead</option>
             </select>
           </div>
           <div>
