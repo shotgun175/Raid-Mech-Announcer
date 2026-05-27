@@ -4,7 +4,9 @@
   import OLHudStrip from "$lib/components/mech/overlays/OLHudStrip.svelte";
   import OLCardStack from "$lib/components/mech/overlays/OLCardStack.svelte";
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
+  import OverlayBanner from "$lib/components/mech/overlays/OverlayBanner.svelte";
   import OverlayControls from "$lib/components/mech/overlays/OverlayControls.svelte";
+  import { fly } from "svelte/transition";
   import { formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { isBossSwapPhase } from "$lib/data/raid-library";
@@ -115,6 +117,32 @@
     activeMech = null;
     repeatCountdown = null;
     repeatAnnouncedThisCycle = false;
+  }
+
+  // Celebratory banner shown for a few seconds on a cleared fight (boss killed, not a wipe).
+  // The main window decides boss-defeated vs raid-cleared and emits the matching event; the
+  // banner overrides the idle/teardown render and defers auto-hide until it dismisses itself.
+  const KILL_BANNER_MS = 4000;
+  let killBanner = $state<"boss-defeated" | "raid-cleared" | null>(null);
+  let killBannerTimer: ReturnType<typeof setTimeout> | null = null;
+
+  async function showKillBanner(variant: "boss-defeated" | "raid-cleared") {
+    ttsLog(`[overlay] kill banner → ${variant}`);
+    if (killBannerTimer) clearTimeout(killBannerTimer);
+    killBanner = variant;
+    try {
+      await getCurrentWebviewWindow().show();
+    } catch {}
+    killBannerTimer = setTimeout(async () => {
+      killBanner = null;
+      killBannerTimer = null;
+      // The fight is over; honor auto-hide now that the banner has had its moment.
+      if (mechStore.mechSettings.autoShowHide && currentBar === null) {
+        try {
+          await getCurrentWebviewWindow().hide();
+        } catch {}
+      }
+    }, KILL_BANNER_MS);
   }
 
   // Apply click-through and always-on-top to this window whenever the settings change
@@ -286,9 +314,10 @@
     });
 
     const unHide = await listen("mech:overlay-hide", async () => {
-      // Only hide when live data ends — keep visible if in preview mode
-      const willHide = currentBar === null;
-      ttsLog(`[overlay] event mech:overlay-hide → ${willHide ? "win.hide()" : "kept visible (preview)"}`);
+      // Only hide when live data ends — keep visible if in preview mode, or while a kill banner
+      // is still showing (the banner's own timer hides the window once it dismisses).
+      const willHide = currentBar === null && killBanner === null;
+      ttsLog(`[overlay] event mech:overlay-hide → ${willHide ? "win.hide()" : "kept visible (preview/banner)"}`);
       if (willHide) await win.hide();
     });
 
@@ -346,6 +375,12 @@
       extendedSilence = false;
     });
 
+    // Cleared-fight banners. These fire from the main window's endEncounter (loa:fight-end with
+    // cleared=true), so they arrive alongside the encounter-end teardown — showKillBanner keeps
+    // the window up for its duration regardless.
+    const unBossDefeated = await listen("mech:boss-defeated", () => showKillBanner("boss-defeated"));
+    const unRaidCleared = await listen("mech:raid-cleared", () => showKillBanner("raid-cleared"));
+
     unlisteners.push(
       unBoss,
       unShow,
@@ -358,13 +393,16 @@
       unConfirm,
       unDiff,
       unPeer,
-      unEnd
+      unEnd,
+      unBossDefeated,
+      unRaidCleared
     );
   });
 
   onDestroy(() => {
     unlisteners.forEach((fn) => fn());
     if (announceTimer) clearTimeout(announceTimer);
+    if (killBannerTimer) clearTimeout(killBannerTimer);
     clearRepeatTimer();
   });
 </script>
@@ -376,7 +414,20 @@
 
   When not live, show a preview pill so the user can position and check scale.
 -->
-{#if currentBar == null && gate && !extendedSilence}
+{#if killBanner}
+  <!-- Cleared-fight celebration. Top priority so it shows over the post-kill teardown
+       (boss-status null + encounter-end clear currentBar/gate the same instant). -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+    onmousedown={startDrag}
+    class="absolute top-8 left-1/2 -translate-x-1/2 select-none"
+    style="cursor: {clickThrough ? 'default' : 'grab'};"
+  >
+    <div transition:fly={{ y: -10, duration: 250 }}>
+      <OverlayBanner variant={killBanner} />
+    </div>
+  </div>
+{:else if currentBar == null && gate && !extendedSilence}
   <!-- Gate is active but boss went silent (phase transition / brief stagger gap).
        Overlay stays visible with a placeholder until HP resumes — but only until the
        ~20s extended-silence mark (extendedSilence), after which it falls through to the

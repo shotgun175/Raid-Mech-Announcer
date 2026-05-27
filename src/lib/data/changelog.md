@@ -10,7 +10,13 @@
 
 #### NEW FEATURES
 
+- Added a first-run welcome guide that covers the common setup gotchas: adding the app's folder to your antivirus exceptions (for the WinDivert driver), keeping LOA Logs installed, quitting NordVPN since it conflicts, and running as administrator if nothing is detected. You can reopen it anytime from the "?" button at the bottom of the menu.
+- The overlay now marks a kill: a "Boss Defeated" banner when a gate's boss dies, or a "Raid Cleared" banner when you down the final gate of a raid. Each shows briefly then fades. You can preview both in Settings > Overlay Preview by dragging the HP slider down to 0.
+
 #### BUG FIXES AND IMPROVEMENTS
+
+- Recolored the "push" execute-phase banner from green to pink so it reads clearly apart from the new green kill banners.
+- Raids saved by older versions are now repaired automatically on launch, filling in any fields added in newer releases so they can't cause overlay display glitches.
 
 <!-- @release-end -->
 

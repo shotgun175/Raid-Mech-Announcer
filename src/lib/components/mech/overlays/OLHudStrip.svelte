@@ -128,14 +128,14 @@
         </span>
       {:else if mechStore.liveEncourageMessage}
         <span
-          style="font-size: 9px; color: #10b981; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; flex-shrink: 0;"
+          style="font-size: 9px; color: #f472b6; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; flex-shrink: 0;"
           >PUSH</span
         >
         <div
-          style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981; flex-shrink: 0;"
+          style="width: 7px; height: 7px; border-radius: 50%; background: #f472b6; box-shadow: 0 0 6px #f472b6; flex-shrink: 0;"
         ></div>
         <span
-          style="font-size: 14px; font-weight: 700; color: #10b981; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+          style="font-size: 14px; font-weight: 700; color: #f472b6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
           >{mechStore.liveEncourageMessage}</span
         >
       {:else}

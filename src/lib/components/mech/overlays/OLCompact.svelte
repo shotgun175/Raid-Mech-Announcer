@@ -75,10 +75,10 @@
       {/if}
       {#if upcoming.length === 0 && mechStore.liveEncourageMessage}
         <div
-          style="padding: 9px 12px; background: rgba(16,185,129,0.08); border-left: 2px solid #10b981; display: flex; align-items: center; gap: 10px;"
+          style="padding: 9px 12px; background: rgba(244,114,182,0.08); border-left: 2px solid #f472b6; display: flex; align-items: center; gap: 10px;"
         >
           <span
-            style="font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #10b981; text-transform: uppercase; flex-shrink: 0;"
+            style="font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #f472b6; text-transform: uppercase; flex-shrink: 0;"
             >push</span
           >
           <span style="font-size: 12.5px; font-weight: 700; color: #fafafa;">{mechStore.liveEncourageMessage}</span>
