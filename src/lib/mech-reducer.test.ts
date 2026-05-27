@@ -22,7 +22,8 @@ const idle: FightState = {
   liveTotalBars: null,
   liveBossName: null,
   liveEncourageMessage: null,
-  livePhase: null
+  livePhase: null,
+  bossDied: false
 };
 
 function status(name: string, bars: number, isDead = false): { type: "status"; data: BossStatusData } {
@@ -132,7 +133,8 @@ const idleState: FightState = {
   liveTotalBars: null,
   liveBossName: null,
   liveEncourageMessage: null,
-  livePhase: null
+  livePhase: null,
+  bossDied: false
 };
 
 const phaseStatus = (name: string, bars: number, total: number, isDead = false) => ({
@@ -187,5 +189,65 @@ describe("reduceBossStatus revival phase tracking", () => {
     expect(end.state.livePhase).toBeNull();
     const t2 = reduceBossStatus({ ...idleState, liveGateId: "g22", livePhase: 3 }, { type: "tier2" }, phaseCtx);
     expect(t2.state.livePhase).toBeNull();
+  });
+});
+
+describe("reduceBossStatus kill banner", () => {
+  const ag1 = gate("ag1", "Act 4: Armoche", 1, "Act 4: Covetous Master Echidna"); // swap gate
+  const ag2 = gate("ag2", "Act 4: Armoche", 2, "Armoche, Sentinel of the Abyss");
+  const bctx: ReduceCtx = { raids: [ag1, ag2], difficultyMap: {}, autoShowHide: false, pickEncourage: () => "PUSH" };
+  const base: FightState = {
+    liveGateId: null,
+    liveBar: null,
+    liveTotalBars: null,
+    liveBossName: null,
+    liveEncourageMessage: null,
+    livePhase: null,
+    bossDied: false
+  };
+  const bannerOf = (effects: ReturnType<typeof reduceBossStatus>["effects"]) =>
+    effects.find((e) => e.type === "kill-banner")?.variant ?? null;
+  const nullStatus = { type: "status" as const, data: null };
+
+  it("fires raid-cleared when the final gate's own boss dies", () => {
+    const live: FightState = { ...base, liveGateId: "ag2", liveBar: 0, liveBossName: "Armoche, Sentinel of the Abyss" };
+    const { effects } = reduceBossStatus(live, status("Armoche, Sentinel of the Abyss", 0, true), bctx);
+    expect(bannerOf(effects)).toBe("raid-cleared");
+  });
+
+  it("fires boss-defeated on a swap-gate clear (Echidna → Brelshaza → feed end)", () => {
+    let s = reduceBossStatus(base, status("Act 4: Covetous Master Echidna", 287), bctx).state;
+    expect(s.liveGateId).toBe("ag1");
+    // Echidna dies (the swap) — gate kept, kill pending.
+    s = reduceBossStatus(s, status("Act 4: Covetous Master Echidna", 0, true), bctx).state;
+    expect(s.bossDied).toBe(true);
+    // Brelshaza takes over alive — pending kill cleared.
+    s = reduceBossStatus(s, status("Brelshaza, Ember in the Ashes", 450), bctx).state;
+    expect(s.bossDied).toBe(false);
+    // Brelshaza dies (name doesn't match the gate) — gate kept, kill pending again.
+    s = reduceBossStatus(s, status("Brelshaza, Ember in the Ashes", 0, true), bctx).state;
+    expect(s.bossDied).toBe(true);
+    // Feed ends → teardown → banner for the live gate (G1, not final) = boss-defeated.
+    const end = reduceBossStatus(s, nullStatus, bctx);
+    expect(bannerOf(end.effects)).toBe("boss-defeated");
+    expect(end.state.liveGateId).toBeNull();
+  });
+
+  it("does not banner on a wipe (boss never dies, ends via tier2)", () => {
+    let s = reduceBossStatus(base, status("Armoche, Sentinel of the Abyss", 300), bctx).state;
+    s = reduceBossStatus(s, status("Armoche, Sentinel of the Abyss", 120), bctx).state; // still alive
+    const end = reduceBossStatus(s, { type: "tier2" }, bctx);
+    expect(bannerOf(end.effects)).toBeNull();
+    expect(end.effects.some((e) => e.type === "encounter-end")).toBe(true);
+  });
+
+  it("does not banner when an add dies but the boss resumes before the feed ends", () => {
+    let s = reduceBossStatus(base, status("Armoche, Sentinel of the Abyss", 300), bctx).state;
+    s = reduceBossStatus(s, status("Some Add", 0, true), bctx).state; // add dies → pending
+    expect(s.bossDied).toBe(true);
+    s = reduceBossStatus(s, status("Armoche, Sentinel of the Abyss", 250), bctx).state; // boss alive → cleared
+    expect(s.bossDied).toBe(false);
+    const end = reduceBossStatus(s, nullStatus, bctx);
+    expect(bannerOf(end.effects)).toBeNull();
   });
 });

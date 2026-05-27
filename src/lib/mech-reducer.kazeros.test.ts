@@ -36,7 +36,8 @@ const idle: FightState = {
   liveTotalBars: null,
   liveBossName: null,
   liveEncourageMessage: null,
-  livePhase: null
+  livePhase: null,
+  bossDied: false
 };
 
 describe("Final Act: Kazeros G2 revival fixture", () => {
