@@ -46,6 +46,13 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());
     app_handle.manage(std::sync::Mutex::new(log_watcher));
 
+    // One-time LRU sweep of the TTS clip cache so it can't grow without bound. Off the main
+    // thread since it touches the filesystem; the cache lives next to the exe (with settings).
+    {
+        let cache_dir = context.current_dir.join(crate::tts_cmd::TTS_CACHE_DIR);
+        std::thread::spawn(move || crate::tts_cmd::prune_tts_cache(&cache_dir));
+    }
+
     Ok(())
 }
 

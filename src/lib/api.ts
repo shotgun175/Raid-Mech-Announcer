@@ -6,6 +6,11 @@ export const saveSettings = (settings: AppSettings): Promise<void> => invoke("sa
 export const getSettings = (): Promise<AppSettings> => invoke("get_settings");
 export const listTtsVoices = (): Promise<string[]> => invoke("list_tts_voices");
 export const stopTts = (): Promise<void> => invoke("stop_tts");
+// Bulk pre-generate (cache-warm) the given callout lines for a voice + rate. Progress arrives via
+// the "tts:pregen-progress" / "tts:pregen-done" events; cancel with cancelTtsPregen().
+export const pregenerateTts = (texts: string[], voice: string, rate: number): Promise<void> =>
+  invoke("pregenerate_tts", { texts, voice, rate });
+export const cancelTtsPregen = (): Promise<void> => invoke("cancel_tts_pregen");
 export const getLOAMeterDataPath = (): Promise<string | null> => invoke("get_loa_meter_data_path");
 export const toggleOverlayWindow = (): Promise<void> => invoke("toggle_overlay_window");
 

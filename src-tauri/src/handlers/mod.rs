@@ -25,6 +25,8 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         capture_path,
         crate::tts_cmd::speak_tts,
         crate::tts_cmd::stop_tts,
+        crate::tts_cmd::pregenerate_tts,
+        crate::tts_cmd::cancel_tts_pregen,
         crate::tts_cmd::list_tts_voices,
     ])
 }
