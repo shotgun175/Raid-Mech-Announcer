@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.2.7 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.7 - May 27th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Added a "Generate voice lines" button (Settings > Announcements) that pre-creates all spoken callouts for your imported raids ahead of time, so they play instantly the very first time in a fight instead of taking a moment to load. It uses your current voice and Timing settings and skips anything already generated.
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -19,14 +35,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.6 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.6 - May 27th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.6 - May 27th, 2026
 
 #### NEW FEATURES
 
