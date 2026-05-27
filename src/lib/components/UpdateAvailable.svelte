@@ -6,10 +6,19 @@
   import { installUpdate } from "$lib/utils/updater";
   import type { Update } from "@tauri-apps/plugin-updater";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+  import { peerState } from "$lib/mech-peer.svelte";
+  import { mechStore } from "$lib/mech-store.svelte";
 
   let installing = $state(false);
+  let showConfirm = $state(false);
 
-  async function onInstall() {
+  const warningText = $derived(
+    mechStore.isLive
+      ? "A fight is in progress. Updating now will close the overlay and interrupt mech announcements. Update anyway?"
+      : "Updating will disconnect Raid Mech Announcer from LOA Logs and restart the app. Do you want to proceed?"
+  );
+
+  async function doInstall() {
     if (!updateInfo.manifest || installing) return;
     installing = true;
     try {
@@ -17,6 +26,16 @@
     } catch (e) {
       console.error("update install failed:", e);
       installing = false;
+    }
+  }
+
+  // Updating tears down WinDivert and relaunches, dropping the LOA Logs link.
+  // Warn first only when that link is live; otherwise install immediately.
+  async function onUpdateClick() {
+    if (peerState.isConnected) {
+      showConfirm = true;
+    } else {
+      await doInstall();
     }
   }
 
@@ -46,20 +65,41 @@
       use:melt={$content}
     >
       <h2 use:melt={$title} class="sticky top-0 py-2 text-xl font-semibold">New Update Available!</h2>
-      {#if updateInfo.manifest?.body}
-        <div use:melt={$description} class="overflow-y-scroll rounded-md border border-neutral-700">
-          {@render markdown(updateInfo.manifest.body)}
+      {#if showConfirm}
+        <p use:melt={$description} class="text-center text-sm text-neutral-300">
+          {warningText}
+        </p>
+        <div class="flex items-center gap-3 py-2">
+          <button
+            class="rounded-md bg-neutral-600/70 px-2 py-1 hover:bg-neutral-600/60 focus:ring-0"
+            onclick={() => (showConfirm = false)}
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0 disabled:opacity-60"
+            disabled={installing}
+            onclick={doInstall}
+          >
+            <span>{installing ? "Installing…" : "Update Now"}</span>
+          </button>
+        </div>
+      {:else}
+        {#if updateInfo.manifest?.body}
+          <div use:melt={$description} class="overflow-y-scroll rounded-md border border-neutral-700">
+            {@render markdown(updateInfo.manifest.body)}
+          </div>
+        {/if}
+        <div class="flex items-center py-2">
+          <button
+            class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0 disabled:opacity-60"
+            disabled={installing}
+            onclick={onUpdateClick}
+          >
+            <span>{installing ? "Installing…" : "Update Now"}</span>
+          </button>
         </div>
       {/if}
-      <div class="flex items-center py-2">
-        <button
-          class="rounded-md bg-accent-500/70 px-2 py-1 hover:bg-accent-500/60 focus:ring-0 disabled:opacity-60"
-          disabled={installing}
-          onclick={onInstall}
-        >
-          <span>{installing ? "Installing…" : "Update Now"}</span>
-        </button>
-      </div>
     </div>
   </div>
 {/if}
