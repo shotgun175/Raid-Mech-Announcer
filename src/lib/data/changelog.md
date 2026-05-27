@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Spoken mechanic callouts are now cached after the first time they're generated, so repeated lines play instantly instead of taking a moment to load each time. The cache is size-capped and clears its least-used clips automatically.
+
 <!-- @release-end -->
 
 <!-- @release v0.2.6 -->
