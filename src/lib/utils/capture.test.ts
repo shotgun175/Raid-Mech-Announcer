@@ -48,7 +48,7 @@ describe("segmentFights", () => {
     expect(wipe[0].outcome).toBe("wipe");
   });
 
-  it("keeps a mid-fight boss swap in one fight (gap under 60s)", () => {
+  it("keeps a mid-fight boss swap in one fight and labels it by the final boss (LOA Logs style)", () => {
     const records = [
       { t: 1_000, d: boss("Act 4: Covetous Master Echidna", 300) },
       { t: 2_000, d: boss("Act 4: Covetous Master Echidna", 0, true) },
@@ -57,6 +57,18 @@ describe("segmentFights", () => {
     const fights = segmentFights(records);
     expect(fights).toHaveLength(1);
     expect(fights[0].records).toHaveLength(3);
+    expect(fights[0].boss).toBe("Brelshaza, Ember in the Ashes");
+  });
+
+  it("labels a fight by its main boss, not a transient mid-fight add", () => {
+    // Kazeros G1: an Abyssal Afterimage add spawns mid-fight, but the gate ends on Abyss Lord.
+    const records = [
+      { t: 1_000, d: boss("Abyss Lord Kazeros", 100) },
+      { t: 2_000, d: boss("Abyssal Afterimage", 100) }, // add appears
+      { t: 3_000, d: boss("Abyss Lord Kazeros", 60, true) } // add gone, main boss dies
+    ];
+    const fights = segmentFights(records);
+    expect(fights[0].boss).toBe("Abyss Lord Kazeros");
   });
 
   it("splits a re-pull even when a null disconnect fragments the silence gap", () => {

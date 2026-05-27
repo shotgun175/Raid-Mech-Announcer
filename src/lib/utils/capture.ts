@@ -48,7 +48,11 @@ export function segmentFights(records: CaptureRecord[]): Fight[] {
 
   const flush = () => {
     if (cur.length === 0) return;
-    const boss = cur.find((r) => r.d?.name)?.d?.name ?? "Unknown";
+    // Label by the LAST named boss so revival/handoff gates read the way LOA Logs lists them
+    // (Kazeros G2 -> "Death Incarnate Kazeros", Armoche G1 -> "Brelshaza, Ember in the Ashes")
+    // rather than by the opening form. A fight ends on its main boss, so a transient mid-fight
+    // add (e.g. the Abyssal Afterimage) is not picked up.
+    const boss = cur.findLast((r) => r.d?.name)?.d?.name ?? "Unknown";
     const last = cur.at(-1)?.d ?? null;
     const outcome: Fight["outcome"] = last?.isDead ? "kill" : "wipe";
     fights.push({
