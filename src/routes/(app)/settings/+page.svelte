@@ -1,8 +1,16 @@
 <script lang="ts">
-  import { saveSettings, getLOAMeterDataPath, listTtsVoices, capturePath } from "$lib/api";
+  import {
+    saveSettings,
+    getLOAMeterDataPath,
+    listTtsVoices,
+    capturePath,
+    pregenerateTts,
+    cancelTtsPregen
+  } from "$lib/api";
   import OverlayPreviewPanel from "$lib/components/mech/OverlayPreviewPanel.svelte";
   import { revealItemInDir } from "@tauri-apps/plugin-opener";
-  import { emit } from "@tauri-apps/api/event";
+  import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
+  import { enumerateTtsLines } from "$lib/utils/tts-lines";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
   import { registerShortcuts, shortcuts } from "$lib/utils/shortcuts";
@@ -40,6 +48,52 @@
       installedVoices = ["Could not read installed voices"];
     }
     showVoices = true;
+  }
+
+  // ── Pre-generate voice lines (cache warm) ───────────────────────────
+  // Synthesizes every callout for the imported raids at the current voice + Timing values, so
+  // they play instantly the first time in a fight instead of taking ~2s to generate. Progress
+  // and completion arrive via Tauri events emitted by the backend.
+  let pregenRunning = $state(false);
+  let pregenDone = $state(0);
+  let pregenTotal = $state(0);
+  let pregenSummary = $state<string | null>(null);
+  let pregenUnlisten: UnlistenFn[] = [];
+
+  onMount(async () => {
+    const onProgress = await listen<{ done: number; total: number }>("tts:pregen-progress", (e) => {
+      pregenDone = e.payload.done;
+      pregenTotal = e.payload.total;
+    });
+    const onDone = await listen<{ generated: number; total: number; cancelled: boolean }>("tts:pregen-done", (e) => {
+      pregenRunning = false;
+      const { generated, total, cancelled } = e.payload;
+      const n = `${generated} new line${generated === 1 ? "" : "s"}`;
+      pregenSummary = cancelled ? `Cancelled - cached ${n}` : `Done - cached ${n} (${total} total)`;
+    });
+    pregenUnlisten = [onProgress, onDone];
+  });
+
+  onDestroy(() => {
+    pregenUnlisten.forEach((fn) => fn());
+  });
+
+  async function generateVoiceLines() {
+    if (pregenRunning) return;
+    const lines = enumerateTtsLines(mechStore.raids, mechStore.difficultyMap, s.lead, s.repeatLead);
+    if (lines.length === 0) {
+      pregenSummary = "No callouts to generate (no raids imported, or all TTS is off)";
+      return;
+    }
+    pregenSummary = null;
+    pregenDone = 0;
+    pregenTotal = lines.length;
+    pregenRunning = true;
+    await pregenerateTts(lines, s.voice, s.ttsRate ?? 1.0);
+  }
+
+  function cancelGenerateVoiceLines() {
+    cancelTtsPregen();
   }
 
   // ── Discord webhook ─────────────────────────────────────────────────
@@ -426,8 +480,8 @@
             </div>
           </div>
 
-          <!-- Voice picker + Test button on same row -->
-          <div class="flex items-center gap-4 pt-1">
+          <!-- Voice picker + Test Announcement + installed-voices toggle on one row -->
+          <div class="flex flex-wrap items-center gap-4 pt-1">
             <div class="flex items-center gap-2">
               {#each ["Andrew", "Jenny"] as const as voiceName}
                 <button
@@ -439,10 +493,6 @@
               {/each}
               <span class="pl-1 text-sm text-neutral-400">Voice</span>
             </div>
-          </div>
-
-          <!-- Test button + voice debug -->
-          <div class="flex flex-wrap items-center gap-3">
             <button
               onclick={testTTS}
               class="flex items-center gap-2 rounded-md border border-accent-500/40 bg-accent-600/20 px-4 py-2 text-sm font-semibold text-accent-400 transition hover:bg-accent-600/30"
@@ -455,6 +505,35 @@
             >
               {showVoices ? "Hide installed voices" : "Show installed voices"}
             </button>
+          </div>
+
+          <!-- Pre-generate voice lines (cache warm) -->
+          <div class="flex flex-col gap-2 rounded-md border border-neutral-700 bg-neutral-800/40 px-4 py-3">
+            <div class="flex flex-wrap items-center gap-3">
+              {#if pregenRunning}
+                <button
+                  onclick={cancelGenerateVoiceLines}
+                  class="rounded-md border border-red-500/40 bg-red-600/15 px-3 py-1.5 text-sm font-medium text-red-300 transition hover:bg-red-600/25"
+                >
+                  Cancel
+                </button>
+                <span class="text-xs text-neutral-400">Generating {pregenDone} / {pregenTotal}…</span>
+              {:else}
+                <button
+                  onclick={generateVoiceLines}
+                  class="rounded-md border border-accent-500/40 bg-accent-600/20 px-3 py-1.5 text-sm font-medium text-accent-400 transition hover:bg-accent-600/30"
+                >
+                  Generate voice lines
+                </button>
+                {#if pregenSummary}
+                  <span class="text-xs text-neutral-500">{pregenSummary}</span>
+                {/if}
+              {/if}
+            </div>
+            <p class="text-xs text-neutral-500">
+              Pre-generates every callout for your imported raids at the current voice and Timing values, so they play
+              instantly the first time in a fight. Safe to run anytime - already-generated lines are skipped.
+            </p>
           </div>
 
           {#if showVoices}

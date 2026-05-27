@@ -1,10 +1,11 @@
 use rodio::{Decoder, OutputStream, Sink};
 use std::fs::OpenOptions;
 use std::io::Cursor;
-use std::path::Path;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::path::{Path, PathBuf};
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::time::{Instant, SystemTime};
-use tauri::{State, command};
+use tauri::{AppHandle, Emitter, State, command};
 use uuid::Uuid;
 
 use crate::context::AppContext;
@@ -15,6 +16,25 @@ const JENNY:  &str = "en-US-JennyNeural";
 // Bumped by stop_tts() to cancel all queued/in-flight speech. Each speak_tts thread captures
 // the epoch at spawn; if it changes before or during playback, that thread skips or stops.
 static TTS_EPOCH: AtomicU64 = AtomicU64::new(0);
+
+// Bulk pre-generation (cache warm) state. PREGEN_RUNNING guards against two runs at once;
+// PREGEN_CANCEL lets the UI stop an in-flight run.
+static PREGEN_RUNNING: AtomicBool = AtomicBool::new(false);
+static PREGEN_CANCEL: AtomicBool = AtomicBool::new(false);
+const PREGEN_WORKERS: usize = 4;
+
+#[derive(Clone, serde::Serialize)]
+struct PregenProgress {
+    done: usize,
+    total: usize,
+}
+
+#[derive(Clone, serde::Serialize)]
+struct PregenDone {
+    generated: usize,
+    total: usize,
+    cancelled: bool,
+}
 
 fn voice_id(name: &str) -> &'static str {
     if name.to_lowercase().contains("jenny") { JENNY } else { ANDREW }
@@ -72,6 +92,71 @@ pub fn stop_tts() {
     TTS_EPOCH.fetch_add(1, Ordering::SeqCst);
 }
 
+/// Bulk-warm the cache: synthesize every line in `texts` (skipping any already cached) for the
+/// given voice + rate, off the UI thread with a few workers. Emits `tts:pregen-progress`
+/// ({done,total}) as clips complete and `tts:pregen-done` ({generated,total,cancelled}) at the
+/// end. A no-op if a run is already in progress. Cancel via cancel_tts_pregen().
+#[command]
+pub fn pregenerate_tts(app: AppHandle, ctx: State<AppContext>, texts: Vec<String>, voice: String, rate: f64) {
+    // Guard against overlapping runs.
+    if PREGEN_RUNNING.swap(true, Ordering::SeqCst) {
+        return;
+    }
+    PREGEN_CANCEL.store(false, Ordering::SeqCst);
+
+    let vid = voice_id(&voice).to_string();
+    let rate_str = format!("{:+.0}%", (rate - 1.0) * 100.0);
+    let cache_dir = ctx.current_dir.join(TTS_CACHE_DIR);
+    let texts: Vec<String> = texts.into_iter().filter(|t| !t.trim().is_empty()).collect();
+
+    std::thread::spawn(move || {
+        let total = texts.len();
+        let texts = Arc::new(texts);
+        let next = Arc::new(AtomicUsize::new(0)); // shared work index
+        let done = Arc::new(AtomicUsize::new(0));
+        let generated = Arc::new(AtomicUsize::new(0)); // actually synthesized (vs already cached)
+
+        let mut handles = Vec::new();
+        for _ in 0..PREGEN_WORKERS.min(total.max(1)) {
+            let (texts, next, done, generated) = (texts.clone(), next.clone(), done.clone(), generated.clone());
+            let (cache_dir, vid, rate_str, app) = (cache_dir.clone(), vid.clone(), rate_str.clone(), app.clone());
+            handles.push(std::thread::spawn(move || {
+                loop {
+                    if PREGEN_CANCEL.load(Ordering::SeqCst) {
+                        break;
+                    }
+                    let i = next.fetch_add(1, Ordering::SeqCst);
+                    if i >= texts.len() {
+                        break;
+                    }
+                    let text = &texts[i];
+                    let cache_file = cache_dir.join(cache_file_name(text, &vid, &rate_str));
+                    if !cache_file.is_file() && synthesize_to_cache(text, &vid, &rate_str, &cache_dir).is_some() {
+                        generated.fetch_add(1, Ordering::SeqCst);
+                    }
+                    let d = done.fetch_add(1, Ordering::SeqCst) + 1;
+                    let _ = app.emit("tts:pregen-progress", PregenProgress { done: d, total });
+                }
+            }));
+        }
+        for h in handles {
+            let _ = h.join();
+        }
+
+        let cancelled = PREGEN_CANCEL.load(Ordering::SeqCst);
+        let generated = generated.load(Ordering::SeqCst);
+        log::info!("[tts] pre-generate done: {generated} new of {total} (cancelled={cancelled})");
+        let _ = app.emit("tts:pregen-done", PregenDone { generated, total, cancelled });
+        PREGEN_RUNNING.store(false, Ordering::SeqCst);
+    });
+}
+
+/// Request cancellation of an in-flight pre-generate run. Workers stop after their current clip.
+#[command]
+pub fn cancel_tts_pregen() {
+    PREGEN_CANCEL.store(true, Ordering::SeqCst);
+}
+
 /// Try Python edge-tts, cached. A cache hit replays the stored MP3 (no Python, no network); a
 /// miss synthesizes via subprocess, publishes the clip to the cache, then plays it.
 fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch: u64, cache_dir: &Path) -> bool {
@@ -103,14 +188,36 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
         }
     }
 
-    // ---- Cache miss: synthesize, then publish to the cache ----
+    // ---- Cache miss: synthesize, publish to the cache, then play ----
+    // Don't bother synthesizing a line that a stop already invalidated.
+    if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
+        return true;
+    }
+    let t0 = Instant::now();
+    let Some(final_path) = synthesize_to_cache(text, voice_id, &rate_str, cache_dir) else {
+        return false;
+    };
+    log::info!("[tts] cache miss, synthesized in {} ms: \"{}\"", t0.elapsed().as_millis(), text);
+
+    // A stop fired while generating: keep the cached clip for next time, just skip playback.
+    if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
+        return true;
+    }
+    match std::fs::read(&final_path) {
+        Ok(bytes) => play_clip(bytes, vol, epoch),
+        Err(_) => false,
+    }
+}
+
+/// Synthesize a clip with edge-tts and publish it into the content-addressed cache, returning the
+/// final path. Generates to a unique temp first so concurrent identical calls never read a
+/// half-written file, then renames it into place. No hit-check (callers do that) and no playback —
+/// shared by the speak path and the bulk pre-generate command.
+fn synthesize_to_cache(text: &str, voice_id: &str, rate_str: &str, cache_dir: &Path) -> Option<PathBuf> {
     let _ = std::fs::create_dir_all(cache_dir);
-    // Generate to a unique temp first so concurrent identical calls don't read a half-written
-    // file, then atomically rename it into the content-addressed cache path.
     let gen_tmp = cache_dir.join(format!(".gen_{}.mp3", Uuid::new_v4()));
     let gen_tmp_str = gen_tmp.to_string_lossy().to_string();
 
-    let t0 = Instant::now();
     #[cfg(target_os = "windows")]
     let gen_ok = {
         use std::os::windows::process::CommandExt;
@@ -119,7 +226,7 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
                 "-m", "edge_tts",
                 "--voice", voice_id,
                 "--text", text,
-                "--rate", &rate_str,
+                "--rate", rate_str,
                 "--write-media", &gen_tmp_str,
             ])
             .creation_flags(0x08000000)
@@ -130,37 +237,28 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
 
     #[cfg(not(target_os = "windows"))]
     let gen_ok = std::process::Command::new("python")
-        .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--rate", &rate_str, "--write-media", &gen_tmp_str])
+        .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--rate", rate_str, "--write-media", &gen_tmp_str])
         .output()
         .map(|o| o.status.success())
         .unwrap_or(false);
 
     if !gen_ok || !gen_tmp.exists() {
         let _ = std::fs::remove_file(&gen_tmp);
-        return false;
+        return None;
     }
-    log::info!("[tts] cache miss, synthesized in {} ms: \"{}\"", t0.elapsed().as_millis(), text);
 
     // Publish into the cache. If a concurrent call already produced this clip, keep theirs.
+    let cache_file = cache_dir.join(cache_file_name(text, voice_id, rate_str));
     let final_path = if cache_file.exists() {
         let _ = std::fs::remove_file(&gen_tmp);
         cache_file
     } else if std::fs::rename(&gen_tmp, &cache_file).is_ok() {
         cache_file
     } else {
-        // Rename failed (rare, e.g. cross-volume) — play from the temp; a later miss re-publishes.
+        // Rename failed (rare, e.g. cross-volume) — return the temp; a later call re-publishes.
         gen_tmp
     };
-
-    // A stop fired while generating: keep the cached clip for next time, just skip playback.
-    if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
-        return true;
-    }
-
-    match std::fs::read(&final_path) {
-        Ok(bytes) => play_clip(bytes, vol, epoch),
-        Err(_) => false,
-    }
+    Some(final_path)
 }
 
 /// Decode an in-memory MP3 and play it to completion, stopping early if a stop (epoch bump) fires.
