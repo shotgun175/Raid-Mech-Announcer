@@ -4,11 +4,14 @@
   import OLCombined from "$lib/components/mech/overlays/OLCombined.svelte";
   import OLHudStrip from "$lib/components/mech/overlays/OLHudStrip.svelte";
   import OLPill from "$lib/components/mech/overlays/OLPill.svelte";
+  import OverlayBanner from "$lib/components/mech/overlays/OverlayBanner.svelte";
   import { BOSS_HP_COLORS, formatGate, SEVERITY } from "$lib/mech-constants";
   import { mechStore } from "$lib/mech-store.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { speakTts } from "$lib/utils/tts";
   import { filterByDifficulty } from "$lib/utils/difficulty";
+  import { isFinalGateOfRaid } from "$lib/utils/gate-match";
+  import { fly } from "svelte/transition";
   import { onDestroy } from "svelte";
   import type { Difficulty, Mechanic } from "$lib/mech-types";
 
@@ -214,6 +217,16 @@
   const gateName = $derived(gate ? `G${formatGate(gate.gate)} · ${gate.raid.toUpperCase()}` : "");
   const bossName = $derived(gate ? gate.boss.split(",")[0] : "");
 
+  // At 0 bars the boss is "dead" — preview the kill banner (raid-cleared on the raid's final
+  // gate, boss-defeated otherwise), mirroring the live overlay. Only outside a real fight.
+  const killBanner = $derived<"boss-defeated" | "raid-cleared" | null>(
+    !isLive && gate && simBar <= 0
+      ? isFinalGateOfRaid(mechStore.raids, gate)
+        ? "raid-cleared"
+        : "boss-defeated"
+      : null
+  );
+
   const barColor = $derived.by(() => {
     if (!gate) return BOSS_HP_COLORS[0];
     const idx = Math.max(0, Math.ceil((simBar / gate.totalBars) * BOSS_HP_COLORS.length) - 1);
@@ -367,7 +380,11 @@
           : overlayDefaultStyle} cursor: grab;"
         onmousedown={startDrag}
       >
-        {#if variant === "standard"}
+        {#if killBanner}
+          <div transition:fly={{ y: -10, duration: 250 }}>
+            <OverlayBanner variant={killBanner} />
+          </div>
+        {:else if variant === "standard"}
           <OLCombined
             mechanics={visibleMechanics}
             currentBar={simBar}
@@ -417,7 +434,7 @@
           />
         {/if}
 
-        {#if lastAnnounced}
+        {#if lastAnnounced && !killBanner}
           {@const s = SEVERITY[lastAnnounced.severity as keyof typeof SEVERITY]}
           <div
             style="margin-top: 8px; background: {s.dim}; border: 1px solid {s.border}; border-radius: 4px; padding: 6px 12px; font-size: 12px; color: {s.color}; font-weight: 600; text-align: center;"

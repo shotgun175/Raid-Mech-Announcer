@@ -2,7 +2,8 @@ import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
 import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty } from "./utils/difficulty";
-import { bestGateMatch } from "./utils/gate-match";
+import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
+import { normalizeRaids } from "./migrate";
 import { reduceBossStatus, type BossEvent, type Effect, type FightState } from "./mech-reducer";
 
 // Fire-and-forget log into the in-app debug strip. Works from any window via
@@ -71,6 +72,15 @@ async function broadcastFightStart() {
   } catch {}
 }
 
+// Brief celebratory overlay banner on a *cleared* fight (boss killed, not a wipe). The overlay
+// shows it for a few seconds, overriding the post-kill auto-hide for that window.
+async function broadcastKillBanner(variant: "boss-defeated" | "raid-cleared") {
+  dbg(`[fight] cleared → broadcast mech:${variant}`);
+  try {
+    await emit(variant === "raid-cleared" ? "mech:raid-cleared" : "mech:boss-defeated", null);
+  } catch {}
+}
+
 // Three-tier silence detection (no instant wipe signal exists — on a wipe the boss stays
 // alive and simply stops sending HP, so end-of-fight is inferred from silence):
 // - OVERLAY_HIDE_MS (8s): clear HP display; the overlay keeps showing a "phase transition…"
@@ -130,7 +140,10 @@ const CHANGED_MECHS_KEY = "mech-announcer-changed-mechs";
 function loadRaids(): Gate[] {
   try {
     const raw = localStorage.getItem(RAIDS_KEY);
-    return raw ? (JSON.parse(raw) as Gate[]) : buildDefaultRaids();
+    // normalizeRaids coerces older/partial stored gates to the current schema so downstream code
+    // never reads undefined (e.g. an invalid severity crashing SEVERITY[...]). Idempotent; the
+    // boot-time reconcile + save then persists the cleaned data.
+    return raw ? normalizeRaids(JSON.parse(raw)) : buildDefaultRaids();
   } catch {
     return buildDefaultRaids();
   }
@@ -424,7 +437,17 @@ export const mechStore = (() => {
     // Clears the sticky gate so the next fight re-matches immediately. Also broadcasts
     // encounter-end + hides the overlay (autoShowHide-gated) so post-fight auto-hide
     // happens once, here — never in the middle of a fight from a heartbeat timeout.
-    endEncounter() {
+    // The optional fight-end payload (boss name + cleared flag) drives the kill banner.
+    endEncounter(payload?: { boss?: string; cleared?: boolean }) {
+      // A cleared fight flashes the kill banner. Done before the liveGateId guard because the
+      // isDead path may have already cleared the gate for non-swap bosses; resolve the gate from
+      // the fight-end boss name, falling back to the still-live gate, to pick the banner variant.
+      if (payload?.cleared) {
+        const gate =
+          (payload.boss ? bestGateMatch(raids, payload.boss) : null) ??
+          (liveGateId ? (raids.find((r) => r.id === liveGateId) ?? null) : null);
+        if (gate) broadcastKillBanner(isFinalGateOfRaid(raids, gate) ? "raid-cleared" : "boss-defeated");
+      }
       if (liveGateId == null) return;
       dbg(`[fight] loa fight-end → liveGateId cleared`);
       liveBar = null;

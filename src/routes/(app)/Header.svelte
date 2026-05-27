@@ -2,10 +2,11 @@
   import { page } from "$app/state";
   import QuickTooltip from "$lib/components/QuickTooltip.svelte";
   import { addToast } from "$lib/components/Toaster.svelte";
-  import { IconArrowUp, IconMenu, IconRefresh, IconX } from "$lib/icons";
+  import { IconArrowUp, IconHelp, IconMenu, IconRefresh, IconX } from "$lib/icons";
   import { settings, updateInfo } from "$lib/stores.svelte";
   import { checkForUpdate } from "$lib/utils/updater";
   import { noUpdateAvailable } from "$lib/utils/toasts";
+  import { openWelcome } from "$lib/components/WelcomeModal.svelte";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { getVersion } from "@tauri-apps/api/app";
   import { onMount, type Snippet } from "svelte";
@@ -86,46 +87,53 @@
       </div>
       <div class="m-2 h-px bg-accent-500/20"></div>
 
-      <!-- version + update button row -->
+      <!-- version + help + update button row -->
       <div class="mx-4 mt-auto mb-2 flex items-center justify-between px-1">
         {#if version}
           <span class="text-sm text-neutral-500">version {version}</span>
         {/if}
-        {#if !updateInfo.available}
-          <button
-            class="group ml-auto"
-            onclick={async () => {
-              checking = true;
-              const update = await checkForUpdate();
-              setTimeout(() => {
-                if (!update) {
-                  addToast(noUpdateAvailable);
-                }
-                checking = false;
-              }, 900);
-            }}
-          >
-            <QuickTooltip tooltip="Check for updates">
-              <IconRefresh
-                class="size-4 transform group-hover:text-accent-500/80 {checking
-                  ? 'animate-[spin_1s_linear_infinite_reverse]'
-                  : ''}"
-              />
+        <div class="ml-auto flex items-center gap-3">
+          <button class="group" onclick={openWelcome} aria-label="Help and setup guide">
+            <QuickTooltip tooltip="Help & setup guide">
+              <IconHelp class="size-4 group-hover:text-accent-500/80" />
             </QuickTooltip>
           </button>
-        {:else}
-          <button
-            class="group ml-auto"
-            onclick={async () => {
-              updateInfo.available = false;
-              updateInfo.available = true;
-            }}
-          >
-            <QuickTooltip tooltip="Update available">
-              <IconArrowUp class="size-4 animate-bounce text-accent-500/80 group-hover:text-accent-500/70" />
-            </QuickTooltip>
-          </button>
-        {/if}
+          {#if !updateInfo.available}
+            <button
+              class="group"
+              onclick={async () => {
+                checking = true;
+                const update = await checkForUpdate();
+                setTimeout(() => {
+                  if (!update) {
+                    addToast(noUpdateAvailable);
+                  }
+                  checking = false;
+                }, 900);
+              }}
+            >
+              <QuickTooltip tooltip="Check for updates">
+                <IconRefresh
+                  class="size-4 transform group-hover:text-accent-500/80 {checking
+                    ? 'animate-[spin_1s_linear_infinite_reverse]'
+                    : ''}"
+                />
+              </QuickTooltip>
+            </button>
+          {:else}
+            <button
+              class="group"
+              onclick={async () => {
+                updateInfo.available = false;
+                updateInfo.available = true;
+              }}
+            >
+              <QuickTooltip tooltip="Update available">
+                <IconArrowUp class="size-4 animate-bounce text-accent-500/80 group-hover:text-accent-500/70" />
+              </QuickTooltip>
+            </button>
+          {/if}
+        </div>
       </div>
     </div>
   </div>

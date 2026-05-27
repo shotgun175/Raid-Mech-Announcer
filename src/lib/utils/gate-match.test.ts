@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { bestGateMatch } from "./gate-match";
+import { bestGateMatch, isFinalGateOfRaid } from "./gate-match";
 import type { Gate } from "../mech-types";
 
 function gate(boss: string, id = boss): Gate {
@@ -8,6 +8,20 @@ function gate(boss: string, id = boss): Gate {
     raid: "R",
     gate: 1,
     boss,
+    bossType: "",
+    weakness: "",
+    tauntable: false,
+    totalBars: 300,
+    mechanics: []
+  };
+}
+
+function raidGate(raid: string, gateNum: number, id = `${raid}-${gateNum}`): Gate {
+  return {
+    id,
+    raid,
+    gate: gateNum,
+    boss: id,
     bossType: "",
     weakness: "",
     tauntable: false,
@@ -46,5 +60,39 @@ describe("bestGateMatch", () => {
   it("returns null when nothing clears the threshold", () => {
     expect(bestGateMatch([armocheG2], "Totally Different Boss")).toBeNull();
     expect(bestGateMatch([armocheG2], "")).toBeNull();
+  });
+});
+
+describe("isFinalGateOfRaid", () => {
+  it("treats a lone gate as final", () => {
+    const only = raidGate("Brel", 1);
+    expect(isFinalGateOfRaid([only], only)).toBe(true);
+  });
+
+  it("flags the highest gate as final and earlier gates as not", () => {
+    const g1 = raidGate("Brel", 1);
+    const g2 = raidGate("Brel", 2);
+    const g3 = raidGate("Brel", 3);
+    const raids = [g1, g2, g3];
+    expect(isFinalGateOfRaid(raids, g1)).toBe(false);
+    expect(isFinalGateOfRaid(raids, g2)).toBe(false);
+    expect(isFinalGateOfRaid(raids, g3)).toBe(true);
+  });
+
+  it("orders split gates (21/22/23 -> 2.1/2.2/2.3) so the last sub-gate is final", () => {
+    const g1 = raidGate("Aegir", 1);
+    const g21 = raidGate("Aegir", 21);
+    const g22 = raidGate("Aegir", 22);
+    const raids = [g1, g21, g22];
+    expect(isFinalGateOfRaid(raids, g1)).toBe(false);
+    expect(isFinalGateOfRaid(raids, g21)).toBe(false);
+    expect(isFinalGateOfRaid(raids, g22)).toBe(true);
+  });
+
+  it("scopes to the gate's own raid, ignoring other raids' gate numbers", () => {
+    const brelG1 = raidGate("Brel", 1);
+    const akkanG9 = raidGate("Akkan", 9);
+    // brelG1 is the only Brel gate present -> final for its raid, despite Akkan having a higher number.
+    expect(isFinalGateOfRaid([brelG1, akkanG9], brelG1)).toBe(true);
   });
 });

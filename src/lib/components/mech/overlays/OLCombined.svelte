@@ -149,10 +149,10 @@
     </div>
   {:else if mechStore.liveEncourageMessage}
     <div
-      style="background: rgba(10,10,10,0.9); backdrop-filter: blur(12px); border: 1px solid #10b98166; border-left: 3px solid #10b981; border-radius: 0 5px 5px 0; padding: 12px 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 24px #10b9811a; display: flex; align-items: center; gap: 10px;"
+      style="background: rgba(10,10,10,0.9); backdrop-filter: blur(12px); border: 1px solid #f472b666; border-left: 3px solid #f472b6; border-radius: 0 5px 5px 0; padding: 12px 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 24px #f472b61a; display: flex; align-items: center; gap: 10px;"
     >
       <span
-        style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #10b981; text-transform: uppercase; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.28); border-radius: 3px; padding: 2px 6px; flex-shrink: 0;"
+        style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #f472b6; text-transform: uppercase; background: rgba(244,114,182,0.12); border: 1px solid rgba(244,114,182,0.28); border-radius: 3px; padding: 2px 6px; flex-shrink: 0;"
         >push</span
       >
       <span style="font-size: 16px; font-weight: 700; color: #fafafa; letter-spacing: -0.01em;"

@@ -1,4 +1,5 @@
 import type { Gate } from "../mech-types";
+import { gateSortKey } from "../mech-constants";
 
 // Minimum match score for a live boss name to bind to a gate. Tuned so a short core name
 // ("Echidna", ~0.23 against the unrelated long "Act 4: Covetous Master Echidna") doesn't
@@ -41,4 +42,17 @@ export function bestGateMatch(gates: Gate[], bossName: string): Gate | null {
     }
   }
   return bestScore >= MATCH_THRESHOLD ? best : null;
+}
+
+/**
+ * Whether `gate` is the last gate of its raid among `gates` — i.e. no other gate sharing its
+ * raid name sorts higher (via gateSortKey, which interleaves split gates like 21/22/23 as
+ * 2.1/2.2/2.3). Decides the kill banner: the final gate's clear is "Raid Cleared", every
+ * earlier gate is "Boss Defeated". A lone gate (or unknown raid) counts as final.
+ */
+export function isFinalGateOfRaid(gates: Gate[], gate: Gate): boolean {
+  const sameRaid = gates.filter((g) => g.raid === gate.raid);
+  if (sameRaid.length <= 1) return true;
+  const maxKey = Math.max(...sameRaid.map((g) => gateSortKey(g.gate)));
+  return gateSortKey(gate.gate) >= maxKey;
 }

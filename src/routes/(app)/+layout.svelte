@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import UpdateAvailable from "$lib/components/UpdateAvailable.svelte";
+  import WelcomeModal from "$lib/components/WelcomeModal.svelte";
   import Toaster from "$lib/components/Toaster.svelte";
   import PeerConnect from "$lib/components/mech/PeerConnect.svelte";
   import { getSettings } from "$lib/api";
@@ -60,10 +61,14 @@
 
     // LOA Logs writes a "saving to db" line on true encounter end (not phase transitions).
     // endEncounter() clears the sticky gate and broadcasts mech:encounter-end itself,
-    // so the back-to-back fight re-matches against the new boss.
-    const unlistenFightEnd = listen("loa:fight-end", () => {
-      mechStore.endEncounter();
-    });
+    // so the back-to-back fight re-matches against the new boss. The payload (boss name +
+    // cleared flag) lets it flash the boss-defeated / raid-cleared banner on a kill.
+    const unlistenFightEnd = listen<{ boss?: string; difficulty?: string; cleared?: boolean }>(
+      "loa:fight-end",
+      (event) => {
+        mechStore.endEncounter(event.payload ?? undefined);
+      }
+    );
 
     const pollId = setInterval(async () => {
       if (peerState.status === "connecting" || peerState.isConnected) return;
@@ -84,6 +89,7 @@
 </script>
 
 <UpdateAvailable />
+<WelcomeModal />
 <Toaster />
 <div class="flex h-screen flex-col bg-neutral-900 select-none" style="zoom: {logScale};">
   <div class="min-h-0 flex-1 overflow-auto">
