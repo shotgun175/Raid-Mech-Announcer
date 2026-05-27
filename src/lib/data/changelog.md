@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.2.6 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.6 - May 27th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Added a first-run welcome guide that covers the common setup gotchas: adding the app's folder to your antivirus exceptions (for the WinDivert driver), keeping LOA Logs installed, quitting NordVPN since it conflicts, and running as administrator if nothing is detected. You can reopen it anytime from the "?" button at the bottom of the menu.
 - The overlay now marks a kill: a "Boss Defeated" banner when a gate's boss dies, or a "Raid Cleared" banner when you down the final gate of a raid. Each shows briefly then fades. You can preview both in Settings > Overlay Preview by dragging the HP slider down to 0.
 
@@ -21,14 +37,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.5 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.5 - May 26th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.5 - May 26th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
