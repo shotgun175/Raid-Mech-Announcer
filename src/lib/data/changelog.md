@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Fixed the Boss Defeated / Raid Cleared banners sometimes never appearing at the end of a fight; they now fire reliably whenever the boss is killed.
+
 <!-- @release-end -->
 
 <!-- @release v0.2.7 -->
