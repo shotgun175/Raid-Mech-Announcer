@@ -11,10 +11,16 @@ export type Fight = {
   outcome: "kill" | "wipe" | "unknown";
 };
 
-// A silence longer than this between consecutive records is treated as the boundary
-// between two separate pulls. Matches GATE_RESET_MS in mech-store so segmentation lines
-// up with how the live app considers an encounter over.
-const FIGHT_GAP_MS = 60_000;
+// Fights are split where the boss-status feed goes quiet and then resumes with the boss HP
+// climbing back UP: a re-pull resetting to full, or a different boss on a gate change. Keying
+// off the HP rise (not the raw silence) survives two traps a gap-only rule fell into:
+//   - a wipe -> re-pull silence gets fragmented by a `null` disconnect record (see
+//     capture-buffer), so no single gap ever crossed a fixed threshold;
+//   - revival/phase transitions inside one gate (Kazeros G2: Archdemon -> Death Incarnate) jump
+//     HP up too, but arrive as continuous data, so the silence gate leaves them in the same
+//     fight, while a real gate change (Kazeros G1 -> G2) carries a loading gap and does split.
+const SILENCE_MS = 12_000; // a null record, or a real-to-real gap past this, means the feed went quiet
+const REPULL_RISE = 0.05; // HP climbing this far above the last reading across silence = a fresh pull
 
 export function parseCapture(jsonl: string): CaptureRecord[] {
   const out: CaptureRecord[] = [];
@@ -36,14 +42,15 @@ export function parseCapture(jsonl: string): CaptureRecord[] {
 export function segmentFights(records: CaptureRecord[]): Fight[] {
   const fights: Fight[] = [];
   let cur: CaptureRecord[] = [];
-  let prevT: number | null = null;
+  let lastRealT: number | null = null;
+  let prevHp = 0;
+  let silenceSeen = true; // first real record always opens a fight
 
   const flush = () => {
     if (cur.length === 0) return;
-    const withData = cur.filter((r): r is CaptureRecord & { d: BossStatusData } => r.d != null);
-    const boss = withData.find((r) => r.d.name)?.d.name ?? "Unknown";
-    const last = withData.at(-1)?.d ?? null;
-    const outcome: Fight["outcome"] = last?.isDead ? "kill" : withData.length > 0 ? "wipe" : "unknown";
+    const boss = cur.find((r) => r.d?.name)?.d?.name ?? "Unknown";
+    const last = cur.at(-1)?.d ?? null;
+    const outcome: Fight["outcome"] = last?.isDead ? "kill" : "wipe";
     fights.push({
       id: String(cur[0].t),
       boss,
@@ -56,9 +63,17 @@ export function segmentFights(records: CaptureRecord[]): Fight[] {
   };
 
   for (const r of records) {
-    if (prevT != null && r.t - prevT > FIGHT_GAP_MS) flush();
+    if (r.d == null) {
+      silenceSeen = true; // a disconnect; null markers belong to no fight
+      continue;
+    }
+    if (lastRealT != null && r.t - lastRealT > SILENCE_MS) silenceSeen = true;
+    const hp = r.d.maxHp > 0 ? r.d.currentHp / r.d.maxHp : 0;
+    if (cur.length > 0 && silenceSeen && hp > prevHp + REPULL_RISE) flush();
     cur.push(r);
-    prevT = r.t;
+    lastRealT = r.t;
+    prevHp = hp;
+    silenceSeen = false;
   }
   flush();
   return fights;

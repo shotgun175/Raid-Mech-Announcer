@@ -58,4 +58,43 @@ describe("segmentFights", () => {
     expect(fights).toHaveLength(1);
     expect(fights[0].records).toHaveLength(3);
   });
+
+  it("splits a re-pull even when a null disconnect fragments the silence gap", () => {
+    // The bug this rule fixes: a wipe -> re-pull gap is broken in two by a `null` PeerJS-drop
+    // record, so no single gap is ever large enough for a gap-only rule to split on.
+    const records = [
+      { t: 1_000, d: boss("Witch of Agony, Serca", 100) },
+      { t: 2_000, d: boss("Witch of Agony, Serca", 30) }, // wiping at low HP
+      { t: 3_000, d: null }, // PeerJS drop mid-silence
+      { t: 8_000, d: boss("Witch of Agony, Serca", 100) } // re-pull, only 5s after the null
+    ];
+    const fights = segmentFights(records);
+    expect(fights).toHaveLength(2);
+    expect(fights[0].outcome).toBe("wipe");
+    expect(fights[0].records).toHaveLength(2); // null is excluded from the fight
+    expect(fights[1].records).toHaveLength(1);
+  });
+
+  it("keeps a revival phase in one fight (HP jumps up on continuous data, no silence)", () => {
+    // Kazeros G2: Archdemon dies and revives as Death Incarnate with no gap between forms.
+    const records = [
+      { t: 1_000, d: boss("Archdemon Kazeros", 100) },
+      { t: 2_500, d: boss("Archdemon Kazeros", 0, true) },
+      { t: 4_000, d: boss("Death Incarnate Kazeros", 100) }, // revival 1.5s later
+      { t: 5_500, d: boss("Death Incarnate Kazeros", 0, true) }
+    ];
+    const fights = segmentFights(records);
+    expect(fights).toHaveLength(1);
+    expect(fights[0].outcome).toBe("kill");
+  });
+
+  it("does not split an early-fight disconnect (HP resumes where it left off, not a re-pull)", () => {
+    const records = [
+      { t: 1_000, d: boss("Corvus Tul Rak", 100) },
+      { t: 2_000, d: null }, // brief drop right after the pull starts
+      { t: 16_000, d: boss("Corvus Tul Rak", 98) } // >12s later but HP did not climb back up
+    ];
+    const fights = segmentFights(records);
+    expect(fights).toHaveLength(1);
+  });
 });
