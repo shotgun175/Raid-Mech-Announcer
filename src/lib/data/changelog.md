@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- Added a "Generate voice lines" button (Settings > Announcements) that pre-creates all spoken callouts for your imported raids ahead of time, so they play instantly the very first time in a fight instead of taking a moment to load. It uses your current voice and Timing settings and skips anything already generated.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 - Spoken mechanic callouts are now cached after the first time they're generated, so repeated lines play instantly instead of taking a moment to load each time. The cache is size-capped and clears its least-used clips automatically.
