@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Fixed the Boss Defeated / Raid Cleared banners sometimes never appearing at the end of a fight; they now fire reliably whenever the boss is killed.
-
 <!-- @release-end -->
 
-<!-- @release v0.2.7 -->
+<!-- @release v0.2.8 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.2.7 - May 27th, 2026
+    v0.2.8 - May 27th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Fixed the Boss Defeated / Raid Cleared banners sometimes never appearing at the end of a fight; they now fire reliably whenever the boss is killed.
+
+<!-- @release-end -->
+
+<!-- @release v0.2.7 -->
+### v0.2.7 - May 27th, 2026
 
 #### NEW FEATURES
 
