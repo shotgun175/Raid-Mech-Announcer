@@ -227,6 +227,9 @@ export const mechStore = (() => {
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
   let livePhase = $state<number | null>(null);
+  // Pending-kill token: the live boss has died and hasn't resumed. Set/cleared by the reducer
+  // (FightState.bossDied) and consumed by whichever encounter-end fires first to show the banner.
+  let liveBossDied = $state(false);
   // Gates that received library updates in the last reconciliation pass, surfaced
   // as a small dot in the sidebar. Persists across app restarts until user opens
   // that gate. Cleared by selectGate.
@@ -295,6 +298,7 @@ export const mechStore = (() => {
     liveBossName = s.liveBossName;
     liveEncourageMessage = s.liveEncourageMessage;
     livePhase = s.livePhase;
+    liveBossDied = s.bossDied;
   }
 
   function runEffect(e: Effect) {
@@ -327,6 +331,9 @@ export const mechStore = (() => {
       case "stop-heartbeat":
         stopHeartbeat();
         break;
+      case "kill-banner":
+        broadcastKillBanner(e.variant);
+        break;
       case "log":
         dbg(e.msg);
         break;
@@ -335,7 +342,7 @@ export const mechStore = (() => {
 
   function dispatch(event: BossEvent) {
     const { state, effects } = reduceBossStatus(
-      { liveGateId, liveBar, liveTotalBars, liveBossName, liveEncourageMessage, livePhase },
+      { liveGateId, liveBar, liveTotalBars, liveBossName, liveEncourageMessage, livePhase, bossDied: liveBossDied },
       event,
       {
         raids,
@@ -437,16 +444,14 @@ export const mechStore = (() => {
     // Clears the sticky gate so the next fight re-matches immediately. Also broadcasts
     // encounter-end + hides the overlay (autoShowHide-gated) so post-fight auto-hide
     // happens once, here — never in the middle of a fight from a heartbeat timeout.
-    // The optional fight-end payload (boss name + cleared flag) drives the kill banner.
-    endEncounter(payload?: { boss?: string; cleared?: boolean }) {
-      // A cleared fight flashes the kill banner. Done before the liveGateId guard because the
-      // isDead path may have already cleared the gate for non-swap bosses; resolve the gate from
-      // the fight-end boss name, falling back to the still-live gate, to pick the banner variant.
-      if (payload?.cleared) {
-        const gate =
-          (payload.boss ? bestGateMatch(raids, payload.boss) : null) ??
-          (liveGateId ? (raids.find((r) => r.id === liveGateId) ?? null) : null);
+    endEncounter() {
+      // If the boss died this encounter (feed-confirmed via liveBossDied) and the banner hasn't
+      // fired yet, fire it now, crediting the live gate. One-shot: the reducer's feed-driven
+      // teardown consumes the same token, so whichever encounter-end lands first shows the banner.
+      if (liveBossDied) {
+        const gate = liveGateId ? (raids.find((r) => r.id === liveGateId) ?? null) : null;
         if (gate) broadcastKillBanner(isFinalGateOfRaid(raids, gate) ? "raid-cleared" : "boss-defeated");
+        liveBossDied = false;
       }
       if (liveGateId == null) return;
       dbg(`[fight] loa fight-end → liveGateId cleared`);
@@ -455,6 +460,7 @@ export const mechStore = (() => {
       liveBossName = null;
       liveGateId = null;
       liveEncourageMessage = null;
+      liveBossDied = false;
       stopHeartbeat();
       broadcastBossStatus(null);
       broadcastEncounterEnd();

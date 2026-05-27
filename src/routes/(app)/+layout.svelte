@@ -60,15 +60,12 @@
     });
 
     // LOA Logs writes a "saving to db" line on true encounter end (not phase transitions).
-    // endEncounter() clears the sticky gate and broadcasts mech:encounter-end itself,
-    // so the back-to-back fight re-matches against the new boss. The payload (boss name +
-    // cleared flag) lets it flash the boss-defeated / raid-cleared banner on a kill.
-    const unlistenFightEnd = listen<{ boss?: string; difficulty?: string; cleared?: boolean }>(
-      "loa:fight-end",
-      (event) => {
-        mechStore.endEncounter(event.payload ?? undefined);
-      }
-    );
+    // endEncounter() clears the sticky gate and broadcasts mech:encounter-end itself, so the
+    // back-to-back fight re-matches against the new boss. The kill banner is now driven by the
+    // boss-status feed (liveBossDied), so this no longer needs the fight-end payload.
+    const unlistenFightEnd = listen("loa:fight-end", () => {
+      mechStore.endEncounter();
+    });
 
     const pollId = setInterval(async () => {
       if (peerState.status === "connecting" || peerState.isConnected) return;

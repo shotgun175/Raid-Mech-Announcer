@@ -1,5 +1,5 @@
 import type { BossStatusData, Difficulty, Gate } from "./mech-types";
-import { bestGateMatch } from "./utils/gate-match";
+import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
 import { gateSwapsBoss, isBossSwapPhase } from "./data/raid-library";
 import { filterByDifficulty } from "./utils/difficulty";
 
@@ -10,6 +10,9 @@ export type FightState = {
   liveBossName: string | null;
   liveEncourageMessage: string | null;
   livePhase: number | null;
+  // True once the live boss has reported a death (isDead) and hasn't since come back alive.
+  // Consumed at encounter-end to fire the kill banner; a wipe never sets it (the boss stays alive).
+  bossDied: boolean;
 };
 
 export type BossEvent =
@@ -27,6 +30,7 @@ export type Effect =
   | { type: "overlay-hide" }
   | { type: "start-heartbeat" }
   | { type: "stop-heartbeat" }
+  | { type: "kill-banner"; variant: "boss-defeated" | "raid-cleared" }
   | { type: "log"; msg: string };
 
 export type ReduceCtx = {
@@ -37,6 +41,16 @@ export type ReduceCtx = {
 };
 
 const CLEARED = { liveBar: null, liveTotalBars: null, liveBossName: null } as const;
+
+// On a cleared fight, which banner to show — "raid-cleared" on the raid's final gate, else
+// "boss-defeated". Resolves from the live gate (which survives boss-swaps), so a swap gate like
+// Armoche G1 (Echidna → Brelshaza) is credited to G1, not a separately-imported Brelshaza raid.
+function killBannerEffect(gateId: string | null, ctx: ReduceCtx): Effect | null {
+  if (!gateId) return null;
+  const gate = ctx.raids.find((r) => r.id === gateId);
+  if (!gate) return null;
+  return { type: "kill-banner", variant: isFinalGateOfRaid(ctx.raids, gate) ? "raid-cleared" : "boss-defeated" };
+}
 
 // Mirrors mech-store recomputeEncourage: returns the next encouragement value given the gate,
 // the live bar, and whether we are in a boss-swap phase (no mechs shown -> execute phase).
@@ -119,10 +133,14 @@ export function reduceBossStatus(
     };
   }
   if (event.type === "tier2") {
+    // If the boss died but the feed never sent its closing null (e.g. LOA dropped right after the
+    // kill), the safety-net teardown still banners — a wipe leaves bossDied false, so it won't.
+    const banner = state.bossDied ? killBannerEffect(state.liveGateId, ctx) : null;
     return {
-      state: { ...state, liveGateId: null, liveEncourageMessage: null, livePhase: null },
+      state: { ...state, liveGateId: null, liveEncourageMessage: null, livePhase: null, bossDied: false },
       effects: [
         { type: "log", msg: `[fight] tier-2 timeout (60s) → encounter ended (gate cleared, overlay hidden)` },
+        ...(banner ? [banner] : []),
         { type: "encounter-end" },
         ...hide()
       ]
@@ -136,20 +154,26 @@ export function reduceBossStatus(
     if (state.liveGateId && data?.isDead) {
       const matched = bestGateMatch(ctx.raids, data.name ?? "");
       if (!matched || matched.id !== state.liveGateId) {
-        // Unrelated boss died - keep the live gate, just bump the heartbeat.
+        // The current boss died but its name doesn't resolve to the live gate — a swap boss whose
+        // name isn't the gate's (Brelshaza in Armoche G1), or a clone/add. Keep the gate and mark
+        // the kill pending: a resume (next boss alive) clears it, encounter-end banners on it.
         return {
-          state,
+          state: { ...state, bossDied: true },
           effects: [
-            { type: "log", msg: `[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays)` },
+            {
+              type: "log",
+              msg: `[gate] ignored isDead from unrelated boss "${data.name}" (live gate stays, kill pending)`
+            },
             { type: "start-heartbeat" }
           ]
         };
       }
       const liveGate = ctx.raids.find((r) => r.id === state.liveGateId);
       if (liveGate && gateSwapsBoss(liveGate.raid, liveGate.gate)) {
-        // Swap gate's own boss died - phase transition, not the end. Keep gate + fired keys.
+        // Swap gate's own boss died - phase transition, not necessarily the end. Keep gate; mark
+        // the kill so a true end (feed goes null) banners, while a resume (next boss) clears it.
         return {
-          state: { ...state, ...CLEARED },
+          state: { ...state, ...CLEARED, bossDied: true },
           effects: [
             {
               type: "log",
@@ -161,7 +185,10 @@ export function reduceBossStatus(
         };
       }
     }
-    // Real encounter end / teardown.
+    // Real encounter end / teardown. A clear if the boss just died (data.isDead) or had died before
+    // the feed dropped (state.bossDied); a wipe sets neither, so it gets no banner.
+    const cleared = !!data?.isDead || state.bossDied;
+    const banner = cleared ? killBannerEffect(state.liveGateId, ctx) : null;
     return {
       state: {
         liveGateId: null,
@@ -169,11 +196,16 @@ export function reduceBossStatus(
         liveTotalBars: null,
         liveBossName: null,
         liveEncourageMessage: null,
-        livePhase: null
+        livePhase: null,
+        bossDied: false
       },
       effects: [
-        { type: "log", msg: `[fight] end → boss "${data?.name ?? "null"}" cleared (gate cleared, overlay hidden)` },
+        {
+          type: "log",
+          msg: `[fight] end → boss "${data?.name ?? "null"}" ${cleared ? "killed" : "lost"} (gate cleared)`
+        },
         { type: "stop-heartbeat" },
+        ...(banner ? [banner] : []),
         { type: "broadcast-status", payload: null },
         { type: "encounter-end" },
         ...hide()
@@ -187,7 +219,8 @@ export function reduceBossStatus(
     ...state,
     liveBar: data.currentBars,
     liveTotalBars: data.totalBars,
-    liveBossName: data.name
+    liveBossName: data.name,
+    bossDied: false // boss is alive in this path — clear any pending kill (swap/clone resumed)
   };
 
   if (!next.liveGateId) {
