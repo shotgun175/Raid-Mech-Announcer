@@ -39,6 +39,25 @@ function strArray(v: unknown): string[] | undefined {
   return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : undefined;
 }
 
+// Lowercase keys map to canonical weakness strings. Handles free-typed inputs
+// from when this was a text field, plus the v0.2.9 rename of "Weak to Light"
+// (Serca G2) to "Weak to Holy". Anything not in the map falls back to "No Weakness".
+const WEAKNESS_CANONICAL: Record<string, string> = {
+  "no weakness": "No Weakness",
+  "weak to dark": "Weak to Dark",
+  "weak to fire": "Weak to Fire",
+  "weak to lightning": "Weak to Lightning",
+  "weak to earth": "Weak to Earth",
+  "weak to holy": "Weak to Holy",
+  "weak to water": "Weak to Water",
+  "weak to light": "Weak to Holy"
+};
+
+function normalizeWeakness(v: unknown): string {
+  const raw = typeof v === "string" ? v.trim().toLowerCase() : "";
+  return WEAKNESS_CANONICAL[raw] ?? "No Weakness";
+}
+
 function randomId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -79,7 +98,7 @@ function normalizeGate(g: Record<string, unknown>): Gate {
     gate: numOrNull(g.gate) ?? 1,
     boss: str(g.boss),
     bossType: str(g.bossType),
-    weakness: str(g.weakness),
+    weakness: normalizeWeakness(g.weakness),
     tauntable: bool(g.tauntable, false),
     totalBars: numOrNull(g.totalBars) ?? 300,
     mechanics: Array.isArray(g.mechanics) ? g.mechanics.filter(isObj).map(normalizeMech) : []

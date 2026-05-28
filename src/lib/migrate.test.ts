@@ -17,7 +17,7 @@ describe("normalizeRaids", () => {
       gate: 2,
       boss: "Brel",
       bossType: "",
-      weakness: "",
+      weakness: "No Weakness",
       tauntable: false,
       totalBars: 300,
       mechanics: []

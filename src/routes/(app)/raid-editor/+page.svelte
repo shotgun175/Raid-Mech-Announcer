@@ -10,7 +10,7 @@
   import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
   import { gatePhases, isPhasedGate, scopeToPhase, byPhaseThenHp } from "$lib/utils/mechanics";
   import Header from "../Header.svelte";
-  import { formatGate, PHASE_COLORS } from "$lib/mech-constants";
+  import { formatGate, PHASE_COLORS, WEAKNESS_COLORS } from "$lib/mech-constants";
 
   let showModal = $state(false);
   let editMech = $state<Mechanic | null>(null);
@@ -107,9 +107,6 @@
     if (gate) mechStore.resetMechToLibraryDefault(gate.id, id);
   }
 
-  const bossTypeColor = $derived(
-    !gate ? "#fbbf24" : gate.bossType === "HUMAN" ? "#fbbf24" : gate.bossType === "ANCIENT" ? "#a78bfa" : "#f87171"
-  );
 </script>
 
 <Header title="Raid Editor" />
@@ -133,13 +130,15 @@
               border="color-mix(in oklch, var(--color-accent-500) 30%, transparent)"
               small
             />
-            <MechBadge label={gate.bossType} color={bossTypeColor} small />
+            <MechBadge label={gate.bossType} color="#fb923c" small />
             {#if gate.weakness !== "No Weakness"}
-              <MechBadge label={gate.weakness} color="#4ade80" small />
+              <MechBadge label={gate.weakness} color={WEAKNESS_COLORS[gate.weakness] ?? "#4ade80"} small />
             {/if}
-            {#if !gate.tauntable}
-              <MechBadge label="Not Tauntable" color="#8a8a8a" small />
-            {/if}
+            <MechBadge
+              label={gate.tauntable ? "Tauntable" : "Not Tauntable"}
+              color={gate.tauntable ? "#4ade80" : "#8a8a8a"}
+              small
+            />
           </div>
           <div style="font-size: 17px; font-weight: 700; color: #fafafa;">{gate.boss}</div>
         </div>

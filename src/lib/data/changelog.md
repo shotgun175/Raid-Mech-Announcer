@@ -12,6 +12,9 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Add Raid form: weakness picker is now a dropdown instead of free text, and the Tauntable toggle is a clickable pill above the difficulty picker.
+- Boss-header badges: refreshed colors for cleaner at-a-glance reads. Boss type is always orange, weakness color is per element (Fire is red to avoid clashing with the boss type), and Tauntable is always shown in green or gray.
+
 <!-- @release-end -->
 
 <!-- @release v0.2.8 -->
