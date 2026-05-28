@@ -1621,7 +1621,7 @@ const LIBRARY: LibraryGate[] = [
     availableDifficulties: ["Solo", "Normal", "Hard"],
     boss: "Red Doom Narkiel",
     bossType: "HUMAN",
-    weakness: "Weak to Fire",
+    weakness: "No Weakness",
     tauntable: true,
     mechanics: [
       {

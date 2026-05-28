@@ -1166,6 +1166,9 @@
               <option value={w}>{w}</option>
             {/each}
           </select>
+          <div style="font-size: 11px; color: #737373; margin-top: 6px;">
+            "No Weakness" = use LoS/LWC as default.
+          </div>
         </div>
         <div>
           <div style={fieldLabel}>Tauntable</div>
