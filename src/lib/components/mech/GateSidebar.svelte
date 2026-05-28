@@ -3,7 +3,7 @@
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
   import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
-  import { formatGate, gateLabel, gateSortKey } from "$lib/mech-constants";
+  import { formatGate, gateLabel, gateSortKey, WEAKNESS_OPTIONS } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
 
@@ -1160,8 +1160,38 @@
           </div>
         </div>
         <div>
-          <div style={fieldLabel}>Weakness (optional)</div>
-          <input style={inp} bind:value={form.weakness} placeholder="e.g. Weak to Light" />
+          <div style={fieldLabel}>Weakness</div>
+          <select style={selStyle} bind:value={form.weakness}>
+            {#each WEAKNESS_OPTIONS as w (w)}
+              <option value={w}>{w}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <div style={fieldLabel}>Tauntable</div>
+          <div style="margin-top: 4px;">
+            <label
+              style="display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-size: 11px; color: {form.tauntable
+                ? '#4ade80'
+                : '#737373'}; background: {form.tauntable
+                ? '#0d1a0f'
+                : 'transparent'}; border: 1px solid {form.tauntable
+                ? '#4ade8033'
+                : '#262626'}; border-radius: 3px; padding: 3px 8px; transition: all 0.15s; font-weight: 700; letter-spacing: 0.04em;"
+            >
+              <input
+                type="checkbox"
+                bind:checked={form.tauntable}
+                style="accent-color: #4ade80; width: 12px; height: 12px;"
+              />
+              <!-- Hidden ghost label reserves width for the longer string ("NOT TAUNTABLE")
+                   so the pill doesn't resize when toggled - keeps the click target stable. -->
+              <span style="display: inline-grid; text-align: center;">
+                <span style="grid-area: 1 / 1; visibility: hidden;">NOT TAUNTABLE</span>
+                <span style="grid-area: 1 / 1;">{form.tauntable ? "TAUNTABLE" : "NOT TAUNTABLE"}</span>
+              </span>
+            </label>
+          </div>
         </div>
         <div>
           <div style={fieldLabel}>
@@ -1196,16 +1226,6 @@
             Pick at least one. Drives the raid's difficulty picker and the difficulty checkboxes in the mech editor.
           </div>
         </div>
-        <label
-          style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12.5px; color: #fafafa;"
-        >
-          <input
-            type="checkbox"
-            bind:checked={form.tauntable}
-            style="accent-color: var(--color-accent-500); width: 13px; height: 13px;"
-          />
-          Tauntable
-        </label>
       </div>
       {#if collisionWarning}
         <div

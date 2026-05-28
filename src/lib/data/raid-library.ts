@@ -2998,7 +2998,7 @@ const LIBRARY: LibraryGate[] = [
     availableDifficulties: ["Normal", "Hard", "Nightmare"],
     boss: "Corvus Tul Rak",
     bossType: "ANCIENT",
-    weakness: "Weak to Light",
+    weakness: "Weak to Holy",
     tauntable: false,
     mechanics: [
       {

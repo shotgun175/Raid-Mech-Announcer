@@ -39,3 +39,22 @@ export function formatTimer(secs: number | null): string {
   const m = Math.floor(secs / 60);
   return `${m}:${String(secs % 60).padStart(2, "0")}`;
 }
+
+export const WEAKNESS_OPTIONS = [
+  "No Weakness",
+  "Weak to Dark",
+  "Weak to Fire",
+  "Weak to Lightning",
+  "Weak to Earth",
+  "Weak to Holy",
+  "Weak to Water"
+] as const;
+
+export const WEAKNESS_COLORS: Record<string, string> = {
+  "Weak to Dark": "#a78bfa",
+  "Weak to Fire": "#f87171",
+  "Weak to Lightning": "#fbbf24",
+  "Weak to Earth": "#84cc16",
+  "Weak to Holy": "#fde047",
+  "Weak to Water": "#38bdf8"
+};
