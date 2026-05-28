@@ -12,20 +12,27 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+<!-- @release-end -->
+
+<!-- @release v0.2.9 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.9 - May 28th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
 - Add Raid form: weakness picker is now a dropdown instead of free text, and the Tauntable toggle is a clickable pill above the difficulty picker.
 - Boss-header badges: refreshed colors for cleaner at-a-glance reads. Boss type is always orange, weakness color is per element (Fire is red to avoid clashing with the boss type), and Tauntable is always shown in green or gray.
 
 <!-- @release-end -->
 
 <!-- @release v0.2.8 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.8 - May 27th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.8 - May 27th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
