@@ -1167,7 +1167,7 @@
             {/each}
           </select>
           <div style="font-size: 11px; color: #737373; margin-top: 6px;">
-            "No Weakness" = use LoS/LWC as default.
+            No Weakness = use the Light of Salvation, or Lostwind Cliff, card set
           </div>
         </div>
         <div>
