@@ -10,7 +10,11 @@
 
 #### NEW FEATURES
 
+- Library mechanics can now show a small source tag (for example, MAXROLL) so you can see at a glance where a mechanic's data came from.
+
 #### BUG FIXES AND IMPROVEMENTS
+
+- Settings are now saved more safely: if the app is interrupted mid-save, your existing settings can no longer be left corrupted.
 
 <!-- @release-end -->
 
