@@ -534,6 +534,7 @@ export const mechStore = (() => {
         ttsText: libMech.name,
         notes: libMech.notes ?? "",
         difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
+        source: libMech.source ?? libEntry.source,
         userEdited: false
       };
       raids = raids.map((r) =>
