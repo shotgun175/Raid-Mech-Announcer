@@ -3,8 +3,9 @@
 
   const HUB_URL = "https://shotgun175.github.io/";
 
-  // Desktop webview: a plain target="_blank" can't reach the system browser, so
-  // route the click through the Tauri opener plugin (permission: opener:allow-open-url).
+  // Desktop webview: target="_blank" can't reach the system browser, so route the
+  // click through the Tauri opener plugin (permission: opener:allow-open-url). The
+  // href/target stay as a fallback for accessibility and non-webview contexts.
   function openHub(e: MouseEvent) {
     e.preventDefault();
     openUrl(HUB_URL).catch((err) => console.warn("could not open hub link", err));
@@ -12,48 +13,78 @@
 </script>
 
 <a
+  class="lat-badge"
   href={HUB_URL}
+  target="_blank"
+  rel="noopener"
+  aria-label="Part of Lost Ark Tools - see all tools"
   onclick={openHub}
-  aria-label="Part of Lost Ark Tools - opens the Lost Ark Tools hub in your browser"
-  class="hub-badge"
 >
-  <span class="hub-badge__dot" aria-hidden="true"></span>
-  Part of Lost Ark Tools
+  <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+    <rect width="32" height="32" rx="7" fill="#0a0b13" />
+    <g stroke="#54d8d2" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round">
+      <path d="M9 9h14M9 16h14M9 23h14M9 9v14M16 9v14M23 9v14" /></g
+    >
+    <circle cx="16" cy="16" r="4.4" fill="#f0b94d" />
+  </svg>
+  <span class="lat-badge__text">
+    <span class="lat-badge__kicker">Part of</span>
+    <span class="lat-badge__name">Lost Ark Tools</span>
+  </span>
+  <svg
+    class="lat-badge__arrow"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M5 12h14M13 6l6 6-6 6" /></svg
+  >
 </a>
 
 <style>
-  .hub-badge {
+  .lat-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     min-height: 44px;
-    padding: 0 14px;
-    border: 1px solid #404040;
-    border-radius: 8px;
-    background: #1f1f1f;
-    color: #d4d4d4;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 9px 14px;
+    border: 1px solid rgba(240, 185, 77, 0.45);
+    border-radius: 10px;
+    background: #14172a;
+    color: #ece8df;
     text-decoration: none;
-    transition:
-      background 0.15s,
-      border-color 0.15s,
-      color 0.15s;
+    font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace;
   }
-  .hub-badge:hover {
-    background: #262626;
-    border-color: var(--color-accent-500, #38bdf8);
-    color: #fafafa;
+  .lat-badge:hover {
+    border-color: #f0b94d;
   }
-  .hub-badge:focus-visible {
-    outline: 2px solid var(--color-accent-500, #38bdf8);
-    outline-offset: 2px;
+  .lat-badge:focus-visible {
+    outline: 2px solid #54d8d2;
+    outline-offset: 3px;
   }
-  .hub-badge__dot {
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--color-accent-500, #38bdf8);
+  .lat-badge__text {
+    display: flex;
+    flex-direction: column;
+  }
+  .lat-badge__kicker {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #aab0d2;
+  }
+  .lat-badge__name {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f0b94d;
+  }
+  .lat-badge__arrow {
+    color: #54d8d2;
   }
 </style>
