@@ -86,8 +86,7 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
 }
 
 pub fn on_window_event(window: &Window, event: &WindowEvent) {
-    on_window_event_inner(window, event)
-        .expect("An error occurred whilst handling window event");
+    on_window_event_inner(window, event).expect("An error occurred whilst handling window event");
 }
 
 pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()> {

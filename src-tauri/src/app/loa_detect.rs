@@ -24,7 +24,10 @@ mod tests {
         let result = find_loa_meter_data();
         if let Some(ref p) = result {
             assert!(p.exists(), "returned path must exist");
-            assert!(p.join("encounters.json").exists(), "must contain encounters.json");
+            assert!(
+                p.join("encounters.json").exists(),
+                "must contain encounters.json"
+            );
         }
         // If None, the test passes — LOA Logs just isn't installed here.
     }

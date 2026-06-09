@@ -117,7 +117,8 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
           ttsEnabled: true,
           ttsText: libMech.name,
           notes: libMech.notes ?? "",
-          difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined
+          difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
+          source: libMech.source ?? libGate.source
         };
         if (mechFieldsDiffer(um, merged)) {
           gateChanged = true;
@@ -148,7 +149,8 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
           ttsEnabled: true,
           ttsText: lm.name,
           notes: lm.notes ?? "",
-          difficulties: lm.difficulties?.length ? lm.difficulties : undefined
+          difficulties: lm.difficulties?.length ? lm.difficulties : undefined,
+          source: lm.source ?? libGate.source
         });
         gateChanged = true;
       }
@@ -194,6 +196,7 @@ function mechFieldsDiffer(a: Mechanic, b: Mechanic): boolean {
     a.repeatSecs !== b.repeatSecs ||
     a.triggerType !== b.triggerType ||
     a.notes !== b.notes ||
+    a.source !== b.source ||
     JSON.stringify(a.difficulties) !== JSON.stringify(b.difficulties)
   );
 }

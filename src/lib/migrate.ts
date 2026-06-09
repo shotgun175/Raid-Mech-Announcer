@@ -14,10 +14,11 @@
 // drop the mech (origin "library" with no key) or duplicate it (origin "custom" makes reconcile
 // re-add the library copy in Step C). Leaving it absent keeps reconcile's guard meaningful.
 
-import type { Difficulty, Gate, Mechanic, Phase, Severity, TriggerType } from "./mech-types";
+import type { Difficulty, Gate, Mechanic, MechanicSource, Phase, Severity, TriggerType } from "./mech-types";
 
 const SEVERITIES = new Set<Severity>(["normal", "major", "wipe"]);
 const TRIGGERS = new Set<TriggerType>(["hp", "timer", "hp+timer"]);
+const SOURCES = new Set<MechanicSource>(["maxroll", "verified-in-fight", "estimated"]);
 
 function isObj(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
@@ -88,6 +89,9 @@ function normalizeMech(m: Record<string, unknown>): Mechanic {
   if (typeof m.key === "string") out.key = m.key;
   const difficulties = strArray(m.difficulties);
   if (difficulties && difficulties.length) out.difficulties = difficulties as Difficulty[];
+  // Preserve provenance so reconcile doesn't see a perpetual undefined -> "maxroll" diff
+  // (which would re-flag every mech in a sourced gate as "updated" on every boot).
+  if (SOURCES.has(m.source as MechanicSource)) out.source = m.source as MechanicSource;
   return out;
 }
 

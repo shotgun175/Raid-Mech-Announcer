@@ -97,6 +97,25 @@ describe("normalizeRaids", () => {
     expect(g.mechanics.map((m) => m.phase)).toEqual([2, null, null]);
   });
 
+  it("preserves a valid mechanic source and drops an invalid one", () => {
+    const [g] = normalizeRaids([
+      {
+        id: "g1",
+        raid: "R",
+        gate: 1,
+        boss: "B",
+        mechanics: [
+          { id: "m1", name: "tagged", severity: "normal", source: "maxroll" },
+          { id: "m2", name: "bad-source", severity: "normal", source: "wikipedia" },
+          { id: "m3", name: "no-source", severity: "normal" }
+        ]
+      }
+    ]);
+    expect(g.mechanics[0].source).toBe("maxroll");
+    expect(g.mechanics[1].source).toBeUndefined();
+    expect("source" in g.mechanics[2] ? g.mechanics[2].source : undefined).toBeUndefined();
+  });
+
   it("is idempotent: normalizing twice yields the same result", () => {
     const input = [
       { id: "g1", raid: "R", gate: 1, boss: "B", mechanics: [{ id: "m1", name: "x", severity: "major" }] }

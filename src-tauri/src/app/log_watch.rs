@@ -17,11 +17,7 @@ pub struct FightEndEvent {
 pub fn loa_log_path() -> Option<PathBuf> {
     let base = dirs::data_local_dir()?;
     let path = base.join("LOA Logs").join("loa_logs_rCURRENT.log");
-    if path.is_file() {
-        Some(path)
-    } else {
-        None
-    }
+    if path.is_file() { Some(path) } else { None }
 }
 
 /// Parses a single log line. Returns Some(FightEndEvent) if it's a fight-end line.
@@ -32,13 +28,21 @@ pub fn parse_fight_end(line: &str) -> Option<FightEndEvent> {
     let cleared = cleared_str == "true";
 
     let after_diff = after.split("difficulty: ").nth(1)?;
-    let difficulty = after_diff.split(']').next()?.trim_start_matches('[').to_string();
+    let difficulty = after_diff
+        .split(']')
+        .next()?
+        .trim_start_matches('[')
+        .to_string();
     let boss = after_diff.split_once("] ")?.1.trim().to_string();
 
     if boss.is_empty() {
         return None;
     }
-    Some(FightEndEvent { boss, difficulty, cleared })
+    Some(FightEndEvent {
+        boss,
+        difficulty,
+        cleared,
+    })
 }
 
 /// Spawns a background thread that tails the LOA Logs current log file.

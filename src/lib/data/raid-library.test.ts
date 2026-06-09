@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { LIBRARY, gateSwapsBoss, isBossSwapPhase } from "./raid-library";
+import { LIBRARY, buildLibraryGate, gateSwapsBoss, isBossSwapPhase, type LibraryGate } from "./raid-library";
 import type { Gate } from "../mech-types";
 
 function gateFixture(raid: string, gate: number, boss: string): Gate {
@@ -63,5 +63,46 @@ describe("isBossSwapPhase", () => {
 
   it("is false when the live boss is empty", () => {
     expect(isBossSwapPhase(armocheG1, "")).toBe(false);
+  });
+});
+
+describe("mechanic provenance (source)", () => {
+  it("propagates a gate-level source to every built mechanic", () => {
+    const valtanG1 = LIBRARY.find((g) => g.encounterKey === "Valtan G1");
+    expect(valtanG1?.source).toBe("maxroll");
+    const built = buildLibraryGate(valtanG1!);
+    expect(built.mechanics.length).toBeGreaterThan(0);
+    for (const m of built.mechanics) {
+      expect(m.source).toBe("maxroll");
+    }
+  });
+
+  it("leaves source undefined for gates with no provenance recorded", () => {
+    const untagged = LIBRARY.find((g) => g.source === undefined);
+    expect(untagged).toBeDefined();
+    for (const m of buildLibraryGate(untagged!).mechanics) {
+      expect(m.source).toBeUndefined();
+    }
+  });
+
+  it("lets a per-mechanic source override the gate default", () => {
+    const synthetic: LibraryGate = {
+      encounterKey: "Provenance Test G1",
+      raid: "Provenance Test",
+      gate: 1,
+      releaseOrder: 999,
+      boss: "Test Boss",
+      bossType: "",
+      weakness: "",
+      tauntable: false,
+      source: "maxroll",
+      mechanics: [
+        { key: "prov-a", name: "A", severity: "normal", triggerType: "hp", hpBar: 10 },
+        { key: "prov-b", name: "B", severity: "normal", triggerType: "hp", hpBar: 5, source: "verified-in-fight" }
+      ]
+    };
+    const built = buildLibraryGate(synthetic);
+    expect(built.mechanics[0].source).toBe("maxroll");
+    expect(built.mechanics[1].source).toBe("verified-in-fight");
   });
 });

@@ -1,4 +1,4 @@
-import type { Difficulty, Gate, Mechanic, Severity, TriggerType } from "$lib/mech-types";
+import type { Difficulty, Gate, Mechanic, MechanicSource, Severity, TriggerType } from "$lib/mech-types";
 import { gateSortKey } from "$lib/mech-constants";
 
 // Hand-curated boss HP bar counts. Intentionally NOT sourced from Npc.json hpBars
@@ -86,6 +86,9 @@ export interface LibraryMechanic {
   notes?: string;
   difficulties?: Difficulty[];
   phase?: 1 | 2 | 3 | 4;
+  // Per-mechanic provenance override. When omitted, the mechanic inherits its
+  // gate's `source` (LibraryGate.source). See MechanicSource for the values.
+  source?: MechanicSource;
 }
 
 export interface LibraryGate {
@@ -109,12 +112,17 @@ export interface LibraryGate {
   // dies at x30 and Brelshaza invades). Tells setBossStatus to treat that death as a
   // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
   swapsBoss?: boolean;
+  // Default provenance for every mechanic in this gate (each mechanic can still
+  // override via LibraryMechanic.source). Rolled out gate-by-gate; an absent value
+  // means provenance hasn't been recorded yet (baseline is Maxroll-derived).
+  source?: MechanicSource;
 }
 
 const LIBRARY: LibraryGate[] = [
   // ── Valtan (releaseOrder 1) ─────────────────────────────────────────────────
   {
     encounterKey: "Valtan G1",
+    source: "maxroll",
     raid: "Valtan",
     gate: 1,
     releaseOrder: 1,
@@ -2518,6 +2526,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Act 4: Armoche (releaseOrder 16) ────────────────────────────────────────
   {
     encounterKey: "Act 4: Armoche G1",
+    source: "maxroll",
     raid: "Act 4: Armoche",
     gate: 1,
     releaseOrder: 16,
@@ -2581,6 +2590,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 4: Armoche G2",
+    source: "maxroll",
     raid: "Act 4: Armoche",
     gate: 2,
     releaseOrder: 16,
@@ -2664,6 +2674,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Final Act: Kazeros (releaseOrder 17) ────────────────────────────────────
   {
     encounterKey: "Final Act: Kazeros G1",
+    source: "maxroll",
     raid: "Final Act: Kazeros",
     gate: 1,
     releaseOrder: 17,
@@ -2798,6 +2809,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Final Act: Kazeros G2-2",
+    source: "maxroll",
     raid: "Final Act: Kazeros",
     gate: 22,
     releaseOrder: 17,
@@ -2992,6 +3004,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Serca G2",
+    source: "maxroll",
     raid: "Serca",
     gate: 2,
     releaseOrder: 18,
@@ -3065,7 +3078,7 @@ const LIBRARY: LibraryGate[] = [
   }
 ];
 
-function makeMechanics(raw: LibraryMechanic[], prefix: string): Mechanic[] {
+function makeMechanics(raw: LibraryMechanic[], prefix: string, defaultSource?: MechanicSource): Mechanic[] {
   return raw.map((m, i) => ({
     id: `${prefix}-${i}-${Date.now()}`,
     key: m.key,
@@ -3081,7 +3094,8 @@ function makeMechanics(raw: LibraryMechanic[], prefix: string): Mechanic[] {
     ttsEnabled: true,
     ttsText: m.name,
     notes: m.notes ?? "",
-    difficulties: m.difficulties?.length ? m.difficulties : undefined
+    difficulties: m.difficulties?.length ? m.difficulties : undefined,
+    source: m.source ?? defaultSource
   }));
 }
 
@@ -3096,7 +3110,7 @@ export function buildLibraryGate(entry: LibraryGate): Gate {
     weakness: entry.weakness,
     tauntable: entry.tauntable,
     totalBars: entry.totalBars ?? bossHpMap[entry.boss] ?? 300,
-    mechanics: makeMechanics(entry.mechanics, slug)
+    mechanics: makeMechanics(entry.mechanics, slug, entry.source)
   };
 }
 
@@ -3170,7 +3184,8 @@ function stableGate(entry: LibraryGate): Gate {
       ttsEnabled: true,
       ttsText: m.name,
       notes: m.notes ?? "",
-      difficulties: m.difficulties?.length ? m.difficulties : undefined
+      difficulties: m.difficulties?.length ? m.difficulties : undefined,
+      source: m.source ?? entry.source
     }))
   };
 }

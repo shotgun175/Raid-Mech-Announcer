@@ -11,7 +11,7 @@ use uuid::Uuid;
 use crate::context::AppContext;
 
 const ANDREW: &str = "en-US-AndrewNeural";
-const JENNY:  &str = "en-US-JennyNeural";
+const JENNY: &str = "en-US-JennyNeural";
 
 // Bumped by stop_tts() to cancel all queued/in-flight speech. Each speak_tts thread captures
 // the epoch at spawn; if it changes before or during playback, that thread skips or stops.
@@ -37,7 +37,11 @@ struct PregenDone {
 }
 
 fn voice_id(name: &str) -> &'static str {
-    if name.to_lowercase().contains("jenny") { JENNY } else { ANDREW }
+    if name.to_lowercase().contains("jenny") {
+        JENNY
+    } else {
+        ANDREW
+    }
 }
 
 // On-disk cache of synthesized clips, keyed by (voice, rate, text). edge-tts generation costs
@@ -97,7 +101,13 @@ pub fn stop_tts() {
 /// ({done,total}) as clips complete and `tts:pregen-done` ({generated,total,cancelled}) at the
 /// end. A no-op if a run is already in progress. Cancel via cancel_tts_pregen().
 #[command]
-pub fn pregenerate_tts(app: AppHandle, ctx: State<AppContext>, texts: Vec<String>, voice: String, rate: f64) {
+pub fn pregenerate_tts(
+    app: AppHandle,
+    ctx: State<AppContext>,
+    texts: Vec<String>,
+    voice: String,
+    rate: f64,
+) {
     // Guard against overlapping runs.
     if PREGEN_RUNNING.swap(true, Ordering::SeqCst) {
         return;
@@ -118,8 +128,14 @@ pub fn pregenerate_tts(app: AppHandle, ctx: State<AppContext>, texts: Vec<String
 
         let mut handles = Vec::new();
         for _ in 0..PREGEN_WORKERS.min(total.max(1)) {
-            let (texts, next, done, generated) = (texts.clone(), next.clone(), done.clone(), generated.clone());
-            let (cache_dir, vid, rate_str, app) = (cache_dir.clone(), vid.clone(), rate_str.clone(), app.clone());
+            let (texts, next, done, generated) =
+                (texts.clone(), next.clone(), done.clone(), generated.clone());
+            let (cache_dir, vid, rate_str, app) = (
+                cache_dir.clone(),
+                vid.clone(),
+                rate_str.clone(),
+                app.clone(),
+            );
             handles.push(std::thread::spawn(move || {
                 loop {
                     if PREGEN_CANCEL.load(Ordering::SeqCst) {
@@ -131,7 +147,9 @@ pub fn pregenerate_tts(app: AppHandle, ctx: State<AppContext>, texts: Vec<String
                     }
                     let text = &texts[i];
                     let cache_file = cache_dir.join(cache_file_name(text, &vid, &rate_str));
-                    if !cache_file.is_file() && synthesize_to_cache(text, &vid, &rate_str, &cache_dir).is_some() {
+                    if !cache_file.is_file()
+                        && synthesize_to_cache(text, &vid, &rate_str, &cache_dir).is_some()
+                    {
                         generated.fetch_add(1, Ordering::SeqCst);
                     }
                     let d = done.fetch_add(1, Ordering::SeqCst) + 1;
@@ -146,7 +164,14 @@ pub fn pregenerate_tts(app: AppHandle, ctx: State<AppContext>, texts: Vec<String
         let cancelled = PREGEN_CANCEL.load(Ordering::SeqCst);
         let generated = generated.load(Ordering::SeqCst);
         log::info!("[tts] pre-generate done: {generated} new of {total} (cancelled={cancelled})");
-        let _ = app.emit("tts:pregen-done", PregenDone { generated, total, cancelled });
+        let _ = app.emit(
+            "tts:pregen-done",
+            PregenDone {
+                generated,
+                total,
+                cancelled,
+            },
+        );
         PREGEN_RUNNING.store(false, Ordering::SeqCst);
     });
 }
@@ -159,7 +184,14 @@ pub fn cancel_tts_pregen() {
 
 /// Try Python edge-tts, cached. A cache hit replays the stored MP3 (no Python, no network); a
 /// miss synthesizes via subprocess, publishes the clip to the cache, then plays it.
-fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch: u64, cache_dir: &Path) -> bool {
+fn try_python_edge_tts(
+    text: &str,
+    voice_id: &str,
+    volume: u8,
+    rate: f64,
+    epoch: u64,
+    cache_dir: &Path,
+) -> bool {
     // edge-tts rate format: "+50%" for 1.5x, "-25%" for 0.75x
     let rate_str = format!("{:+.0}%", (rate - 1.0) * 100.0);
     let vol = (volume as f32 / 100.0).clamp(0.0, 1.0);
@@ -178,7 +210,11 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
         let t0 = Instant::now();
         match std::fs::read(&cache_file) {
             Ok(bytes) => {
-                log::info!("[tts] cache hit, loaded in {} ms: \"{}\"", t0.elapsed().as_millis(), text);
+                log::info!(
+                    "[tts] cache hit, loaded in {} ms: \"{}\"",
+                    t0.elapsed().as_millis(),
+                    text
+                );
                 return play_clip(bytes, vol, epoch);
             }
             // Unreadable entry — drop it and fall through to regenerate.
@@ -197,7 +233,11 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
     let Some(final_path) = synthesize_to_cache(text, voice_id, &rate_str, cache_dir) else {
         return false;
     };
-    log::info!("[tts] cache miss, synthesized in {} ms: \"{}\"", t0.elapsed().as_millis(), text);
+    log::info!(
+        "[tts] cache miss, synthesized in {} ms: \"{}\"",
+        t0.elapsed().as_millis(),
+        text
+    );
 
     // A stop fired while generating: keep the cached clip for next time, just skip playback.
     if TTS_EPOCH.load(Ordering::SeqCst) != epoch {
@@ -213,7 +253,12 @@ fn try_python_edge_tts(text: &str, voice_id: &str, volume: u8, rate: f64, epoch:
 /// final path. Generates to a unique temp first so concurrent identical calls never read a
 /// half-written file, then renames it into place. No hit-check (callers do that) and no playback —
 /// shared by the speak path and the bulk pre-generate command.
-fn synthesize_to_cache(text: &str, voice_id: &str, rate_str: &str, cache_dir: &Path) -> Option<PathBuf> {
+fn synthesize_to_cache(
+    text: &str,
+    voice_id: &str,
+    rate_str: &str,
+    cache_dir: &Path,
+) -> Option<PathBuf> {
     let _ = std::fs::create_dir_all(cache_dir);
     let gen_tmp = cache_dir.join(format!(".gen_{}.mp3", Uuid::new_v4()));
     let gen_tmp_str = gen_tmp.to_string_lossy().to_string();
@@ -223,11 +268,16 @@ fn synthesize_to_cache(text: &str, voice_id: &str, rate_str: &str, cache_dir: &P
         use std::os::windows::process::CommandExt;
         std::process::Command::new("python")
             .args([
-                "-m", "edge_tts",
-                "--voice", voice_id,
-                "--text", text,
-                "--rate", rate_str,
-                "--write-media", &gen_tmp_str,
+                "-m",
+                "edge_tts",
+                "--voice",
+                voice_id,
+                "--text",
+                text,
+                "--rate",
+                rate_str,
+                "--write-media",
+                &gen_tmp_str,
             ])
             .creation_flags(0x08000000)
             .output()
@@ -237,7 +287,18 @@ fn synthesize_to_cache(text: &str, voice_id: &str, rate_str: &str, cache_dir: &P
 
     #[cfg(not(target_os = "windows"))]
     let gen_ok = std::process::Command::new("python")
-        .args(["-m", "edge_tts", "--voice", voice_id, "--text", text, "--rate", rate_str, "--write-media", &gen_tmp_str])
+        .args([
+            "-m",
+            "edge_tts",
+            "--voice",
+            voice_id,
+            "--text",
+            text,
+            "--rate",
+            rate_str,
+            "--write-media",
+            &gen_tmp_str,
+        ])
         .output()
         .map(|o| o.status.success())
         .unwrap_or(false);
@@ -263,10 +324,16 @@ fn synthesize_to_cache(text: &str, voice_id: &str, rate_str: &str, cache_dir: &P
 
 /// Decode an in-memory MP3 and play it to completion, stopping early if a stop (epoch bump) fires.
 fn play_clip(bytes: Vec<u8>, vol: f32, epoch: u64) -> bool {
-    let Ok((_stream, handle)) = OutputStream::try_default() else { return false };
-    let Ok(sink) = Sink::try_new(&handle) else { return false };
+    let Ok((_stream, handle)) = OutputStream::try_default() else {
+        return false;
+    };
+    let Ok(sink) = Sink::try_new(&handle) else {
+        return false;
+    };
     sink.set_volume(vol);
-    let Ok(decoder) = Decoder::new(Cursor::new(bytes)) else { return false };
+    let Ok(decoder) = Decoder::new(Cursor::new(bytes)) else {
+        return false;
+    };
     sink.append(decoder);
     // Poll instead of sleep_until_end so a stop (epoch bump) interrupts playback promptly.
     while !sink.empty() {
@@ -287,7 +354,9 @@ pub fn prune_tts_cache(cache_dir: &Path) {
 }
 
 fn prune_cache_to_cap(cache_dir: &Path, cap_bytes: u64) {
-    let Ok(entries) = std::fs::read_dir(cache_dir) else { return };
+    let Ok(entries) = std::fs::read_dir(cache_dir) else {
+        return;
+    };
     let mut clips: Vec<(std::path::PathBuf, u64, SystemTime)> = Vec::new();
     let mut total: u64 = 0;
 
@@ -334,11 +403,20 @@ mod tests {
     #[test]
     fn cache_name_is_stable_and_distinguishes_voice_and_rate() {
         let a = cache_file_name("Bomb in 3 bars", "en-US-AndrewNeural", "+0%");
-        assert_eq!(a, cache_file_name("Bomb in 3 bars", "en-US-AndrewNeural", "+0%"));
+        assert_eq!(
+            a,
+            cache_file_name("Bomb in 3 bars", "en-US-AndrewNeural", "+0%")
+        );
         assert!(a.starts_with("tts_") && a.ends_with(".mp3"));
         // Different text, voice, or rate must all yield different files.
-        assert_ne!(a, cache_file_name("Bomb in 4 bars", "en-US-AndrewNeural", "+0%"));
-        assert_ne!(a, cache_file_name("Bomb in 3 bars", "en-US-JennyNeural", "+0%"));
+        assert_ne!(
+            a,
+            cache_file_name("Bomb in 4 bars", "en-US-AndrewNeural", "+0%")
+        );
+        assert_ne!(
+            a,
+            cache_file_name("Bomb in 3 bars", "en-US-JennyNeural", "+0%")
+        );
         // Regression: +50% and -50% must not collide (they would under naive sanitization).
         assert_ne!(
             cache_file_name("Bomb in 3 bars", "en-US-AndrewNeural", "+50%"),
@@ -369,11 +447,23 @@ mod tests {
         // Cap of 250 bytes: must drop the single oldest clip (300 -> 200), keep the rest.
         prune_cache_to_cap(&dir, 250);
 
-        assert!(!dir.join("tts_old.mp3").exists(), "oldest clip should be evicted");
+        assert!(
+            !dir.join("tts_old.mp3").exists(),
+            "oldest clip should be evicted"
+        );
         assert!(dir.join("tts_mid.mp3").exists(), "mid clip should survive");
-        assert!(dir.join("tts_new.mp3").exists(), "newest clip should survive");
-        assert!(!dir.join(".gen_abc.mp3").exists(), "leftover temp should be swept");
-        assert!(dir.join("settings.json").exists(), "unrelated files must be left alone");
+        assert!(
+            dir.join("tts_new.mp3").exists(),
+            "newest clip should survive"
+        );
+        assert!(
+            !dir.join(".gen_abc.mp3").exists(),
+            "leftover temp should be swept"
+        );
+        assert!(
+            dir.join("settings.json").exists(),
+            "unrelated files must be left alone"
+        );
 
         std::fs::remove_dir_all(&dir).ok();
     }
@@ -401,7 +491,10 @@ fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64, epoch: u64) {
         return;
     }
     let safe = text.replace('\'', "''");
-    let safe_voice = voice.replace('\'', "''").replace('{', "{{").replace('}', "}}");
+    let safe_voice = voice
+        .replace('\'', "''")
+        .replace('{', "{{")
+        .replace('}', "}}");
     // SAPI Rate: -10 (slowest) to +10 (fastest). Map 0.25-4.0 to -10..+10.
     let sapi_rate = ((rate - 1.0) * 8.0).round().clamp(-10.0, 10.0) as i32;
     let script = format!(
@@ -415,13 +508,15 @@ fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64, epoch: u64) {
     );
 
     #[cfg(target_os = "windows")]
-    {{
-        use std::os::windows::process::CommandExt;
-        let _ = std::process::Command::new("powershell")
-            .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-            .creation_flags(0x08000000)
-            .spawn();
-    }}
+    {
+        {
+            use std::os::windows::process::CommandExt;
+            let _ = std::process::Command::new("powershell")
+                .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+                .creation_flags(0x08000000)
+                .spawn();
+        }
+    }
 }
 
 /// List voice sources available on this system.
@@ -442,7 +537,10 @@ pub fn list_tts_voices() -> Vec<String> {
                     .lines()
                     .filter(|l| l.contains("en-US"))
                     .count();
-                out.push(format!("✓ Python edge-tts — {} en-US voices available", count));
+                out.push(format!(
+                    "✓ Python edge-tts — {} en-US voices available",
+                    count
+                ));
                 out.push("  en-US-AndrewNeural (Male) ← selected when Andrew".into());
                 out.push("  en-US-JennyNeural  (Female) ← selected when Jenny".into());
             }

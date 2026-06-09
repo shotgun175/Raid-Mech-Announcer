@@ -1,7 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod app;
-mod tts_cmd;
 mod constants;
 mod context;
 mod handlers;
@@ -9,6 +8,7 @@ mod misc;
 mod settings;
 mod setup;
 mod shell;
+mod tts_cmd;
 mod ui;
 
 use crate::constants::*;
@@ -36,8 +36,9 @@ async fn main() -> Result<()> {
     load_windivert(&context.current_dir).expect("could not load windivert dependencies");
     // LOA Logs install is required so the Settings window can surface the meter-data
     // path back to the user. The path itself is the only thing this app reads.
-    crate::app::loa_detect::find_loa_meter_data()
-        .expect("LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer");
+    crate::app::loa_detect::find_loa_meter_data().expect(
+        "LOA Logs installation not found — install LOA Logs before running Raid Mech Announcer",
+    );
     let handle = Handle::current();
     async_runtime::set(handle);
 
