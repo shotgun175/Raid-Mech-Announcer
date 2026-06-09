@@ -151,7 +151,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 ### Mech Store & Raid Library
 - `mechStore` (`mech-store.svelte.ts`) owns the user's raid list — persisted in `localStorage` under key `"mech-announcer-raids"` in the WebView2 profile
 - `raid-library.ts` is the source of truth for pre-built templates; each `LibraryGate` has a `releaseOrder` (from the LOA Logs `encounters.json` ordering — higher = newer)
-- Library currently covers all 18 raid release groups: **48 gates, 220 mechanics** — all with `notes` populated from Maxroll per-gate guides
+- Library currently covers all 16 raid release groups: **42 gates, 244 mechanics** — all with `notes` populated from Maxroll per-gate guides
 - `LibraryMechanic` interface includes `notes?: string`; passed through to `Mechanic.notes` by both `makeMechanics()` and `stableGate()`
 - `totalBars` on every imported/default gate is derived from `bossHpMap[entry.boss]` (defined at the top of `raid-library.ts`) — intentionally uses hand-curated values, NOT raw `Npc.json` `hpBars`, so the simulation starts near the first mechanic threshold rather than far above it
 - `buildDefaultRaids()` derives the 3 newest raids automatically from `releaseOrder` — no hardcoded list
