@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.2.10 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.2.10 - June 9th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Added a "Part of Lost Ark Tools" link under Settings > General > About that opens the tools hub in your browser.
 - The mechanic edit screen now notes where a library mechanic's data came from (for example, a Maxroll guide), shown quietly at the bottom of the dialog.
 
@@ -20,14 +36,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.9 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.9 - May 28th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.9 - May 28th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 

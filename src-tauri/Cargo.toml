@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.2.9"
+version = "0.2.10"
 description = "Raid mechanic announcer for Lost Ark"
 authors = ["shotgun175"]
 license = "GNU General Public License v3.0"
