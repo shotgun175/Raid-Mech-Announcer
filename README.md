@@ -58,6 +58,27 @@ This app uses WinDivert for packet capture (same as LOA Logs). The `WinDivert.dl
 
 **NordVPN users:** NordVPN also uses WinDivert. Both apps cannot run simultaneously.
 
+## Assumptions, scope, and open questions
+
+A few design decisions and boundaries are easy to trip over when reading the code or contributing data, so they are collected here.
+
+### Assumptions
+
+- **LOA Logs is installed and running.** The app reads game data tables from LOA Logs' `meter-data` directory at startup and refuses to start without them. Live boss HP arrives over the PeerJS share URL you paste in; LOA Logs exposes no local server or API to poll (the port in its `settings.json` is a packet-capture setting, not a server port).
+- **Windows only.** Packet capture (WinDivert), the WebView2 UI shell, and TTS all assume Windows.
+- **Mechanic data is curated from community guides.** The pre-built library is sourced primarily from Maxroll cheat sheets. Mechanic names favor the shorthand players call in party chat, since TTS reads them aloud mid-fight.
+
+### Scope
+
+- **This is a mechanic announcer, not a damage meter.** It reuses LOA Logs' packet-capture and encounter-detection plumbing only to drive HP-based announcements. There is no DPS readout or combat-metering UI, by design.
+- **Boss HP bar counts (`totalBars`) are deliberately hand-curated, not pulled from the game tables.** Each gate's `totalBars` comes from the `bossHpMap` at the top of `src/lib/data/raid-library.ts`, not from the raw `hpBars` value in `Npc.json`. This is intentional: the curated numbers place the editor's HP simulation slider near the first real mechanic threshold, so the preview is useful immediately instead of starting far above where anything happens. Do not "fix" these by syncing them to `Npc.json`.
+- **Where the real numbers live, if you need them.** The authoritative HP bar count for a boss is the `hpBars` field in `Npc.json` (under `src-tauri/meter-data/`, from the upstream LOA Logs repo) for the entry with `grade: "commander"`. Other entries for the same name are phase variants with `hpBars: 1`. Cross-reference `encounters.json` for the correct raid entry, then translate to a curated `bossHpMap` value rather than copying the raw count directly.
+
+### Open questions / known limits
+
+- **Coverage is intentionally partial.** The library covers the 48 standard raid gates. Rotating or weekly modes (such as Howl's Hourglass) are out of scope and will correctly produce no overlay match.
+- **HP thresholds are best-effort.** They approximate community-guide values and can drift slightly between patches. Bosses that rename mid-fight (phase transitions) are handled by sticky gate matching so the overlay does not flip raids on a rename.
+
 ## Credits
 
 Forked from [LOA Logs](https://github.com/snoww/loa-logs) by [Snow](https://github.com/snoww) and contributors. The packet capture core, game data tables, and base architecture come from that project.
