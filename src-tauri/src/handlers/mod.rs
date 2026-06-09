@@ -34,13 +34,13 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
 #[command]
 pub fn toggle_overlay_window(app: AppHandle) -> Result<()> {
     if let Some(overlay) = app.get_webview_window(OVERLAY_WINDOW_LABEL) {
-        if overlay.is_visible().unwrap() {
-            if overlay.is_minimized().unwrap() {
-                overlay.unminimize().unwrap();
+        if overlay.is_visible()? {
+            if overlay.is_minimized()? {
+                overlay.unminimize()?;
             }
-            overlay.hide().unwrap();
+            overlay.hide()?;
         } else {
-            overlay.show().unwrap();
+            overlay.show()?;
         }
     }
 

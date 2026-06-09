@@ -24,7 +24,7 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
 
     let settings = settings_manager.read().expect("Could not read settings");
 
-    initialize_windows_and_settings(app_handle, settings.as_ref());
+    initialize_windows_and_settings(app_handle, settings.as_ref())?;
 
     app_handle.manage(shell_manager);
 
@@ -56,24 +56,31 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn initialize_windows_and_settings(app_handle: &AppHandle, settings: Option<&Settings>) {
-    let overlay_window = app_handle.get_overlay_window().unwrap();
+fn initialize_windows_and_settings(
+    app_handle: &AppHandle,
+    settings: Option<&Settings>,
+) -> Result<(), Box<dyn Error>> {
+    let overlay_window = app_handle
+        .get_overlay_window()
+        .ok_or_else(|| "overlay window not found".to_string())?;
 
     if let Some(settings) = settings {
         info!("settings loaded");
         if !settings.general.hide_meter_on_start {
             overlay_window.restore_default_state();
-            overlay_window.show().unwrap();
+            overlay_window.show()?;
         } else {
-            overlay_window.hide().unwrap();
+            overlay_window.hide()?;
         }
 
         if settings.general.always_on_top {
-            overlay_window.set_always_on_top(true).unwrap();
+            overlay_window.set_always_on_top(true)?;
         } else {
-            overlay_window.set_always_on_top(false).unwrap();
+            overlay_window.set_always_on_top(false)?;
         }
     } else {
-        overlay_window.show().unwrap();
+        overlay_window.show()?;
     }
+
+    Ok(())
 }
