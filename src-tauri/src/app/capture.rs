@@ -33,7 +33,8 @@ pub fn append(lines: &str) -> Result<()> {
         .append(true)
         .open(&path)
         .with_context(|| format!("opening capture file {}", path.display()))?;
-    f.write_all(lines.as_bytes()).context("writing capture batch")?;
+    f.write_all(lines.as_bytes())
+        .context("writing capture batch")?;
     if !lines.ends_with('\n') {
         let _ = f.write_all(b"\n");
     }

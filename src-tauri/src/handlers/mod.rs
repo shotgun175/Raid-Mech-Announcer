@@ -85,8 +85,7 @@ pub async fn unload_driver(shell_manager: State<'_, ShellManager>) -> Result<()>
 
 #[command]
 pub fn get_loa_meter_data_path() -> Option<String> {
-    crate::app::loa_detect::find_loa_meter_data()
-        .map(|p| p.display().to_string())
+    crate::app::loa_detect::find_loa_meter_data().map(|p| p.display().to_string())
 }
 
 #[command]
