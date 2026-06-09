@@ -1,6 +1,6 @@
 <script lang="ts">
   import { formatTimer } from "$lib/mech-constants";
-  import type { Difficulty, Mechanic, Phase, Severity, TriggerType } from "$lib/mech-types";
+  import type { Difficulty, Mechanic, MechanicSource, Phase, Severity, TriggerType } from "$lib/mech-types";
   import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
 
   interface Props {
@@ -14,6 +14,15 @@
   let { mech, totalBars, availableDifficulties, defaultPhase, onSave, onClose }: Props = $props();
 
   const isEdit = $derived(mech != null && !!mech.id);
+
+  // Read-only provenance shown as a quiet footer note. Library data, not user-set,
+  // so it's surfaced here on demand rather than as a badge in the mechanic list.
+  const SOURCE_LABEL: Record<MechanicSource, { text: string; dot: string }> = {
+    "maxroll": { text: "Maxroll guide", dot: "#818cf8" },
+    "verified-in-fight": { text: "Verified in-fight", dot: "#4ade80" },
+    "estimated": { text: "Estimated", dot: "#fbbf24" }
+  };
+  const sourceLabel = $derived(mech?.source ? SOURCE_LABEL[mech.source] : null);
 
   type FormState = {
     name: string;
@@ -292,7 +301,18 @@
     </div>
 
     <!-- Footer -->
-    <div style="padding: 12px 18px; border-top: 1px solid #262626; display: flex; justify-content: flex-end; gap: 8px;">
+    <div
+      style="padding: 12px 18px; border-top: 1px solid #262626; display: flex; align-items: center; justify-content: flex-end; gap: 8px;"
+    >
+      {#if sourceLabel}
+        <span
+          title="Where this mechanic's HP/timer data came from."
+          style="margin-right: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #737373;"
+        >
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: {sourceLabel.dot};"></span>
+          Source: {sourceLabel.text}
+        </span>
+      {/if}
       <button
         onclick={onClose}
         style="background: #262626; border: 1px solid #262626; border-radius: 4px; padding: 7px 14px; color: #a3a3a3; cursor: pointer; font-size: 12.5px; font-family: inherit;"

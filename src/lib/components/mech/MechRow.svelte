@@ -1,6 +1,6 @@
 <script lang="ts">
   import { formatTimer, PHASE_COLORS, SEVERITY } from "$lib/mech-constants";
-  import type { Difficulty, Mechanic, MechanicSource } from "$lib/mech-types";
+  import type { Difficulty, Mechanic } from "$lib/mech-types";
   import { mechStore } from "$lib/mech-store.svelte";
   import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
   import MechBadge from "./MechBadge.svelte";
@@ -58,34 +58,6 @@
   const orderedDifficulties = $derived(
     mech.difficulties ? DIFFICULTY_ORDER.filter((d) => mech.difficulties!.includes(d)) : []
   );
-  // Small provenance/confidence badge. Only renders when a mech carries a source.
-  const SOURCE_BADGE: Record<
-    MechanicSource,
-    { label: string; color: string; bg: string; border: string; title: string }
-  > = {
-    "maxroll": {
-      label: "MAXROLL",
-      color: "#a5b4fc",
-      bg: "rgba(99,102,241,0.12)",
-      border: "rgba(129,140,248,0.4)",
-      title: "Trigger data sourced from a Maxroll guide"
-    },
-    "verified-in-fight": {
-      label: "VERIFIED",
-      color: "#86efac",
-      bg: "rgba(34,197,94,0.12)",
-      border: "rgba(74,222,128,0.4)",
-      title: "Trigger data confirmed against live capture data"
-    },
-    "estimated": {
-      label: "EST",
-      color: "#fbbf24",
-      bg: "rgba(245,158,11,0.12)",
-      border: "rgba(251,191,36,0.4)",
-      title: "Trigger data hand-estimated; no authoritative source"
-    }
-  };
-  const sourceBadge = $derived(mech.source ? SOURCE_BADGE[mech.source] : null);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -161,13 +133,6 @@
             >
           {/each}
         </span>
-      {/if}
-      {#if sourceBadge}
-        <span
-          title={sourceBadge.title}
-          style="flex-shrink: 0; background: {sourceBadge.bg}; border: 1px solid {sourceBadge.border}; border-radius: 2px; padding: 1px 4px; color: {sourceBadge.color}; font-size: 9px; font-weight: 700; letter-spacing: 0.04em;"
-          >{sourceBadge.label}</span
-        >
       {/if}
     </div>
     {#if mech.notes}

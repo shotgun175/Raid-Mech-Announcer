@@ -10,7 +10,7 @@
 
 #### NEW FEATURES
 
-- Library mechanics can now show a small source tag (for example, MAXROLL) so you can see at a glance where a mechanic's data came from.
+- The mechanic edit screen now notes where a library mechanic's data came from (for example, a Maxroll guide), shown quietly at the bottom of the dialog.
 
 #### BUG FIXES AND IMPROVEMENTS
 
