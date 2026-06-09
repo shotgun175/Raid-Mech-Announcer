@@ -10,6 +10,7 @@
 
 #### NEW FEATURES
 
+- Added a "Part of Lost Ark Tools" link under Settings > General > About that opens the tools hub in your browser.
 - The mechanic edit screen now notes where a library mechanic's data came from (for example, a Maxroll guide), shown quietly at the bottom of the dialog.
 
 #### BUG FIXES AND IMPROVEMENTS

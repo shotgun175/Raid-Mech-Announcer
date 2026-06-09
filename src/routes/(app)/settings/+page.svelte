@@ -8,6 +8,7 @@
     cancelTtsPregen
   } from "$lib/api";
   import OverlayPreviewPanel from "$lib/components/mech/OverlayPreviewPanel.svelte";
+  import HubBadge from "$lib/components/HubBadge.svelte";
   import { revealItemInDir } from "@tauri-apps/plugin-opener";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
   import { enumerateTtsLines } from "$lib/utils/tts-lines";
@@ -781,6 +782,15 @@
             Each fight is saved to a local capture file. If a mechanic misbehaves, open the folder and send us that file
             so we can reproduce it.
           </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="flex items-center gap-3 pt-2">
+          <span class="text-xs font-semibold tracking-widest text-accent-400 uppercase">About</span>
+          <div class="h-px flex-1 bg-accent-500/20"></div>
+        </div>
+        <div>
+          <HubBadge />
         </div>
       {:else if currentTab === "Shortcuts"}
         <div
