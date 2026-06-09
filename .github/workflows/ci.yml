@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same ref so pushes don't pile up.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Windows-only: the app targets Windows and Tauri's build script links against
+    # the Windows WebView2 toolchain, so Linux runners would need extra system deps.
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Type-check (svelte-check)
+        run: npm run check
+
+      - name: Frontend tests (vitest)
+        run: npm test
+
+      # The cargo steps below compile the Tauri shell, whose build script reads
+      # `frontendDist` (../build). Build the frontend first so it exists.
+      - name: Build frontend
+        run: npm run build
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Rust target
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Rust formatting (cargo fmt)
+        working-directory: src-tauri
+        run: cargo fmt --check
+
+      - name: Rust lint (cargo clippy)
+        working-directory: src-tauri
+        run: cargo clippy -- -D warnings
+
+      - name: Rust tests (cargo test)
+        working-directory: src-tauri
+        run: cargo test
