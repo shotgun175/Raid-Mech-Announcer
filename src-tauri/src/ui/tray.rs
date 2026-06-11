@@ -35,7 +35,10 @@ impl<'a, R: Runtime> LoaMenuBuilder<'a, R> {
     }
 
     pub fn command(mut self, cmd: TrayCommand) -> Self {
-        self.0 = self.0.text(cmd.as_ref(), cmd.get_str("label").unwrap());
+        // Every variant carries a label prop; fall back to the kebab id
+        // rather than aborting (panic = "abort") if one is ever missed.
+        let label = cmd.get_str("label").unwrap_or_else(|| cmd.as_ref());
+        self.0 = self.0.text(cmd.as_ref(), label);
         self
     }
 

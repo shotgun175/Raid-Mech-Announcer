@@ -22,11 +22,13 @@ impl Serialize for AppError {
     where
         S: serde::Serializer,
     {
-        let error = self.source().unwrap();
-        error!("{}", error);
+        // Display already includes the variant prefix ("UI error:" etc.) and
+        // the inner message; a sourceless variant added later must not panic
+        // inside the IPC error path itself.
+        error!("{}", self);
 
-        if let Some(inner) = error.source() {
-            error!("caused by: {}", inner);
+        if let Some(source) = self.source() {
+            error!("caused by: {}", source);
         }
 
         serializer.serialize_str(&self.to_string())

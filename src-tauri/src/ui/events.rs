@@ -15,16 +15,21 @@ use crate::{
     ui::{AppHandleExtensions, TrayCommand, WindowExtensions},
 };
 
-pub fn block_on_local<F, T>(future: F) -> T
+pub fn block_on_local<F, T>(future: F) -> Option<T>
 where
     F: Future<Output = T>,
 {
     tokio::task::block_in_place(|| {
-        let rt = tokio::runtime::Builder::new_current_thread()
+        match tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .unwrap();
-        rt.block_on(future)
+        {
+            Ok(rt) => Some(rt.block_on(future)),
+            Err(err) => {
+                error!("could not build a runtime for a blocking task: {err}");
+                None
+            }
+        }
     })
 }
 
@@ -36,8 +41,10 @@ pub fn on_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
     } = event
     {
         let app_handle = tray.app_handle();
-        if let Some(overlay) = app_handle.get_overlay_window() {
-            overlay.restore_and_focus();
+        if let Some(overlay) = app_handle.get_overlay_window()
+            && let Err(err) = overlay.restore_and_focus()
+        {
+            error!("An error occurred whilst handling tray click: {err}");
         }
     }
 }
@@ -63,14 +70,14 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
         }
         TrayCommand::ShowOverlay => {
             if let Some(overlay) = app_handle.get_overlay_window() {
-                overlay.restore_and_focus();
+                overlay.restore_and_focus()?;
             }
         }
         TrayCommand::Reset => {
             if let Some(overlay) = app_handle.get_overlay_window() {
                 overlay.set_size(DEFAULT_OVERLAY_WINDOW_SIZE)?;
                 overlay.set_position(WINDOW_POSITION)?;
-                overlay.restore_and_focus();
+                overlay.restore_and_focus()?;
             }
         }
         TrayCommand::ShowSettings => {
@@ -86,7 +93,12 @@ pub fn on_menu_event_inner(app_handle: &AppHandle, event: MenuEvent) -> Result<(
 }
 
 pub fn on_window_event(window: &Window, event: &WindowEvent) {
-    on_window_event_inner(window, event).expect("An error occurred whilst handling window event");
+    // Log-and-continue: this wraps EVERY window event (including the
+    // save-on-focus-loss path); with panic = "abort" an expect here would
+    // kill the app on any transient window-op failure.
+    if let Err(err) = on_window_event_inner(window, event) {
+        error!("An error occurred whilst handling window event: {err}");
+    }
 }
 
 pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()> {
@@ -128,7 +140,7 @@ pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()>
 pub fn teardown(app_handle: &AppHandle) {
     let shell_manager = app_handle.state::<ShellManager>();
 
-    block_on_local(async {
+    let _ = block_on_local(async {
         shell_manager.unload_driver().await;
     });
 
