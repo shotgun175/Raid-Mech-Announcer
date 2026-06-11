@@ -2,17 +2,17 @@ import MarkdownIt from "markdown-it";
 
 // Open every rendered link in a new tab/window instead of navigating the webview.
 function withExternalLinks(instance: MarkdownIt): MarkdownIt {
-	const defaultRender =
-		instance.renderer.rules.link_open ||
-		function (tokens, idx, options, env, self) {
-			return self.renderToken(tokens, idx, options);
-		};
+  const defaultRender =
+    instance.renderer.rules.link_open ||
+    function (tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
 
-	instance.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-		tokens[idx].attrSet("target", "_blank");
-		return defaultRender(tokens, idx, options, env, self);
-	};
-	return instance;
+  instance.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+    tokens[idx].attrSet("target", "_blank");
+    return defaultRender(tokens, idx, options, env, self);
+  };
+  return instance;
 }
 
 // Bundled content only (the in-app changelog): html passes through so the
