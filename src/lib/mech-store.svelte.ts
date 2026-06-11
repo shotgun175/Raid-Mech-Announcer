@@ -223,6 +223,8 @@ export const mechStore = (() => {
   let liveTotalBars = $state<number | null>(null);
   let liveBossName = $state<string | null>(null);
   let mechSettings = $state<MechSettings>(loadSettings());
+  // Debounce handle for updateSetting's save+broadcast (see updateSetting).
+  let settingsSaveTimer: ReturnType<typeof setTimeout> | null = null;
   let difficultyMap = $state<Record<string, string>>(loadDifficultyMap());
   // Set once per fight when every mech has fired and HP is still ticking down.
   let liveEncourageMessage = $state<string | null>(null);
@@ -670,8 +672,16 @@ export const mechStore = (() => {
 
     updateSetting<K extends keyof MechSettings>(key: K, value: MechSettings[K]) {
       mechSettings = { ...mechSettings, [key]: value };
-      saveSettings();
-      broadcastSettings(mechSettings);
+      // Trailing debounce: the Settings sliders call this once per tick, and
+      // each call did a full settings clone + localStorage stringify + cross-
+      // window broadcast. State (and the local UI) updates immediately; the
+      // save + broadcast fire once the burst settles.
+      if (settingsSaveTimer !== null) clearTimeout(settingsSaveTimer);
+      settingsSaveTimer = setTimeout(() => {
+        settingsSaveTimer = null;
+        saveSettings();
+        broadcastSettings(mechSettings);
+      }, 150);
     },
 
     // Applied in the overlay window when it receives mech:settings-changed — no save/re-broadcast
