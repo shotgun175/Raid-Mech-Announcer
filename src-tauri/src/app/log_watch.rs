@@ -87,11 +87,32 @@ impl LogTailer {
         if file.seek(SeekFrom::Start(self.pos)).is_err() {
             return out;
         }
-        let mut buf = String::new();
-        if file.read_to_string(&mut buf).is_err() {
+        let mut bytes = Vec::new();
+        if file.read_to_end(&mut bytes).is_err() {
             return out;
         }
-        self.pos += buf.len() as u64;
+        // UTF-8 handling must never stall the tailer at a fixed pos:
+        // - a clean read consumes everything;
+        // - an INCOMPLETE trailing sequence (writer flushed mid-char) is held
+        //   back and re-read next poll, completed by the next flush;
+        // - a genuinely INVALID byte mid-stream (e.g. the writer was killed
+        //   mid-char and appended past it on restart) is consumed lossily
+        //   (U+FFFD) — that one line won't parse, but tailing continues.
+        let buf: String = match std::str::from_utf8(&bytes) {
+            Ok(text) => {
+                self.pos += bytes.len() as u64;
+                text.to_string()
+            }
+            Err(err) if err.error_len().is_none() => {
+                let valid_up_to = err.valid_up_to();
+                self.pos += valid_up_to as u64;
+                String::from_utf8_lossy(&bytes[..valid_up_to]).into_owned()
+            }
+            Err(_) => {
+                self.pos += bytes.len() as u64;
+                String::from_utf8_lossy(&bytes).into_owned()
+            }
+        };
 
         let combined = std::mem::take(&mut self.partial) + &buf;
         let mut rest = combined.as_str();
@@ -235,6 +256,32 @@ mod tests {
             1,
             "content appended after the rotation must be picked up"
         );
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn invalid_utf8_mid_stream_does_not_stall_the_tailer() {
+        use std::io::Write;
+        let path = temp_log("badutf8");
+        let mut tailer = LogTailer::new(path.clone(), true);
+
+        // A truncated multi-byte char (writer killed mid-flush)...
+        let mut f = std::fs::OpenOptions::new()
+            .append(true)
+            .open(&path)
+            .unwrap();
+        f.write_all(b"broken line \xE2\x80").unwrap();
+        drop(f);
+        tailer.poll(); // held back as a possibly-incomplete trailing char
+
+        // ...followed by normal lines appended after a restart. The bad bytes
+        // are now provably invalid; they must be consumed (lossily), not
+        // re-read at the same pos forever.
+        append(&path, &format!("\n{FIGHT_END}"));
+        let events = tailer.poll();
+        assert_eq!(events.len(), 1, "tailing must continue past invalid bytes");
+        assert_eq!(events[0].boss, "Echidna");
 
         let _ = std::fs::remove_file(&path);
     }
