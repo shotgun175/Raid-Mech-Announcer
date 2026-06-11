@@ -75,7 +75,7 @@ class Settings {
   }
 }
 
-export const defaultSettings: AppSettings = {
+const defaultSettings: AppSettings = {
   general: {
     accentColor: "theme-violet",
     scale: "1",

@@ -1,4 +1,4 @@
-import { BOSS_HP_COLORS, SEVERITY } from "$lib/mech-constants";
+import { BOSS_HP_COLORS } from "$lib/mech-constants";
 import type { Mechanic } from "$lib/mech-types";
 
 export function upcomingFrom(mechs: Mechanic[], currentBar: number): Mechanic[] {

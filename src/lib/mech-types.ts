@@ -47,8 +47,8 @@ export interface Gate {
   availableDifficulties?: Difficulty[];
 }
 
-export type TtsVoice = "Andrew" | "Jenny";
-export type OverlayVariant = "standard" | "compact" | "hud" | "card" | "pill";
+type TtsVoice = "Andrew" | "Jenny";
+type OverlayVariant = "standard" | "compact" | "hud" | "card" | "pill";
 
 export interface MechSettings {
   lead: number;

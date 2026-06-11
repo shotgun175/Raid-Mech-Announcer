@@ -4,7 +4,7 @@ import { mechStore } from "./mech-store.svelte";
 import { recordBossStatus } from "./utils/capture-buffer.svelte";
 import { validateBossStatusData } from "./utils/validate-boss-status";
 
-export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
+type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
 
 export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
