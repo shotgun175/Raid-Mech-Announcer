@@ -87,7 +87,7 @@
       {:else}
         {#if updateInfo.manifest?.body}
           <div use:melt={$description} class="overflow-y-scroll rounded-md border border-neutral-700">
-            {@render markdown(updateInfo.manifest.body)}
+            {@render markdown(updateInfo.manifest.body, true)}
           </div>
         {/if}
         <div class="flex items-center py-2">
