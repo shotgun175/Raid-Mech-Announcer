@@ -113,8 +113,8 @@ export interface LibraryGate {
   // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
   swapsBoss?: boolean;
   // Default provenance for every mechanic in this gate (each mechanic can still
-  // override via LibraryMechanic.source). Rolled out gate-by-gate; an absent value
-  // means provenance hasn't been recorded yet (baseline is Maxroll-derived).
+  // override via LibraryMechanic.source). All 42 gates carry it; only override
+  // individual mechanics to "verified-in-fight"/"estimated" when actually known.
   source?: MechanicSource;
 }
 
@@ -176,6 +176,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Valtan G2",
+    source: "maxroll",
     raid: "Valtan",
     gate: 2,
     releaseOrder: 1,
@@ -266,6 +267,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Vykas (releaseOrder 2) ──────────────────────────────────────────────────
   {
     encounterKey: "Vykas G1",
+    source: "maxroll",
     raid: "Vykas",
     gate: 1,
     releaseOrder: 2,
@@ -317,6 +319,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Vykas G2",
+    source: "maxroll",
     raid: "Vykas",
     gate: 2,
     releaseOrder: 2,
@@ -410,6 +413,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Kakul-Saydon / Clown (releaseOrder 3) ──────────────────────────────────
   {
     encounterKey: "Clown G1",
+    source: "maxroll",
     raid: "Clown",
     gate: 1,
     releaseOrder: 3,
@@ -479,6 +483,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Clown G2",
+    source: "maxroll",
     raid: "Clown",
     gate: 2,
     releaseOrder: 3,
@@ -549,6 +554,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Clown G3",
+    source: "maxroll",
     raid: "Clown",
     gate: 3,
     releaseOrder: 3,
@@ -621,6 +627,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Brelshaza (releaseOrder 4) ──────────────────────────────────────────────
   {
     encounterKey: "Brelshaza G1",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 1,
     releaseOrder: 4,
@@ -654,6 +661,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G2",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 2,
     releaseOrder: 4,
@@ -705,6 +713,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G3",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 3,
     releaseOrder: 4,
@@ -766,6 +775,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G4",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 4,
     releaseOrder: 4,
@@ -827,6 +837,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Kayangel (releaseOrder 5) ───────────────────────────────────────────────
   {
     encounterKey: "Kayangel G1",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 1,
     releaseOrder: 5,
@@ -850,6 +861,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Kayangel G2",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 2,
     releaseOrder: 5,
@@ -893,6 +905,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Kayangel G3",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 3,
     releaseOrder: 5,
@@ -946,6 +959,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Akkan (releaseOrder 6) ──────────────────────────────────────────────────
   {
     encounterKey: "Akkan G1",
+    source: "maxroll",
     raid: "Akkan",
     gate: 1,
     releaseOrder: 6,
@@ -1025,6 +1039,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Akkan G2",
+    source: "maxroll",
     raid: "Akkan",
     gate: 2,
     releaseOrder: 6,
@@ -1114,6 +1129,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Akkan G3",
+    source: "maxroll",
     raid: "Akkan",
     gate: 3,
     releaseOrder: 6,
@@ -1199,6 +1215,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Ivory Tower (releaseOrder 7) ────────────────────────────────────────────
   {
     encounterKey: "Ivory Tower G1",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 1,
     releaseOrder: 7,
@@ -1231,6 +1248,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Ivory Tower G2",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 2,
     releaseOrder: 7,
@@ -1263,6 +1281,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Ivory Tower G3",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 3,
     releaseOrder: 7,
@@ -1335,6 +1354,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Thaemine (releaseOrder 8) ────────────────────────────────────────────────
   {
     encounterKey: "Thaemine G1",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 1,
     releaseOrder: 8,
@@ -1397,6 +1417,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G2",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 2,
     releaseOrder: 8,
@@ -1459,6 +1480,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G3",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 3,
     releaseOrder: 8,
@@ -1560,6 +1582,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G4",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 4,
     releaseOrder: 8,
@@ -1623,6 +1646,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Echidna (releaseOrder 9) ────────────────────────────────────────────────
   {
     encounterKey: "Echidna G1",
+    source: "maxroll",
     raid: "Echidna",
     gate: 1,
     releaseOrder: 9,
@@ -1715,6 +1739,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Echidna G2",
+    source: "maxroll",
     raid: "Echidna",
     gate: 2,
     releaseOrder: 9,
@@ -1800,6 +1825,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Behemoth (releaseOrder 10) ───────────────────────────────────────────────
   {
     encounterKey: "Behemoth G1",
+    source: "maxroll",
     raid: "Behemoth",
     gate: 1,
     releaseOrder: 10,
@@ -1834,6 +1860,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Behemoth G2",
+    source: "maxroll",
     raid: "Behemoth",
     gate: 2,
     releaseOrder: 10,
@@ -1869,6 +1896,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Aegir (releaseOrder 11) ──────────────────────────────────────────────────
   {
     encounterKey: "Aegir G1",
+    source: "maxroll",
     raid: "Aegir",
     gate: 1,
     releaseOrder: 11,
@@ -1969,6 +1997,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Aegir G2",
+    source: "maxroll",
     raid: "Aegir",
     gate: 2,
     releaseOrder: 11,
@@ -2053,6 +2082,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Act 2: Brelshaza (releaseOrder 12) ──────────────────────────────────────
   {
     encounterKey: "Act 2: Brelshaza G1",
+    source: "maxroll",
     raid: "Act 2: Brelshaza",
     gate: 1,
     releaseOrder: 12,
@@ -2122,6 +2152,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 2: Brelshaza G2",
+    source: "maxroll",
     raid: "Act 2: Brelshaza",
     gate: 2,
     releaseOrder: 12,
@@ -2200,6 +2231,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Act 3: Mordum (releaseOrder 13) ─────────────────────────────────────────
   {
     encounterKey: "Act 3: Mordum G1",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 1,
     releaseOrder: 13,
@@ -2280,6 +2312,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 3: Mordum G2",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 2,
     releaseOrder: 13,
@@ -2343,6 +2376,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 3: Mordum G3",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 3,
     releaseOrder: 13,
@@ -2745,6 +2779,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Final Act: Kazeros G2-1",
+    source: "maxroll",
     raid: "Final Act: Kazeros",
     gate: 21,
     releaseOrder: 17,
@@ -2919,6 +2954,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Serca (releaseOrder 18) ──────────────────────────────────────────────────
   {
     encounterKey: "Serca G1",
+    source: "maxroll",
     raid: "Serca",
     gate: 1,
     releaseOrder: 18,

@@ -88,10 +88,26 @@ describe("mechanic provenance (source)", () => {
     }
   });
 
-  it("leaves source undefined for gates with no provenance recorded", () => {
-    const untagged = LIBRARY.find((g) => g.source === undefined);
-    expect(untagged).toBeDefined();
-    for (const m of buildLibraryGate(untagged!).mechanics) {
+  it("every library gate carries a provenance source", () => {
+    const untagged = LIBRARY.filter((g) => g.source === undefined).map((g) => g.encounterKey);
+    expect(untagged).toEqual([]);
+  });
+
+  it("leaves mechanics unstamped when a gate has no provenance recorded", () => {
+    // No library gate is untagged anymore; the absent-source behavior still
+    // matters for user-authored gates, so pin it with a synthetic one.
+    const synthetic: LibraryGate = {
+      encounterKey: "Unstamped Test G1",
+      raid: "Unstamped Test",
+      gate: 1,
+      releaseOrder: 998,
+      boss: "Test Boss",
+      bossType: "",
+      weakness: "",
+      tauntable: false,
+      mechanics: [{ key: "unstamped-a", name: "A", severity: "normal", triggerType: "hp", hpBar: 10 }]
+    };
+    for (const m of buildLibraryGate(synthetic).mechanics) {
       expect(m.source).toBeUndefined();
     }
   });
