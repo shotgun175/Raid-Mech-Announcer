@@ -29,7 +29,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +55,19 @@ jobs:
             echo "should_bump=true" >> "$GITHUB_OUTPUT"
           else
             TAG="${GITHUB_REF#refs/tags/}"
-            echo "new_version=${TAG#v}" >> "$GITHUB_OUTPUT"
+            # Tag-push is verify-only: the human must have bumped all three
+            # manifests first, or the published binaries would embed a version
+            # that disagrees with the tag/release/latest.json and confuse the
+            # updater. Fail loudly on any mismatch.
+            WANT="${TAG#v}"
+            PKG=$(grep '"version"' package.json | head -1 | sed -E 's/.*"version": "([0-9.]+)".*/\1/')
+            CONF=$(grep '"version"' src-tauri/tauri.conf.json | head -1 | sed -E 's/.*"version": "([0-9.]+)".*/\1/')
+            CARGO=$(grep -E '^version = ' src-tauri/Cargo.toml | head -1 | sed -E 's/version = "([0-9.]+)"/\1/')
+            if [ "$PKG" != "$WANT" ] || [ "$CONF" != "$WANT" ] || [ "$CARGO" != "$WANT" ]; then
+              echo "::error::Tag $TAG does not match the manifests (package.json=$PKG, tauri.conf.json=$CONF, Cargo.toml=$CARGO). Bump them first or use workflow_dispatch."
+              exit 1
+            fi
+            echo "new_version=$WANT" >> "$GITHUB_OUTPUT"
             echo "new_tag=$TAG" >> "$GITHUB_OUTPUT"
             echo "should_bump=false" >> "$GITHUB_OUTPUT"
           fi
@@ -101,10 +113,12 @@ jobs:
             fi
           fi
 
-          # package.json — first "version" key only (top of file)
-          sed -i '0,/"version": "[0-9.]*"/{s/"version": "[0-9.]*"/"version": "'"$NEW"'"/}' package.json
-          # tauri.conf.json
-          sed -i 's/"version": "[0-9.]*"/"version": "'"$NEW"'"/' src-tauri/tauri.conf.json
+          # package.json AND package-lock.json in one atomic step (the lockfile
+          # previously never got bumped and re-drifted every release)
+          npm version "$NEW" --no-git-tag-version --allow-same-version
+          # tauri.conf.json — first "version" key only, so a future
+          # version-shaped plugin option can never be clobbered
+          sed -i '0,/"version": "[0-9.]*"/{s/"version": "[0-9.]*"/"version": "'"$NEW"'"/}' src-tauri/tauri.conf.json
           # Cargo.toml — first "version" line under [package]
           sed -i '0,/^version = "[0-9.]*"/{s/^version = "[0-9.]*"/version = "'"$NEW"'"/}' src-tauri/Cargo.toml
           # changelog.md — rename "@release Unreleased" marker to the new version
@@ -261,28 +275,59 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json src/lib/data/changelog.md
+          git add package.json package-lock.json src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json src/lib/data/changelog.md
           git commit -m "chore: bump to $NEW"
           git tag "$TAG"
           git push origin HEAD:main
           git push origin "$TAG"
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "24"
           cache: "npm"
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable @ 2026-06
+        with:
+          components: clippy, rustfmt
 
       - name: Cache Rust target
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: "src-tauri -> target"
 
       - name: Install npm dependencies
         run: npm ci
+
+      # Inherit the CI gates: a tag pushed on a broken commit must not ship a
+      # signed build to the auto-updater audience. (The frontend build itself
+      # runs inside tauri-action below.)
+      - name: Type-check (svelte-check)
+        run: npm run check
+
+      - name: Prettier check
+        run: npm run lint
+
+      - name: Frontend tests (vitest)
+        run: npm test
+
+      # The cargo gates compile the Tauri shell, whose build script reads
+      # frontendDist (../build) — build the frontend first so it exists.
+      - name: Build frontend
+        run: npm run build
+
+      - name: Rust formatting (cargo fmt)
+        working-directory: src-tauri
+        run: cargo fmt --check
+
+      - name: Rust lint (cargo clippy)
+        working-directory: src-tauri
+        run: cargo clippy -- -D warnings
+
+      - name: Rust tests (cargo test)
+        working-directory: src-tauri
+        run: cargo test
 
       - name: Resolve release notes
         id: notes
@@ -326,7 +371,10 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Build, sign, and publish release
-        uses: tauri-apps/tauri-action@v0
+        # SHA-pinned: this action runs with the updater signing key and a
+        # contents:write token in env — a hijacked mutable tag could
+        # exfiltrate them.
+        uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}

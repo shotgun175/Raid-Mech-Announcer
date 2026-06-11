@@ -20,10 +20,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "24"
           cache: "npm"
@@ -31,8 +31,31 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      # npm ci validates the dependency tree but NOT the root version field —
+      # releases v0.2.5–v0.2.10 all built with the lockfile stuck at 0.2.4 and
+      # nothing surfaced it. Fail loudly when any version surface disagrees.
+      - name: Version coherence (manifests + lockfiles agree)
+        shell: bash
+        run: |
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")).version;
+            const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+            const conf = JSON.parse(fs.readFileSync("src-tauri/tauri.conf.json", "utf8")).version;
+            const cargo = /(?:^|\n)version = "([0-9.]+)"/.exec(fs.readFileSync("src-tauri/Cargo.toml", "utf8"))[1];
+            const cargoLock = /\[\[package\]\]\nname = "app"\nversion = "([0-9.]+)"/.exec(fs.readFileSync("src-tauri/Cargo.lock", "utf8"))[1];
+            const surfaces = { "package.json": pkg, "package-lock.json (root)": lock.version, "package-lock.json (pkg)": lock.packages[""].version, "tauri.conf.json": conf, "Cargo.toml": cargo, "Cargo.lock (app)": cargoLock };
+            const values = [...new Set(Object.values(surfaces))];
+            console.table ? console.log(surfaces) : null;
+            if (values.length !== 1) { console.error("Version surfaces disagree:", surfaces); process.exit(1); }
+            console.log("All version surfaces agree:", values[0]);
+          '
+
       - name: Type-check (svelte-check)
         run: npm run check
+
+      - name: Prettier check
+        run: npm run lint
 
       - name: Frontend tests (vitest)
         run: npm test
@@ -43,12 +66,12 @@ jobs:
         run: npm run build
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable @ 2026-06
         with:
           components: clippy, rustfmt
 
       - name: Cache Rust target
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: "src-tauri -> target"
 
