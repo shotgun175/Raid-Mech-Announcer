@@ -1,5 +1,7 @@
 # Raid Mech Announcer
 
+Part of [Lost Ark Tools](https://shotgun175.github.io/).
+
 A transparent always-on-top overlay for Lost Ark that announces raid mechanics based on boss HP bars. Built on top of [LOA Logs](https://github.com/snoww/loa-logs) for live data, with a full raid mechanic editor and TTS/Discord webhook support.
 
 > **Requires LOA Logs to be installed.** The app reads game data from LOA Logs' meter-data directory and receives live boss HP via PeerJS share.
@@ -9,7 +11,7 @@ A transparent always-on-top overlay for Lost Ark that announces raid mechanics b
 - **Mech Overlay** — transparent window that announces upcoming mechanics as HP bars tick down, with 5 overlay variants (Pill, Compact, HUD Strip, Card Stack, Combined)
 - **Raid Editor** — build and manage mechanic patterns per raid gate, with live HP timeline visualization
 - **Pre-built Library** — 42 gates across 16 raid groups with notes sourced from Maxroll guides
-- **TTS Announcements** — Windows SAPI voices (Andrew/Jenny) with volume control
+- **TTS Announcements** — edge-tts neural voices (Andrew/Jenny) with Windows SAPI as the last-resort fallback; volume and rate control
 - **Discord Webhooks** — post mechanic announcements as embeds to a Discord channel
 - **Auto Show/Hide** — overlay appears when a matching boss is detected and hides when the encounter ends
 - **PeerJS Integration** — receive live boss HP directly from LOA Logs' share URL
@@ -27,6 +29,7 @@ A transparent always-on-top overlay for Lost Ark that announces raid mechanics b
 1. Install and launch **LOA Logs** — Raid Mech Announcer reads its meter-data on startup
 2. Launch **Raid Mech Announcer** — the overlay appears in preview mode so you can position it
 3. In LOA Logs, click the **share** button to get a PeerJS URL, then paste it into the connection bar at the bottom of the app
+   - Convenience: while disconnected, the app polls the clipboard once per second and auto-connects when it sees a copied LOA Logs share URL. The clipboard is only pattern-matched for that URL, never stored or sent anywhere.
 4. Enter a raid — the overlay auto-matches the boss and starts announcing mechanics
 
 ## Development
@@ -39,8 +42,6 @@ npm run check            # TypeScript validation
 npm run lint             # Prettier check
 npm run format           # Prettier fix
 ```
-
-> **Note:** Live packet capture requires the private `meter-core-rs` crate. Dev builds use `meter-core-stub` — mechanic announcements still work via the PeerJS connection; only direct packet capture is unavailable.
 
 ## Overlay Variants
 
@@ -82,3 +83,9 @@ A few design decisions and boundaries are easy to trip over when reading the cod
 ## Credits
 
 Forked from [LOA Logs](https://github.com/snoww/loa-logs) by [Snow](https://github.com/snoww) and contributors. The packet capture core, game data tables, and base architecture come from that project.
+
+---
+
+> Raid Mech Announcer is a fan-made tool. It is not affiliated with, endorsed by, or
+> sponsored by Smilegate RPG or Amazon Games. "Lost Ark" and related marks belong to
+> their respective owners.

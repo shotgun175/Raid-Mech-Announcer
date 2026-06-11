@@ -2,7 +2,7 @@
 // raid list. Runs once on app startup. No I/O, no Svelte runes — just data in,
 // data out — so it's trivial to unit-test.
 //
-// Algorithm (per spec docs/superpowers/specs/2026-05-20-library-update-push-design.md):
+// Algorithm:
 //   For each user gate that matches a library gate by (raid, gate):
 //     - Defensive guard: if any mech lacks `origin`, skip the whole gate
 //       (treat as unstamped pre-migration data).

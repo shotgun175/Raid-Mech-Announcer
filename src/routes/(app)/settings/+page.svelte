@@ -792,6 +792,10 @@
         <div>
           <HubBadge />
         </div>
+        <div class="max-w-md text-xs text-neutral-400">
+          Raid Mech Announcer is a fan-made tool, not affiliated with, endorsed by, or sponsored by Smilegate RPG or
+          Amazon Games.
+        </div>
       {:else if currentTab === "Shortcuts"}
         <div
           class="w-fit rounded-md border border-amber-500/30 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-400"

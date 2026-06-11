@@ -353,6 +353,15 @@ Minor updates.
 - Auto-updates now work properly. Earlier versions could not detect new releases when they were published. This version fixes that, and from here on future updates arrive automatically when you launch the app.
 <!-- @release-end -->
 
+<!-- @release v0.1.1 -->
+
+### v0.1.1 - May 2026
+
+#### Under the hood
+
+- Releases can now be published with one click from the repository's Actions tab (version bump, changelog stamp, build, sign, and publish all run automatically). No app changes.
+<!-- @release-end -->
+
 <!-- @release v0.1.0 -->
 
 ### v0.1.0 - May 2026

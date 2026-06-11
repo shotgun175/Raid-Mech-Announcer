@@ -16,7 +16,7 @@
     "icon": [
       "icons/icon.ico"
     ],
-    "longDescription": "Raid Mech Announcer - Raid mechanic overlay and DPS meter for Lost Ark.",
+    "longDescription": "Raid Mech Announcer - Raid mechanic announcer overlay for Lost Ark.",
     "shortDescription": "Raid Mech Announcer",
     "licenseFile": "../LICENSE"
   },
@@ -45,7 +45,7 @@
       },
       {
         "label": "main",
-        "title": "Mech Announcer Overlay",
+        "title": "Raid Mech Announcer - Overlay",
         "userAgent": "Raid Mech Announcer",
         "url": "mech-overlay",
         "fullscreen": false,

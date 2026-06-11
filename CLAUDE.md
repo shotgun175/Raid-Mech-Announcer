@@ -1,9 +1,5 @@
 # Raid Mech Announcer
 
-## TODO — Fill in before shipping
-- [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your Discord invite link
-- [ ] `src/routes/(app)/Header.svelte` — uncomment and fill in your donation link
-
 ## Releases
 The Tauri updater is wired up against GitHub Releases. Public key lives in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`; private key is at `~/.tauri/raid-mech-announcer.key` (gitignored via `.tauri/`). Endpoint: `https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest/download/latest.json`.
 
@@ -190,7 +186,7 @@ First `tauri:dev` compile takes 5–10 minutes (longer after deleting `target/`)
 - **LOA Logs has no local API**: port 6040 in LOA Logs `settings.json` is a packet-capture config value, not a server port. The only real-time data path from LOA Logs into this app is the PeerJS share URL.
 - **Boss names change mid-fight**: e.g. Echidna G2 cycles through multiple phase names. Gate matching is sticky (first-match-wins per fight) so the overlay does not flip to a different raid on a phase transition.
 - **`loa:fight-end` Tauri event**: emitted by `log_watch` whenever LOA Logs writes a fight-end line. Payload: `{ boss: string, difficulty: string, cleared: boolean }`. Only fires when LOA Logs is installed and running.
-- **Overlay auto-resize**: when a fight starts the overlay window resizes to wrap its content (top-left anchored). Resets to 360×90 when idle. This requires `core:window:allow-set-size` in capabilities.
+- **Overlay auto-resize**: when a fight starts the overlay window resizes to wrap its content (top-left anchored). Resets to 500×100 when idle (`mech-overlay/+page.svelte` + the window definition in `tauri.conf.json`). The tray's "Reset Window" uses a different, deliberate 500×350 (`constants.rs` `DEFAULT_OVERLAY_WINDOW_SIZE`) so a mis-positioned window comes back big enough to grab. This requires `core:window:allow-set-size` in capabilities.
 - **`alwaysOnTop` is applied in real time**: the overlay page has a `$effect` that calls `setAlwaysOnTop()` whenever `mechStore.mechSettings.alwaysOnTop` changes — no restart needed.
 - **OverlayControls**: the dashed window-bounds outline and corner buttons (gear = open Settings, dash = hide overlay) only render when `clickThrough` is `false`. They disappear completely in click-through mode.
 - **PowerShell text replacement corrupts UTF-8**: Never use PowerShell `-replace` / `Get-Content | Set-Content` on source files without `-Encoding utf8`. PS 5.1 reads as Windows-1252 by default; multi-byte UTF-8 characters whose bytes collide with the target codepoint get silently destroyed (e.g. `×` U+00D7 was corrupted when replacing em dashes because its byte 0x97 = em dash in Win-1252). Always use the Edit tool for in-source text changes.

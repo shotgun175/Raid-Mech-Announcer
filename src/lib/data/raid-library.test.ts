@@ -30,6 +30,17 @@ describe("LIBRARY key uniqueness", () => {
   });
 });
 
+describe("library size matches the documented counts", () => {
+  // CLAUDE.md and README both claim "42 gates, 244 mechanics". This pins the
+  // claim so the docs and the data cannot silently drift — update BOTH the
+  // docs and these numbers when the library grows.
+  it("has 42 gates and 244 mechanics", () => {
+    expect(LIBRARY.length).toBe(42);
+    const mechCount = LIBRARY.reduce((n, gate) => n + gate.mechanics.length, 0);
+    expect(mechCount).toBe(244);
+  });
+});
+
 describe("gateSwapsBoss", () => {
   it("is true for Act 4: Armoche G1 (Echidna swaps to Brelshaza)", () => {
     expect(gateSwapsBoss("Act 4: Armoche", 1)).toBe(true);
