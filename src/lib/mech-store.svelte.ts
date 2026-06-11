@@ -726,34 +726,6 @@ export const mechStore = (() => {
     // Drives the encouragement state from the Overlay Preview panel's local sim
     // (the preview bypasses setBossStatus). Safe to call repeatedly — it only mutates
     // on transition into/out of the empty-upcoming state.
-    recomputeEncourage,
-
-    moveRaidUp(raidName: string) {
-      const names = Array.from(new Set(raids.map((r) => r.raid)));
-      const idx = names.indexOf(raidName);
-      if (idx <= 0) return;
-      const swapWith = names[idx - 1];
-      const reordered = [
-        ...raids.filter((r) => r.raid !== raidName && r.raid !== swapWith),
-        ...raids.filter((r) => r.raid === raidName),
-        ...raids.filter((r) => r.raid === swapWith)
-      ];
-      raids = reordered;
-      saveRaids();
-    },
-
-    moveRaidDown(raidName: string) {
-      const names = Array.from(new Set(raids.map((r) => r.raid)));
-      const idx = names.indexOf(raidName);
-      if (idx < 0 || idx >= names.length - 1) return;
-      const swapWith = names[idx + 1];
-      const reordered = [
-        ...raids.filter((r) => r.raid !== raidName && r.raid !== swapWith),
-        ...raids.filter((r) => r.raid === swapWith),
-        ...raids.filter((r) => r.raid === raidName)
-      ];
-      raids = reordered;
-      saveRaids();
-    }
+    recomputeEncourage
   };
 })();

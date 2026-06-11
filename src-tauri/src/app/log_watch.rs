@@ -45,6 +45,70 @@ pub fn parse_fight_end(line: &str) -> Option<FightEndEvent> {
     })
 }
 
+/// Incremental log reader. Two failure modes of the previous inline loop are
+/// handled here: a fight-end line flushed in two chunks was lost (the read
+/// position advanced past the partial line, so neither half ever parsed), and
+/// a rotated/truncated file was tailed-at-the-old-offset forever (the held
+/// handle also pinned the old file). The tailer carries incomplete trailing
+/// lines between polls, re-opens the path on every poll, and restarts from
+/// the top when the file shrank.
+struct LogTailer {
+    path: PathBuf,
+    pos: u64,
+    partial: String,
+}
+
+impl LogTailer {
+    fn new(path: PathBuf, start_at_end: bool) -> Self {
+        let pos = if start_at_end {
+            std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0)
+        } else {
+            0
+        };
+        Self {
+            path,
+            pos,
+            partial: String::new(),
+        }
+    }
+
+    /// Read newly appended content; return every complete fight-end event.
+    fn poll(&mut self) -> Vec<FightEndEvent> {
+        let mut out = Vec::new();
+        let Ok(mut file) = File::open(&self.path) else {
+            return out;
+        };
+        let len = file.metadata().map(|m| m.len()).unwrap_or(0);
+        if len < self.pos {
+            // Shrunk: the file was rotated or truncated — start over.
+            self.pos = 0;
+            self.partial.clear();
+        }
+        if file.seek(SeekFrom::Start(self.pos)).is_err() {
+            return out;
+        }
+        let mut buf = String::new();
+        if file.read_to_string(&mut buf).is_err() {
+            return out;
+        }
+        self.pos += buf.len() as u64;
+
+        let combined = std::mem::take(&mut self.partial) + &buf;
+        let mut rest = combined.as_str();
+        while let Some(nl) = rest.find('\n') {
+            let line = rest[..nl].trim_end_matches('\r');
+            if let Some(evt) = parse_fight_end(line) {
+                out.push(evt);
+            }
+            rest = &rest[nl + 1..];
+        }
+        // Whatever follows the last newline is an incomplete line: keep it
+        // for the next poll instead of consuming-and-losing it.
+        self.partial = rest.to_string();
+        out
+    }
+}
+
 /// Spawns a background thread that tails the LOA Logs current log file.
 /// Emits `loa:fight-end` on the given AppHandle whenever a fight-end line is detected.
 /// Returns the watcher (caller must keep it alive for events to fire).
@@ -55,26 +119,16 @@ pub fn start_log_watcher(app: tauri::AppHandle) -> Option<RecommendedWatcher> {
     let mut watcher = notify::recommended_watcher(tx).ok()?;
     watcher.watch(&log_path, RecursiveMode::NonRecursive).ok()?;
 
-    let path = log_path.clone();
     std::thread::spawn(move || {
-        let mut file = match File::open(&path) {
-            Ok(f) => f,
-            Err(_) => return,
-        };
-        // Seek to end — only watch new lines written after startup.
-        let _ = file.seek(SeekFrom::End(0));
-        let mut buf = String::new();
+        // Start at the end — only watch new lines written after startup.
+        let mut tailer = LogTailer::new(log_path, true);
 
         for event in rx.into_iter().flatten() {
             if !matches!(event.kind, EventKind::Modify(_)) {
                 continue;
             }
-            buf.clear();
-            let _ = file.read_to_string(&mut buf);
-            for line in buf.lines() {
-                if let Some(evt) = parse_fight_end(line) {
-                    let _ = app.emit("loa:fight-end", &evt);
-                }
+            for evt in tailer.poll() {
+                let _ = app.emit("loa:fight-end", &evt);
             }
         }
     });
@@ -114,5 +168,85 @@ mod tests {
     fn returns_none_for_empty_boss_name() {
         let line = "saving to db - cleared: [false], difficulty: [Normal] ";
         assert!(parse_fight_end(line).is_none());
+    }
+
+    const FIGHT_END: &str = "[2026-05-03T15:30:06Z] INFO [app::live::encounter_state] saving to db - cleared: [false], difficulty: [Solo] Echidna\n";
+
+    fn temp_log(name: &str) -> PathBuf {
+        let path = std::env::temp_dir().join(format!(
+            "rma_log_watch_test_{name}_{}.log",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_file(&path);
+        std::fs::write(&path, b"").unwrap();
+        path
+    }
+
+    fn append(path: &PathBuf, content: &str) {
+        use std::io::Write;
+        let mut f = std::fs::OpenOptions::new().append(true).open(path).unwrap();
+        f.write_all(content.as_bytes()).unwrap();
+    }
+
+    #[test]
+    fn carries_a_line_split_across_two_flushes() {
+        let path = temp_log("split");
+        let mut tailer = LogTailer::new(path.clone(), true);
+
+        let (first, second) = FIGHT_END.split_at(60);
+        append(&path, first);
+        assert!(
+            tailer.poll().is_empty(),
+            "half a line must not parse or be consumed"
+        );
+        append(&path, second);
+        let events = tailer.poll();
+        assert_eq!(
+            events.len(),
+            1,
+            "the two halves must reassemble into one event"
+        );
+        assert_eq!(events[0].boss, "Echidna");
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn recovers_when_the_file_is_rotated() {
+        let path = temp_log("rotate");
+        let mut tailer = LogTailer::new(path.clone(), true);
+
+        append(&path, FIGHT_END);
+        assert_eq!(tailer.poll().len(), 1);
+
+        // Rotation: the file is replaced and starts shorter than the old read
+        // position (the shrink IS the rotation signal — a replacement that
+        // instantly exceeds the old length is indistinguishable from an
+        // append by size alone; accepted limitation of this heuristic).
+        std::fs::write(&path, b"new file header\n").unwrap();
+        assert_eq!(
+            tailer.poll().len(),
+            0,
+            "the shrink resets the read position"
+        );
+        append(&path, FIGHT_END);
+        assert_eq!(
+            tailer.poll().len(),
+            1,
+            "content appended after the rotation must be picked up"
+        );
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn parses_multiple_lines_in_one_flush() {
+        let path = temp_log("multi");
+        let mut tailer = LogTailer::new(path.clone(), true);
+
+        append(&path, &format!("{FIGHT_END}unrelated line\n{FIGHT_END}"));
+        assert_eq!(tailer.poll().len(), 2);
+
+        let _ = std::fs::remove_file(&path);
     }
 }
