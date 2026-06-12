@@ -10,7 +10,7 @@ A transparent always-on-top overlay for Lost Ark that announces raid mechanics b
 
 - **Mech Overlay** — transparent window that announces upcoming mechanics as HP bars tick down, with 5 overlay variants (Pill, Compact, HUD Strip, Card Stack, Combined)
 - **Raid Editor** — build and manage mechanic patterns per raid gate, with live HP timeline visualization
-- **Pre-built Library** — 42 gates across 16 raid groups with notes sourced from Maxroll guides
+- **Pre-built Library** — 44 gates across 17 raid groups with notes sourced from Maxroll guides
 - **TTS Announcements** — edge-tts neural voices (Andrew/Jenny) with Windows SAPI as the last-resort fallback; volume and rate control
 - **Discord Webhooks** — post mechanic announcements as embeds to a Discord channel
 - **Auto Show/Hide** — overlay appears when a matching boss is detected and hides when the encounter ends

@@ -61,6 +61,27 @@ describe("bestGateMatch", () => {
     expect(bestGateMatch([armocheG2], "Totally Different Boss")).toBeNull();
     expect(bestGateMatch([armocheG2], "")).toBeNull();
   });
+
+  describe("Horizon Cathedral (both bosses share the 'Arcenos' core)", () => {
+    const horizonG1 = gate("Archbishop Arcenos", "hc1");
+    const horizonG2 = gate("Arcenos, Vanguard of Fanaticism", "hc2");
+
+    it("routes each boss to its own gate when both gates are present", () => {
+      expect(bestGateMatch([horizonG1, horizonG2], "Archbishop Arcenos")?.id).toBe("hc1");
+      expect(bestGateMatch([horizonG1, horizonG2], "Arcenos, Vanguard of Fanaticism")?.id).toBe("hc2");
+    });
+
+    it("never binds a G2 fight to the G1 gate (no name containment either way)", () => {
+      expect(bestGateMatch([horizonG1], "Arcenos, Vanguard of Fanaticism")).toBeNull();
+    });
+
+    it("binds a G1 fight to the G2 gate when only G2 is imported (known limitation)", () => {
+      // G2's pre-comma core "arcenos" is a substring of "archbishop arcenos":
+      // 7/18 ≈ 0.389 ≥ 0.24. Harmless with both gates imported (exact match wins);
+      // pinned here so a matcher change that alters this is a conscious decision.
+      expect(bestGateMatch([horizonG2], "Archbishop Arcenos")?.id).toBe("hc2");
+    });
+  });
 });
 
 describe("isFinalGateOfRaid", () => {

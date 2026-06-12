@@ -72,7 +72,9 @@ export const bossHpMap: Record<string, number> = {
   "Archdemon Kazeros": 1000,
   "Death Incarnate Kazeros": 777,
   "Witch of Agony, Serca": 300,
-  "Corvus Tul Rak": 300
+  "Corvus Tul Rak": 300,
+  "Archbishop Arcenos": 200,
+  "Arcenos, Vanguard of Fanaticism": 200
 };
 
 export interface LibraryMechanic {
@@ -113,7 +115,7 @@ export interface LibraryGate {
   // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
   swapsBoss?: boolean;
   // Default provenance for every mechanic in this gate (each mechanic can still
-  // override via LibraryMechanic.source). All 42 gates carry it; only override
+  // override via LibraryMechanic.source). All 44 gates carry it; only override
   // individual mechanics to "verified-in-fight"/"estimated" when actually known.
   source?: MechanicSource;
 }
@@ -3109,6 +3111,112 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
           "Remember Pac-Man order and stagger boss. Normal/Hard: spacebar on red flash. Nightmare: count 2 wing flaps then spacebar. (Maxroll calls this 'Triangle Detection'.)"
+      }
+    ]
+  },
+  // ── Horizon Cathedral (releaseOrder 19) ─────────────────────────────────────
+  // Difficulty is the one-off "Stage 1/2/3" scheme (game + Maxroll naming). LOA Logs
+  // logs the same three as "Level 1/2/3" (ids 9/10/11) — only relevant if the
+  // loa:fight-end difficulty payload is ever consumed. Maxroll states NO mechanic
+  // differences between stages, only item level (1700/1720/1750) and rewards.
+  {
+    encounterKey: "Horizon Cathedral G1",
+    source: "maxroll",
+    raid: "Horizon Cathedral",
+    gate: 1,
+    releaseOrder: 19,
+    availableDifficulties: ["Stage 1", "Stage 2", "Stage 3"],
+    boss: "Archbishop Arcenos",
+    bossType: "HUMAN",
+    weakness: "Weak to Dark",
+    tauntable: true,
+    mechanics: [
+      {
+        key: "horizon-cathedral-g1-bell-charge",
+        name: "Bell Charge",
+        hpBar: 180,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Bells fall from the ceiling; the aggro'd player aims the boss at a bell so he destroys it — an unbroken bell explodes for massive damage (Timestop/Hyper Awakening survives). Repeats through the fight; enhanced after x160 with a pulse wave — spacebar to avoid knockdown. (Maxroll calls this 'Bell Charge + Spacebar'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-dps-check",
+        name: "DPS Check",
+        hpBar: 160,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Boss disappears, safe spot appears at center — 38s DPS check. Just Guard his hammer hit on the bell, then dodge the orb explosions (bigger orbs = bigger blasts). Normal patterns are enhanced after this mechanic. (Maxroll calls this 'DPS Check + Just Guard'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-shield-flashes",
+        name: "Shield Flashes",
+        hpBar: 100,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Boss teleports to center (cutscene); four safe spots — two white, two gold — split to your assigned color. White flash = spacebar the outward pulse; gold flash = Just Guard the explosion. Success grants extra shield damage. (Maxroll calls this 'Shield + Flashes'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-counter-just-guard",
+        name: "Counter + Just Guard",
+        hpBar: 60,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Just Guard the hammer slam at center and stay out of the middle until it explodes. Two bosses appear — split the party: counter the one charging on the ground, Just Guard the one jumping into the air."
+      }
+    ]
+  },
+  {
+    encounterKey: "Horizon Cathedral G2",
+    source: "maxroll",
+    raid: "Horizon Cathedral",
+    gate: 2,
+    releaseOrder: 19,
+    availableDifficulties: ["Stage 1", "Stage 2", "Stage 3"],
+    boss: "Arcenos, Vanguard of Fanaticism",
+    bossType: "HUMAN",
+    weakness: "Weak to Dark",
+    tauntable: true,
+    // This gate's main mechanics trigger on the Boss Identity gauge (top-left meter
+    // that fills over time AND from boss attacks) — there is no HP-bar or fixed-timer
+    // correlation, and the app has no identity data path. Triggers are intentionally
+    // left empty so nothing announces at a wrong moment; if real clears show a usable
+    // HP correlation, set verified hpBar triggers (the only trigger type the overlay
+    // announces) from capture/replay and mark them "verified-in-fight".
+    mechanics: [
+      {
+        key: "horizon-cathedral-g2-identity-50",
+        name: "50% Identity",
+        triggerType: "timer",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "At 50% Identity gauge, one of two variants: (1) bell hits + ground puddles + jump AoE with safe spots — dash toward the bell on the second bell hit; two players get line telegraphs — spread and Just Guard the cone toward the boss for heavy stagger. (2) Blue stun circle under boss — move out; orbiting chains send shockwaves — Just Guard single ones, never stand where they overlap. No trigger set: Identity gauge isn't trackable."
+      },
+      {
+        key: "horizon-cathedral-g2-tuning-forks",
+        name: "Tuning Forks",
+        triggerType: "timer",
+        severity: "wipe",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "At 100% Identity gauge: tuning forks spawn giving the boss damage reduction + a DPS check. Stand at your pre-assigned position between forks (positions repeat every 3) and Just Guard the slow soundwave aiming at the NEXT player clockwise to destroy forks — aiming at the boss triggers a massive retaliation AoE. Failing the check wipes. No trigger set: Identity gauge isn't trackable. (Maxroll calls this '100% Identity - Tuning Forks'.)"
+      },
+      {
+        key: "horizon-cathedral-g2-bell-destruction",
+        name: "Bell Destruction",
+        triggerType: "timer",
+        severity: "normal",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "After depleting the stagger bar, destroy the boss's bell to extend the damage phase. Stagger-driven — no trigger set."
       }
     ]
   }

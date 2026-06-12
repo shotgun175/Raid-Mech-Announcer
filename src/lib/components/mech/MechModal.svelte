@@ -77,11 +77,21 @@
   const needsHpBar = $derived(form.triggerType === "hp" || form.triggerType === "hp+timer");
   const needsRepeatSecs = $derived(form.triggerType === "hp+timer");
   const needsTimerSecs = $derived(form.triggerType === "timer");
+  // A library mech can ship with no trigger values at all (Horizon Cathedral G2's
+  // Identity-gauge mechanics — the app has no data path to trigger them). Editing
+  // such a mech must stay saveable without inventing a value, so the per-trigger-type
+  // requirements are waived while the mech remains trigger-less; they apply again
+  // the moment any trigger field is filled in.
+  const openedTriggerless = $derived(
+    mech != null && mech.hpBar == null && mech.timerSecs == null && mech.repeatSecs == null
+  );
+  const stillTriggerless = $derived(form.hpBar === "" && form.repeatSecs === "" && form.timerSecs === "");
   const isValid = $derived(
     form.name.trim() !== "" &&
-      (!needsHpBar || form.hpBar !== "") &&
-      (!needsRepeatSecs || form.repeatSecs !== "") &&
-      (!needsTimerSecs || form.timerSecs !== "")
+      ((openedTriggerless && stillTriggerless) ||
+        ((!needsHpBar || form.hpBar !== "") &&
+          (!needsRepeatSecs || form.repeatSecs !== "") &&
+          (!needsTimerSecs || form.timerSecs !== "")))
   );
 
   function save() {

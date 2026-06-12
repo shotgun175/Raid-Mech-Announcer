@@ -1,4 +1,15 @@
-export type Difficulty = "Solo" | "Normal" | "Hard" | "Nightmare" | "Extreme" | "TFM";
+// "Stage 1/2/3" is Horizon Cathedral's one-off difficulty scheme (the game and Maxroll
+// say "Stage"; LOA Logs logs the same difficulties as "Level 1/2/3" — see raid-library.ts).
+export type Difficulty =
+  | "Solo"
+  | "Normal"
+  | "Hard"
+  | "Nightmare"
+  | "Extreme"
+  | "TFM"
+  | "Stage 1"
+  | "Stage 2"
+  | "Stage 3";
 export type Severity = "normal" | "major" | "wipe";
 export type TriggerType = "hp" | "timer" | "hp+timer";
 export type Phase = 1 | 2 | 3 | 4 | null;

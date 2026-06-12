@@ -10,6 +10,9 @@
 
 #### NEW FEATURES
 
+- Added the new Horizon Cathedral raid to the library: Gate 1 (Archbishop Arcenos) with all four HP-bar mechanics, and Gate 2 (Arcenos, Vanguard of Fanaticism) with its gauge- and stagger-driven mechanics documented as reference notes in the Raid Editor. Gate 2's mechanics aren't tied to boss HP, so they ship without announcement triggers — set an HP-bar trigger yourself after a few clears if you want callouts.
+- Difficulty picker now supports Horizon Cathedral's Stage 1 / Stage 2 / Stage 3 difficulties.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->

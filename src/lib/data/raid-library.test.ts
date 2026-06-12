@@ -31,13 +31,13 @@ describe("LIBRARY key uniqueness", () => {
 });
 
 describe("library size matches the documented counts", () => {
-  // CLAUDE.md and README both claim "42 gates, 244 mechanics". This pins the
+  // CLAUDE.md and README both claim "44 gates, 251 mechanics". This pins the
   // claim so the docs and the data cannot silently drift — update BOTH the
   // docs and these numbers when the library grows.
-  it("has 42 gates and 244 mechanics", () => {
-    expect(LIBRARY.length).toBe(42);
+  it("has 44 gates and 251 mechanics", () => {
+    expect(LIBRARY.length).toBe(44);
     const mechCount = LIBRARY.reduce((n, gate) => n + gate.mechanics.length, 0);
-    expect(mechCount).toBe(244);
+    expect(mechCount).toBe(251);
   });
 });
 
