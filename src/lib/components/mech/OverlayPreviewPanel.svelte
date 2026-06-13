@@ -455,7 +455,8 @@
     style="flex-shrink: 0; padding: 8px 16px; background: #0f0f0f; border-top: 1px solid #262626; display: flex; align-items: center; justify-content: center; gap: 6px;"
   >
     <span style="font-size: 12px; color: #8a8a8a;"
-      >Drag the widget to reposition · Use the slider or ▶ Play to simulate HP draining</span
+      >Drag the widget to reposition · Use the slider or ▶ Play to simulate HP draining · Timer (from-pull) callouts
+      fire in live fights only</span
     >
   </div>
 </div>

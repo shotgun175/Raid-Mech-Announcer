@@ -411,7 +411,7 @@
           <div class="flex flex-col gap-1">
             <div class="text-sm font-semibold">Repeating Pattern Lead Time</div>
             <div class="text-xs text-neutral-400">
-              How many seconds before a repeating mechanic fires again to announce it
+              How many seconds of warning before a repeating mechanic fires again or a timer mechanic comes due
             </div>
             <div class="flex items-center gap-3 pt-1">
               <input

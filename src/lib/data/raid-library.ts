@@ -2072,11 +2072,11 @@ const LIBRARY: LibraryGate[] = [
         key: "aegir-g2-final-struggle",
         name: "Final Struggle",
         timerSecs: 50,
-        repeatSecs: 50,
         triggerType: "timer",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "HM only; guard every 50s and 90s enrage timer caps the fight — must kill before enrage or wipe"
+        notes:
+          "HM only; guard every 50s and 90s enrage timer caps the fight — must kill before enrage or wipe. From-pull callout warns of the first guard only."
       }
     ]
   },
@@ -2859,13 +2859,12 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g22-angry-birds",
         name: "Angry Birds",
-        timerSecs: 180,
-        repeatSecs: 180,
         triggerType: "timer",
         phase: 2,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
-        notes: "Repeating periodic mechanic throughout phase"
+        notes:
+          "Repeating periodic mechanic throughout the phase. Phase-relative cadence, not anchored to pull or HP — no trigger set."
       },
       {
         key: "final-act-kazeros-g22-kazeros-says",
@@ -2912,13 +2911,12 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g23-spotlight",
         name: "Spotlight",
-        timerSecs: 150,
-        repeatSecs: 150,
         triggerType: "timer",
         phase: 3,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
-        notes: "Periodic spotlight — bait to edge and dodge away"
+        notes:
+          "Periodic spotlight — bait to edge and dodge away. Phase-relative cadence, not anchored to pull or HP — no trigger set."
       },
       {
         key: "final-act-kazeros-g23-final-time-attack",
@@ -3188,8 +3186,8 @@ const LIBRARY: LibraryGate[] = [
     // that fills over time AND from boss attacks) — there is no HP-bar or fixed-timer
     // correlation, and the app has no identity data path. Triggers are intentionally
     // left empty so nothing announces at a wrong moment; if real clears show a usable
-    // HP correlation, set verified hpBar triggers (the only trigger type the overlay
-    // announces) from capture/replay and mark them "verified-in-fight".
+    // correlation, set verified hpBar or timerSecs (announced from pull) values from
+    // capture/replay and mark them "verified-in-fight".
     mechanics: [
       {
         key: "horizon-cathedral-g2-identity-50",

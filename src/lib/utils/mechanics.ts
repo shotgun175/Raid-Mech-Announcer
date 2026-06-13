@@ -21,6 +21,28 @@ export function activeRepeatMech(mechanics: Mechanic[], bar: number): Mechanic |
   );
 }
 
+export type TimerFire = { mech: Mechanic; secsLeft: number; announce: boolean };
+
+/**
+ * From-pull timer mechs whose announce window has been reached `elapsedSecs`
+ * seconds into the fight: timerSecs - elapsed <= leadSecs. Only pure timer mechs
+ * qualify (`timerSecs` set, `hpBar` null) — a mech carrying both would announce
+ * twice, once per trigger path (the editor can leave a stale hidden value behind
+ * when the trigger type is switched). `announce` is false once the mech is past
+ * due — its window passed while callouts were gated (HP silence, phase transition)
+ * — so the caller marks it fired without speaking a stale callout. `secsLeft` is
+ * clamped to >= 1: interval drift inside the window must not round a live callout
+ * down to zero. Excluding already-fired mechs is the caller's job.
+ */
+export function dueTimerMechs(mechanics: Mechanic[], elapsedSecs: number, leadSecs: number): TimerFire[] {
+  return mechanics
+    .filter((m) => m.timerSecs != null && m.hpBar == null && m.timerSecs - elapsedSecs <= leadSecs)
+    .map((m) => {
+      const remaining = m.timerSecs! - elapsedSecs;
+      return { mech: m, secsLeft: Math.max(1, Math.round(remaining)), announce: remaining > 0 };
+    });
+}
+
 const SEVERITY_RANK: Record<string, number> = { wipe: 3, major: 2, normal: 1 };
 
 function outranksForAnnounce(a: Mechanic, b: Mechanic): boolean {

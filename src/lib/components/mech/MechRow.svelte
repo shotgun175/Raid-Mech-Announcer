@@ -87,8 +87,10 @@
   >
     {#if mech.hpBar != null}
       {mech.hpBar}<span style="font-size: 12px; color: #8a8a8a; font-weight: 400; margin-left: 2px;">×</span>
-    {:else}
+    {:else if mech.timerSecs != null}
       <span style="font-size: 12px; color: #fbbf24;">⏱ {formatTimer(mech.timerSecs)}</span>
+    {:else}
+      <span style="font-size: 12px; color: #525252;" title="No trigger set — reference only">—</span>
     {/if}
   </div>
 

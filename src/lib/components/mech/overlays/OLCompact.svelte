@@ -13,6 +13,10 @@
   }: OverlayProps = $props();
   const upcoming = $derived(upcomingFrom(mechanics, currentBar).slice(0, 3));
   const barColor = $derived(hpBarColor(currentBar, totalBars));
+  // A gate whose mechs all lack trigger values (Horizon Cathedral G2: Identity-gauge
+  // mechanics with no HP/timer data) will never produce a callout — say so instead of
+  // sitting on "Awaiting first mech..." for the whole fight.
+  const hasAnnounceableMechs = $derived(mechanics.some((m) => m.hpBar != null || m.timerSecs != null));
   const showActiveMech = $derived(
     activeMech != null && repeatCountdown != null && mechStore.mechSettings.showRepeatTicker
   );
@@ -26,7 +30,7 @@
     <div
       style="background: rgba(23,23,23,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(64,64,64,0.5); border-radius: 4px; padding: 8px 14px; color: #a3a3a3; font-size: 12px;"
     >
-      Awaiting first mech...
+      {hasAnnounceableMechs ? "Awaiting first mech..." : "No auto callouts for this gate"}
     </div>
   {:else}
     <div
