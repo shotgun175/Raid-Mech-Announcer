@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.3.0 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.3.0 - June 13th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Added the new Horizon Cathedral raid to the library: Gate 1 (Archbishop Arcenos) with all four HP-bar mechanics, and Gate 2 (Arcenos, Vanguard of Fanaticism) with its gauge- and stagger-driven mechanics documented as reference notes in the Raid Editor. Gate 2's mechanics aren't tied to boss HP, so they ship without announcement triggers — set a timer or HP-bar trigger yourself after a few clears if you want callouts.
 - Difficulty picker now supports Horizon Cathedral's Stage 1 / Stage 2 / Stage 3 difficulties.
 - Timer mechanics now announce. A mechanic with a "Timer (from pull)" value gets a spoken callout shortly before that time is reached, using your repeat-warning lead setting — this also activates the library's existing from-pull timer mechanics, such as Serca Gate 2's Stagger Helping Pattern at 8:30.
@@ -22,14 +38,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.2.10 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.2.10 - June 9th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.2.10 - June 9th, 2026
 
 #### NEW FEATURES
 
