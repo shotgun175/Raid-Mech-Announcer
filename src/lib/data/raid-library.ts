@@ -72,7 +72,9 @@ export const bossHpMap: Record<string, number> = {
   "Archdemon Kazeros": 1000,
   "Death Incarnate Kazeros": 777,
   "Witch of Agony, Serca": 300,
-  "Corvus Tul Rak": 300
+  "Corvus Tul Rak": 300,
+  "Archbishop Arcenos": 200,
+  "Arcenos, Vanguard of Fanaticism": 200
 };
 
 export interface LibraryMechanic {
@@ -113,8 +115,8 @@ export interface LibraryGate {
   // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
   swapsBoss?: boolean;
   // Default provenance for every mechanic in this gate (each mechanic can still
-  // override via LibraryMechanic.source). Rolled out gate-by-gate; an absent value
-  // means provenance hasn't been recorded yet (baseline is Maxroll-derived).
+  // override via LibraryMechanic.source). All 44 gates carry it; only override
+  // individual mechanics to "verified-in-fight"/"estimated" when actually known.
   source?: MechanicSource;
 }
 
@@ -176,6 +178,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Valtan G2",
+    source: "maxroll",
     raid: "Valtan",
     gate: 2,
     releaseOrder: 1,
@@ -266,6 +269,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Vykas (releaseOrder 2) ──────────────────────────────────────────────────
   {
     encounterKey: "Vykas G1",
+    source: "maxroll",
     raid: "Vykas",
     gate: 1,
     releaseOrder: 2,
@@ -317,6 +321,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Vykas G2",
+    source: "maxroll",
     raid: "Vykas",
     gate: 2,
     releaseOrder: 2,
@@ -410,6 +415,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Kakul-Saydon / Clown (releaseOrder 3) ──────────────────────────────────
   {
     encounterKey: "Clown G1",
+    source: "maxroll",
     raid: "Clown",
     gate: 1,
     releaseOrder: 3,
@@ -479,6 +485,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Clown G2",
+    source: "maxroll",
     raid: "Clown",
     gate: 2,
     releaseOrder: 3,
@@ -549,6 +556,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Clown G3",
+    source: "maxroll",
     raid: "Clown",
     gate: 3,
     releaseOrder: 3,
@@ -621,6 +629,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Brelshaza (releaseOrder 4) ──────────────────────────────────────────────
   {
     encounterKey: "Brelshaza G1",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 1,
     releaseOrder: 4,
@@ -654,6 +663,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G2",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 2,
     releaseOrder: 4,
@@ -705,6 +715,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G3",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 3,
     releaseOrder: 4,
@@ -766,6 +777,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Brelshaza G4",
+    source: "maxroll",
     raid: "Brelshaza",
     gate: 4,
     releaseOrder: 4,
@@ -827,6 +839,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Kayangel (releaseOrder 5) ───────────────────────────────────────────────
   {
     encounterKey: "Kayangel G1",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 1,
     releaseOrder: 5,
@@ -850,6 +863,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Kayangel G2",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 2,
     releaseOrder: 5,
@@ -893,6 +907,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Kayangel G3",
+    source: "maxroll",
     raid: "Kayangel",
     gate: 3,
     releaseOrder: 5,
@@ -946,6 +961,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Akkan (releaseOrder 6) ──────────────────────────────────────────────────
   {
     encounterKey: "Akkan G1",
+    source: "maxroll",
     raid: "Akkan",
     gate: 1,
     releaseOrder: 6,
@@ -1025,6 +1041,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Akkan G2",
+    source: "maxroll",
     raid: "Akkan",
     gate: 2,
     releaseOrder: 6,
@@ -1114,6 +1131,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Akkan G3",
+    source: "maxroll",
     raid: "Akkan",
     gate: 3,
     releaseOrder: 6,
@@ -1199,6 +1217,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Ivory Tower (releaseOrder 7) ────────────────────────────────────────────
   {
     encounterKey: "Ivory Tower G1",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 1,
     releaseOrder: 7,
@@ -1231,6 +1250,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Ivory Tower G2",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 2,
     releaseOrder: 7,
@@ -1263,6 +1283,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Ivory Tower G3",
+    source: "maxroll",
     raid: "Ivory Tower",
     gate: 3,
     releaseOrder: 7,
@@ -1335,6 +1356,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Thaemine (releaseOrder 8) ────────────────────────────────────────────────
   {
     encounterKey: "Thaemine G1",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 1,
     releaseOrder: 8,
@@ -1397,6 +1419,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G2",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 2,
     releaseOrder: 8,
@@ -1459,6 +1482,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G3",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 3,
     releaseOrder: 8,
@@ -1560,6 +1584,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Thaemine G4",
+    source: "maxroll",
     raid: "Thaemine",
     gate: 4,
     releaseOrder: 8,
@@ -1623,6 +1648,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Echidna (releaseOrder 9) ────────────────────────────────────────────────
   {
     encounterKey: "Echidna G1",
+    source: "maxroll",
     raid: "Echidna",
     gate: 1,
     releaseOrder: 9,
@@ -1715,6 +1741,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Echidna G2",
+    source: "maxroll",
     raid: "Echidna",
     gate: 2,
     releaseOrder: 9,
@@ -1800,6 +1827,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Behemoth (releaseOrder 10) ───────────────────────────────────────────────
   {
     encounterKey: "Behemoth G1",
+    source: "maxroll",
     raid: "Behemoth",
     gate: 1,
     releaseOrder: 10,
@@ -1834,6 +1862,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Behemoth G2",
+    source: "maxroll",
     raid: "Behemoth",
     gate: 2,
     releaseOrder: 10,
@@ -1869,6 +1898,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Aegir (releaseOrder 11) ──────────────────────────────────────────────────
   {
     encounterKey: "Aegir G1",
+    source: "maxroll",
     raid: "Aegir",
     gate: 1,
     releaseOrder: 11,
@@ -1969,6 +1999,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Aegir G2",
+    source: "maxroll",
     raid: "Aegir",
     gate: 2,
     releaseOrder: 11,
@@ -2041,11 +2072,11 @@ const LIBRARY: LibraryGate[] = [
         key: "aegir-g2-final-struggle",
         name: "Final Struggle",
         timerSecs: 50,
-        repeatSecs: 50,
         triggerType: "timer",
         severity: "wipe",
         difficulties: ["Hard"],
-        notes: "HM only; guard every 50s and 90s enrage timer caps the fight — must kill before enrage or wipe"
+        notes:
+          "HM only; guard every 50s and 90s enrage timer caps the fight — must kill before enrage or wipe. From-pull callout warns of the first guard only."
       }
     ]
   },
@@ -2053,6 +2084,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Act 2: Brelshaza (releaseOrder 12) ──────────────────────────────────────
   {
     encounterKey: "Act 2: Brelshaza G1",
+    source: "maxroll",
     raid: "Act 2: Brelshaza",
     gate: 1,
     releaseOrder: 12,
@@ -2122,6 +2154,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 2: Brelshaza G2",
+    source: "maxroll",
     raid: "Act 2: Brelshaza",
     gate: 2,
     releaseOrder: 12,
@@ -2200,6 +2233,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Act 3: Mordum (releaseOrder 13) ─────────────────────────────────────────
   {
     encounterKey: "Act 3: Mordum G1",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 1,
     releaseOrder: 13,
@@ -2280,6 +2314,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 3: Mordum G2",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 2,
     releaseOrder: 13,
@@ -2343,6 +2378,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Act 3: Mordum G3",
+    source: "maxroll",
     raid: "Act 3: Mordum",
     gate: 3,
     releaseOrder: 13,
@@ -2745,6 +2781,7 @@ const LIBRARY: LibraryGate[] = [
   },
   {
     encounterKey: "Final Act: Kazeros G2-1",
+    source: "maxroll",
     raid: "Final Act: Kazeros",
     gate: 21,
     releaseOrder: 17,
@@ -2822,13 +2859,12 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g22-angry-birds",
         name: "Angry Birds",
-        timerSecs: 180,
-        repeatSecs: 180,
         triggerType: "timer",
         phase: 2,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
-        notes: "Repeating periodic mechanic throughout phase"
+        notes:
+          "Repeating periodic mechanic throughout the phase. Phase-relative cadence, not anchored to pull or HP — no trigger set."
       },
       {
         key: "final-act-kazeros-g22-kazeros-says",
@@ -2875,13 +2911,12 @@ const LIBRARY: LibraryGate[] = [
       {
         key: "final-act-kazeros-g23-spotlight",
         name: "Spotlight",
-        timerSecs: 150,
-        repeatSecs: 150,
         triggerType: "timer",
         phase: 3,
         severity: "normal",
         difficulties: ["Normal", "Hard"],
-        notes: "Periodic spotlight — bait to edge and dodge away"
+        notes:
+          "Periodic spotlight — bait to edge and dodge away. Phase-relative cadence, not anchored to pull or HP — no trigger set."
       },
       {
         key: "final-act-kazeros-g23-final-time-attack",
@@ -2919,6 +2954,7 @@ const LIBRARY: LibraryGate[] = [
   // ── Serca (releaseOrder 18) ──────────────────────────────────────────────────
   {
     encounterKey: "Serca G1",
+    source: "maxroll",
     raid: "Serca",
     gate: 1,
     releaseOrder: 18,
@@ -3073,6 +3109,112 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
           "Remember Pac-Man order and stagger boss. Normal/Hard: spacebar on red flash. Nightmare: count 2 wing flaps then spacebar. (Maxroll calls this 'Triangle Detection'.)"
+      }
+    ]
+  },
+  // ── Horizon Cathedral (releaseOrder 19) ─────────────────────────────────────
+  // Difficulty is the one-off "Stage 1/2/3" scheme (game + Maxroll naming). LOA Logs
+  // logs the same three as "Level 1/2/3" (ids 9/10/11) — only relevant if the
+  // loa:fight-end difficulty payload is ever consumed. Maxroll states NO mechanic
+  // differences between stages, only item level (1700/1720/1750) and rewards.
+  {
+    encounterKey: "Horizon Cathedral G1",
+    source: "maxroll",
+    raid: "Horizon Cathedral",
+    gate: 1,
+    releaseOrder: 19,
+    availableDifficulties: ["Stage 1", "Stage 2", "Stage 3"],
+    boss: "Archbishop Arcenos",
+    bossType: "HUMAN",
+    weakness: "Weak to Dark",
+    tauntable: true,
+    mechanics: [
+      {
+        key: "horizon-cathedral-g1-bell-charge",
+        name: "Bell Charge",
+        hpBar: 180,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Bells fall from the ceiling; the aggro'd player aims the boss at a bell so he destroys it — an unbroken bell explodes for massive damage (Timestop/Hyper Awakening survives). Repeats through the fight; enhanced after x160 with a pulse wave — spacebar to avoid knockdown. (Maxroll calls this 'Bell Charge + Spacebar'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-dps-check",
+        name: "DPS Check",
+        hpBar: 160,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Boss disappears, safe spot appears at center — 38s DPS check. Just Guard his hammer hit on the bell, then dodge the orb explosions (bigger orbs = bigger blasts). Normal patterns are enhanced after this mechanic. (Maxroll calls this 'DPS Check + Just Guard'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-shield-flashes",
+        name: "Shield Flashes",
+        hpBar: 100,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Boss teleports to center (cutscene); four safe spots — two white, two gold — split to your assigned color. White flash = spacebar the outward pulse; gold flash = Just Guard the explosion. Success grants extra shield damage. (Maxroll calls this 'Shield + Flashes'.)"
+      },
+      {
+        key: "horizon-cathedral-g1-counter-just-guard",
+        name: "Counter + Just Guard",
+        hpBar: 60,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "Just Guard the hammer slam at center and stay out of the middle until it explodes. Two bosses appear — split the party: counter the one charging on the ground, Just Guard the one jumping into the air."
+      }
+    ]
+  },
+  {
+    encounterKey: "Horizon Cathedral G2",
+    source: "maxroll",
+    raid: "Horizon Cathedral",
+    gate: 2,
+    releaseOrder: 19,
+    availableDifficulties: ["Stage 1", "Stage 2", "Stage 3"],
+    boss: "Arcenos, Vanguard of Fanaticism",
+    bossType: "HUMAN",
+    weakness: "Weak to Dark",
+    tauntable: true,
+    // This gate's main mechanics trigger on the Boss Identity gauge (top-left meter
+    // that fills over time AND from boss attacks) — there is no HP-bar or fixed-timer
+    // correlation, and the app has no identity data path. Triggers are intentionally
+    // left empty so nothing announces at a wrong moment; if real clears show a usable
+    // correlation, set verified hpBar or timerSecs (announced from pull) values from
+    // capture/replay and mark them "verified-in-fight".
+    mechanics: [
+      {
+        key: "horizon-cathedral-g2-identity-50",
+        name: "50% Identity",
+        triggerType: "timer",
+        severity: "major",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "At 50% Identity gauge, one of two variants: (1) bell hits + ground puddles + jump AoE with safe spots — dash toward the bell on the second bell hit; two players get line telegraphs — spread and Just Guard the cone toward the boss for heavy stagger. (2) Blue stun circle under boss — move out; orbiting chains send shockwaves — Just Guard single ones, never stand where they overlap. No trigger set: Identity gauge isn't trackable."
+      },
+      {
+        key: "horizon-cathedral-g2-tuning-forks",
+        name: "Tuning Forks",
+        triggerType: "timer",
+        severity: "wipe",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "At 100% Identity gauge: tuning forks spawn giving the boss damage reduction + a DPS check. Stand at your pre-assigned position between forks (positions repeat every 3) and Just Guard the slow soundwave aiming at the NEXT player clockwise to destroy forks — aiming at the boss triggers a massive retaliation AoE. Failing the check wipes. No trigger set: Identity gauge isn't trackable. (Maxroll calls this '100% Identity - Tuning Forks'.)"
+      },
+      {
+        key: "horizon-cathedral-g2-bell-destruction",
+        name: "Bell Destruction",
+        triggerType: "timer",
+        severity: "normal",
+        difficulties: ["Stage 1", "Stage 2", "Stage 3"],
+        notes:
+          "After depleting the stagger bar, destroy the boss's bell to extend the damage phase. Stagger-driven — no trigger set."
       }
     ]
   }

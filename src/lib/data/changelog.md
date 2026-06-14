@@ -10,7 +10,14 @@
 
 #### NEW FEATURES
 
+- Added the new Horizon Cathedral raid to the library: Gate 1 (Archbishop Arcenos) with all four HP-bar mechanics, and Gate 2 (Arcenos, Vanguard of Fanaticism) with its gauge- and stagger-driven mechanics documented as reference notes in the Raid Editor. Gate 2's mechanics aren't tied to boss HP, so they ship without announcement triggers — set a timer or HP-bar trigger yourself after a few clears if you want callouts.
+- Difficulty picker now supports Horizon Cathedral's Stage 1 / Stage 2 / Stage 3 difficulties.
+- Timer mechanics now announce. A mechanic with a "Timer (from pull)" value gets a spoken callout shortly before that time is reached, using your repeat-warning lead setting — this also activates the library's existing from-pull timer mechanics, such as Serca Gate 2's Stagger Helping Pattern at 8:30.
+
 #### BUG FIXES AND IMPROVEMENTS
+
+- The overlay no longer shows "Awaiting first mech..." for the whole fight on a gate that has no automatic callouts (like Horizon Cathedral Gate 2) — it now says "No auto callouts for this gate".
+- Mechanics without a trigger value show a dash in the editor's trigger column instead of an empty timer icon.
 
 <!-- @release-end -->
 
@@ -351,6 +358,15 @@ Minor updates.
 #### Fixes
 
 - Auto-updates now work properly. Earlier versions could not detect new releases when they were published. This version fixes that, and from here on future updates arrive automatically when you launch the app.
+<!-- @release-end -->
+
+<!-- @release v0.1.1 -->
+
+### v0.1.1 - May 2026
+
+#### Under the hood
+
+- Releases can now be published with one click from the repository's Actions tab (version bump, changelog stamp, build, sign, and publish all run automatically). No app changes.
 <!-- @release-end -->
 
 <!-- @release v0.1.0 -->

@@ -21,6 +21,9 @@
   const repeatUrgent = $derived(
     repeatCountdown != null && repeatCountdown > 0 && repeatCountdown <= (mechStore.mechSettings.repeatLead ?? 5)
   );
+  // Mirrors OLCompact: a gate whose mechs all lack trigger values will never produce
+  // a callout — say so instead of implying one is coming.
+  const hasAnnounceableMechs = $derived(mechanics.some((m) => m.hpBar != null || m.timerSecs != null));
 </script>
 
 <!-- Single connected block: HP bar → [active strip] → NEXT row -->
@@ -139,7 +142,9 @@
           >{mechStore.liveEncourageMessage}</span
         >
       {:else}
-        <span style="font-size: 12px; color: #525252;">No upcoming mechanics</span>
+        <span style="font-size: 12px; color: #525252;"
+          >{hasAnnounceableMechs ? "No upcoming mechanics" : "No auto callouts for this gate"}</span
+        >
       {/if}
     </div>
   </div>

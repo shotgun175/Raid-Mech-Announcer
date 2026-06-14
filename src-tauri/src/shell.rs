@@ -13,8 +13,6 @@ impl ShellManager {
     pub async fn remove_driver(&self) {
         #[cfg(target_os = "windows")]
         {
-            use tauri_plugin_shell::ShellExt;
-
             let command = self.0.shell().command("sc").args(["delete", "windivert"]);
 
             match command.output().await {

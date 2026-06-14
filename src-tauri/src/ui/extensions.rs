@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+use anyhow::Result;
 use tauri::{AppHandle, Manager, WebviewWindow};
 use tauri_plugin_window_state::WindowExt;
 
@@ -10,9 +11,12 @@ pub trait AppHandleExtensions {
     fn get_settings_window(&self) -> Option<WebviewWindow>;
 }
 
+// Fallible: with panic = "abort" in release builds, an unwrap on a failed
+// window op would kill the whole app from a tray click. Callers log-and-
+// continue or propagate (CLAUDE.md: no unwrap in handler code).
 pub trait WindowExtensions {
-    fn restore_default_state(&self);
-    fn restore_and_focus(&self);
+    fn restore_default_state(&self) -> Result<()>;
+    fn restore_and_focus(&self) -> Result<()>;
 }
 
 impl AppHandleExtensions for &AppHandle {
@@ -39,15 +43,17 @@ impl AppHandleExtensions for AppHandle {
 pub struct OverlayWindow(WebviewWindow);
 
 impl WindowExtensions for OverlayWindow {
-    fn restore_and_focus(&self) {
-        self.0.show().unwrap();
-        self.0.unminimize().unwrap();
-        self.0.set_focus().unwrap();
-        self.0.set_ignore_cursor_events(false).unwrap();
+    fn restore_and_focus(&self) -> Result<()> {
+        self.0.show()?;
+        self.0.unminimize()?;
+        self.0.set_focus()?;
+        self.0.set_ignore_cursor_events(false)?;
+        Ok(())
     }
 
-    fn restore_default_state(&self) {
-        self.0.restore_state(WINDOW_STATE_FLAGS).unwrap()
+    fn restore_default_state(&self) -> Result<()> {
+        self.0.restore_state(WINDOW_STATE_FLAGS)?;
+        Ok(())
     }
 }
 

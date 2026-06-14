@@ -5,8 +5,8 @@ import { filterByDifficulty } from "./difficulty";
  * The exact set of spoken callout strings for the given raids at the current Timing settings,
  * for pre-generating (warming) the TTS cache. Mirrors the overlay's announce phrasing using the
  * user-configured lead / repeatLead (Settings > Announcements > Timing):
- *   - HP-triggered mechs:  "<text> in <lead> bars"
- *   - repeating mechs:     "<text> in <repeatLead> seconds"
+ *   - HP-triggered mechs:        "<text> in <lead> bars"
+ *   - repeating/from-pull mechs: "<text> in <repeatLead> seconds"
  *
  * One line per trigger - no speculative variants. The repeat countdown always announces at
  * repeatLead, and the bar countdown announces at lead in the normal case; an off-nominal bar
@@ -32,7 +32,7 @@ export function enumerateTtsLines(
       const text = (m.ttsText || m.name).trim();
       if (!text) continue;
       if (m.hpBar != null) lines.add(`${text} in ${bars} bar${bars === 1 ? "" : "s"}`);
-      if (m.repeatSecs != null) lines.add(`${text} in ${secs} second${secs === 1 ? "" : "s"}`);
+      if (m.repeatSecs != null || m.timerSecs != null) lines.add(`${text} in ${secs} second${secs === 1 ? "" : "s"}`);
     }
   }
   return [...lines];

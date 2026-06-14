@@ -1,4 +1,6 @@
 <script lang="ts">
+  // Synced from shotgun175.github.io/snippets/hub-badge.html
+  // (local change: clicks route through the Tauri opener plugin).
   import { openUrl } from "@tauri-apps/plugin-opener";
 
   const HUB_URL = "https://shotgun175.github.io/";

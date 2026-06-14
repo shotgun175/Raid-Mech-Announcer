@@ -2,9 +2,9 @@ import { Peer, type DataConnection } from "peerjs";
 import { emit } from "@tauri-apps/api/event";
 import { mechStore } from "./mech-store.svelte";
 import { recordBossStatus } from "./utils/capture-buffer.svelte";
-import type { BossStatusData } from "./mech-types";
+import { validateBossStatusData } from "./utils/validate-boss-status";
 
-export type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
+type PeerStatus = "disconnected" | "connecting" | "connected" | "error";
 
 export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
@@ -96,14 +96,20 @@ export const peerState = (() => {
 
     newConn.on("data", (raw) => {
       if (connectId !== myId) return;
-      const msg = raw as { type: string; data: BossStatusData | null };
-      if (msg.type === "bossStatus") {
-        const d = msg.data;
-        const entry = d ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}` : "— null";
-        debugLog = [...debugLog, entry].slice(-200);
-        recordBossStatus(msg.data);
-        mechStore.setBossStatus(msg.data);
+      const msg = raw as { type?: unknown; data?: unknown };
+      if (!msg || msg.type !== "bossStatus") return;
+      // This is the app's only external input boundary: validate before the
+      // payload reaches the reducer, TTS, display, or the capture file.
+      const result = validateBossStatusData(msg.data);
+      if (!result.ok) {
+        debugLog = [...debugLog, `[peer] dropped malformed bossStatus: ${result.reason}`].slice(-200);
+        return;
       }
+      const d = result.data;
+      const entry = d ? `${d.currentBars}/${d.totalBars} dead:${d.isDead} · ${d.name}` : "— null";
+      debugLog = [...debugLog, entry].slice(-200);
+      recordBossStatus(d);
+      mechStore.setBossStatus(d);
     });
 
     newConn.on("close", () => {

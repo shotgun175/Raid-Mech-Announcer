@@ -106,7 +106,6 @@
   function resetMechToLibrary(id: string) {
     if (gate) mechStore.resetMechToLibraryDefault(gate.id, id);
   }
-
 </script>
 
 <Header title="Raid Editor" />

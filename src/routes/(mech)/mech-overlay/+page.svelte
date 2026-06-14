@@ -13,7 +13,7 @@
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { filterByDifficulty } from "$lib/utils/difficulty";
-  import { activeRepeatMech, topMechPerThreshold } from "$lib/utils/mechanics";
+  import { activeRepeatMech, dueTimerMechs, topMechPerThreshold } from "$lib/utils/mechanics";
   import { setClickthrough, stopTts } from "$lib/api";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
 
@@ -117,6 +117,62 @@
     activeMech = null;
     repeatCountdown = null;
     repeatAnnouncedThisCycle = false;
+  }
+
+  // From-pull timer announcements (pure timer mechs: timerSecs, no hpBar). The clock
+  // anchors to the mech:fight-start wall-clock and runs until encounter-end; the 1s
+  // tick is gated on live HP so a wipe's silence stops callouts immediately (mirroring
+  // the repeat ticker), while HP resuming after a phase transition picks the clock back
+  // up with the elapsed time still correct. Fired keys share the per-fight lastFiredKey
+  // set. Known limits: the anchor is the first matched HP packet, so a mid-fight bind
+  // (app launched late, raid imported mid-pull) anchors late and shifts callouts late;
+  // a re-pull that never produced an encounter-end (no loa:fight-end and inside the 60s
+  // silence reset) keeps the old anchor; an overlay reload mid-fight never starts the
+  // clock (timer callouts are skipped for that fight — HP callouts self-heal).
+  let fightStartAt: number | null = null;
+  let fightClockId: ReturnType<typeof setInterval> | null = null;
+
+  function startFightClock() {
+    stopFightClock();
+    fightStartAt = Date.now();
+    fightClockId = setInterval(() => {
+      if (fightStartAt == null || currentBar == null || !gate || isPhaseTransition) return;
+      const cfg = mechStore.mechSettings;
+      const lead = Math.max(1, Math.round(cfg.repeatLead ?? 5));
+      const elapsed = (Date.now() - fightStartAt) / 1000;
+      // From-pull semantics only hold for mechs not scoped to a phase (a phase-tagged
+      // timer counts from its phase opening, which this clock can't see) and, for
+      // difficulty-restricted mechs, only when the user has actually selected a
+      // difficulty — on "All", a Hard-only timer mech (Aegir G2 Final Struggle) would
+      // call out at a fixed time in every pull of every difficulty.
+      const eligible = visibleMechanics.filter(
+        (m) => m.phase == null && (activeDifficulty != null || !m.difficulties?.length)
+      );
+      for (const fire of dueTimerMechs(eligible, elapsed, lead)) {
+        const key = `${fire.mech.id}-timer`;
+        if (lastFiredKey.has(key)) continue;
+        lastFiredKey.add(key);
+        // Window passed while callouts were gated (HP silence / phase transition):
+        // mark fired, skip the stale callout.
+        if (!fire.announce) continue;
+        const m = fire.mech;
+        ttsLog(`[TTS][overlay] timer fire "${m.name}" elapsed=${Math.round(elapsed)}s timer=${m.timerSecs}s`);
+        announce(
+          m.name,
+          m.severity,
+          m.ttsEnabled,
+          `${m.ttsText || m.name} in ${fire.secsLeft} second${fire.secsLeft === 1 ? "" : "s"}`
+        );
+      }
+    }, 1000);
+  }
+
+  function stopFightClock() {
+    if (fightClockId) {
+      clearInterval(fightClockId);
+      fightClockId = null;
+    }
+    fightStartAt = null;
   }
 
   // Celebratory banner shown for a few seconds on a cleared fight (boss killed, not a wipe).
@@ -330,9 +386,10 @@
     });
 
     const unFightStart = await listen("mech:fight-start", () => {
-      ttsLog(`[TTS][overlay] fight-start → reset firedKey + repeatTimer`);
+      ttsLog(`[TTS][overlay] fight-start → reset firedKey + repeatTimer, start fight clock`);
       lastFiredKey = new Set();
       clearRepeatTimer();
+      startFightClock();
       extendedSilence = false;
     });
 
@@ -363,13 +420,14 @@
     // active gate, or Tier-2 silence safety net). Drop all per-fight state so the next
     // boss-status event re-binds against the new gate cleanly.
     const unEnd = await listen("mech:encounter-end", () => {
-      ttsLog(`[overlay] encounter-end → clear gateId + fired keys + repeat timer`);
+      ttsLog(`[overlay] encounter-end → clear gateId + fired keys + repeat timer + fight clock`);
       gateId = null;
       currentBar = null;
       bossName = "";
       mechStore.applyRemoteEncourageMessage(null);
       activePhase = null;
       clearRepeatTimer();
+      stopFightClock();
       stopTts(); // flush any queued/in-flight speech so nothing leaks out after stop/clear/end
       lastFiredKey = new Set();
       extendedSilence = false;
@@ -404,6 +462,7 @@
     if (announceTimer) clearTimeout(announceTimer);
     if (killBannerTimer) clearTimeout(killBannerTimer);
     clearRepeatTimer();
+    stopFightClock();
   });
 </script>
 

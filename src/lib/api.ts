@@ -5,6 +5,8 @@ export const setClickthrough = (set: boolean): Promise<void> => invoke("set_clic
 export const saveSettings = (settings: AppSettings): Promise<void> => invoke("save_settings", { settings });
 export const getSettings = (): Promise<AppSettings> => invoke("get_settings");
 export const listTtsVoices = (): Promise<string[]> => invoke("list_tts_voices");
+export const speakTtsCommand = (text: string, voice: string, volume: number, rate: number): Promise<void> =>
+  invoke("speak_tts", { text, voice, volume, rate });
 export const stopTts = (): Promise<void> => invoke("stop_tts");
 // Bulk pre-generate (cache-warm) the given callout lines for a voice + rate. Progress arrives via
 // the "tts:pregen-progress" / "tts:pregen-done" events; cancel with cancelTtsPregen().

@@ -67,7 +67,9 @@ fn initialize_windows_and_settings(
     if let Some(settings) = settings {
         info!("settings loaded");
         if !settings.general.hide_meter_on_start {
-            overlay_window.restore_default_state();
+            if let Err(err) = overlay_window.restore_default_state() {
+                warn!("could not restore the overlay window state: {err}");
+            }
             overlay_window.show()?;
         } else {
             overlay_window.hide()?;

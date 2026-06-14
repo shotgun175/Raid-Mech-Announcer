@@ -30,6 +30,17 @@ describe("LIBRARY key uniqueness", () => {
   });
 });
 
+describe("library size matches the documented counts", () => {
+  // CLAUDE.md and README both claim "44 gates, 251 mechanics". This pins the
+  // claim so the docs and the data cannot silently drift — update BOTH the
+  // docs and these numbers when the library grows.
+  it("has 44 gates and 251 mechanics", () => {
+    expect(LIBRARY.length).toBe(44);
+    const mechCount = LIBRARY.reduce((n, gate) => n + gate.mechanics.length, 0);
+    expect(mechCount).toBe(251);
+  });
+});
+
 describe("gateSwapsBoss", () => {
   it("is true for Act 4: Armoche G1 (Echidna swaps to Brelshaza)", () => {
     expect(gateSwapsBoss("Act 4: Armoche", 1)).toBe(true);
@@ -77,10 +88,26 @@ describe("mechanic provenance (source)", () => {
     }
   });
 
-  it("leaves source undefined for gates with no provenance recorded", () => {
-    const untagged = LIBRARY.find((g) => g.source === undefined);
-    expect(untagged).toBeDefined();
-    for (const m of buildLibraryGate(untagged!).mechanics) {
+  it("every library gate carries a provenance source", () => {
+    const untagged = LIBRARY.filter((g) => g.source === undefined).map((g) => g.encounterKey);
+    expect(untagged).toEqual([]);
+  });
+
+  it("leaves mechanics unstamped when a gate has no provenance recorded", () => {
+    // No library gate is untagged anymore; the absent-source behavior still
+    // matters for user-authored gates, so pin it with a synthetic one.
+    const synthetic: LibraryGate = {
+      encounterKey: "Unstamped Test G1",
+      raid: "Unstamped Test",
+      gate: 1,
+      releaseOrder: 998,
+      boss: "Test Boss",
+      bossType: "",
+      weakness: "",
+      tauntable: false,
+      mechanics: [{ key: "unstamped-a", name: "A", severity: "normal", triggerType: "hp", hpBar: 10 }]
+    };
+    for (const m of buildLibraryGate(synthetic).mechanics) {
       expect(m.source).toBeUndefined();
     }
   });

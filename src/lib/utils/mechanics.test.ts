@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   activeRepeatMech,
+  dueTimerMechs,
   topMechPerThreshold,
   gatePhases,
   isPhasedGate,
@@ -62,6 +63,79 @@ describe("activeRepeatMech", () => {
 
   it("returns null when the gate has no repeating mechanics", () => {
     expect(activeRepeatMech([spikeGuard], 100)).toBeNull();
+  });
+});
+
+describe("dueTimerMechs", () => {
+  // Serca G2 Stagger Helping Pattern: pure timer at 510s from pull.
+  const stagger = mech({
+    id: "stagger",
+    name: "Stagger Helping Pattern",
+    hpBar: null,
+    timerSecs: 510,
+    triggerType: "timer"
+  });
+  // Trigger-less mech (Horizon Cathedral G2 style) — must never fire.
+  const identity = mech({ id: "identity", name: "50% Identity", hpBar: null, timerSecs: null, triggerType: "timer" });
+  const gate = [stagger, identity, mech({ id: "hp", hpBar: 100 })];
+
+  it("is empty before the announce window opens", () => {
+    expect(dueTimerMechs(gate, 504, 5)).toEqual([]);
+  });
+
+  it("fires inside the lead window with the seconds remaining", () => {
+    const fires = dueTimerMechs(gate, 505, 5);
+    expect(fires).toHaveLength(1);
+    expect(fires[0].mech.id).toBe("stagger");
+    expect(fires[0].secsLeft).toBe(5);
+    expect(fires[0].announce).toBe(true);
+  });
+
+  it("marks a past-due mech as non-announcing (bound mid-fight)", () => {
+    const fires = dueTimerMechs(gate, 600, 5);
+    expect(fires).toHaveLength(1);
+    expect(fires[0].mech.id).toBe("stagger");
+    expect(fires[0].announce).toBe(false);
+  });
+
+  it("never returns trigger-less or hp-only mechs", () => {
+    expect(dueTimerMechs([identity, mech({ id: "hp", hpBar: 100 })], 9999, 5)).toEqual([]);
+  });
+
+  it("excludes a mech carrying both hpBar and timerSecs (the HP path owns it — no double-announce)", () => {
+    const both = mech({ id: "both", hpBar: 100, timerSecs: 510, triggerType: "timer" });
+    expect(dueTimerMechs([both], 9999, 5)).toEqual([]);
+  });
+
+  // The live clock feeds fractional elapsed ((Date.now() - start) / 1000), so the
+  // window edges and the secsLeft rounding/clamp must hold off integer boundaries.
+  it("opens the window on a fractional elapsed and rounds secsLeft", () => {
+    const fires = dueTimerMechs(gate, 505.4, 5); // remaining 4.6 → round → 5
+    expect(fires).toHaveLength(1);
+    expect(fires[0].secsLeft).toBe(5);
+    expect(fires[0].announce).toBe(true);
+  });
+
+  it("stays empty a fraction before the window opens", () => {
+    expect(dueTimerMechs(gate, 504.9, 5)).toEqual([]); // remaining 5.1 > lead 5
+  });
+
+  it("clamps a sub-second live remaining up to 1 instead of rounding it to 0", () => {
+    const fires = dueTimerMechs(gate, 509.7, 5); // remaining 0.3 — still live
+    expect(fires[0].secsLeft).toBe(1);
+    expect(fires[0].announce).toBe(true);
+  });
+
+  it("treats the exact due instant as past due (no stale callout)", () => {
+    const fires = dueTimerMechs(gate, 510, 5); // remaining 0
+    expect(fires[0].secsLeft).toBe(1);
+    expect(fires[0].announce).toBe(false);
+  });
+
+  it("marks a fractionally past-due mech non-announcing with secsLeft clamped", () => {
+    const fires = dueTimerMechs(gate, 510.4, 5); // remaining -0.4
+    expect(fires[0].secsLeft).toBe(1);
+    expect(fires[0].announce).toBe(false);
   });
 });
 

@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { speakTtsCommand } from "$lib/api";
 
 /**
  * Speak text using Python edge-tts (neural) with SAPI fallback.
@@ -6,12 +6,12 @@ import { invoke } from "@tauri-apps/api/core";
  */
 export async function speakTts(text: string, voice: string, volume: number, rate: number = 1.0): Promise<void> {
   try {
-    await invoke("speak_tts", {
+    await speakTtsCommand(
       text,
       voice,
-      volume: Math.round(Math.max(0, Math.min(100, volume))),
-      rate: Math.max(0.25, Math.min(4.0, rate))
-    });
+      Math.round(Math.max(0, Math.min(100, volume))),
+      Math.max(0.25, Math.min(4.0, rate))
+    );
   } catch {
     // Fallback for browser dev mode (npm run dev)
     try {
