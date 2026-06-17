@@ -187,23 +187,13 @@
         </div>
       </div>
 
-      <!-- HP bar + Phase -->
+      <!-- HP bar threshold. Phase is intentionally not editable here: it advances only on a
+           boss revival (see mech-reducer isRevival), so it's library-curated data, not a
+           free field. The form still carries the original phase through `save()` untouched. -->
       {#if form.triggerType === "hp" || form.triggerType === "hp+timer"}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
-          <div>
-            <div class="field-label">HP Bar Threshold<span class="req-asterisk">*</span></div>
-            <input type="number" style={inp} bind:value={form.hpBar} placeholder="/{totalBars}" />
-          </div>
-          <div>
-            <div class="field-label">Phase</div>
-            <select style={sel} bind:value={form.phase}>
-              <option value="">No Phase</option>
-              <option value="1">Phase 1</option>
-              <option value="2">Phase 2</option>
-              <option value="3">Phase 3</option>
-              <option value="4">Phase 4</option>
-            </select>
-          </div>
+        <div style="margin-bottom: 14px;">
+          <div class="field-label">HP Bar Threshold<span class="req-asterisk">*</span></div>
+          <input type="number" style={inp} bind:value={form.hpBar} placeholder="/{totalBars}" />
         </div>
       {/if}
 
