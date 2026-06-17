@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- The Add/Edit Mechanic dialog no longer has a Phase dropdown. Phase only changes which mechanics are active on raids where the boss revives (like Kazeros), so it's now set automatically from the built-in raid data instead of by hand. This avoids a confusing case where tagging a phase on a normal fight could quietly stop later mechanics from being announced. Phases that are already built into a raid still work and still show in the editor's phase tabs and on the overlay.
-
 <!-- @release-end -->
 
-<!-- @release v0.3.0 -->
+<!-- @release v0.3.1 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.0 - June 13th, 2026
+    v0.3.1 - June 17th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- The Add/Edit Mechanic dialog no longer has a Phase dropdown. Phase only changes which mechanics are active on raids where the boss revives (like Kazeros), so it's now set automatically from the built-in raid data instead of by hand. This avoids a confusing case where tagging a phase on a normal fight could quietly stop later mechanics from being announced. Phases that are already built into a raid still work and still show in the editor's phase tabs and on the overlay.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.0 -->
+### v0.3.0 - June 13th, 2026
 
 #### NEW FEATURES
 
