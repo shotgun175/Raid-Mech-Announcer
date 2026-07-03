@@ -354,13 +354,33 @@ jobs:
               --jq .body 2>/dev/null || echo "Release $TAG.")
           fi
 
-          # Strip HTML comments (single-line + multi-line) from the extracted notes
-          # so guidance text inside the changelog never leaks to release pages or
-          # the in-app updater modal.
+          # Clean the extracted notes for the release page + in-app updater modal:
+          #   1. Strip HTML comments (single-line + multi-line) so guidance text
+          #      inside the changelog never leaks out.
+          #   2. Demote the styled <div> version-heading to a plain markdown
+          #      heading. The modal renders these notes as untrusted remote text
+          #      (HTML escaped, never executed), so a raw <div> would otherwise
+          #      show as literal tag soup instead of a title. Depth-counted so the
+          #      nested divs + "New" chip are all consumed; the version/date line
+          #      is captured (mirrors the demotion in the bump step above).
           NOTES_CLEAN=$(echo "$NOTES" | awk '
             /<!--/ { in_comment=1 }
             in_comment && /-->/ { in_comment=0; next }
             in_comment { next }
+            /<div class="rounded-md flex space-x-2 items-center">/ {
+              in_styled=1; div_depth=0; captured=""
+            }
+            in_styled {
+              s = $0
+              while (match(s, /<div/))    { div_depth++; s = substr(s, RSTART + 4) }
+              s = $0
+              while (match(s, /<\/div>/)) { div_depth--; s = substr(s, RSTART + 6) }
+              if (captured == "" && match($0, /v[0-9][^<]*[^[:space:]<]/)) {
+                captured = substr($0, RSTART, RLENGTH)
+              }
+              if (div_depth == 0) { if (captured != "") print "### " captured; in_styled=0 }
+              next
+            }
             { print }
           ')
 
