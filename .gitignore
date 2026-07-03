@@ -43,6 +43,8 @@ coverage/
 
 # Claude Code project config — local-only, not for the public repo
 .claude/
+# Project instructions live in .claude/CLAUDE.md now; keep any root copy untracked
+/CLAUDE.md
 
 # Local Claude Code session notes (see CLAUDE.md — never commit CLAUDE.local.md)
 CLAUDE.local.md
