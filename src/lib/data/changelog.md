@@ -10,6 +10,22 @@
 
 #### NEW FEATURES
 
+#### BUG FIXES AND IMPROVEMENTS
+
+<!-- @release-end -->
+
+<!-- @release v0.3.2 -->
+<div class="rounded-md flex space-x-2 items-center">
+  <div class="text-lg font-semibold text-white">
+    v0.3.2 - July 18th, 2026
+  </div>
+  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
+    New
+  </div>
+</div>
+
+#### NEW FEATURES
+
 - Solo mode is now selectable on Act 4: Armoche, Final Act: Kazeros, and Serca. Picking SOLO intentionally announces nothing: solo runs are heavily assisted and don't need callouts, and the Raid Editor and overlay now say so instead of showing an empty list.
 
 #### BUG FIXES AND IMPROVEMENTS
@@ -20,14 +36,7 @@
 <!-- @release-end -->
 
 <!-- @release v0.3.1 -->
-<div class="rounded-md flex space-x-2 items-center">
-  <div class="text-lg font-semibold text-white">
-    v0.3.1 - June 17th, 2026
-  </div>
-  <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
-    New
-  </div>
-</div>
+### v0.3.1 - June 17th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
