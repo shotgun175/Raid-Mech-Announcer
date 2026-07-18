@@ -1,5 +1,5 @@
-import type { Difficulty, Gate } from "$lib/mech-types";
-import { filterByDifficulty } from "./difficulty";
+import type { Gate } from "$lib/mech-types";
+import { filterByDifficulty, resolveDifficulty } from "./difficulty";
 
 /**
  * The exact set of spoken callout strings for the given raids at the current Timing settings,
@@ -26,7 +26,7 @@ export function enumerateTtsLines(
   const lines = new Set<string>();
 
   for (const gate of raids) {
-    const diff = (difficultyMap[gate.raid] as Difficulty | undefined) ?? null;
+    const diff = resolveDifficulty(difficultyMap, gate.raid, raids);
     for (const m of filterByDifficulty(gate.mechanics, diff)) {
       if (m.ttsEnabled === false) continue;
       const text = (m.ttsText || m.name).trim();

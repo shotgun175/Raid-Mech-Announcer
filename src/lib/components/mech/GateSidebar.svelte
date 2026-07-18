@@ -2,7 +2,12 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Difficulty, Gate } from "$lib/mech-types";
   import { libraryByRaid, LIBRARY } from "$lib/data/raid-library";
-  import { DIFFICULTY_ORDER, DIFFICULTY_STYLE } from "$lib/utils/difficulty";
+  import {
+    DIFFICULTY_ORDER,
+    DIFFICULTY_STYLE,
+    raidAvailableDifficulties,
+    resolveDifficulty
+  } from "$lib/utils/difficulty";
   import { formatGate, gateLabel, gateSortKey, WEAKNESS_OPTIONS } from "$lib/mech-constants";
   import { createDialog, melt } from "@melt-ui/svelte";
   import ImportRaidsModal from "./ImportRaidsModal.svelte";
@@ -22,12 +27,11 @@
     customsCount: number;
   } | null>(null);
 
-  // Per-row height estimate × (All + N difficulties) + a small fudge for borders/padding.
+  // Per-row height estimate × N difficulties + a small fudge for borders/padding.
   // Used to decide whether the dropdown will fit below its trigger or needs to flip up.
   function estDiffPanelHeight(numDifficulties: number): number {
     const ROW = 22;
-    const ROWS = 1 + numDifficulties; // "All" row + each difficulty
-    return ROW * ROWS + 12;
+    return ROW * numDifficulties + 12;
   }
 
   // The dropdown lives inside the gates list which has its own overflow:auto
@@ -381,16 +385,7 @@
   );
 
   function availableDifficultiesFor(raidName: string): Difficulty[] {
-    // For the raid-level picker, take the union across all gates in this raid
-    // that have an availableDifficulties set (custom raids set this via the
-    // Add Raid form). If none of the raid's gates declare one, fall back to
-    // the library entry, then to ["Normal", "Hard"].
-    const own = (raidsByName[raidName] ?? []).flatMap((g) => g.availableDifficulties ?? []);
-    if (own.length > 0) {
-      const set = new Set(own);
-      return DIFFICULTY_ORDER.filter((d) => set.has(d));
-    }
-    return libraryByRaid[raidName]?.[0]?.availableDifficulties ?? ["Normal", "Hard"];
+    return raidAvailableDifficulties(raidName, mechStore.raids);
   }
 
   const inp =
@@ -473,8 +468,8 @@
   <!-- Raid groups -->
   <div style="flex: 1; overflow-y: auto;">
     {#each raidNames as raidName (raidName)}
-      {@const diff = (mechStore.difficultyMap[raidName] as Difficulty) ?? null}
-      {@const sty = diff ? DIFFICULTY_STYLE[diff] : null}
+      {@const diff = resolveDifficulty(mechStore.difficultyMap, raidName, mechStore.raids)}
+      {@const sty = DIFFICULTY_STYLE[diff]}
       <div>
         <div style="padding: 6px 10px 2px; display: flex; align-items: center; gap: 6px;">
           <div
@@ -500,18 +495,18 @@
               }}
               title="Select difficulty"
               style="
-                background: {sty ? sty.bg : '#1a1a1a'};
-                border: 1px {sty ? 'solid' : 'dashed'} {sty ? sty.border : '#33333366'};
+                background: {sty.bg};
+                border: 1px solid {sty.border};
                 border-radius: 3px;
                 padding: 1px 6px;
-                color: {sty ? sty.color : '#525252'};
+                color: {sty.color};
                 font-size: 9px;
                 font-weight: 700;
                 letter-spacing: 0.04em;
                 cursor: pointer;
                 font-family: inherit;
                 line-height: 1.6;
-              ">{sty ? sty.label : "ALL"} ▾</button
+              ">{sty.label} ▾</button
             >
 
             {#if openDiffDropdown === raidName}
@@ -532,25 +527,6 @@
                   box-shadow: 0 4px 14px rgba(0,0,0,0.6);
                 "
               >
-                <!-- All (null) option -->
-                <button
-                  onclick={(e) => {
-                    e.stopPropagation();
-                    mechStore.setDifficulty(raidName, null);
-                    openDiffDropdown = null;
-                  }}
-                  style="
-                    display: flex; align-items: center; justify-content: space-between;
-                    width: 100%; padding: 4px 10px; font-size: 10px; font-weight: 600;
-                    color: #525252; background: {diff === null ? '#252525' : 'transparent'};
-                    border: none; cursor: pointer; font-family: inherit; text-align: left;
-                    letter-spacing: 0.03em;
-                  "
-                >
-                  <span>All</span>
-                  {#if diff === null}<span>✓</span>{/if}
-                </button>
-
                 <!-- Per-difficulty options -->
                 {#each availableDifficultiesFor(raidName) as d (d)}
                   {@const ds = DIFFICULTY_STYLE[d]}

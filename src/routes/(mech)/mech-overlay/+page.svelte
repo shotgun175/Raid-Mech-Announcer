@@ -12,7 +12,7 @@
   import { isBossSwapPhase } from "$lib/data/raid-library";
   import { speakTts } from "$lib/utils/tts";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
-  import { filterByDifficulty } from "$lib/utils/difficulty";
+  import { DIFFICULTY_STYLE, filterByDifficulty, resolveDifficulty } from "$lib/utils/difficulty";
   import { activeRepeatMech, dueTimerMechs, topMechPerThreshold } from "$lib/utils/mechanics";
   import { setClickthrough, stopTts } from "$lib/api";
   import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
@@ -58,7 +58,7 @@
     gate != null && currentBar != null && totalBars > 0 && totalBars < gate.totalBars * 0.05
   );
   const activeDifficulty = $derived<Difficulty | null>(
-    gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
+    gate ? resolveDifficulty(mechStore.difficultyMap, gate.raid, mechStore.raids) : null
   );
   const visibleMechanics = $derived(
     gate && !inSwapPhase
@@ -141,13 +141,10 @@
       const lead = Math.max(1, Math.round(cfg.repeatLead ?? 5));
       const elapsed = (Date.now() - fightStartAt) / 1000;
       // From-pull semantics only hold for mechs not scoped to a phase (a phase-tagged
-      // timer counts from its phase opening, which this clock can't see) and, for
-      // difficulty-restricted mechs, only when the user has actually selected a
-      // difficulty — on "All", a Hard-only timer mech (Aegir G2 Final Struggle) would
-      // call out at a fixed time in every pull of every difficulty.
-      const eligible = visibleMechanics.filter(
-        (m) => m.phase == null && (activeDifficulty != null || !m.difficulties?.length)
-      );
+      // timer counts from its phase opening, which this clock can't see). Difficulty
+      // scoping is already applied by visibleMechanics; the active tier is always a
+      // concrete one, so a Hard-only timer mech never fires outside Hard.
+      const eligible = visibleMechanics.filter((m) => m.phase == null);
       for (const fire of dueTimerMechs(eligible, elapsed, lead)) {
         const key = `${fire.mech.id}-timer`;
         if (lastFiredKey.has(key)) continue;
@@ -615,6 +612,16 @@
         {activeMech}
         {repeatCountdown}
       />
+    {/if}
+
+    {#if activeDifficulty === "Solo" && visibleMechanics.length === 0 && gate.mechanics.length > 0}
+      <div
+        style="margin-top: 8px; background: rgba(23,23,23,0.85); border: 1px solid {DIFFICULTY_STYLE.Solo
+          .border}; border-radius: 4px; padding: 6px 14px; font-size: 12px; color: {DIFFICULTY_STYLE.Solo
+          .color}; font-weight: 600; text-align: center;"
+      >
+        Solo mode: no callouts needed
+      </div>
     {/if}
 
     {#if lastAnnounced}
