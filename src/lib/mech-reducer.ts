@@ -1,7 +1,7 @@
-import type { BossStatusData, Difficulty, Gate } from "./mech-types";
+import type { BossStatusData, Gate } from "./mech-types";
 import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
 import { gateSwapsBoss, isBossSwapPhase } from "./data/raid-library";
-import { filterByDifficulty } from "./utils/difficulty";
+import { filterByDifficulty, resolveDifficulty } from "./utils/difficulty";
 
 export type FightState = {
   liveGateId: string | null;
@@ -59,12 +59,12 @@ function nextEncourage(
   gate: Gate | undefined,
   currentBars: number | null,
   difficultyMap: Record<string, string>,
+  raids: Gate[],
   inSwapPhase: boolean,
   pick: () => string
 ): string | null {
   if (gate == null || currentBars == null || currentBars <= 0) return null;
-  const activeDifficulty = (difficultyMap[gate.raid] as Difficulty | undefined) ?? null;
-  const mechs = filterByDifficulty(gate.mechanics, activeDifficulty);
+  const mechs = filterByDifficulty(gate.mechanics, resolveDifficulty(difficultyMap, gate.raid, raids));
   const hasMechs = mechs.some((m) => m.hpBar != null);
   const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
   if (inSwapPhase || (hasMechs && !anyUpcoming)) return current ?? pick();
@@ -271,6 +271,7 @@ export function reduceBossStatus(
     liveGate,
     data.currentBars,
     ctx.difficultyMap,
+    ctx.raids,
     swapPhase,
     ctx.pickEncourage
   );

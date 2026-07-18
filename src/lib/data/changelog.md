@@ -10,7 +10,12 @@
 
 #### NEW FEATURES
 
+- Solo mode is now selectable on Act 4: Armoche, Final Act: Kazeros, and Serca. Picking SOLO intentionally announces nothing: solo runs are heavily assisted and don't need callouts, and the Raid Editor and overlay now say so instead of showing an empty list.
+
 #### BUG FIXES AND IMPROVEMENTS
+
+- The difficulty picker no longer has an "All" option. Each raid now announces exactly one difficulty; if you never picked one, it uses the raid's base difficulty (Normal for most raids, Stage 1 for Horizon Cathedral). "All" could announce the same mechanic twice when a raid had separate Normal and Hard versions of it.
+- Heads-up if you run Hard or Nightmare: raids you had left on "All" now default to Normal, so tap those raids' difficulty pill once after updating to keep Hard-only mechanics announcing.
 
 <!-- @release-end -->
 

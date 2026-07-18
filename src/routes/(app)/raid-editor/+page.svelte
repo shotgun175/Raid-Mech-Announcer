@@ -7,7 +7,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import type { Difficulty, Mechanic } from "$lib/mech-types";
   import { libraryByRaid } from "$lib/data/raid-library";
-  import { activeDifficultyForGate, filterByDifficulty } from "$lib/utils/difficulty";
+  import { DIFFICULTY_STYLE, filterByDifficulty, resolveDifficulty } from "$lib/utils/difficulty";
   import { gatePhases, isPhasedGate, scopeToPhase, byPhaseThenHp } from "$lib/utils/mechanics";
   import Header from "../Header.svelte";
   import { formatGate, PHASE_COLORS, WEAKNESS_COLORS } from "$lib/mech-constants";
@@ -68,7 +68,9 @@
     return typeof activePhase === "number" && phases.includes(activePhase) ? activePhase : phases[0];
   });
 
-  const activeDifficulty = $derived(activeDifficultyForGate(mechStore.difficultyMap, gate?.raid ?? ""));
+  const activeDifficulty = $derived(
+    gate ? resolveDifficulty(mechStore.difficultyMap, gate.raid, mechStore.raids) : null
+  );
   const sorted = $derived.by(() => {
     if (!gate) return [];
     // "All" shows every phase grouped (phase-first, then HP); a single phase scopes to that phase.
@@ -254,14 +256,25 @@
       <!-- Mechanic rows -->
       <div style="flex: 1; overflow-y: auto;">
         {#if sorted.length === 0}
-          <div style="padding: 48px; text-align: center; color: #8a8a8a; font-size: 13px;">
-            No mechanics yet.<br />
-            <button
-              onclick={openAdd}
-              style="margin-top: 12px; background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 4px; padding: 8px 16px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-family: inherit;"
-              >+ Add First Mechanic</button
-            >
-          </div>
+          {#if activeDifficulty === "Solo" && gate.mechanics.length > 0}
+            <div style="padding: 48px; text-align: center; color: #8a8a8a; font-size: 13px;">
+              <span style="color: {DIFFICULTY_STYLE.Solo.color}; font-weight: 700;">Solo runs don't need callouts.</span
+              ><br />
+              <span style="font-size: 12px;"
+                >Solo mode is heavily assisted, so nothing announces on this difficulty. Pick another tier on the raid's
+                difficulty pill to see its mechanics.</span
+              >
+            </div>
+          {:else}
+            <div style="padding: 48px; text-align: center; color: #8a8a8a; font-size: 13px;">
+              No mechanics yet.<br />
+              <button
+                onclick={openAdd}
+                style="margin-top: 12px; background: color-mix(in oklch, var(--color-accent-500) 10%, transparent); border: 1px solid color-mix(in oklch, var(--color-accent-500) 30%, transparent); border-radius: 4px; padding: 8px 16px; color: var(--color-accent-500); cursor: pointer; font-size: 12px; font-family: inherit;"
+                >+ Add First Mechanic</button
+              >
+            </div>
+          {/if}
         {:else}
           {#each sorted as m (m.id)}
             <MechRow

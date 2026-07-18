@@ -1,7 +1,7 @@
 import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
-import type { BossStatusData, Difficulty, Gate, MechSettings } from "./mech-types";
-import { filterByDifficulty } from "./utils/difficulty";
+import type { BossStatusData, Gate, MechSettings } from "./mech-types";
+import { filterByDifficulty, resolveDifficulty } from "./utils/difficulty";
 import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
 import { normalizeRaids } from "./migrate";
 import { reduceBossStatus, type BossEvent, type Effect, type FightState } from "./mech-reducer";
@@ -249,8 +249,7 @@ export const mechStore = (() => {
       return;
     }
     const gate = raids.find((r) => r.id === gateId);
-    const activeDifficulty = gate ? ((difficultyMap[gate.raid] as Difficulty | undefined) ?? null) : null;
-    const mechs = gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : [];
+    const mechs = gate ? filterByDifficulty(gate.mechanics, resolveDifficulty(difficultyMap, gate.raid, raids)) : [];
     const hasMechs = mechs.some((m) => m.hpBar != null);
     const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
     // During a boss-swap phase the listed mechs belong to the first boss and aren't shown,
@@ -700,15 +699,10 @@ export const mechStore = (() => {
       return difficultyMap;
     },
 
-    setDifficulty(raidName: string, difficulty: string | null) {
-      const prev = difficultyMap[raidName] ?? "All";
-      dbg(`[difficulty] ${raidName}: "${prev}" → "${difficulty ?? "All"}"`);
-      if (!difficulty) {
-        const { [raidName]: _, ...rest } = difficultyMap;
-        difficultyMap = rest;
-      } else {
-        difficultyMap = { ...difficultyMap, [raidName]: difficulty };
-      }
+    setDifficulty(raidName: string, difficulty: string) {
+      const prev = difficultyMap[raidName] ?? "unset";
+      dbg(`[difficulty] ${raidName}: "${prev}" → "${difficulty}"`);
+      difficultyMap = { ...difficultyMap, [raidName]: difficulty };
       localStorage.setItem(DIFFICULTY_KEY, JSON.stringify(difficultyMap));
       broadcastDifficultyMap(difficultyMap);
     },

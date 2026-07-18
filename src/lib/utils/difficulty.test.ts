@@ -1,6 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { filterByDifficulty, cycleDifficulty, activeDifficultyForGate, DIFFICULTY_STYLE } from "./difficulty";
-import type { Mechanic } from "../mech-types";
+import {
+  filterByDifficulty,
+  cycleDifficulty,
+  raidAvailableDifficulties,
+  baseDifficulty,
+  resolveDifficulty,
+  DIFFICULTY_STYLE
+} from "./difficulty";
+import type { Gate, Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
   return {
@@ -58,8 +65,8 @@ describe("cycleDifficulty", () => {
     expect(cycleDifficulty(null, [...avail])).toBe("Solo");
   });
 
-  it("last → null (All)", () => {
-    expect(cycleDifficulty("Hard", [...avail])).toBeNull();
+  it("last → wraps to first (no All step)", () => {
+    expect(cycleDifficulty("Hard", [...avail])).toBe("Solo");
   });
 
   it("mid → next", () => {
@@ -75,21 +82,91 @@ describe("cycleDifficulty", () => {
     expect(cycleDifficulty(null, [])).toBeNull();
   });
 
-  it("cycles Horizon Cathedral's Stage 1/2/3 in order and wraps to All", () => {
+  it("cycles Horizon Cathedral's Stage 1/2/3 in order and wraps to Stage 1", () => {
     expect(cycleDifficulty(null, [...stages])).toBe("Stage 1");
     expect(cycleDifficulty("Stage 1", [...stages])).toBe("Stage 2");
     expect(cycleDifficulty("Stage 2", [...stages])).toBe("Stage 3");
-    expect(cycleDifficulty("Stage 3", [...stages])).toBeNull();
+    expect(cycleDifficulty("Stage 3", [...stages])).toBe("Stage 1");
   });
 });
 
-describe("activeDifficultyForGate", () => {
-  it("returns the stored difficulty for a raid", () => {
-    expect(activeDifficultyForGate({ Echidna: "Hard" }, "Echidna")).toBe("Hard");
+function gateFix(overrides: Partial<Gate> = {}): Gate {
+  return {
+    id: "g1",
+    raid: "Custom Raid",
+    gate: 1,
+    boss: "Boss",
+    bossType: "Human",
+    weakness: "No Weakness",
+    tauntable: false,
+    totalBars: 100,
+    mechanics: [],
+    ...overrides
+  };
+}
+
+describe("raidAvailableDifficulties", () => {
+  it("unions the raid's own gates' lists in display order (custom raids)", () => {
+    const gates = [
+      gateFix({ id: "g1", availableDifficulties: ["Hard"] }),
+      gateFix({ id: "g2", gate: 2, availableDifficulties: ["Normal"] })
+    ];
+    expect(raidAvailableDifficulties("Custom Raid", gates)).toEqual(["Normal", "Hard"]);
   });
 
-  it("returns null when the raid has no entry", () => {
-    expect(activeDifficultyForGate({}, "Valtan")).toBeNull();
+  it("falls back to the library entry when the gates carry no list", () => {
+    expect(raidAvailableDifficulties("Valtan", [])).toEqual(["Solo", "Normal", "Hard"]);
+  });
+
+  it("falls back to Normal/Hard for unknown raids", () => {
+    expect(raidAvailableDifficulties("Not A Raid", [])).toEqual(["Normal", "Hard"]);
+  });
+
+  it("lists silent Solo for the three Summer 2026 raids", () => {
+    expect(raidAvailableDifficulties("Act 4: Armoche", [])).toContain("Solo");
+    expect(raidAvailableDifficulties("Final Act: Kazeros", [])).toContain("Solo");
+    expect(raidAvailableDifficulties("Serca", [])).toContain("Solo");
+  });
+});
+
+describe("baseDifficulty", () => {
+  it("picks the first non-Solo tier in display order", () => {
+    expect(baseDifficulty(["Solo", "Normal", "Hard"])).toBe("Normal");
+    expect(baseDifficulty(["Normal", "Hard", "Nightmare"])).toBe("Normal");
+  });
+
+  it("picks Hard for a Hard-only raid", () => {
+    expect(baseDifficulty(["Hard"])).toBe("Hard");
+  });
+
+  it("picks Stage 1 for Horizon-style stage raids", () => {
+    expect(baseDifficulty(["Stage 1", "Stage 2", "Stage 3"])).toBe("Stage 1");
+  });
+
+  it("falls back to Solo only when Solo is the sole tier", () => {
+    expect(baseDifficulty(["Solo"])).toBe("Solo");
+  });
+
+  it("falls back to Normal for an empty list", () => {
+    expect(baseDifficulty([])).toBe("Normal");
+  });
+});
+
+describe("resolveDifficulty", () => {
+  it("returns the stored pick for a raid", () => {
+    expect(resolveDifficulty({ Echidna: "Hard" }, "Echidna", [])).toBe("Hard");
+  });
+
+  it("defaults an unset raid to its base tier, never an unfiltered All", () => {
+    expect(resolveDifficulty({}, "Valtan", [])).toBe("Normal");
+  });
+
+  it("never defaults to Solo even when the raid offers it", () => {
+    expect(resolveDifficulty({}, "Act 4: Armoche", [])).toBe("Normal");
+  });
+
+  it("honors an explicit Solo pick", () => {
+    expect(resolveDifficulty({ "Act 4: Armoche": "Solo" }, "Act 4: Armoche", [])).toBe("Solo");
   });
 });
 

@@ -1,4 +1,5 @@
-import type { Difficulty, Mechanic } from "../mech-types";
+import type { Difficulty, Gate, Mechanic } from "../mech-types";
+import { libraryByRaid } from "../data/raid-library";
 
 /** Canonical display order for cycling: S → N → H → NM → EX → TFM → ST1 → ST2 → ST3 */
 export const DIFFICULTY_ORDER: Difficulty[] = [
@@ -28,9 +29,10 @@ export const DIFFICULTY_STYLE: Record<Difficulty, { color: string; bg: string; b
 };
 
 /**
- * Returns mechanics visible for the given difficulty.
- * null difficulty = All (no filter). A mechanic with no difficulties array
- * (or an empty one) is shown in every difficulty.
+ * Returns mechanics visible for the given difficulty. A mechanic with no
+ * difficulties array (or an empty one) is shown in every difficulty.
+ * null skips filtering entirely (defensive; UI callers always resolve a
+ * concrete tier via resolveDifficulty).
  */
 export function filterByDifficulty(mechanics: Mechanic[], difficulty: Difficulty | null): Mechanic[] {
   if (!difficulty) return mechanics;
@@ -38,16 +40,41 @@ export function filterByDifficulty(mechanics: Mechanic[], difficulty: Difficulty
 }
 
 /**
- * Returns the active Difficulty for a raid from the stored map,
- * or null (= All) if none is set.
+ * Available difficulties for a raid: the union across the raid's own gates'
+ * availableDifficulties (set when the user adds a custom raid), else the
+ * library entry's list, else ["Normal", "Hard"] for legacy data.
  */
-export function activeDifficultyForGate(difficultyMap: Record<string, string>, raidName: string): Difficulty | null {
-  return (difficultyMap[raidName] as Difficulty) ?? null;
+export function raidAvailableDifficulties(raidName: string, gates: Gate[]): Difficulty[] {
+  const own = gates.filter((g) => g.raid === raidName).flatMap((g) => g.availableDifficulties ?? []);
+  if (own.length > 0) {
+    const set = new Set(own);
+    return DIFFICULTY_ORDER.filter((d) => set.has(d));
+  }
+  return libraryByRaid[raidName]?.[0]?.availableDifficulties ?? ["Normal", "Hard"];
+}
+
+/**
+ * Default tier when the user hasn't picked one: the first non-Solo difficulty
+ * in display order. Solo is never a default — it would silence the overlay
+ * out of the box for group players.
+ */
+export function baseDifficulty(available: Difficulty[]): Difficulty {
+  const ordered = DIFFICULTY_ORDER.filter((d) => available.includes(d));
+  return ordered.find((d) => d !== "Solo") ?? ordered[0] ?? "Normal";
+}
+
+/**
+ * The active difficulty for a raid: the user's stored pick, else the base
+ * tier. Never null — there is no unfiltered "All" announce mode; a raid with
+ * no stored pick announces its base tier.
+ */
+export function resolveDifficulty(difficultyMap: Record<string, string>, raidName: string, gates: Gate[]): Difficulty {
+  return (difficultyMap[raidName] as Difficulty) ?? baseDifficulty(raidAvailableDifficulties(raidName, gates));
 }
 
 /**
  * Cycles to the next difficulty in the available list (filtered to
- * DIFFICULTY_ORDER). Wraps from last → null (All), and null → first.
+ * DIFFICULTY_ORDER). Wraps from last → first; null resolves to first.
  *
  * Reserved for the planned difficulty-cycling UI in GateSidebar — kept here
  * so the behavior (and its tests) survives until the UI lands.
@@ -57,6 +84,6 @@ export function cycleDifficulty(current: Difficulty | null, availableDifficultie
   if (ordered.length === 0) return null;
   if (!current) return ordered[0];
   const idx = ordered.indexOf(current);
-  if (idx === -1 || idx === ordered.length - 1) return null;
+  if (idx === -1 || idx === ordered.length - 1) return ordered[0];
   return ordered[idx + 1];
 }

@@ -9,7 +9,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { speakTts } from "$lib/utils/tts";
-  import { filterByDifficulty } from "$lib/utils/difficulty";
+  import { DIFFICULTY_STYLE, filterByDifficulty, resolveDifficulty } from "$lib/utils/difficulty";
   import { isFinalGateOfRaid } from "$lib/utils/gate-match";
   import { fly } from "svelte/transition";
   import { onDestroy } from "svelte";
@@ -20,7 +20,7 @@
   const gate = $derived(mechStore.selectedGate);
   const isLive = $derived(mechStore.isLive);
   const activeDifficulty = $derived<Difficulty | null>(
-    gate ? ((mechStore.difficultyMap[gate.raid] as Difficulty) ?? null) : null
+    gate ? resolveDifficulty(mechStore.difficultyMap, gate.raid, mechStore.raids) : null
   );
   const visibleMechanics = $derived(gate ? filterByDifficulty(gate.mechanics, activeDifficulty) : []);
 
@@ -432,6 +432,16 @@
             activeMech={activeMechSim}
             repeatCountdown={repeatCountdownSim}
           />
+        {/if}
+
+        {#if activeDifficulty === "Solo" && visibleMechanics.length === 0 && gate.mechanics.length > 0}
+          <div
+            style="margin-top: 8px; background: rgba(23,23,23,0.85); border: 1px solid {DIFFICULTY_STYLE.Solo
+              .border}; border-radius: 4px; padding: 6px 12px; font-size: 12px; color: {DIFFICULTY_STYLE.Solo
+              .color}; font-weight: 600; text-align: center;"
+          >
+            Solo mode: no callouts needed
+          </div>
         {/if}
 
         {#if lastAnnounced && !killBanner}
