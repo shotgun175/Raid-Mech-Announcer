@@ -533,7 +533,7 @@ fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64, epoch: u64) {
 }
 
 /// List voice sources available on this system.
-#[command]
+#[command(async)]
 pub fn list_tts_voices() -> Vec<String> {
     let mut out = vec![];
 

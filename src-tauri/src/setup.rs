@@ -8,7 +8,7 @@ use crate::app;
 use crate::{
     context::AppContext,
     settings::*,
-    ui::{AppHandleExtensions, WindowExtensions, setup_tray},
+    ui::{AppHandleExtensions, setup_tray},
 };
 
 pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
@@ -49,22 +49,9 @@ fn initialize_windows_and_settings(
         .get_overlay_window()
         .ok_or_else(|| "overlay window not found".to_string())?;
 
-    if let Some(settings) = settings {
+    if settings.is_some() {
         info!("settings loaded");
-        if !settings.general.hide_meter_on_start {
-            if let Err(err) = overlay_window.restore_default_state() {
-                warn!("could not restore the overlay window state: {err}");
-            }
-            overlay_window.show()?;
-        } else {
-            overlay_window.hide()?;
-        }
-
-        if settings.general.always_on_top {
-            overlay_window.set_always_on_top(true)?;
-        } else {
-            overlay_window.set_always_on_top(false)?;
-        }
+        overlay_window.hide()?;
     } else {
         overlay_window.show()?;
     }

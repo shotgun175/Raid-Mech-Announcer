@@ -2,9 +2,8 @@ use std::ops::Deref;
 
 use anyhow::Result;
 use tauri::{AppHandle, Manager, WebviewWindow};
-use tauri_plugin_window_state::WindowExt;
 
-use crate::constants::{OVERLAY_WINDOW_LABEL, SETTINGS_WINDOW_LABEL, WINDOW_STATE_FLAGS};
+use crate::constants::{OVERLAY_WINDOW_LABEL, SETTINGS_WINDOW_LABEL};
 
 pub trait AppHandleExtensions {
     fn get_overlay_window(&self) -> Option<OverlayWindow>;
@@ -15,7 +14,6 @@ pub trait AppHandleExtensions {
 // window op would kill the whole app from a tray click. Callers log-and-
 // continue or propagate (CLAUDE.md: no unwrap in handler code).
 pub trait WindowExtensions {
-    fn restore_default_state(&self) -> Result<()>;
     fn restore_and_focus(&self) -> Result<()>;
 }
 
@@ -48,11 +46,6 @@ impl WindowExtensions for OverlayWindow {
         self.0.unminimize()?;
         self.0.set_focus()?;
         self.0.set_ignore_cursor_events(false)?;
-        Ok(())
-    }
-
-    fn restore_default_state(&self) -> Result<()> {
-        self.0.restore_state(WINDOW_STATE_FLAGS)?;
         Ok(())
     }
 }

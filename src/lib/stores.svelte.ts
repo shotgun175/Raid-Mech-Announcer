@@ -79,8 +79,7 @@ const defaultSettings: AppSettings = {
   general: {
     accentColor: "theme-violet",
     scale: "1",
-    logScale: "1",
-    betaChannel: false
+    logScale: "1"
   },
   shortcuts: {
     hideOverlay: "Control+ArrowUp"
