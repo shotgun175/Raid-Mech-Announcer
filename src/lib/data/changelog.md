@@ -14,15 +14,36 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.6 -->
+<!-- @release v0.3.7 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.6 - September 23rd, 2026
+    v0.3.7 - September 23rd, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- Opening the app again while it is already running now brings the Settings window to the front. Before, a second launch did nothing, so an app sitting in the tray could look dead.
+- On first run, Settings now opens by itself with the welcome guide, and the guide's first tip explains how to connect: in LOA Logs, click Start Live Sharing (the screen-share icon). It copies a link, and this app connects automatically within a second.
+- The Shortcuts tab now shows a red note under any key that could not be registered because another app is already using it, so you know to pick a different one.
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- The default Hide Overlay shortcut for new installs is now Ctrl+Shift+Up. The old default, Ctrl+Up, is the key LOA Logs uses for Show Logs, so it usually did not work when LOA Logs was started first. If you already have a Hide Overlay key saved, it is kept as it is. If yours is Ctrl+Up and LOA Logs has claimed it, the Shortcuts tab now says so, and you can record Ctrl+Shift+Up (or any free key) there.
+- Removed the "Shortcuts are paused while on this tab" banner. Shortcuts were never actually paused.
+- In the Raid Editor at narrow window widths, mechanic names now stay readable: the name, the NEXT marker and the difficulty badges wrap onto a second line instead of squeezing the name down to a letter. At the default width nothing changes.
+- The edit and remove icons in the raid list are easier to see, and they light up when you reach them with the keyboard, not only when you hover with the mouse.
+- Screen readers now announce the menu button, the Simulate HP slider and each gate in the raid list by name, and say which gate is selected. Gates can be selected with Enter or Space.
+- The "Part of Lost Ark Tools" link in Settings now reads "Part of Lost Ark Tools, see all tools" to screen readers, matching the other Lost Ark tools.
+- The README now has install steps (download the setup file from the latest release; the app checks for updates when it starts and offers to install them), notes that the Andrew and Jenny voices need Python with edge-tts, and uses the overlay names shown in the app.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.6 -->
+### v0.3.6 - September 23rd, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
