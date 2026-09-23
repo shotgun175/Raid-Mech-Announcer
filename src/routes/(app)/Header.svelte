@@ -3,7 +3,7 @@
   import QuickTooltip from "$lib/components/QuickTooltip.svelte";
   import { addToast } from "$lib/components/Toaster.svelte";
   import { IconArrowUp, IconHelp, IconMenu, IconRefresh, IconX } from "$lib/icons";
-  import { settings, updateInfo } from "$lib/stores.svelte";
+  import { updateInfo } from "$lib/stores.svelte";
   import { checkForUpdate } from "$lib/utils/updater";
   import { noUpdateAvailable } from "$lib/utils/toasts";
   import { openWelcome } from "$lib/components/WelcomeModal.svelte";
@@ -62,7 +62,7 @@
 {/snippet}
 
 {#if $open}
-  <div use:melt={$portalled} class="text-white select-none {settings.app.general.accentColor}">
+  <div use:melt={$portalled} class="text-white select-none">
     <div use:melt={$overlay} class="fixed inset-0 z-30 bg-neutral-950/50" transition:fade={{ duration: 100 }}></div>
     <div
       use:melt={$content}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { settings, updateInfo } from "$lib/stores.svelte.js";
+  import { updateInfo } from "$lib/stores.svelte.js";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { fade } from "svelte/transition";
   import { markdown } from "./Markdown.svelte";
@@ -63,8 +63,8 @@
   <div use:melt={$portalled}>
     <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
     <div
-      class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[40rem] max-w-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-neutral-800/40 p-4 shadow-lg drop-shadow-xl backdrop-blur-xl
-      {settings.app.general.accentColor} flex flex-col items-center gap-4 text-white"
+      class="fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] w-[40rem] max-w-[60rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-4 rounded-xl bg-neutral-800/40
+      p-4 text-white shadow-lg drop-shadow-xl backdrop-blur-xl"
       use:melt={$content}
     >
       <h2 use:melt={$title} class="sticky top-0 py-2 text-xl font-semibold">New Update Available!</h2>

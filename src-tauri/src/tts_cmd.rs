@@ -276,45 +276,25 @@ fn synthesize_to_cache(
     let gen_tmp = cache_dir.join(format!(".gen_{}.mp3", Uuid::new_v4()));
     let gen_tmp_str = gen_tmp.to_string_lossy().to_string();
 
+    let mut cmd = std::process::Command::new("python");
+    cmd.args([
+        "-m",
+        "edge_tts",
+        "--voice",
+        voice_id,
+        "--text",
+        text,
+        "--rate",
+        rate_str,
+        "--write-media",
+        &gen_tmp_str,
+    ]);
     #[cfg(target_os = "windows")]
-    let gen_ok = {
+    {
         use std::os::windows::process::CommandExt;
-        std::process::Command::new("python")
-            .args([
-                "-m",
-                "edge_tts",
-                "--voice",
-                voice_id,
-                "--text",
-                text,
-                "--rate",
-                rate_str,
-                "--write-media",
-                &gen_tmp_str,
-            ])
-            .creation_flags(0x08000000)
-            .output()
-            .map(|o| o.status.success())
-            .unwrap_or(false)
-    };
-
-    #[cfg(not(target_os = "windows"))]
-    let gen_ok = std::process::Command::new("python")
-        .args([
-            "-m",
-            "edge_tts",
-            "--voice",
-            voice_id,
-            "--text",
-            text,
-            "--rate",
-            rate_str,
-            "--write-media",
-            &gen_tmp_str,
-        ])
-        .output()
-        .map(|o| o.status.success())
-        .unwrap_or(false);
+        cmd.creation_flags(0x08000000);
+    }
+    let gen_ok = cmd.output().map(|o| o.status.success()).unwrap_or(false);
 
     if !gen_ok || !gen_tmp.exists() {
         let _ = std::fs::remove_file(&gen_tmp);
@@ -562,9 +542,6 @@ pub fn list_tts_voices() -> Vec<String> {
             }
         }
     }
-
-    #[cfg(not(target_os = "windows"))]
-    out.push("✗ Python edge-tts: Windows only in this build".into());
 
     out.push("---".into());
 
