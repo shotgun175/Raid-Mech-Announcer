@@ -11,6 +11,7 @@
 
   let installing = $state(false);
   let showConfirm = $state(false);
+  let installError = $state<string | null>(null);
 
   const warningText = $derived(
     mechStore.isLive
@@ -21,10 +22,12 @@
   async function doInstall() {
     if (!updateInfo.manifest || installing) return;
     installing = true;
+    installError = null;
     try {
       await installUpdate(updateInfo.manifest as Update);
     } catch (e) {
       console.error("update install failed:", e);
+      installError = "Update failed to download. Try again, or download the installer from the GitHub Releases page.";
       installing = false;
     }
   }
@@ -99,6 +102,9 @@
             <span>{installing ? "Installing…" : "Update Now"}</span>
           </button>
         </div>
+      {/if}
+      {#if installError}
+        <p class="text-center text-sm text-red-400">{installError}</p>
       {/if}
     </div>
   </div>

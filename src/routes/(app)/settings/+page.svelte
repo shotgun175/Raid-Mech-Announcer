@@ -66,12 +66,19 @@
       pregenDone = e.payload.done;
       pregenTotal = e.payload.total;
     });
-    const onDone = await listen<{ generated: number; total: number; cancelled: boolean }>("tts:pregen-done", (e) => {
-      pregenRunning = false;
-      const { generated, total, cancelled } = e.payload;
-      const n = `${generated} new line${generated === 1 ? "" : "s"}`;
-      pregenSummary = cancelled ? `Cancelled - cached ${n}` : `Done - cached ${n} (${total} total)`;
-    });
+    const onDone = await listen<{ generated: number; failed: number; total: number; cancelled: boolean }>(
+      "tts:pregen-done",
+      (e) => {
+        pregenRunning = false;
+        const { generated, failed, total, cancelled } = e.payload;
+        const n = `${generated} new line${generated === 1 ? "" : "s"}`;
+        pregenSummary = cancelled ? `Cancelled - cached ${n}` : `Done - cached ${n} (${total} total)`;
+        if (failed > 0) {
+          const hint = "Neural voices need Python with edge-tts (pip install edge-tts) and an internet connection.";
+          pregenSummary += ` - ${failed} failed. ${hint}`;
+        }
+      }
+    );
     pregenUnlisten = [onProgress, onDone];
   });
 
