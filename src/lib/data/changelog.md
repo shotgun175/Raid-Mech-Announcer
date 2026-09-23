@@ -14,15 +14,33 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.4 -->
+<!-- @release v0.3.5 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.4 - September 23rd, 2026
+    v0.3.5 - September 23rd, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- Generate voice lines now tells you when lines fail to generate, with a hint that the Andrew and Jenny voices need Python with edge-tts (pip install edge-tts) and an internet connection. Before, it said "Done" even when every line had failed.
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Overlay Preview now matches the live overlay on gates with two or more repeating mechanics. For example, on Serca Gate 1 the preview now hands off to Bomb Bingo at x175 just like the real overlay.
+- Voice lines for a mechanic whose callout text ends in a space now play instantly after Generate voice lines, instead of taking about two seconds the first time.
+- If an update fails to download, a message now appears under the Update Now button instead of the button quietly resetting.
+- Loading the installed voices list in Settings no longer freezes the app windows while it runs.
+- Settings are saved more safely, and a damaged settings file is now noted in the log instead of being silently ignored.
+- A boss bar count of 0, or a difficulty setting the app does not recognize, no longer breaks the overlay, the raid list or the mechanic dialog.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.4 -->
+### v0.3.4 - September 23rd, 2026
 
 #### NEW FEATURES
 
