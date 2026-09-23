@@ -65,10 +65,6 @@
             <span class="font-medium text-white">NordVPN can't run at the same time.</span> Both use the same capture driver.
             Quit NordVPN fully (and reboot) if detection fails.
           </li>
-          <li>
-            <span class="font-medium text-white">Run as Administrator</span> if the overlay never reacts to a fight - packet
-            capture needs elevated rights.
-          </li>
         </ul>
       </div>
       <div class="flex justify-end">
