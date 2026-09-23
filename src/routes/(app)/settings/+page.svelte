@@ -14,7 +14,7 @@
   import { enumerateTtsLines } from "$lib/utils/tts-lines";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
-  import { registerShortcuts } from "$lib/utils/shortcuts";
+  import { failedShortcutNote, registerShortcuts } from "$lib/utils/shortcuts";
   import { speakTts } from "$lib/utils/tts";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { onMount, onDestroy } from "svelte";
@@ -742,10 +742,7 @@
       {:else if currentTab === "Shortcuts"}
         {#snippet failedNote(key: string)}
           {#if key && settings.failedShortcuts.includes(key)}
-            <div class="text-xs text-red-400">
-              Couldn't register: another app is using this key (LOA Logs uses Ctrl+Up for Show Logs by default). Pick
-              another.
-            </div>
+            <div class="text-xs text-red-400">{failedShortcutNote(key)}</div>
           {/if}
         {/snippet}
 
