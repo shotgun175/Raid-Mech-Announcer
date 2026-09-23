@@ -72,19 +72,3 @@ export function resolveDifficulty(difficultyMap: Record<string, string>, raidNam
   const stored = difficultyMap[raidName] as Difficulty;
   return DIFFICULTY_ORDER.includes(stored) ? stored : baseDifficulty(raidAvailableDifficulties(raidName, gates));
 }
-
-/**
- * Cycles to the next difficulty in the available list (filtered to
- * DIFFICULTY_ORDER). Wraps from last → first; null resolves to first.
- *
- * Reserved for the planned difficulty-cycling UI in GateSidebar — kept here
- * so the behavior (and its tests) survives until the UI lands.
- */
-export function cycleDifficulty(current: Difficulty | null, availableDifficulties: Difficulty[]): Difficulty | null {
-  const ordered = DIFFICULTY_ORDER.filter((d) => availableDifficulties.includes(d));
-  if (ordered.length === 0) return null;
-  if (!current) return ordered[0];
-  const idx = ordered.indexOf(current);
-  if (idx === -1 || idx === ordered.length - 1) return ordered[0];
-  return ordered[idx + 1];
-}

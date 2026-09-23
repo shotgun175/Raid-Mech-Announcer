@@ -368,9 +368,6 @@ export const mechStore = (() => {
     get livePhase() {
       return livePhase;
     },
-    get liveTotalBars() {
-      return liveTotalBars;
-    },
     get liveBossName() {
       return liveBossName;
     },
@@ -431,10 +428,6 @@ export const mechStore = (() => {
         changedMechIds = merged;
         saveChangedMechIds(changedMechIds);
       }
-    },
-
-    setLiveGate(id: string | null) {
-      liveGateId = id;
     },
 
     // Authoritative encounter-end signal (driven by LOA Logs' "saving to db" log line).

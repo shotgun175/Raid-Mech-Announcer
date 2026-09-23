@@ -8,7 +8,6 @@
 </script>
 
 <script lang="ts">
-  import { settings } from "$lib/stores.svelte";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
@@ -45,8 +44,8 @@
   <div use:melt={$portalled}>
     <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
     <div
-      class="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[36rem] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-neutral-800/40 p-6 shadow-lg drop-shadow-xl backdrop-blur-xl
-      {settings.app.general.accentColor} flex flex-col gap-4 text-white"
+      class="fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] w-[36rem] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl bg-neutral-800/40 p-6
+      text-white shadow-lg drop-shadow-xl backdrop-blur-xl"
       use:melt={$content}
     >
       <h2 use:melt={$title} class="text-xl font-semibold">Welcome to Raid Mech Announcer</h2>

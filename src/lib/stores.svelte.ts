@@ -17,7 +17,6 @@ const mergeSettings = (defaultSettings: any, storageSettings: any) => {
 
 class Settings {
   app = $state(defaultSettings);
-  version = $state("");
   lockUpdate = false;
 
   constructor() {
@@ -40,25 +39,12 @@ class Settings {
         this.lockUpdate = false;
       };
 
-      const updateVersion = async (newVersion: string | null) => {
-        this.lockUpdate = true;
-        if (newVersion) {
-          this.version = newVersion;
-        }
-        this.lockUpdate = false;
-      };
-
       updateSettings(localStorage.getItem("appSettings"), true);
-      updateVersion(localStorage.getItem("version"));
 
       $effect.root(() => {
         $effect(() => {
           if (this.lockUpdate) return;
           localStorage.setItem("appSettings", JSON.stringify(this.app));
-        });
-        $effect(() => {
-          if (this.lockUpdate) return;
-          localStorage.setItem("version", this.version);
         });
       });
 
@@ -67,7 +53,6 @@ class Settings {
         const { key, newValue, storageArea } = e;
         if (storageArea !== localStorage) return;
         if (key === "appSettings") updateSettings(newValue);
-        else if (key === "version") updateVersion(newValue);
       });
     } else {
       console.warn("localStorage not available?");

@@ -13,7 +13,6 @@
   import { LIBRARY } from "$lib/data/raid-library";
   import { checkForUpdate } from "$lib/utils/updater";
   import { registerShortcuts } from "$lib/utils/shortcuts";
-  import { getVersion } from "@tauri-apps/api/app";
   import { readText } from "@tauri-apps/plugin-clipboard-manager";
   import { onMount } from "svelte";
 
@@ -40,9 +39,6 @@
     (async () => {
       const data = await getSettings();
       if (data) settings.app = data;
-
-      const version = await getVersion();
-      if (settings.version !== version) settings.version = version;
 
       await registerShortcuts();
 

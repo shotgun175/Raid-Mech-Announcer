@@ -14,7 +14,7 @@
   import { enumerateTtsLines } from "$lib/utils/tts-lines";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
-  import { registerShortcuts, shortcuts } from "$lib/utils/shortcuts";
+  import { registerShortcuts } from "$lib/utils/shortcuts";
   import { speakTts } from "$lib/utils/tts";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { onMount, onDestroy } from "svelte";
@@ -256,59 +256,6 @@
   >
 {/snippet}
 
-{#snippet settingOption(category: string, setting: string, name: string, description?: string, breakdown?: boolean)}
-  {@const appSettings = settings.app as any}
-  <div class="w-fit">
-    <label class="flex items-center gap-2">
-      {#if !breakdown}
-        <input
-          type="checkbox"
-          bind:checked={appSettings[category][setting]}
-          class="form-checkbox size-5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
-        />
-      {:else}
-        <input
-          type="checkbox"
-          bind:checked={appSettings[category]["breakdown"][setting]}
-          class="form-checkbox size-5 rounded-sm border-0 bg-neutral-700 checked:text-accent-600/80 focus:ring-0"
-        />
-      {/if}
-      <div class="ml-5">
-        <div class="text-sm">{name}</div>
-        {#if description}<div class="text-xs text-neutral-300">{description}</div>{/if}
-      </div>
-    </label>
-  </div>
-{/snippet}
-
-{#snippet sliderField(
-  label: string,
-  description: string,
-  min: number,
-  max: number,
-  step: number,
-  value: number,
-  suffix: string,
-  onChange: (v: number) => void
-)}
-  <div class="flex flex-col gap-1">
-    <div class="text-sm">{label}</div>
-    {#if description}<div class="text-xs text-neutral-300">{description}</div>{/if}
-    <div class="flex items-center gap-3 pt-1">
-      <input
-        type="range"
-        {min}
-        {max}
-        {step}
-        {value}
-        oninput={(e) => onChange(parseFloat((e.target as HTMLInputElement).value))}
-        class="h-[3px] w-full appearance-none rounded bg-neutral-700 accent-accent-500"
-      />
-      <span class="w-16 shrink-0 text-right font-mono text-sm text-accent-400">{value}{suffix}</span>
-    </div>
-  </div>
-{/snippet}
-
 {#snippet checkField(label: string, description: string, checked: boolean, onChange: (v: boolean) => void)}
   <div class="w-fit">
     <label class="flex cursor-pointer items-center gap-2">
@@ -337,17 +284,6 @@
       settings.app.general.accentColor = theme;
     }}
   ></button>
-{/snippet}
-
-{#snippet shortcutRow(action: string, label: string, currentKey: string)}
-  <div class="flex min-w-80 items-center justify-between gap-2 rounded px-2 py-1 hover:bg-neutral-700/60">
-    <p class="text-sm">{label}</p>
-    <button
-      class="min-w-40 rounded-md bg-neutral-700 px-2 py-1 font-mono text-xs transition hover:bg-neutral-600"
-      use:melt={$scTrigger}
-      onclick={() => openRecorder(action)}>{currentKey || "None"}</button
-    >
-  </div>
 {/snippet}
 
 <!-- ── page ──────────────────────────────────────────────────────── -->
@@ -867,8 +803,7 @@
     <div use:melt={$scOverlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
     <div
       use:melt={$scContent}
-      class="fixed top-1/2 left-1/2 z-50 w-[90vw] max-w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-neutral-800 p-6 shadow-lg {settings
-        .app.general.accentColor} flex flex-col items-center gap-4 text-white"
+      class="fixed top-1/2 left-1/2 z-50 flex w-[90vw] max-w-[400px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-4 rounded-xl bg-neutral-800 p-6 text-white shadow-lg"
     >
       <h2 use:melt={$scTitle} class="font-semibold">Record Shortcut</h2>
       <p class="min-w-40 rounded bg-neutral-900 px-4 py-3 text-center font-mono text-sm">

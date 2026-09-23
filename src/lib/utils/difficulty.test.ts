@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   filterByDifficulty,
-  cycleDifficulty,
   raidAvailableDifficulties,
   baseDifficulty,
   resolveDifficulty,
@@ -54,39 +53,6 @@ describe("filterByDifficulty", () => {
     expect(filterByDifficulty(mechanics, "Hard")).toHaveLength(1);
     expect(filterByDifficulty(mechanics, "Nightmare")).toHaveLength(1);
     expect(filterByDifficulty(mechanics, "Normal")).toHaveLength(0);
-  });
-});
-
-describe("cycleDifficulty", () => {
-  const avail = ["Solo", "Normal", "Hard"] as const;
-  const stages = ["Stage 1", "Stage 2", "Stage 3"] as const;
-
-  it("null → first available", () => {
-    expect(cycleDifficulty(null, [...avail])).toBe("Solo");
-  });
-
-  it("last → wraps to first (no All step)", () => {
-    expect(cycleDifficulty("Hard", [...avail])).toBe("Solo");
-  });
-
-  it("mid → next", () => {
-    expect(cycleDifficulty("Solo", [...avail])).toBe("Normal");
-    expect(cycleDifficulty("Normal", [...avail])).toBe("Hard");
-  });
-
-  it("skips unavailable difficulties", () => {
-    expect(cycleDifficulty(null, ["Normal", "Hard"])).toBe("Normal");
-  });
-
-  it("returns null when available list is empty", () => {
-    expect(cycleDifficulty(null, [])).toBeNull();
-  });
-
-  it("cycles Horizon Cathedral's Stage 1/2/3 in order and wraps to Stage 1", () => {
-    expect(cycleDifficulty(null, [...stages])).toBe("Stage 1");
-    expect(cycleDifficulty("Stage 1", [...stages])).toBe("Stage 2");
-    expect(cycleDifficulty("Stage 2", [...stages])).toBe("Stage 3");
-    expect(cycleDifficulty("Stage 3", [...stages])).toBe("Stage 1");
   });
 });
 
