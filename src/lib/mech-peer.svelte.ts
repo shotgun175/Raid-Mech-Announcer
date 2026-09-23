@@ -10,6 +10,7 @@ export const peerState = (() => {
   let status = $state<PeerStatus>("disconnected");
   let errorMsg = $state<string | null>(null);
   let debugLog = $state<string[]>([]);
+  let dropCount = $state(0); // bumped only when an open connection closes on its own, never by disconnect()
   let peer: Peer | null = null;
   let conn: DataConnection | null = null;
   let connectId = 0; // incremented on each connect() call to detect stale callbacks
@@ -64,6 +65,16 @@ export const peerState = (() => {
 
     cleanupPeer();
     setStatus("connecting");
+    // One bound for both the signaling open and the data-connection open: a silent broker
+    // socket or a remote that never answers would otherwise leave us in "connecting" forever.
+    setTimeout(() => {
+      if (connectId !== myId || status !== "connecting") return;
+      connectId++;
+      cleanupPeer();
+      errorMsg = "Connection timed out";
+      setStatus("error");
+      mechStore.setBossStatus(null);
+    }, 15_000);
     errorMsg = null;
 
     const newPeer = new Peer();
@@ -114,6 +125,7 @@ export const peerState = (() => {
 
     newConn.on("close", () => {
       if (connectId !== myId) return;
+      dropCount++;
       debugLog = [...debugLog, `[peer] conn closed`].slice(-200);
       setStatus("disconnected");
       recordBossStatus(null);
@@ -163,6 +175,9 @@ export const peerState = (() => {
     },
     get debugLog() {
       return debugLog;
+    },
+    get dropCount() {
+      return dropCount;
     },
     clearDebugLog() {
       debugLog = [];

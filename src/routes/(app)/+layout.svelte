@@ -24,6 +24,7 @@
 
   const LOA_LIVE_PREFIX = "https://live.lostark.bible/";
   let lastSeenClip = "";
+  let seenDrops = 0;
 
   onMount(() => {
     // Reconcile library updates into user's localStorage-backed gates before
@@ -68,6 +69,12 @@
     });
 
     const pollId = setInterval(async () => {
+      // A real drop (not a deliberate Disconnect) clears the latch so the same share URL
+      // still on the clipboard gets one retry.
+      if (peerState.dropCount !== seenDrops) {
+        seenDrops = peerState.dropCount;
+        lastSeenClip = "";
+      }
       if (peerState.status === "connecting" || peerState.isConnected) return;
       try {
         const text = await readText();
