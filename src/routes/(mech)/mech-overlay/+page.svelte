@@ -48,6 +48,8 @@
   const inSwapPhase = $derived(!!gate && isBossSwapPhase(gate, bossName));
   const displayBossName = $derived(inSwapPhase ? bossName.split(",")[0] : gate ? gate.boss.split(",")[0] : bossName);
   const displayBar = $derived(currentBar ?? totalBars);
+  // Render-only floor: a 0-bar payload would divide by zero in the variants' HP math.
+  const renderBars = $derived(Math.max(1, totalBars));
   // A boolean (not the raw bar count) so the resize effect re-runs only when HP appears or
   // goes silent — not on every HP tick, which would re-measure and fight manual resizes.
   const hasLiveHp = $derived(currentBar != null);
@@ -559,7 +561,7 @@
       <OLCombined
         mechanics={visibleMechanics}
         currentBar={displayBar}
-        {totalBars}
+        totalBars={renderBars}
         {gateName}
         bossName={displayBossName}
         {activeMech}
@@ -569,7 +571,7 @@
       <OLCompact
         mechanics={visibleMechanics}
         currentBar={displayBar}
-        {totalBars}
+        totalBars={renderBars}
         {gateName}
         bossName={displayBossName}
         {activeMech}
@@ -579,7 +581,7 @@
       <OLHudStrip
         mechanics={visibleMechanics}
         currentBar={displayBar}
-        {totalBars}
+        totalBars={renderBars}
         {gateName}
         bossName={displayBossName}
         {activeMech}
@@ -589,7 +591,7 @@
       <OLCardStack
         mechanics={visibleMechanics}
         currentBar={displayBar}
-        {totalBars}
+        totalBars={renderBars}
         {gateName}
         {activeMech}
         {repeatCountdown}
@@ -598,7 +600,7 @@
       <OLPill
         mechanics={visibleMechanics}
         currentBar={displayBar}
-        {totalBars}
+        totalBars={renderBars}
         {gateName}
         {activeMech}
         {repeatCountdown}

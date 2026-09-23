@@ -141,4 +141,13 @@ describe("normalizeRaids", () => {
     expect(g.mechanics).toHaveLength(1);
     expect(g.mechanics[0].id).toBe("m1");
   });
+
+  it("drops unknown availableDifficulties and omits the field when none survive", () => {
+    const [kept, dropped] = normalizeRaids([
+      { id: "g1", raid: "R", gate: 1, boss: "B", availableDifficulties: ["Hard", "Bogus"] },
+      { id: "g2", raid: "R", gate: 2, boss: "B", availableDifficulties: ["Bogus"] }
+    ]);
+    expect(kept.availableDifficulties).toEqual(["Hard"]);
+    expect("availableDifficulties" in dropped).toBe(false);
+  });
 });

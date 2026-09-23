@@ -8,6 +8,7 @@ export function upcomingFrom(mechs: Mechanic[], currentBar: number): Mechanic[] 
 }
 
 export function hpBarColor(currentBar: number, totalBars: number): string {
+  if (!(totalBars > 0)) return BOSS_HP_COLORS[0];
   const idx = Math.max(0, Math.ceil((currentBar / totalBars) * BOSS_HP_COLORS.length) - 1);
   return BOSS_HP_COLORS[idx % BOSS_HP_COLORS.length];
 }

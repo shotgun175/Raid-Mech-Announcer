@@ -414,7 +414,7 @@
         bossType: form.bossType,
         weakness: form.weakness.trim() || "No Weakness",
         tauntable: form.tauntable,
-        totalBars: form.totalBars,
+        totalBars: Math.max(1, form.totalBars || 1),
         availableDifficulties: [...form.availableDifficulties]
       });
     } else {
@@ -426,7 +426,7 @@
         bossType: form.bossType,
         weakness: form.weakness.trim() || "No Weakness",
         tauntable: form.tauntable,
-        totalBars: form.totalBars,
+        totalBars: Math.max(1, form.totalBars || 1),
         mechanics: [],
         availableDifficulties: [...form.availableDifficulties]
       });
