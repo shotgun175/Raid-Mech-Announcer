@@ -24,7 +24,6 @@ If the issue persists, report it to the developers.
 
     let result = dialog.show();
     if cfg!(target_os = "windows") && result == MessageDialogResult::Custom(BUTTON_OPEN.to_string())
-        || cfg!(target_os = "linux") && result == MessageDialogResult::Ok
     {
         let log_path = app::path::log_dir().join(LOG_FILENAME);
         let _ = app.opener().reveal_item_in_dir(log_path);
