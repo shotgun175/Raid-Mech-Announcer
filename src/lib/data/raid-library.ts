@@ -3220,24 +3220,51 @@ const LIBRARY: LibraryGate[] = [
   }
 ];
 
+/**
+ * The 12 library-owned fields of a stored Mechanic, built from a LibraryMechanic. The single
+ * copy used by import, defaults, reconciliation and the per-mech reset, so none can drift.
+ */
+export function libraryMechFields(
+  lm: LibraryMechanic,
+  gateSource?: MechanicSource
+): Pick<
+  Mechanic,
+  | "name"
+  | "severity"
+  | "triggerType"
+  | "hpBar"
+  | "timerSecs"
+  | "repeatSecs"
+  | "phase"
+  | "ttsEnabled"
+  | "ttsText"
+  | "notes"
+  | "difficulties"
+  | "source"
+> {
+  return {
+    name: lm.name,
+    severity: lm.severity,
+    triggerType: lm.triggerType,
+    hpBar: lm.hpBar ?? null,
+    timerSecs: lm.timerSecs ?? null,
+    repeatSecs: lm.repeatSecs ?? null,
+    phase: lm.phase ?? null,
+    ttsEnabled: true,
+    ttsText: lm.name,
+    notes: lm.notes ?? "",
+    difficulties: lm.difficulties?.length ? lm.difficulties : undefined,
+    source: lm.source ?? gateSource
+  };
+}
+
 function makeMechanics(raw: LibraryMechanic[], prefix: string, defaultSource?: MechanicSource): Mechanic[] {
   return raw.map((m, i) => ({
     id: `${prefix}-${i}-${Date.now()}`,
     key: m.key,
     origin: "library" as const,
     userEdited: false,
-    name: m.name,
-    severity: m.severity,
-    triggerType: m.triggerType,
-    hpBar: m.hpBar ?? null,
-    timerSecs: m.timerSecs ?? null,
-    repeatSecs: m.repeatSecs ?? null,
-    phase: m.phase ?? null,
-    ttsEnabled: true,
-    ttsText: m.name,
-    notes: m.notes ?? "",
-    difficulties: m.difficulties?.length ? m.difficulties : undefined,
-    source: m.source ?? defaultSource
+    ...libraryMechFields(m, defaultSource)
   }));
 }
 
@@ -3316,18 +3343,7 @@ function stableGate(entry: LibraryGate): Gate {
       key: m.key,
       origin: "library" as const,
       userEdited: false,
-      name: m.name,
-      severity: m.severity,
-      triggerType: m.triggerType,
-      hpBar: m.hpBar ?? null,
-      timerSecs: m.timerSecs ?? null,
-      repeatSecs: m.repeatSecs ?? null,
-      phase: m.phase ?? null,
-      ttsEnabled: true,
-      ttsText: m.name,
-      notes: m.notes ?? "",
-      difficulties: m.difficulties?.length ? m.difficulties : undefined,
-      source: m.source ?? entry.source
+      ...libraryMechFields(m, entry.source)
     }))
   };
 }

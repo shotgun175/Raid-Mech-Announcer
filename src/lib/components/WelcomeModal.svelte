@@ -54,21 +54,16 @@
         <p>Before your first raid, a few things to know:</p>
         <ul class="flex flex-col gap-2">
           <li>
-            <span class="font-medium text-white">Antivirus may quarantine the app.</span> It ships a packet-capture driver
-            (WinDivert) that antivirus often flags. If detection isn't working, add this app's folder to your AV exceptions
-            and relaunch.
+            <span class="font-medium text-white">Antivirus may quarantine the app.</span> If it won't start or detection isn't
+            working, add this app's folder to your AV exceptions and relaunch.
           </li>
           <li>
             <span class="font-medium text-white">LOA Logs must be installed and running.</span> This app reads LOA Logs' raid
             data to drive announcements. It won't start without LOA Logs' meter-data present.
           </li>
           <li>
-            <span class="font-medium text-white">NordVPN can't run at the same time.</span> Both use the same capture driver.
-            Quit NordVPN fully (and reboot) if detection fails.
-          </li>
-          <li>
-            <span class="font-medium text-white">Run as Administrator</span> if the overlay never reacts to a fight - packet
-            capture needs elevated rights.
+            <span class="font-medium text-white">NordVPN can't run alongside LOA Logs.</span> It conflicts with LOA Logs'
+            capture driver. Quit NordVPN fully (and reboot) if detection fails.
           </li>
         </ul>
       </div>

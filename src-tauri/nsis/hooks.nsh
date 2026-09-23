@@ -11,6 +11,9 @@
   ; SHCNE_UPDATEDIR (0x00001000) with SHCNF_PATHW (0x0005): scoped hint that the
   ; install directory contents changed
   System::Call 'shell32::SHChangeNotify(i 0x00001000, i 0x0005, w "$INSTDIR", i 0)'
+  ; Remove the WinDivert files older versions extracted next to the exe; nothing uses them.
+  Delete /REBOOTOK "$INSTDIR\WinDivert.dll"
+  Delete /REBOOTOK "$INSTDIR\WinDivert64.sys"
 !macroend
 
 !macro NSIS_HOOK_PREUNINSTALL
@@ -18,5 +21,6 @@
 !macroend
 
 !macro NSIS_HOOK_POSTUNINSTALL
+  Delete /REBOOTOK "$INSTDIR\WinDivert.dll"
   Delete /REBOOTOK "$INSTDIR\WinDivert64.sys"
 !macroend

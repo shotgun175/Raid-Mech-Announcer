@@ -8,7 +8,6 @@ use crate::app;
 use crate::{
     context::AppContext,
     settings::*,
-    shell::ShellManager,
     ui::{AppHandleExtensions, WindowExtensions, setup_tray},
 };
 
@@ -19,28 +18,14 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn Error>> {
     let app_handle = app.handle();
 
     let context = app.state::<AppContext>();
-    let shell_manager = ShellManager::new(app_handle.clone());
     let settings_manager = app.state::<SettingsManager>();
 
     let settings = settings_manager.read().expect("Could not read settings");
 
     initialize_windows_and_settings(app_handle, settings.as_ref())?;
 
-    app_handle.manage(shell_manager);
-
     info!("starting app v{}", context.version);
     setup_tray(app_handle)?;
-
-    // Eagerly unload the WinDivert kernel driver on startup so it does not stay
-    // loaded across runs (e.g. after a crash or after the updater replaces the
-    // bundled .sys binary).
-    {
-        let app_handle = app_handle.clone();
-        tauri::async_runtime::spawn(async move {
-            let shell_manager = app_handle.state::<ShellManager>();
-            shell_manager.unload_driver().await;
-        });
-    }
 
     // Keep the watcher alive for the app's lifetime. Returns None if LOA Logs isn't installed.
     let log_watcher = crate::app::log_watch::start_log_watcher(app_handle.clone());

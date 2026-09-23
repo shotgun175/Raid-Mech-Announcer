@@ -4,17 +4,14 @@ mod app;
 mod constants;
 mod context;
 mod handlers;
-mod misc;
 mod settings;
 mod setup;
-mod shell;
 mod tts_cmd;
 mod ui;
 
 use crate::constants::*;
 use crate::context::AppContext;
 use crate::handlers::generate_handlers;
-use crate::misc::load_windivert;
 use crate::settings::SettingsManager;
 use crate::setup::setup;
 use crate::ui::on_window_event;
@@ -53,9 +50,6 @@ async fn main() -> Result<()> {
         Ok(manager) => manager,
         Err(err) => fatal_startup_error(&format!("Could not load settings: {err}")),
     };
-    if let Err(err) = load_windivert(&context.current_dir) {
-        fatal_startup_error(&format!("Could not load the WinDivert dependencies: {err}"));
-    }
     // LOA Logs install is required so the Settings window can surface the meter-data
     // path back to the user. The path itself is the only thing this app reads.
     if crate::app::loa_detect::find_loa_meter_data().is_none() {
@@ -75,7 +69,6 @@ async fn main() -> Result<()> {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(

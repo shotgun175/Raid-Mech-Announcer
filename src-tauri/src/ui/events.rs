@@ -11,27 +11,8 @@ use tauri_plugin_window_state::AppHandleExt;
 
 use crate::{
     constants::*,
-    shell::ShellManager,
     ui::{AppHandleExtensions, TrayCommand, WindowExtensions},
 };
-
-pub fn block_on_local<F, T>(future: F) -> Option<T>
-where
-    F: Future<Output = T>,
-{
-    tokio::task::block_in_place(|| {
-        match tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-        {
-            Ok(rt) => Some(rt.block_on(future)),
-            Err(err) => {
-                error!("could not build a runtime for a blocking task: {err}");
-                None
-            }
-        }
-    })
-}
 
 pub fn on_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
     if let TrayIconEvent::Click {
@@ -138,12 +119,6 @@ pub fn on_window_event_inner(window: &Window, event: &WindowEvent) -> Result<()>
 }
 
 pub fn teardown(app_handle: &AppHandle) {
-    let shell_manager = app_handle.state::<ShellManager>();
-
-    let _ = block_on_local(async {
-        shell_manager.unload_driver().await;
-    });
-
     logger().flush();
     app_handle.exit(0);
 }

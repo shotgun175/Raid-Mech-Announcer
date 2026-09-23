@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { LIBRARY, buildLibraryGate, gateSwapsBoss, isBossSwapPhase, type LibraryGate } from "./raid-library";
+import {
+  LIBRARY,
+  buildLibraryGate,
+  gateSwapsBoss,
+  isBossSwapPhase,
+  libraryMechFields,
+  type LibraryGate
+} from "./raid-library";
 import type { Gate } from "../mech-types";
 
 function gateFixture(raid: string, gate: number, boss: string): Gate {
@@ -131,5 +138,43 @@ describe("mechanic provenance (source)", () => {
     const built = buildLibraryGate(synthetic);
     expect(built.mechanics[0].source).toBe("maxroll");
     expect(built.mechanics[1].source).toBe("verified-in-fight");
+  });
+});
+
+describe("libraryMechFields", () => {
+  const FIELDS = [
+    "name",
+    "severity",
+    "triggerType",
+    "hpBar",
+    "timerSecs",
+    "repeatSecs",
+    "phase",
+    "ttsEnabled",
+    "ttsText",
+    "notes",
+    "difficulties",
+    "source"
+  ] as const;
+
+  it("keeps the curated phase (Final Act: Kazeros G2-1 Forced Clash is phase 1)", () => {
+    const entry = LIBRARY.find((g) => g.mechanics.some((m) => m.key === "final-act-kazeros-g21-forced-clash"))!;
+    const lm = entry.mechanics.find((m) => m.key === "final-act-kazeros-g21-forced-clash")!;
+    expect(libraryMechFields(lm, entry.source).phase).toBe(1);
+  });
+
+  it("returns exactly the 12 library-owned fields", () => {
+    const entry = LIBRARY[0];
+    expect(Object.keys(libraryMechFields(entry.mechanics[0], entry.source)).sort()).toEqual([...FIELDS].sort());
+  });
+
+  it("matches what buildLibraryGate stores for every mechanic of every LIBRARY gate", () => {
+    for (const entry of LIBRARY) {
+      const built = buildLibraryGate(entry);
+      entry.mechanics.forEach((lm, i) => {
+        const fields = libraryMechFields(lm, entry.source);
+        for (const f of FIELDS) expect(built.mechanics[i][f], `${lm.key}.${f}`).toEqual(fields[f]);
+      });
+    }
   });
 });

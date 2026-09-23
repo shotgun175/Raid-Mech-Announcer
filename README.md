@@ -53,11 +53,9 @@ npm run format           # Prettier fix
 | **Card Stack** | Stacked cards for each upcoming mechanic |
 | **Combined** | HP timeline + upcoming mechanics |
 
-## WinDivert
+## Packet capture
 
-This app uses WinDivert for packet capture (same as LOA Logs). The `WinDivert.dll` and `WinDivert64.sys` files are compiled into the binary and extracted on first run. If your antivirus quarantines them, add a folder exception for the install directory.
-
-**NordVPN users:** NordVPN also uses WinDivert. Both apps cannot run simultaneously.
+This app does no packet capture of its own and ships no capture driver. LOA Logs captures the game traffic and shares live boss HP over PeerJS, so antivirus exceptions for its capture driver and its NordVPN conflict apply to LOA Logs, not to this app.
 
 ## Assumptions, scope, and open questions
 
@@ -66,7 +64,7 @@ A few design decisions and boundaries are easy to trip over when reading the cod
 ### Assumptions
 
 - **LOA Logs is installed and running.** The app reads game data tables from LOA Logs' `meter-data` directory at startup and refuses to start without them. Live boss HP arrives over the PeerJS share URL you paste in; LOA Logs exposes no local server or API to poll (the port in its `settings.json` is a packet-capture setting, not a server port).
-- **Windows only.** Packet capture (WinDivert), the WebView2 UI shell, and TTS all assume Windows.
+- **Windows only.** The WebView2 UI shell and TTS both assume Windows.
 - **Mechanic data is curated from community guides.** The pre-built library is sourced primarily from Maxroll cheat sheets. Mechanic names favor the shorthand players call in party chat, since TTS reads them aloud mid-fight.
 
 ### Scope

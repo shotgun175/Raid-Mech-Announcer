@@ -99,8 +99,7 @@ VIAddVersionKey "ProductVersion" "${VERSION}"
 !endif
 
 !if "${INSTALLMODE}" == "currentUser"
-  ; MODIFIED: run elevated PowerShell silently
-  RequestExecutionLevel admin
+  RequestExecutionLevel user
 !endif
 
 !if "${INSTALLMODE}" == "both"
