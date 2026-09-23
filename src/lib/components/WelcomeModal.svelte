@@ -62,8 +62,8 @@
             data to drive announcements. It won't start without LOA Logs' meter-data present.
           </li>
           <li>
-            <span class="font-medium text-white">NordVPN can't run at the same time.</span> Both use the same capture driver.
-            Quit NordVPN fully (and reboot) if detection fails.
+            <span class="font-medium text-white">NordVPN can't run alongside LOA Logs.</span> It conflicts with LOA Logs'
+            capture driver. Quit NordVPN fully (and reboot) if detection fails.
           </li>
         </ul>
       </div>
