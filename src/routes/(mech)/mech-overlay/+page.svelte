@@ -11,6 +11,7 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { isBossSwapPhase } from "$lib/data/raid-library";
   import { speakTts } from "$lib/utils/tts";
+  import { calloutLine } from "$lib/utils/tts-lines";
   import type { BossStatusData, Difficulty, Gate, Mechanic, MechSettings } from "$lib/mech-types";
   import { DIFFICULTY_STYLE, filterByDifficulty, resolveDifficulty } from "$lib/utils/difficulty";
   import { activeRepeatMech, dueTimerMechs, topMechPerThreshold } from "$lib/utils/mechanics";
@@ -102,7 +103,7 @@
           activeMech.name,
           activeMech.severity,
           activeMech.ttsEnabled,
-          `${activeMech.ttsText || activeMech.name} in ${secsLeft} second${secsLeft === 1 ? "" : "s"}`
+          calloutLine(activeMech.ttsText || activeMech.name, secsLeft, "second")
         );
       }
     }, 1000);
@@ -154,12 +155,7 @@
         if (!fire.announce) continue;
         const m = fire.mech;
         ttsLog(`[TTS][overlay] timer fire "${m.name}" elapsed=${Math.round(elapsed)}s timer=${m.timerSecs}s`);
-        announce(
-          m.name,
-          m.severity,
-          m.ttsEnabled,
-          `${m.ttsText || m.name} in ${fire.secsLeft} second${fire.secsLeft === 1 ? "" : "s"}`
-        );
+        announce(m.name, m.severity, m.ttsEnabled, calloutLine(m.ttsText || m.name, fire.secsLeft, "second"));
       }
     }, 1000);
   }
@@ -268,12 +264,7 @@
     topMechPerThreshold(firing).forEach((m) => {
       const barsLeft = bar - m.hpBar!;
       ttsLog(`[TTS][overlay] hp-initial fire "${m.name}" bar=${bar} hpBar=${m.hpBar}`);
-      announce(
-        m.name,
-        m.severity,
-        m.ttsEnabled,
-        `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
-      );
+      announce(m.name, m.severity, m.ttsEnabled, calloutLine(m.ttsText || m.name, barsLeft, "bar"));
     });
 
     // The active repeating mech is the one whose HP threshold was crossed most recently

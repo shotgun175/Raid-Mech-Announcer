@@ -9,6 +9,8 @@
   import { mechStore } from "$lib/mech-store.svelte";
   import { peerState } from "$lib/mech-peer.svelte";
   import { speakTts } from "$lib/utils/tts";
+  import { calloutLine } from "$lib/utils/tts-lines";
+  import { activeRepeatMech } from "$lib/utils/mechanics";
   import { DIFFICULTY_STYLE, filterByDifficulty, resolveDifficulty } from "$lib/utils/difficulty";
   import { isFinalGateOfRaid } from "$lib/utils/gate-match";
   import { fly } from "svelte/transition";
@@ -71,7 +73,7 @@
           activeMechSim.name,
           activeMechSim.severity,
           activeMechSim.ttsEnabled,
-          `${activeMechSim.ttsText || activeMechSim.name} in ${secsLeft} second${secsLeft === 1 ? "" : "s"}`
+          calloutLine(activeMechSim.ttsText || activeMechSim.name, secsLeft, "second")
         );
       }
     }, 1000);
@@ -111,21 +113,12 @@
         peerState.pushDebugLog(
           `[TTS][preview] sim-initial fire "${m.name}" simBar=${_simBar} hpBar=${m.hpBar} live=${isLive}`
         );
-        fireAnnouncement(
-          m.name,
-          m.severity,
-          m.ttsEnabled,
-          `${m.ttsText || m.name} in ${barsLeft} bar${barsLeft === 1 ? "" : "s"}`
-        );
+        fireAnnouncement(m.name, m.severity, m.ttsEnabled, calloutLine(m.ttsText || m.name, barsLeft, "bar"));
       }
     });
 
     // Detect active hp+timer mechanic in sim
-    const newActive =
-      [...visibleMechanics]
-        .filter((m) => m.repeatSecs != null && m.hpBar != null && _simBar < (m.hpBar ?? 0))
-        .sort((a, b) => (a.hpBar ?? 0) - (b.hpBar ?? 0))
-        .at(-1) ?? null;
+    const newActive = activeRepeatMech(visibleMechanics, _simBar);
     if (newActive?.id !== activeMechSim?.id) {
       if (newActive) startSimTimer(newActive);
       else clearSimTimer();

@@ -52,9 +52,9 @@ function killBannerEffect(gateId: string | null, ctx: ReduceCtx): Effect | null 
   return { type: "kill-banner", variant: isFinalGateOfRaid(ctx.raids, gate) ? "raid-cleared" : "boss-defeated" };
 }
 
-// Mirrors mech-store recomputeEncourage: returns the next encouragement value given the gate,
-// the live bar, and whether we are in a boss-swap phase (no mechs shown -> execute phase).
-function nextEncourage(
+// Also used by mech-store recomputeEncourage (Overlay Preview): returns the next encouragement value
+// given the gate, the live bar, and whether we are in a boss-swap phase (no mechs shown -> execute phase).
+export function nextEncourage(
   current: string | null,
   gate: Gate | undefined,
   currentBars: number | null,

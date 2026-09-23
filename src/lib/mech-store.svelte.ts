@@ -1,10 +1,9 @@
 import { emit } from "@tauri-apps/api/event";
 import { buildDefaultRaids, buildLibraryGate, LIBRARY, libraryMechFields } from "./data/raid-library";
 import type { BossStatusData, Gate, MechSettings } from "./mech-types";
-import { filterByDifficulty, resolveDifficulty } from "./utils/difficulty";
 import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
 import { normalizeRaids } from "./migrate";
-import { reduceBossStatus, type BossEvent, type Effect, type FightState } from "./mech-reducer";
+import { nextEncourage, reduceBossStatus, type BossEvent, type Effect, type FightState } from "./mech-reducer";
 
 // Fire-and-forget log into the in-app debug strip. Works from any window via
 // the main window's "tts:debug" listener in (app)/+layout.svelte.
@@ -103,6 +102,7 @@ const ENCOURAGE_POOL = [
   "Finish it!",
   "Hit it 'til it dies."
 ];
+const pickEncourage = () => ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
 
 let overlayHideTimer: ReturnType<typeof setTimeout> | null = null;
 let placeholderQuietTimer: ReturnType<typeof setTimeout> | null = null;
@@ -244,23 +244,19 @@ export const mechStore = (() => {
   // clears on transition OUT, so dragging the preview slider back and forth doesn't
   // strand a stale message.
   function recomputeEncourage(currentBars: number | null, gateId: string | null, inSwapPhase = false) {
-    if (gateId == null || currentBars == null || currentBars <= 0) {
-      if (liveEncourageMessage != null) liveEncourageMessage = null;
-      return;
-    }
     const gate = raids.find((r) => r.id === gateId);
-    const mechs = gate ? filterByDifficulty(gate.mechanics, resolveDifficulty(difficultyMap, gate.raid, raids)) : [];
-    const hasMechs = mechs.some((m) => m.hpBar != null);
-    const anyUpcoming = mechs.some((m) => m.hpBar != null && (m.hpBar ?? 0) <= currentBars);
-    // During a boss-swap phase the listed mechs belong to the first boss and aren't shown,
-    // so the swap boss's bar is effectively an execute phase — keep the encouragement up.
-    if (inSwapPhase || (hasMechs && !anyUpcoming)) {
-      if (liveEncourageMessage == null) {
-        liveEncourageMessage = ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)];
-        dbg(`[overlay] encouragement → "${liveEncourageMessage}"`);
-      }
-    } else if (liveEncourageMessage != null) {
-      liveEncourageMessage = null;
+    const next = nextEncourage(
+      liveEncourageMessage,
+      gate,
+      currentBars,
+      difficultyMap,
+      raids,
+      inSwapPhase,
+      pickEncourage
+    );
+    if (next !== liveEncourageMessage) {
+      if (liveEncourageMessage == null) dbg(`[overlay] encouragement → "${next}"`);
+      liveEncourageMessage = next;
     }
   }
 
@@ -349,7 +345,7 @@ export const mechStore = (() => {
         raids,
         difficultyMap,
         autoShowHide: mechSettings.autoShowHide,
-        pickEncourage: () => ENCOURAGE_POOL[Math.floor(Math.random() * ENCOURAGE_POOL.length)]
+        pickEncourage
       }
     );
     applyState(state);
