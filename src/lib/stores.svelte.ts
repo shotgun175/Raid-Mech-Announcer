@@ -93,7 +93,3 @@ class UpdateInfo {
 
 export const settings = new Settings();
 export const updateInfo = new UpdateInfo();
-
-// Markdown rendering moved to $lib/markdown (pure module): markdownIt for
-// bundled content, markdownItUntrusted for the updater's remote notes.
-export { markdownIt, markdownItUntrusted } from "./markdown";
