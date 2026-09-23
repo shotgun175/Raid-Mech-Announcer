@@ -61,9 +61,11 @@ release-staging/
 # JetBrains IDEs
 .idea/
 
+# Docs: working documents (plans, notes, reference guides), kept on disk only
+docs/
+
 # Superpowers brainstorm sessions
 .superpowers/
-docs/superpowers/
 
 # Playwright MCP session logs
 .playwright-mcp/
