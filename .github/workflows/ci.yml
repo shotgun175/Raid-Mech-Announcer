@@ -35,21 +35,7 @@ jobs:
       # releases v0.2.5–v0.2.10 all built with the lockfile stuck at 0.2.4 and
       # nothing surfaced it. Fail loudly when any version surface disagrees.
       - name: Version coherence (manifests + lockfiles agree)
-        shell: bash
-        run: |
-          node -e '
-            const fs = require("fs");
-            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")).version;
-            const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
-            const conf = JSON.parse(fs.readFileSync("src-tauri/tauri.conf.json", "utf8")).version;
-            const cargo = /(?:^|\n)version = "([0-9.]+)"/.exec(fs.readFileSync("src-tauri/Cargo.toml", "utf8"))[1];
-            const cargoLock = /\[\[package\]\]\nname = "app"\nversion = "([0-9.]+)"/.exec(fs.readFileSync("src-tauri/Cargo.lock", "utf8"))[1];
-            const surfaces = { "package.json": pkg, "package-lock.json (root)": lock.version, "package-lock.json (pkg)": lock.packages[""].version, "tauri.conf.json": conf, "Cargo.toml": cargo, "Cargo.lock (app)": cargoLock };
-            const values = [...new Set(Object.values(surfaces))];
-            console.table ? console.log(surfaces) : null;
-            if (values.length !== 1) { console.error("Version surfaces disagree:", surfaces); process.exit(1); }
-            console.log("All version surfaces agree:", values[0]);
-          '
+        run: node .github/scripts/check-versions.mjs
 
       - name: Type-check (svelte-check)
         run: npm run check
