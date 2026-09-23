@@ -14,15 +14,24 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.2 -->
+<!-- @release v0.3.3 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.2 - July 18th, 2026
+    v0.3.3 - September 23rd, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Security updates to the libraries that show these update notes and download updates. Nothing you use changes.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.2 -->
+### v0.3.2 - July 18th, 2026
 
 #### NEW FEATURES
 
