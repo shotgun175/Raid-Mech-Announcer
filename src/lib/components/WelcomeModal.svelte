@@ -54,9 +54,8 @@
         <p>Before your first raid, a few things to know:</p>
         <ul class="flex flex-col gap-2">
           <li>
-            <span class="font-medium text-white">Antivirus may quarantine the app.</span> It ships a packet-capture driver
-            (WinDivert) that antivirus often flags. If detection isn't working, add this app's folder to your AV exceptions
-            and relaunch.
+            <span class="font-medium text-white">Antivirus may quarantine the app.</span> If it won't start or detection isn't
+            working, add this app's folder to your AV exceptions and relaunch.
           </li>
           <li>
             <span class="font-medium text-white">LOA Logs must be installed and running.</span> This app reads LOA Logs' raid

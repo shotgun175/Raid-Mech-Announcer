@@ -5,7 +5,6 @@ use tauri::{AppHandle, Manager, State, command, generate_handler};
 
 use crate::constants::*;
 use crate::settings::{Settings, SettingsManager};
-use crate::shell::ShellManager;
 use crate::ui::AppHandleExtensions;
 
 mod error;
@@ -16,8 +15,6 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         save_settings,
         get_settings,
         set_clickthrough,
-        remove_driver,
-        unload_driver,
         get_loa_meter_data_path,
         capture_append,
         capture_read_all,
@@ -68,18 +65,6 @@ pub fn set_clickthrough(app_handle: AppHandle, set: bool) -> Result<()> {
     if let Some(overlay_window) = app_handle.get_overlay_window() {
         overlay_window.set_ignore_cursor_events(set)?;
     }
-    Ok(())
-}
-
-#[command]
-pub async fn remove_driver(shell_manager: State<'_, ShellManager>) -> Result<()> {
-    shell_manager.remove_driver().await;
-    Ok(())
-}
-
-#[command]
-pub async fn unload_driver(shell_manager: State<'_, ShellManager>) -> Result<()> {
-    shell_manager.unload_driver().await;
     Ok(())
 }
 

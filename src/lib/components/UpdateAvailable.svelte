@@ -29,7 +29,7 @@
     }
   }
 
-  // Updating tears down WinDivert and relaunches, dropping the LOA Logs link.
+  // Updating relaunches the app, dropping the LOA Logs link.
   // Warn first only when that link is live; otherwise install immediately.
   async function onUpdateClick() {
     if (peerState.isConnected) {
