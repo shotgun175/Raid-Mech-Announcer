@@ -14,15 +14,27 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.5 -->
+<!-- @release v0.3.6 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.5 - September 23rd, 2026
+    v0.3.6 - September 23rd, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- This release is mostly under the hood: smaller builds and cleanup, with nothing new to learn and nothing to set up.
+- The overlay window now loads about 100 KB less code when the app starts. It no longer loads the text formatting that only the Changelog page and update notes use.
+- Removed code the app never used, in Settings and behind the scenes. Everything looks and works as before.
+- For anyone building the app from source: about 400 MB less to install and about 3.9 MB less to download, plus faster automated checks on code changes.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.5 -->
+### v0.3.5 - September 23rd, 2026
 
 #### NEW FEATURES
 
