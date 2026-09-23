@@ -4,33 +4,40 @@ Part of [Lost Ark Tools](https://shotgun175.github.io/).
 
 A transparent always-on-top overlay for Lost Ark that announces raid mechanics from boss HP bars and from-pull timers. Built on top of [LOA Logs](https://github.com/snoww/loa-logs) for live data, with a full raid mechanic editor and TTS/Discord webhook support.
 
-> **Requires LOA Logs to be installed.** The app reads game data from LOA Logs' meter-data directory and receives live boss HP via PeerJS share.
+> **Requires LOA Logs to be installed.** The app checks for LOA Logs' meter-data folder at startup and receives live boss HP from LOA Logs' share URL.
 
 ## Features
 
-- **Mech Overlay** — transparent window that announces upcoming mechanics as HP bars tick down, plus from-pull timer callouts, with 5 overlay variants (Pill, Compact, HUD Strip, Card Stack, Combined)
-- **Raid Editor** — build and manage mechanic patterns per raid gate, with live HP timeline visualization
-- **Pre-built Library** — 44 gates across 17 raid groups with notes sourced from Maxroll guides
-- **TTS Announcements** — edge-tts neural voices (Andrew/Jenny) with Windows SAPI as the last-resort fallback; volume and rate control
-- **Discord Webhooks** — post mechanic announcements as embeds to a Discord channel
-- **Auto Show/Hide** — overlay appears when a matching boss is detected and hides when the encounter ends
-- **PeerJS Integration** — receive live boss HP directly from LOA Logs' share URL
+- **Mech Overlay**: transparent window that announces upcoming mechanics as HP bars tick down, plus from-pull timer callouts, with 5 overlay variants (Minimal Pill, Compact List, HUD Strip, Card Stack, Standard)
+- **Raid Editor**: build and manage mechanic patterns per raid gate, with live HP timeline visualization
+- **Pre-built Library**: 44 gates across 17 raid groups with notes sourced from Maxroll guides
+- **TTS Announcements**: edge-tts neural voices (Andrew/Jenny) with Windows SAPI as the last-resort fallback; volume and rate control
+- **Discord Webhooks**: post mechanic announcements as embeds to a Discord channel
+- **Auto Show/Hide**: overlay appears when a matching boss is detected and hides when the encounter ends
+- **PeerJS Integration**: receive live boss HP directly from LOA Logs' share URL
 
 ## Requirements
 
 - Windows 10/11
 - [LOA Logs](https://github.com/snoww/loa-logs/releases) installed
 - [Microsoft Edge WebView2 Runtime](https://go.microsoft.com/fwlink/p/?LinkId=2124703)
+- Optional, for the Andrew and Jenny voices: Python 3 on PATH plus `pip install edge-tts`; otherwise a built-in Windows voice is used
 - Node.js ≥ 24.0.0 (for development)
 - Rust ≥ 1.90 / `rustup update stable` (for development)
 
+## Install
+
+1. Download `Raid.Mech.Announcer_<version>_x64-setup.exe` from the [latest release](https://github.com/shotgun175/Raid-Mech-Announcer/releases/latest).
+2. Run it and follow the installer.
+3. The app checks for updates when it starts and offers to install them, so you only download it once.
+
 ## Usage
 
-1. Install and launch **LOA Logs** — Raid Mech Announcer reads its meter-data on startup
-2. Launch **Raid Mech Announcer** — the overlay appears in preview mode so you can position it
-3. In LOA Logs, click the **share** button to get a PeerJS URL, then paste it into the connection bar at the bottom of the app
-   - Convenience: while disconnected, the app polls the clipboard once per second and auto-connects when it sees a copied LOA Logs share URL. The clipboard is only pattern-matched for that URL, never stored or sent anywhere.
-4. Enter a raid — the overlay auto-matches the boss and starts announcing mechanics
+1. Install and launch **LOA Logs**. Raid Mech Announcer checks for it on startup.
+2. Launch **Raid Mech Announcer**. The overlay appears in preview mode so you can position it.
+3. In LOA Logs, click **Start Live Sharing** (the screen-share icon). It copies a link, and the app connects automatically (or open Settings from the tray and use the paste button in the connection bar).
+   - How it works: while disconnected, the app polls the clipboard once per second and auto-connects when it sees a copied LOA Logs share URL. The clipboard is only pattern-matched for that URL, never stored or sent anywhere.
+4. Enter a raid. The overlay auto-matches the boss and starts announcing mechanics.
 
 ## Development
 
@@ -47,11 +54,11 @@ npm run format           # Prettier fix
 
 | Variant | Description |
 |---|---|
-| **Pill** | Single next-mechanic pill — minimal footprint |
-| **Compact** | Upcoming mechanics list with HP bar indicators |
+| **Minimal Pill** | Single next-mechanic pill with a minimal footprint |
+| **Compact List** | Upcoming mechanics list with HP bar indicators |
 | **HUD Strip** | Full-width horizontal strip |
 | **Card Stack** | Stacked cards for each upcoming mechanic |
-| **Combined** | HP timeline + upcoming mechanics |
+| **Standard** (default) | HP timeline + upcoming mechanics |
 
 ## Packet capture
 
@@ -63,7 +70,7 @@ A few design decisions and boundaries are easy to trip over when reading the cod
 
 ### Assumptions
 
-- **LOA Logs is installed and running.** The app reads game data tables from LOA Logs' `meter-data` directory at startup and refuses to start without them. Live boss HP arrives over the PeerJS share URL you paste in; LOA Logs exposes no local server or API to poll (the port in its `settings.json` is a packet-capture setting, not a server port).
+- **LOA Logs is installed and running.** The app checks at startup that LOA Logs' `meter-data` folder exists and refuses to start without it. Live boss HP arrives over LOA Logs' PeerJS share URL; LOA Logs exposes no local server or API to poll (the port in its `settings.json` is a packet-capture setting, not a server port).
 - **Windows only.** The WebView2 UI shell and TTS both assume Windows.
 - **Mechanic data is curated from community guides.** The pre-built library is sourced primarily from Maxroll cheat sheets. Mechanic names favor the shorthand players call in party chat, since TTS reads them aloud mid-fight.
 
@@ -75,7 +82,7 @@ A few design decisions and boundaries are easy to trip over when reading the cod
 
 ### Open questions / known limits
 
-- **Coverage is intentionally partial.** The library covers the 42 standard raid gates. Rotating or weekly modes (such as Howl's Hourglass) are out of scope and will correctly produce no overlay match.
+- **Coverage is intentionally partial.** The library covers the 44 standard raid gates. Rotating or weekly modes (such as Howl's Hourglass) are out of scope and will correctly produce no overlay match.
 - **HP thresholds are best-effort.** They approximate community-guide values and can drift slightly between patches. Bosses that rename mid-fight (phase transitions) are handled by sticky gate matching so the overlay does not flip raids on a rename.
 
 ## Credits

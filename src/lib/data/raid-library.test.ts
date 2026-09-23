@@ -38,8 +38,8 @@ describe("LIBRARY key uniqueness", () => {
 });
 
 describe("library size matches the documented counts", () => {
-  // CLAUDE.md and README both claim "44 gates, 251 mechanics". This pins the
-  // claim so the docs and the data cannot silently drift — update BOTH the
+  // CLAUDE.md claims "44 gates, 251 mechanics" and README claims 44 gates. This pins
+  // the claims so the docs and the data cannot silently drift; update BOTH the
   // docs and these numbers when the library grows.
   it("has 44 gates and 251 mechanics", () => {
     expect(LIBRARY.length).toBe(44);
