@@ -217,6 +217,7 @@
           <span style="letter-spacing: 0.08em; text-transform: uppercase;">Simulate HP</span>
           <input
             type="range"
+            aria-label="Simulate HP"
             min={0}
             max={gate.totalBars}
             value={simBar}

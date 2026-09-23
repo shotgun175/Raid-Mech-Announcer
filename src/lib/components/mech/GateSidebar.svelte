@@ -569,21 +569,18 @@
                 requestDeleteRaid(raidName);
               }}
               title="Remove raid (all its gates). Click twice to confirm."
-              style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s; flex-shrink: 0;"
-              onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
-              onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+              class="sb-quiet"
+              style="--sb-hover: #f87171; background: transparent; border: none; cursor: pointer; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s; flex-shrink: 0;"
+              >✕</button
             >
           {/if}
         </div>
         {#each raidsByName[raidName] as gate (gate.id)}
           {@const sel = gate.id === mechStore.selectedGateId}
           {@const isLive = gate.id === mechStore.liveGateId && mechStore.isLive}
-          <!-- svelte-ignore a11y_interactive_supports_focus -->
+          <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
           <div
-            role="row"
-            tabindex="0"
             onclick={() => mechStore.selectGate(gate.id)}
-            onkeydown={(e) => e.key === "Enter" && mechStore.selectGate(gate.id)}
             style="
               width: 100%; text-align: left; padding: 8px 14px 8px 20px; cursor: pointer;
               background: {sel
@@ -613,7 +610,12 @@
               }
             }}
           >
-            <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+            <button
+              type="button"
+              aria-current={sel ? "true" : undefined}
+              onclick={() => mechStore.selectGate(gate.id)}
+              style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; background: none; border: none; padding: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;"
+            >
               {#if mechStore.changedGateIds.has(gate.id)}
                 <span
                   title="Library updates applied - open to view"
@@ -627,7 +629,7 @@
                   >LIVE</span
                 >
               {/if}
-            </div>
+            </button>
             <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
               <span style="font-size: 12px; color: #8a8a8a; font-family: ui-monospace, monospace;"
                 >{gate.mechanics.length}</span
@@ -638,9 +640,9 @@
                   openEditGate(gate);
                 }}
                 title="Edit gate (boss, total HP bars, difficulties, etc.)"
-                style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 11px; padding: 0 2px; line-height: 1; transition: color 0.15s;"
-                onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--color-accent-500)")}
-                onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✎</button
+                class="sb-quiet"
+                style="--sb-hover: var(--color-accent-500); background: transparent; border: none; cursor: pointer; font-size: 11px; padding: 0 2px; line-height: 1; transition: color 0.15s;"
+                >✎</button
               >
               {#if pendingDeleteGateId === gate.id}
                 <button
@@ -659,9 +661,9 @@
                     requestDeleteGate(gate.id);
                   }}
                   title="Remove gate (other gates in this raid are preserved). Click twice to confirm."
-                  style="background: transparent; border: none; cursor: pointer; color: #3a3a3a; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
-                  onmouseenter={(e) => ((e.currentTarget as HTMLElement).style.color = "#f87171")}
-                  onmouseleave={(e) => ((e.currentTarget as HTMLElement).style.color = "#3a3a3a")}>✕</button
+                  class="sb-quiet"
+                  style="--sb-hover: #f87171; background: transparent; border: none; cursor: pointer; font-size: 12px; padding: 0 1px; line-height: 1; transition: color 0.15s;"
+                  >✕</button
                 >
               {/if}
             </div>
@@ -1248,6 +1250,14 @@
 {/if}
 
 <style>
+  /* Sidebar edit/remove icons: 4.0:1 at rest on #0f0f0f, hover color on mouse and keyboard focus. */
+  .sb-quiet {
+    color: #737373;
+  }
+  .sb-quiet:hover,
+  .sb-quiet:focus-visible {
+    color: var(--sb-hover);
+  }
   @keyframes mech-pulse {
     0%,
     100% {

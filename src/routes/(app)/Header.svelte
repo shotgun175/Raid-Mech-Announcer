@@ -40,7 +40,7 @@
 >
   <div class="mx-auto flex max-w-[180rem] items-center justify-between">
     <div class="flex items-center gap-4">
-      <button use:melt={$trigger}>
+      <button use:melt={$trigger} aria-label="Menu">
         <IconMenu class="size-7 hover:opacity-60" />
       </button>
       <div class="text-xl font-medium">{title}</div>
