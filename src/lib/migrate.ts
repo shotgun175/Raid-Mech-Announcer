@@ -17,6 +17,17 @@
 import type { Difficulty, Gate, Mechanic, MechanicSource, Phase, Severity, TriggerType } from "./mech-types";
 
 const SEVERITIES = new Set<Severity>(["normal", "major", "wipe"]);
+const DIFFICULTIES = new Set<Difficulty>([
+  "Solo",
+  "Normal",
+  "Hard",
+  "Nightmare",
+  "Extreme",
+  "TFM",
+  "Stage 1",
+  "Stage 2",
+  "Stage 3"
+]);
 const TRIGGERS = new Set<TriggerType>(["hp", "timer", "hp+timer"]);
 const SOURCES = new Set<MechanicSource>(["maxroll", "verified-in-fight", "estimated"]);
 
@@ -110,7 +121,7 @@ function normalizeGate(g: Record<string, unknown>): Gate {
 
   const deleted = strArray(g.deletedLibraryKeys);
   if (deleted) out.deletedLibraryKeys = deleted;
-  const avail = strArray(g.availableDifficulties);
+  const avail = strArray(g.availableDifficulties)?.filter((d) => DIFFICULTIES.has(d as Difficulty));
   if (avail && avail.length) out.availableDifficulties = avail as Difficulty[];
   return out;
 }

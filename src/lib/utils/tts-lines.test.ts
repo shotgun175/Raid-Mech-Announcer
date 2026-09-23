@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { enumerateTtsLines } from "./tts-lines";
+import { calloutLine, enumerateTtsLines } from "./tts-lines";
 import type { Gate, Mechanic } from "../mech-types";
 
 function mech(overrides: Partial<Mechanic> = {}): Mechanic {
@@ -58,5 +58,17 @@ describe("enumerateTtsLines", () => {
       mech({ id: "c", ttsText: "Silent", hpBar: 50, ttsEnabled: false })
     ]);
     expect(enumerateTtsLines([g], {}, 3, 5)).toEqual(["Same in 3 bars"]);
+  });
+
+  it("warms exactly the line the overlay speaks for a TTS text with trailing space", () => {
+    const g = gate([mech({ ttsText: "Bomb " })]);
+    expect(enumerateTtsLines([g], {}, 10, 5)).toEqual([calloutLine("Bomb ", 10, "bar")]);
+  });
+});
+
+describe("calloutLine", () => {
+  it("trims the text and pluralizes the unit", () => {
+    expect(calloutLine("Bomb ", 10, "bar")).toBe("Bomb in 10 bars");
+    expect(calloutLine("Bomb", 1, "second")).toBe("Bomb in 1 second");
   });
 });

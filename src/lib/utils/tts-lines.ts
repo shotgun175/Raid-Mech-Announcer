@@ -1,6 +1,11 @@
 import type { Gate } from "$lib/mech-types";
 import { filterByDifficulty, resolveDifficulty } from "./difficulty";
 
+/** The spoken callout line, e.g. "Bomb in 10 bars". The TTS cache is keyed on this exact text. */
+export function calloutLine(text: string, n: number, unit: "bar" | "second"): string {
+  return `${text.trim()} in ${n} ${unit}${n === 1 ? "" : "s"}`;
+}
+
 /**
  * The exact set of spoken callout strings for the given raids at the current Timing settings,
  * for pre-generating (warming) the TTS cache. Mirrors the overlay's announce phrasing using the
@@ -31,8 +36,8 @@ export function enumerateTtsLines(
       if (m.ttsEnabled === false) continue;
       const text = (m.ttsText || m.name).trim();
       if (!text) continue;
-      if (m.hpBar != null) lines.add(`${text} in ${bars} bar${bars === 1 ? "" : "s"}`);
-      if (m.repeatSecs != null || m.timerSecs != null) lines.add(`${text} in ${secs} second${secs === 1 ? "" : "s"}`);
+      if (m.hpBar != null) lines.add(calloutLine(text, bars, "bar"));
+      if (m.repeatSecs != null || m.timerSecs != null) lines.add(calloutLine(text, secs, "second"));
     }
   }
   return [...lines];

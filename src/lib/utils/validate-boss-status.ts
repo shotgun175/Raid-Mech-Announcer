@@ -41,7 +41,7 @@ export function validateBossStatusData(data: unknown): BossStatusValidation {
       return { ok: false, reason: `invalid ${key}` };
     }
   }
-  if (o.gateId !== undefined && o.gateId !== null && typeof o.gateId !== "string") {
+  if (o.gateId !== undefined && o.gateId !== null && (typeof o.gateId !== "string" || o.gateId.length > MAX_NAME_LEN)) {
     return { ok: false, reason: "invalid gateId" };
   }
   if (

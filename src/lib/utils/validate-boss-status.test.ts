@@ -31,6 +31,10 @@ describe("validateBossStatusData", () => {
     expect(validateBossStatusData(noName).ok).toBe(false);
   });
 
+  it("drops an overlong gateId", () => {
+    expect(validateBossStatusData({ ...valid, gateId: "x".repeat(5000) }).ok).toBe(false);
+  });
+
   it("drops non-finite or absurd bar counts", () => {
     expect(validateBossStatusData({ ...valid, currentBars: Number.NaN }).ok).toBe(false);
     expect(validateBossStatusData({ ...valid, currentBars: Infinity }).ok).toBe(false);

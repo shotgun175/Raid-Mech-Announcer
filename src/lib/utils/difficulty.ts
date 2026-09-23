@@ -69,7 +69,8 @@ export function baseDifficulty(available: Difficulty[]): Difficulty {
  * no stored pick announces its base tier.
  */
 export function resolveDifficulty(difficultyMap: Record<string, string>, raidName: string, gates: Gate[]): Difficulty {
-  return (difficultyMap[raidName] as Difficulty) ?? baseDifficulty(raidAvailableDifficulties(raidName, gates));
+  const stored = difficultyMap[raidName] as Difficulty;
+  return DIFFICULTY_ORDER.includes(stored) ? stored : baseDifficulty(raidAvailableDifficulties(raidName, gates));
 }
 
 /**

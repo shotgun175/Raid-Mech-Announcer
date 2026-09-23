@@ -5,7 +5,6 @@ export interface AppSettings {
     accentColor: string;
     scale: FontScale;
     logScale: FontScale;
-    betaChannel: boolean;
   };
   shortcuts: {
     hideOverlay: string;

@@ -32,6 +32,7 @@ struct PregenProgress {
 #[derive(Clone, serde::Serialize)]
 struct PregenDone {
     generated: usize,
+    failed: usize,
     total: usize,
     cancelled: bool,
 }
@@ -98,7 +99,7 @@ pub fn stop_tts() {
 
 /// Bulk-warm the cache: synthesize every line in `texts` (skipping any already cached) for the
 /// given voice + rate, off the UI thread with a few workers. Emits `tts:pregen-progress`
-/// ({done,total}) as clips complete and `tts:pregen-done` ({generated,total,cancelled}) at the
+/// ({done,total}) as clips complete and `tts:pregen-done` ({generated,failed,total,cancelled}) at the
 /// end. A no-op if a run is already in progress. Cancel via cancel_tts_pregen().
 #[command]
 pub fn pregenerate_tts(
@@ -125,11 +126,17 @@ pub fn pregenerate_tts(
         let next = Arc::new(AtomicUsize::new(0)); // shared work index
         let done = Arc::new(AtomicUsize::new(0));
         let generated = Arc::new(AtomicUsize::new(0)); // actually synthesized (vs already cached)
+        let failed = Arc::new(AtomicUsize::new(0)); // not cached and synthesis failed
 
         let mut handles = Vec::new();
         for _ in 0..PREGEN_WORKERS.min(total.max(1)) {
-            let (texts, next, done, generated) =
-                (texts.clone(), next.clone(), done.clone(), generated.clone());
+            let (texts, next, done, generated, failed) = (
+                texts.clone(),
+                next.clone(),
+                done.clone(),
+                generated.clone(),
+                failed.clone(),
+            );
             let (cache_dir, vid, rate_str, app) = (
                 cache_dir.clone(),
                 vid.clone(),
@@ -147,10 +154,12 @@ pub fn pregenerate_tts(
                     }
                     let text = &texts[i];
                     let cache_file = cache_dir.join(cache_file_name(text, &vid, &rate_str));
-                    if !cache_file.is_file()
-                        && synthesize_to_cache(text, &vid, &rate_str, &cache_dir).is_some()
-                    {
-                        generated.fetch_add(1, Ordering::SeqCst);
+                    if !cache_file.is_file() {
+                        if synthesize_to_cache(text, &vid, &rate_str, &cache_dir).is_some() {
+                            generated.fetch_add(1, Ordering::SeqCst);
+                        } else {
+                            failed.fetch_add(1, Ordering::SeqCst);
+                        }
                     }
                     let d = done.fetch_add(1, Ordering::SeqCst) + 1;
                     let _ = app.emit("tts:pregen-progress", PregenProgress { done: d, total });
@@ -163,11 +172,15 @@ pub fn pregenerate_tts(
 
         let cancelled = PREGEN_CANCEL.load(Ordering::SeqCst);
         let generated = generated.load(Ordering::SeqCst);
-        log::info!("[tts] pre-generate done: {generated} new of {total} (cancelled={cancelled})");
+        let failed = failed.load(Ordering::SeqCst);
+        log::info!(
+            "[tts] pre-generate done: {generated} new, {failed} failed of {total} (cancelled={cancelled})"
+        );
         let _ = app.emit(
             "tts:pregen-done",
             PregenDone {
                 generated,
+                failed,
                 total,
                 cancelled,
             },
@@ -520,7 +533,7 @@ fn try_sapi(text: &str, voice: &str, volume: u8, rate: f64, epoch: u64) {
 }
 
 /// List voice sources available on this system.
-#[command]
+#[command(async)]
 pub fn list_tts_voices() -> Vec<String> {
     let mut out = vec![];
 
@@ -538,20 +551,20 @@ pub fn list_tts_voices() -> Vec<String> {
                     .filter(|l| l.contains("en-US"))
                     .count();
                 out.push(format!(
-                    "✓ Python edge-tts — {} en-US voices available",
+                    "✓ Python edge-tts: {} en-US voices available",
                     count
                 ));
                 out.push("  en-US-AndrewNeural (Male) ← selected when Andrew".into());
                 out.push("  en-US-JennyNeural  (Female) ← selected when Jenny".into());
             }
             _ => {
-                out.push("✗ Python edge-tts — not installed (run: pip install edge-tts)".into());
+                out.push("✗ Python edge-tts not installed (run: pip install edge-tts)".into());
             }
         }
     }
 
     #[cfg(not(target_os = "windows"))]
-    out.push("✗ Python edge-tts — Windows only in this build".into());
+    out.push("✗ Python edge-tts: Windows only in this build".into());
 
     out.push("---".into());
 

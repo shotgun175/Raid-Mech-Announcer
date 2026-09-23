@@ -168,6 +168,10 @@ describe("resolveDifficulty", () => {
   it("honors an explicit Solo pick", () => {
     expect(resolveDifficulty({ "Act 4: Armoche": "Solo" }, "Act 4: Armoche", [])).toBe("Solo");
   });
+
+  it("ignores a stored value outside the known tiers and falls back to the base tier", () => {
+    expect(resolveDifficulty({ Valtan: "Bogus" }, "Valtan", [])).toBe("Normal");
+  });
 });
 
 describe("DIFFICULTY_STYLE", () => {
