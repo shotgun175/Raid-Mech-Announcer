@@ -14,15 +14,35 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.3 -->
+<!-- @release v0.3.4 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.3 - September 23rd, 2026
+    v0.3.4 - September 23rd, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- The app no longer asks for administrator rights. There is no UAC prompt at launch, install or update, and it runs as a normal program.
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- The live feed from LOA Logs now reconnects on its own after a brief network drop, as long as the share link is still on your clipboard. Clicking Disconnect still keeps you disconnected.
+- If LOA Logs has really stopped sharing, the connection bar now shows an error saying the share can't be reached, instead of "Waiting for LOA Logs share...".
+- A connection attempt that never gets an answer now gives up after 15 seconds with "Connection timed out", so you can press Connect again instead of restarting the app.
+- The reset arrow on an edited Final Act: Kazeros mechanic now keeps its phase badge, and the mechanic no longer shows an "updated by the library" dot on the next launch.
+- The app no longer ships or unpacks the WinDivert driver files, which it never used. Updating removes the old copies from the install folder.
+- The welcome guide drops the "Run as Administrator" tip. Its antivirus tip now says: if the app won't start or detection isn't working, add this app's folder to your antivirus exceptions and relaunch. Its NordVPN tip now says NordVPN conflicts with LOA Logs' capture driver, so quit NordVPN fully (and reboot) if detection fails.
+- The app no longer stops LOA Logs' capture driver when it starts, quits or updates.
+- Security and stability updates to the app framework and the libraries it is built with.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.3 -->
+### v0.3.3 - September 23rd, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
