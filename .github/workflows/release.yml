@@ -21,12 +21,18 @@ on:
     tags:
       - "v*.*.*"
 
+# One release at a time: a second run queues instead of racing the version bump.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   release:
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
@@ -71,6 +77,55 @@ jobs:
             echo "new_tag=$TAG" >> "$GITHUB_OUTPUT"
             echo "should_bump=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable @ 2026-06
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Rust target
+        uses: swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: "src-tauri -> target"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      # Inherit the CI gates: a tag pushed on a broken commit must not ship a
+      # signed build to the auto-updater audience. (The frontend build itself
+      # runs inside tauri-action below.) They run before the bump step so a red
+      # gate leaves no bump commit or tag on main.
+      - name: Type-check (svelte-check)
+        run: npm run check
+
+      - name: Prettier check
+        run: npm run lint
+
+      - name: Frontend tests (vitest)
+        run: npm test
+
+      # The cargo gates compile the Tauri shell, whose build script reads
+      # frontendDist (../build); build the frontend first so it exists.
+      - name: Build frontend
+        run: npm run build
+
+      - name: Rust formatting (cargo fmt)
+        working-directory: src-tauri
+        run: cargo fmt --check
+
+      - name: Rust lint (cargo clippy)
+        working-directory: src-tauri
+        run: cargo clippy -- -D warnings
+
+      - name: Rust tests (cargo test)
+        working-directory: src-tauri
+        run: cargo test
 
       - name: Bump version + stamp changelog, commit, tag, push
         if: steps.version.outputs.should_bump == 'true'
@@ -281,54 +336,6 @@ jobs:
           git push origin HEAD:main
           git push origin "$TAG"
 
-      - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version: "24"
-          cache: "npm"
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable @ 2026-06
-        with:
-          components: clippy, rustfmt
-
-      - name: Cache Rust target
-        uses: swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
-        with:
-          workspaces: "src-tauri -> target"
-
-      - name: Install npm dependencies
-        run: npm ci
-
-      # Inherit the CI gates: a tag pushed on a broken commit must not ship a
-      # signed build to the auto-updater audience. (The frontend build itself
-      # runs inside tauri-action below.)
-      - name: Type-check (svelte-check)
-        run: npm run check
-
-      - name: Prettier check
-        run: npm run lint
-
-      - name: Frontend tests (vitest)
-        run: npm test
-
-      # The cargo gates compile the Tauri shell, whose build script reads
-      # frontendDist (../build) — build the frontend first so it exists.
-      - name: Build frontend
-        run: npm run build
-
-      - name: Rust formatting (cargo fmt)
-        working-directory: src-tauri
-        run: cargo fmt --check
-
-      - name: Rust lint (cargo clippy)
-        working-directory: src-tauri
-        run: cargo clippy -- -D warnings
-
-      - name: Rust tests (cargo test)
-        working-directory: src-tauri
-        run: cargo test
-
       - name: Resolve release notes
         id: notes
         shell: bash
@@ -389,6 +396,11 @@ jobs:
             echo "$NOTES_CLEAN"
             echo "RELEASE_NOTES_EOF"
           } >> "$GITHUB_OUTPUT"
+
+      # The bump rewrites six version surfaces and tauri-action builds
+      # latest.json from them: fail before signing if any of them disagree.
+      - name: Check versions
+        run: node .github/scripts/check-versions.mjs
 
       - name: Build, sign, and publish release
         # SHA-pinned: this action runs with the updater signing key and a
