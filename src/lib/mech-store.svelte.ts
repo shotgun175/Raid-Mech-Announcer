@@ -1,5 +1,5 @@
 import { emit } from "@tauri-apps/api/event";
-import { buildDefaultRaids, buildLibraryGate, LIBRARY } from "./data/raid-library";
+import { buildDefaultRaids, buildLibraryGate, LIBRARY, libraryMechFields } from "./data/raid-library";
 import type { BossStatusData, Gate, MechSettings } from "./mech-types";
 import { filterByDifficulty, resolveDifficulty } from "./utils/difficulty";
 import { bestGateMatch, isFinalGateOfRaid } from "./utils/gate-match";
@@ -461,6 +461,7 @@ export const mechStore = (() => {
       liveBossName = null;
       liveGateId = null;
       liveEncourageMessage = null;
+      livePhase = null;
       liveBossDied = false;
       stopHeartbeat();
       broadcastBossStatus(null);
@@ -524,18 +525,7 @@ export const mechStore = (() => {
       if (!libMech) return;
       const restored: Gate["mechanics"][number] = {
         ...userMech,
-        name: libMech.name,
-        severity: libMech.severity,
-        hpBar: libMech.hpBar ?? null,
-        timerSecs: libMech.timerSecs ?? null,
-        phase: null,
-        repeatSecs: libMech.repeatSecs ?? null,
-        triggerType: libMech.triggerType,
-        ttsEnabled: true,
-        ttsText: libMech.name,
-        notes: libMech.notes ?? "",
-        difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
-        source: libMech.source ?? libEntry.source,
+        ...libraryMechFields(libMech, libEntry.source),
         userEdited: false
       };
       raids = raids.map((r) =>

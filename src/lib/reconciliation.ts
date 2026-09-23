@@ -15,7 +15,7 @@
 //     - Sort mechanics to library order; custom mechs at end in stable order.
 
 import type { Gate, Mechanic } from "./mech-types";
-import { bossHpMap, type LibraryGate, type LibraryMechanic } from "./data/raid-library";
+import { bossHpMap, libraryMechFields, type LibraryGate, type LibraryMechanic } from "./data/raid-library";
 
 export interface ReconcileResult {
   raids: Gate[];
@@ -105,21 +105,7 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
           continue;
         }
         // Overwrite from library; preserve id/key/origin/userEdited.
-        const merged: Mechanic = {
-          ...um,
-          name: libMech.name,
-          severity: libMech.severity,
-          hpBar: libMech.hpBar ?? null,
-          timerSecs: libMech.timerSecs ?? null,
-          phase: libMech.phase ?? null,
-          repeatSecs: libMech.repeatSecs ?? null,
-          triggerType: libMech.triggerType,
-          ttsEnabled: true,
-          ttsText: libMech.name,
-          notes: libMech.notes ?? "",
-          difficulties: libMech.difficulties?.length ? libMech.difficulties : undefined,
-          source: libMech.source ?? libGate.source
-        };
+        const merged: Mechanic = { ...um, ...libraryMechFields(libMech, libGate.source) };
         if (mechFieldsDiffer(um, merged)) {
           gateChanged = true;
           changedMechIds.add(merged.id);
@@ -139,18 +125,7 @@ export function reconcile(library: LibraryGate[], userRaids: Gate[]): ReconcileR
           key: lm.key,
           origin: "library",
           userEdited: false,
-          name: lm.name,
-          severity: lm.severity,
-          hpBar: lm.hpBar ?? null,
-          timerSecs: lm.timerSecs ?? null,
-          phase: lm.phase ?? null,
-          repeatSecs: lm.repeatSecs ?? null,
-          triggerType: lm.triggerType,
-          ttsEnabled: true,
-          ttsText: lm.name,
-          notes: lm.notes ?? "",
-          difficulties: lm.difficulties?.length ? lm.difficulties : undefined,
-          source: lm.source ?? libGate.source
+          ...libraryMechFields(lm, libGate.source)
         });
         gateChanged = true;
       }
