@@ -22,16 +22,22 @@ export const shortcuts: Record<string, Shortcut> = {
 // settings.app.shortcuts, so it's registered separately below. Its handler just emits
 // mech:confirm; the overlay listens and resyncs the currently-active repeating mech.
 export async function registerShortcuts() {
+  settings.failedShortcuts = [];
   try {
     await unregisterAll();
     for (const sc of Object.entries(shortcuts)) {
       const shortcut = settings.app.shortcuts[sc[0] as keyof typeof settings.app.shortcuts];
       if (shortcut) {
-        await register(shortcut, (event) => {
-          if (event.state === "Pressed") {
-            sc[1].action();
-          }
-        });
+        try {
+          await register(shortcut, (event) => {
+            if (event.state === "Pressed") {
+              sc[1].action();
+            }
+          });
+        } catch (e) {
+          settings.failedShortcuts.push(shortcut);
+          throw e;
+        }
       }
     }
   } catch (e) {
@@ -45,6 +51,7 @@ export async function registerShortcuts() {
         if (event.state === "Pressed") emit("mech:confirm", null).catch(() => {});
       });
     } catch (e) {
+      settings.failedShortcuts.push(confirmHotkey);
       console.warn("confirm hotkey registration failed:", e);
     }
   }

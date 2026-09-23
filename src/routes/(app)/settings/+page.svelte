@@ -740,11 +740,14 @@
           Amazon Games.
         </div>
       {:else if currentTab === "Shortcuts"}
-        <div
-          class="w-fit rounded-md border border-amber-500/30 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-400"
-        >
-          Shortcuts are paused while on this tab
-        </div>
+        {#snippet failedNote(key: string)}
+          {#if key && settings.failedShortcuts.includes(key)}
+            <div class="text-xs text-red-400">
+              Couldn't register: another app is using this key (LOA Logs uses Ctrl+Up for Show Logs by default). Pick
+              another.
+            </div>
+          {/if}
+        {/snippet}
 
         <!-- Confirm Pattern -->
         <div class="flex flex-col gap-1">
@@ -767,6 +770,7 @@
               >
             {/if}
           </div>
+          {@render failedNote(s.confirmHotkey)}
         </div>
 
         <!-- Hide Overlay shortcut -->
@@ -791,6 +795,7 @@
               >
             {/if}
           </div>
+          {@render failedNote(settings.app.shortcuts.hideOverlay)}
         </div>
       {/if}
     </div>
