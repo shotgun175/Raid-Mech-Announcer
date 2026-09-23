@@ -14,6 +14,7 @@ use crate::context::AppContext;
 use crate::handlers::generate_handlers;
 use crate::settings::SettingsManager;
 use crate::setup::setup;
+use crate::ui::AppHandleExtensions;
 use crate::ui::on_window_event;
 use anyhow::Result;
 use tauri::async_runtime;
@@ -69,7 +70,13 @@ async fn main() -> Result<()> {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {}))
+        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            if let Some(w) = app.get_settings_window() {
+                let _ = w.show();
+                let _ = w.unminimize();
+                let _ = w.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_window_state::Builder::new()

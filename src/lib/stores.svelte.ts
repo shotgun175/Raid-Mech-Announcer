@@ -17,6 +17,8 @@ const mergeSettings = (defaultSettings: any, storageSettings: any) => {
 
 class Settings {
   app = $state(defaultSettings);
+  // Keys the OS refused at the last registerShortcuts() (another app holds them). Not persisted.
+  failedShortcuts: string[] = $state([]);
   lockUpdate = false;
 
   constructor() {
@@ -67,7 +69,7 @@ const defaultSettings: AppSettings = {
     logScale: "1"
   },
   shortcuts: {
-    hideOverlay: "Control+ArrowUp"
+    hideOverlay: "Control+Shift+ArrowUp"
   }
 };
 

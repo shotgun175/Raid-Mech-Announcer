@@ -14,7 +14,7 @@
   import { enumerateTtsLines } from "$lib/utils/tts-lines";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
-  import { registerShortcuts } from "$lib/utils/shortcuts";
+  import { failedShortcutNote, registerShortcuts } from "$lib/utils/shortcuts";
   import { speakTts } from "$lib/utils/tts";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { onMount, onDestroy } from "svelte";
@@ -740,11 +740,11 @@
           Amazon Games.
         </div>
       {:else if currentTab === "Shortcuts"}
-        <div
-          class="w-fit rounded-md border border-amber-500/30 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-400"
-        >
-          Shortcuts are paused while on this tab
-        </div>
+        {#snippet failedNote(key: string)}
+          {#if key && settings.failedShortcuts.includes(key)}
+            <div class="text-xs text-red-400">{failedShortcutNote(key)}</div>
+          {/if}
+        {/snippet}
 
         <!-- Confirm Pattern -->
         <div class="flex flex-col gap-1">
@@ -767,6 +767,7 @@
               >
             {/if}
           </div>
+          {@render failedNote(s.confirmHotkey)}
         </div>
 
         <!-- Hide Overlay shortcut -->
@@ -791,6 +792,7 @@
               >
             {/if}
           </div>
+          {@render failedNote(settings.app.shortcuts.hideOverlay)}
         </div>
       {/if}
     </div>

@@ -15,6 +15,16 @@ export const shortcuts: Record<string, Shortcut> = {
   }
 };
 
+// LOA Logs holds Ctrl+Up (Show Logs) by default. The old Hide Overlay default saved it as
+// "Control+ArrowUp"; the Settings key recorder writes the same key as "Ctrl+ArrowUp".
+const LOA_LOGS_SHOW_LOGS_KEYS = ["Control+ArrowUp", "Ctrl+ArrowUp"];
+
+/** Red note shown under a hotkey that failed to register; names LOA Logs only for the key it holds. */
+export function failedShortcutNote(key: string): string {
+  const loaLogs = LOA_LOGS_SHOW_LOGS_KEYS.includes(key) ? " (LOA Logs uses Ctrl+Up for Show Logs by default)" : "";
+  return `Couldn't register: another app is using this key${loaLogs}. Pick another.`;
+}
+
 // Single registration path for ALL global shortcuts. It begins with one unregisterAll(),
 // so the confirm-pattern hotkey MUST be (re)registered here too — otherwise any
 // registerShortcuts() call (app boot, leaving Settings, editing another shortcut) would
@@ -22,16 +32,22 @@ export const shortcuts: Record<string, Shortcut> = {
 // settings.app.shortcuts, so it's registered separately below. Its handler just emits
 // mech:confirm; the overlay listens and resyncs the currently-active repeating mech.
 export async function registerShortcuts() {
+  settings.failedShortcuts = [];
   try {
     await unregisterAll();
     for (const sc of Object.entries(shortcuts)) {
       const shortcut = settings.app.shortcuts[sc[0] as keyof typeof settings.app.shortcuts];
       if (shortcut) {
-        await register(shortcut, (event) => {
-          if (event.state === "Pressed") {
-            sc[1].action();
-          }
-        });
+        try {
+          await register(shortcut, (event) => {
+            if (event.state === "Pressed") {
+              sc[1].action();
+            }
+          });
+        } catch (e) {
+          settings.failedShortcuts.push(shortcut);
+          throw e;
+        }
       }
     }
   } catch (e) {
@@ -45,6 +61,7 @@ export async function registerShortcuts() {
         if (event.state === "Pressed") emit("mech:confirm", null).catch(() => {});
       });
     } catch (e) {
+      settings.failedShortcuts.push(confirmHotkey);
       console.warn("confirm hotkey registration failed:", e);
     }
   }

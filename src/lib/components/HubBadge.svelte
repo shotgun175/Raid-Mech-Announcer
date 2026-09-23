@@ -19,7 +19,7 @@
   href={HUB_URL}
   target="_blank"
   rel="noopener"
-  aria-label="Part of Lost Ark Tools - see all tools"
+  aria-label="Part of Lost Ark Tools, see all tools"
   onclick={openHub}
 >
   <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">

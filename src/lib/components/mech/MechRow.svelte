@@ -107,18 +107,20 @@
 
   <!-- Name + notes -->
   <div style="padding-right: 12px; min-width: 0;">
-    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-      {#if mechStore.changedMechIds.has(mech.id)}
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; row-gap: 2px; margin-bottom: 2px;">
+      <span style="display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%;">
+        {#if mechStore.changedMechIds.has(mech.id)}
+          <span
+            title="This mech was updated by the latest library version. Click anywhere on the row to dismiss this dot."
+            style="flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent-500); box-shadow: 0 0 4px var(--color-accent-500);"
+          ></span>
+        {/if}
         <span
-          title="This mech was updated by the latest library version. Click anywhere on the row to dismiss this dot."
-          style="flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent-500); box-shadow: 0 0 4px var(--color-accent-500);"
-        ></span>
-      {/if}
-      <span
-        style="font-weight: 600; font-size: 13px; color: {isNext
-          ? 'var(--color-accent-500)'
-          : '#fafafa'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{mech.name}</span
-      >
+          style="font-weight: 600; font-size: 13px; color: {isNext
+            ? 'var(--color-accent-500)'
+            : '#fafafa'}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{mech.name}</span
+        >
+      </span>
       {#if isNext}
         <span
           style="font-size: 12px; color: var(--color-accent-500); font-weight: 700; letter-spacing: 0.06em; flex-shrink: 0;"
