@@ -12,6 +12,7 @@
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
   const WELCOME_KEY = "rma-welcome-dismissed";
 
@@ -23,6 +24,10 @@
   onMount(() => {
     if (browser && !localStorage.getItem(WELCOME_KEY)) {
       $open = true;
+      // Settings starts hidden; surface it so the first-run guide is actually seen.
+      const win = getCurrentWebviewWindow();
+      win.show().catch(() => {});
+      win.setFocus().catch(() => {});
     }
   });
 
@@ -52,6 +57,10 @@
       <div use:melt={$description} class="flex flex-col gap-3 text-sm text-neutral-300">
         <p>Before your first raid, a few things to know:</p>
         <ul class="flex flex-col gap-2">
+          <li>
+            <span class="font-medium text-white">Connect to LOA Logs:</span> in LOA Logs, click Start Live Sharing (the screen-share
+            icon). It copies a link, and this app connects automatically within a second.
+          </li>
           <li>
             <span class="font-medium text-white">Antivirus may quarantine the app.</span> If it won't start or detection isn't
             working, add this app's folder to your AV exceptions and relaunch.
