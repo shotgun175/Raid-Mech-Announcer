@@ -16,6 +16,7 @@ pub fn generate_handlers() -> Box<dyn Fn(Invoke) -> bool + Send + Sync> {
         get_settings,
         set_clickthrough,
         get_loa_meter_data_path,
+        get_loa_logs_shortcuts,
         capture_append,
         capture_read_all,
         capture_clear,
@@ -71,6 +72,11 @@ pub fn set_clickthrough(app_handle: AppHandle, set: bool) -> Result<()> {
 #[command]
 pub fn get_loa_meter_data_path() -> Option<String> {
     crate::app::loa_detect::find_loa_meter_data().map(|p| p.display().to_string())
+}
+
+#[command]
+pub fn get_loa_logs_shortcuts() -> std::collections::HashMap<String, String> {
+    crate::app::loa_detect::read_loa_shortcuts()
 }
 
 #[command]
