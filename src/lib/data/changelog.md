@@ -10,21 +10,28 @@
 
 #### NEW FEATURES
 
-- Under the Hide Overlay shortcut, the Shortcuts tab now shows in amber which keys LOA Logs currently has bound (for example Ctrl+ArrowUp for Hide Meter), read from LOA Logs' own settings each time the tab opens, so you can steer clear of them. A key LOA Logs also holds is called out as such.
-
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->
 
-<!-- @release v0.3.9 -->
+<!-- @release v0.3.10 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.9 - September 24th, 2026
+    v0.3.10 - September 24th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- Under the Hide Overlay shortcut, the Shortcuts tab now shows in amber which keys LOA Logs currently has bound (for example Ctrl+ArrowUp for Hide Meter), read from LOA Logs' own settings each time the tab opens, so you can steer clear of them. A key LOA Logs also holds is called out as such.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.9 -->
+### v0.3.9 - September 24th, 2026
 
 #### NEW FEATURES
 
