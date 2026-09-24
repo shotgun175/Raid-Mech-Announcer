@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- Under the Hide Overlay shortcut, the Shortcuts tab now shows in amber which keys LOA Logs currently has bound (for example Ctrl+ArrowUp for Hide Meter), read from LOA Logs' own settings each time the tab opens, so you can steer clear of them. A key LOA Logs also holds is called out as such.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->

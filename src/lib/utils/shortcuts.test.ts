@@ -17,7 +17,10 @@ vi.mock("@tauri-apps/api/event", () => ({ emit: vi.fn(() => Promise.resolve()) }
 import {
   failedShortcutNote,
   loaLogsActionFor,
+  loaLogsActionLabel,
   loaLogsConflictNote,
+  loaLogsKeyList,
+  loaLogsKeysNote,
   normalizeKey,
   registerShortcuts
 } from "./shortcuts";
@@ -89,5 +92,32 @@ describe("LOA Logs bindings", () => {
   it("falls back to the Ctrl+Up default when LOA Logs' settings are unavailable", () => {
     expect(failedShortcutNote("Control+ArrowUp", {})).toContain("Show Logs by default");
     expect(loaLogsConflictNote("Control+ArrowUp", {})).toBeNull();
+  });
+});
+
+describe("loaLogsKeysNote", () => {
+  const bindings = { showLogs: "", resetSession: "Ctrl+Shift+R", hideMeter: "Ctrl+ArrowUp" };
+
+  it("labels known actions, splits unknown ones on case, drops unbound and sorts by label", () => {
+    expect(loaLogsActionLabel("hideMeter")).toBe("Hide Meter");
+    expect(loaLogsActionLabel("someNewThing")).toBe("Some New Thing");
+    expect(loaLogsKeyList(bindings)).toEqual([
+      ["Hide Meter", "Ctrl+ArrowUp"],
+      ["Reset Session", "Ctrl+Shift+R"]
+    ]);
+  });
+
+  it("lists LOA Logs' keys under a key that does not clash, including an unrecorded one", () => {
+    const listed = "LOA Logs currently uses Ctrl+ArrowUp (Hide Meter), Ctrl+Shift+R (Reset Session).";
+    expect(loaLogsKeysNote("Ctrl+ArrowDown", bindings)).toBe(listed);
+    expect(loaLogsKeysNote("", bindings)).toBe(listed);
+  });
+
+  it("uses the clash wording when the key is one LOA Logs holds, and stays quiet with no bindings", () => {
+    expect(loaLogsKeysNote("Control+ArrowUp", bindings)).toBe(
+      "LOA Logs has this key bound to Hide Meter. Whichever app starts first gets it. Pick another."
+    );
+    expect(loaLogsKeysNote("Ctrl+ArrowDown", {})).toBeNull();
+    expect(loaLogsKeysNote("Ctrl+ArrowDown", { showLogs: "" })).toBeNull();
   });
 });
