@@ -10,21 +10,28 @@
 
 #### NEW FEATURES
 
-- The Shortcuts tab now reads LOA Logs' own settings file and warns you when one of your keys is also bound in LOA Logs, naming the LOA Logs action it belongs to (for example Hide Meter). Whichever app starts first gets a shared key, so the warning shows even when the key registered fine; if it did not register, the red note now names that action too.
-
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->
 
-<!-- @release v0.3.8 -->
+<!-- @release v0.3.9 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.8 - September 24th, 2026
+    v0.3.9 - September 24th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- The Shortcuts tab now reads LOA Logs' own settings file and warns you when one of your keys is also bound in LOA Logs, naming the LOA Logs action it belongs to (for example Hide Meter). Whichever app starts first gets a shared key, so the warning shows even when the key registered fine; if it did not register, the red note now names that action too.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.8 -->
+### v0.3.8 - September 24th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
