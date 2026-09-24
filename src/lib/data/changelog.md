@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- The "No update available" message shown by Check for updates now uses your accent colour. It was always green, whatever accent you picked.
+
 <!-- @release-end -->
 
 <!-- @release v0.3.7 -->
