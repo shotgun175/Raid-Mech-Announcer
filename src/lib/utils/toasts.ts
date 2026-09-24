@@ -5,7 +5,7 @@ export const noUpdateAvailable: AddToastProps<ToastData> = {
   data: {
     title: "",
     description: "No update available, please check again later",
-    color: "border-green-500/30"
+    color: "border-accent-500/30"
   },
   closeDelay: 2000
 };
