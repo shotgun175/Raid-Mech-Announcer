@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- The Shortcuts tab now reads LOA Logs' own settings file and warns you when one of your keys is also bound in LOA Logs, naming the LOA Logs action it belongs to (for example Hide Meter). Whichever app starts first gets a shared key, so the warning shows even when the key registered fine; if it did not register, the red note now names that action too.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->

@@ -14,6 +14,8 @@ export const pregenerateTts = (texts: string[], voice: string, rate: number): Pr
   invoke("pregenerate_tts", { texts, voice, rate });
 export const cancelTtsPregen = (): Promise<void> => invoke("cancel_tts_pregen");
 export const getLOAMeterDataPath = (): Promise<string | null> => invoke("get_loa_meter_data_path");
+// LOA Logs' saved global shortcuts (action -> key) from its settings.json; empty when unavailable.
+export const getLoaLogsShortcuts = (): Promise<Record<string, string>> => invoke("get_loa_logs_shortcuts");
 export const toggleOverlayWindow = (): Promise<void> => invoke("toggle_overlay_window");
 
 // Fight-capture log (rolling JSONL of the raw boss-status feed, for replay/diagnostics)
