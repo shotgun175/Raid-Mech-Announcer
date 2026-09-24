@@ -15,7 +15,7 @@
   import { enumerateTtsLines } from "$lib/utils/tts-lines";
   import { mechStore } from "$lib/mech-store.svelte";
   import { settings } from "$lib/stores.svelte";
-  import { failedShortcutNote, loaLogsConflictNote, registerShortcuts } from "$lib/utils/shortcuts";
+  import { failedShortcutNote, loaLogsKeysNote, registerShortcuts } from "$lib/utils/shortcuts";
   import { speakTts } from "$lib/utils/tts";
   import { createDialog, melt } from "@melt-ui/svelte";
   import { onMount, onDestroy } from "svelte";
@@ -754,8 +754,8 @@
         {#snippet failedNote(key: string)}
           {#if key && settings.failedShortcuts.includes(key)}
             <div class="text-xs text-red-400">{failedShortcutNote(key, loaLogsKeys)}</div>
-          {:else if key && loaLogsConflictNote(key, loaLogsKeys)}
-            <div class="text-xs text-amber-400">{loaLogsConflictNote(key, loaLogsKeys)}</div>
+          {:else if loaLogsKeysNote(key, loaLogsKeys)}
+            <div class="text-xs text-amber-400">{loaLogsKeysNote(key, loaLogsKeys)}</div>
           {/if}
         {/snippet}
 

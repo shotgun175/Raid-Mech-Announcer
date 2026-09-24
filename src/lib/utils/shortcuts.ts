@@ -38,15 +38,26 @@ export function normalizeKey(key: string): string {
     .join("+");
 }
 
+/** Display label for a LOA Logs action name ("hideMeter" -> "Hide Meter"); unknown names are split on case. */
+export function loaLogsActionLabel(action: string): string {
+  const humanized = action.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
+  return LOA_LOGS_ACTION_LABELS[action] ?? humanized;
+}
+
+/** LOA Logs' bound keys as [label, key] pairs in a stable order; unbound actions (empty keys) are dropped. */
+export function loaLogsKeyList(bindings: Record<string, string>): [string, string][] {
+  return Object.entries(bindings)
+    .filter(([, key]) => !!key)
+    .map(([action, key]): [string, string] => [loaLogsActionLabel(action), key])
+    .sort((a, b) => a[0].localeCompare(b[0]));
+}
+
 /** The LOA Logs action bound to `key` in its saved settings (see api.getLoaLogsShortcuts), or null. */
 export function loaLogsActionFor(key: string, bindings: Record<string, string>): string | null {
   if (!key) return null;
   const wanted = normalizeKey(key);
   for (const [action, bound] of Object.entries(bindings)) {
-    if (bound && normalizeKey(bound) === wanted) {
-      const humanized = action.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
-      return LOA_LOGS_ACTION_LABELS[action] ?? humanized;
-    }
+    if (bound && normalizeKey(bound) === wanted) return loaLogsActionLabel(action);
   }
   return null;
 }
@@ -55,6 +66,17 @@ export function loaLogsActionFor(key: string, bindings: Record<string, string>):
 export function loaLogsConflictNote(key: string, bindings: Record<string, string>): string | null {
   const action = loaLogsActionFor(key, bindings);
   return action ? `LOA Logs has this key bound to ${action}. Whichever app starts first gets it. Pick another.` : null;
+}
+
+/** Amber note under every shortcut: the clash wording when `key` is one LOA Logs holds, otherwise a plain list of
+ *  the keys LOA Logs currently has bound so the user can steer clear of them. Null when LOA Logs has none (or its
+ *  settings could not be read). LOA Logs normally starts first, so this note, not the red one, is what users see. */
+export function loaLogsKeysNote(key: string, bindings: Record<string, string>): string | null {
+  const clash = loaLogsConflictNote(key, bindings);
+  if (clash) return clash;
+  const list = loaLogsKeyList(bindings);
+  if (!list.length) return null;
+  return `LOA Logs currently uses ${list.map(([label, bound]) => `${bound} (${label})`).join(", ")}.`;
 }
 
 /** Red note under a hotkey that failed to register. Names the LOA Logs action when its settings hold the key;
