@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- The "No update available" message shown by Check for updates now uses your accent colour. It was always green, whatever accent you picked.
-
 <!-- @release-end -->
 
-<!-- @release v0.3.7 -->
+<!-- @release v0.3.8 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.7 - September 23rd, 2026
+    v0.3.8 - September 24th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- The "No update available" message shown by Check for updates now uses your accent colour. It was always green, whatever accent you picked.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.7 -->
+### v0.3.7 - September 23rd, 2026
 
 #### NEW FEATURES
 
