@@ -10,7 +10,7 @@ A transparent always-on-top overlay for Lost Ark that announces raid mechanics f
 
 - **Mech Overlay**: transparent window that announces upcoming mechanics as HP bars tick down, plus from-pull timer callouts, with 5 overlay variants (Minimal Pill, Compact List, HUD Strip, Card Stack, Standard)
 - **Raid Editor**: build and manage mechanic patterns per raid gate, with live HP timeline visualization
-- **Pre-built Library**: 44 gates across 17 raid groups with notes sourced from Maxroll guides
+- **Pre-built Library**: 46 gates across 18 raid groups with notes sourced from Maxroll guides (Belgardin is an early draft from Memorizer's guide videos)
 - **TTS Announcements**: edge-tts neural voices (Andrew/Jenny) with Windows SAPI as the last-resort fallback; volume and rate control
 - **Discord Webhooks**: post mechanic announcements as embeds to a Discord channel
 - **Auto Show/Hide**: overlay appears when a matching boss is detected and hides when the encounter ends
@@ -82,7 +82,7 @@ A few design decisions and boundaries are easy to trip over when reading the cod
 
 ### Open questions / known limits
 
-- **Coverage is intentionally partial.** The library covers the 44 standard raid gates. Rotating or weekly modes (such as Howl's Hourglass) are out of scope and will correctly produce no overlay match.
+- **Coverage is intentionally partial.** The library covers the 46 standard raid gates. Rotating or weekly modes (such as Howl's Hourglass) are out of scope and will correctly produce no overlay match.
 - **HP thresholds are best-effort.** They approximate community-guide values and can drift slightly between patches. Bosses that rename mid-fight (phase transitions) are handled by sticky gate matching so the overlay does not flip raids on a rename.
 
 ## Credits

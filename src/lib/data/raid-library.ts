@@ -74,7 +74,9 @@ export const bossHpMap: Record<string, number> = {
   "Witch of Agony, Serca": 300,
   "Corvus Tul Rak": 300,
   "Archbishop Arcenos": 200,
-  "Arcenos, Vanguard of Fanaticism": 200
+  "Arcenos, Vanguard of Fanaticism": 200,
+  "Belgardin": 300,
+  "Phetus an Kragma": 380
 };
 
 export interface LibraryMechanic {
@@ -3215,6 +3217,148 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Stage 1", "Stage 2", "Stage 3"],
         notes:
           "After depleting the stagger bar, destroy the boss's bell to extend the damage phase. Stagger-driven — no trigger set."
+      }
+    ]
+  },
+  // ── Belgardin (releaseOrder 20) ─────────────────────────────────────────────
+  // DRAFT, drafted 2026-10-09 ahead of the ~2026-10-21 global launch from Memorizer's
+  // KR guide videos (G1 youtu.be/wyY55AEN63E, G2 youtu.be/8tSIChVEYwg); no Maxroll
+  // guide existed yet. Before shipping:
+  //  - `boss` strings are PLACEHOLDERS ("Belgardin" from the roadmap, "Phetus an Kragma"
+  //    from Inven Global). Replace with the exact names in LOA Logs' encounters.json /
+  //    Npc.json once it ships the raid, and rename the matching bossHpMap keys.
+  //  - Mechanic names are provisional descriptions; swap in community shorthand once
+  //    Maxroll cheat sheets exist. `tauntable` is unverified.
+  // No Solo mode (8-player only: Normal 1750 / Hard 1770 / Nightmare 1780). Rumbles have
+  // no HP or timer trigger, so no entry (G1: Holding Just Guard, hold G at the snipe
+  // effect; G2: horizontal, guard where he moves). G2's periodic grab/flame patterns are
+  // likewise untimed. The G1 enhanced coffin repeat (~5 min later) is notes-only: too
+  // vague to time. The transcripts have caption gaps, so skim the videos before shipping.
+  {
+    encounterKey: "Belgardin G1",
+    source: "estimated",
+    raid: "Belgardin",
+    gate: 1,
+    releaseOrder: 20,
+    availableDifficulties: ["Normal", "Hard", "Nightmare"],
+    boss: "Belgardin",
+    bossType: "HUMAN",
+    weakness: "Weak to Holy",
+    tauntable: false,
+    mechanics: [
+      {
+        key: "belgardin-g1-coffin-stagger",
+        name: "Coffin Stagger",
+        hpBar: 270,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Purple puddles fall and a coffin appears on each of the four sides: hide behind any coffin and stagger it, or get stunned. Repeats enhanced about 5 minutes later: two players per coffin, as fast as possible. Ghosts also walk in from each direction toward the center (twice); shots chase players, so drag the shots into the ghosts, or the ghosts explode in the center for heavy damage plus a permanent debuff stack. Gate-wide permanent debuff kills at 6 stacks on Nightmare, 10 on Normal/Hard."
+      },
+      {
+        key: "belgardin-g1-diagonal-coffins",
+        name: "Diagonal Coffins",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Cutscene, then puddles fall (supports be careful). Just Guard toward the boss about 2s after the flash. Line attacks follow: they ignore push immunity and add the permanent debuff, so stay away. Coffins then drop on the diagonals in random order: one needs a Just Guard, the other three a counter, while dodging repeating lines. From here on, getting knocked to the outer edge shrinks your view."
+      },
+      {
+        key: "belgardin-g1-yellow-bar",
+        name: "Yellow Bar",
+        hpBar: 190,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Coffins ring the field; burn his yellow bar in time or the raid wipes. Every hit stacks -10% attack power, 7 stacks immobilizes, so dodge everything; use Atropine at the start. Fixed order A, B, C (random within each): A = dodge the beam. B = yellow flash look-up: Just Guard right before the white circle reaches the edge; no flash: go to the corner of the grab area, move back in after the circle. C = lines cross and he swipes a whole side; stand where his body faces, then move to the safe spot."
+      },
+      {
+        key: "belgardin-g1-coffin-hide",
+        name: "Coffin Hide",
+        hpBar: 115,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "He moves to the center with purple lines like x240: dodge, then Just Guard toward the attack. Hide right up against one of the three coffins for the explosion (it can kill, and still hits if you stand off). Dodge lines again, Just Guard toward the direction, then Just Guard toward the boss."
+      },
+      {
+        key: "belgardin-g1-clone-stagger",
+        name: "Clone Stagger",
+        hpBar: 75,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Cutscene, three clones in an upside-down triangle: stagger all three in time AND at similar timing, or the stagger resets (effectively a wipe). Usual split: two strong staggerers bottom, three and three on the others. An alternating pizza knockdown (applies a stagger debuff) repeats until the mech ends. When the stagger bar appears, everyone throws the Serca or Belgardin item at the center to hit all three. Counter the real follow-up (some are fake). Orbs approach the center twice: Just Guard, move clockwise, Just Guard again; if a guard fails, body-block the orb (imprisons you, others free you). Once your clone is staggered, help the other groups."
+      }
+    ]
+  },
+  {
+    encounterKey: "Belgardin G2",
+    source: "estimated",
+    raid: "Belgardin",
+    gate: 2,
+    releaseOrder: 20,
+    availableDifficulties: ["Normal", "Hard", "Nightmare"],
+    boss: "Phetus an Kragma",
+    bossType: "ANCIENT",
+    weakness: "Weak to Holy",
+    tauntable: false,
+    mechanics: [
+      {
+        key: "belgardin-g2-four-mobs",
+        name: "Four Mobs",
+        hpBar: 360,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Orange-HP mobs on all four sides; kill them in time. Party 1 left, party 2 right; DPS the 3 and 9 o'clock mobs. Counters at 1 and 7 o'clock (one player per party); a successful counter gives you a cone to aim so it hits mobs (-20% HP). Orbs at 12 and 6: one player each, Just Guard inward on the flash, then Just Guard toward the nearest mob (-30% HP). Second round: counters at 11 and 5, guards at 3 and 9. Boss staggers into DPS time when done. If mobs still have lots of HP, wait for a third guard and hold skills to burst the boss after the stagger."
+      },
+      {
+        key: "belgardin-g2-linked-mobs",
+        name: "Linked Mobs",
+        hpBar: 320,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Stagger him while dodging the cone. Four large mobs each linked to small mobs; burn the boss's yellow bar in time. Small mobs shield the large ones, large ones shield the boss: kill smalls, then the large, then the boss. Only two large mobs are needed. He swaps spots during the mech; keep up stagger and DPS to the end. Players tethered by a large mob get stunned 5s if still in its range when it times out. Success unlocks the Belgardin battle item (a stronger Flame Grenade, good on the small mobs)."
+      },
+      {
+        key: "belgardin-g2-red-field",
+        name: "Red Field",
+        hpBar: 280,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Field turns red: Just Guard 0.5s after the flash, then he charges for a counter, three times. Countering fires a beam over the red area for raid-wipe damage; DPS shrinks the red area. He is omnidirectional and stagger-locked. Common tactic: supports Hyper Awaken on the first guard and you counter the first charge in the center, unlocking his stagger bar early. Survive the 5s beam by stacking in one spot for support heals and potting about 4s in. Alternative: skip the first two counters, DPS, counter the third from a safe edge (risks falls from his next patterns)."
+      },
+      {
+        key: "belgardin-g2-stagger-check",
+        name: "Stagger Check",
+        hpBar: 200,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "View changes; stagger him in time while dodging. Hand glows toward a side: move away from the small grab. Green lines lock healing. Purple beam from the background: dodge it no matter what, it cuts party stagger heavily."
+      },
+      {
+        key: "belgardin-g2-slingshot",
+        name: "Slingshot",
+        hpBar: 100,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "He teleports to a side; dodge the green puddles, wait at the center. When the view changes, everyone gets in the circle and holds the pointer just after it turns red, aims opposite the boss so the landing circle reaches him, and releases just after red again. Stagger him on landing. Repeat when the circle returns after the purple beam; the second round is the last chance."
       }
     ]
   }
