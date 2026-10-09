@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- The "Part of Lost Ark Tools" link in Settings now shows the new Lost Ark Tools compass icon, matching the tools hub.
-
 <!-- @release-end -->
 
-<!-- @release v0.3.10 -->
+<!-- @release v0.3.11 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.10 - September 24th, 2026
+    v0.3.11 - October 9th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- The "Part of Lost Ark Tools" link in Settings now shows the new Lost Ark Tools compass icon, matching the tools hub.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.10 -->
+### v0.3.10 - September 24th, 2026
 
 #### NEW FEATURES
 
