@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- The "Part of Lost Ark Tools" link in Settings now shows the new Lost Ark Tools compass icon, matching the tools hub.
+
 <!-- @release-end -->
 
 <!-- @release v0.3.10 -->
