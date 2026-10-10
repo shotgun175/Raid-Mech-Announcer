@@ -14,15 +14,22 @@
 
 <!-- @release-end -->
 
-<!-- @release v0.3.11 -->
+<!-- @release v0.3.12 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.11 - October 9th, 2026
+    v0.3.12 - October 10th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+- Updated the app framework and installer; updates now close and reopen the app more reliably.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.11 -->
+### v0.3.11 - October 9th, 2026
 
 #### BUG FIXES AND IMPROVEMENTS
 
