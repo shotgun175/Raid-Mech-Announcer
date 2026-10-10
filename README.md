@@ -57,6 +57,10 @@ Dependabot opens monthly version-update PRs for GitHub Actions, npm and Cargo (`
 
 Tauri ships in two halves: the `tauri` crate pairs with `@tauri-apps/api`, and each `tauri-plugin-X` crate pairs with `@tauri-apps/plugin-X`. `tauri build` refuses to run when a pair differs in major.minor, so CI and the release workflow run `check-tauri-pairs.mjs` and fail early on a mismatch. Dependabot's `tauri` group bumps both halves in one PR. If a PR bumps only one half (a security update can), add the matching bump on the same branch until the check passes. `@tauri-apps/cli` and `tauri-build` are not pairs.
 
+`@tauri-apps/cli` carries the NSIS installer bundler, and the app uses the stock installer template plus `src-tauri/nsis/hooks.nsh`. Release check: before the first release built with Tauri 2.12 (its stock template closes the running app through Windows Restart Manager), install the new setup.exe over a running copy once, with the app in the tray and the Settings window hidden, and confirm the update installs in place and the app comes back. Do the same after any later cli bump that changes the installer.
+
+`package.json` `overrides` pins `postcss-selector-parser` to `^7.1.6` under `@tailwindcss/typography`, because typography pins an affected 6.0.10 that Dependabot cannot update. Drop the override once a typography release depends on 7.1.6 or later.
+
 ## Overlay Variants
 
 | Variant | Description |
