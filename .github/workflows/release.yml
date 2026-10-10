@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -85,12 +85,13 @@ jobs:
           cache: "npm"
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable @ 2026-06
+        uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # v1 (master 2026-10-09)
         with:
+          toolchain: stable
           components: clippy, rustfmt
 
       - name: Cache Rust target
-        uses: swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
+        uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           workspaces: "src-tauri -> target"
 
@@ -101,6 +102,11 @@ jobs:
       # signed build to the auto-updater audience. (The frontend build itself
       # runs inside tauri-action below.) They run before the bump step so a red
       # gate leaves no bump commit or tag on main.
+      # tauri-action's `tauri build` fails on a Tauri crate/npm major.minor
+      # mismatch, which is after the bump; check the pairs first.
+      - name: Tauri pairs (crate and npm package agree)
+        run: node .github/scripts/check-tauri-pairs.mjs
+
       - name: Type-check (svelte-check)
         run: npm run check
 
