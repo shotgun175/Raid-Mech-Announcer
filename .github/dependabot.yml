@@ -1,7 +1,71 @@
-# Actions only: npm and cargo get security updates from the repo settings, not scheduled PRs.
+# Monthly version updates for actions, npm and cargo. Security updates still come
+# from the repo settings and arrive immediately (cooldown and grouping apply to
+# version updates only).
+#
+# Tauri: the tauri crate and @tauri-apps/api, and each tauri-plugin-X crate and
+# @tauri-apps/plugin-X, must agree on major.minor (.github/scripts/check-tauri-pairs.mjs
+# fails CI otherwise). The "tauri" multi-ecosystem group bumps both halves in one PR
+# so that check passes. Tauri is not ignored, so its security PRs still arrive; a
+# one-sided one shows a red pair check until the companion bump is added on the
+# same branch.
+#
+# Minor and patch updates are grouped per ecosystem; majors arrive as separate PRs.
+# The coupled frontend toolchain majors (SvelteKit, Vite, vite-plugin-svelte,
+# vitest, svelte-check, TypeScript) arrive as one PR, since they only move together.
 version: 2
+
+multi-ecosystem-groups:
+  tauri:
+    schedule:
+      interval: "monthly"
+
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    multi-ecosystem-group: "tauri"
+    patterns:
+      - "@tauri-apps/*"
+    groups:
+      frontend-toolchain-majors:
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@sveltejs/*"
+          - "svelte-check"
+          - "typescript"
+        update-types:
+          - "major"
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "cargo"
+    directory: "/src-tauri"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    multi-ecosystem-group: "tauri"
+    patterns:
+      - "tauri"
+      - "tauri-build"
+      - "tauri-plugin-*"
+    groups:
+      cargo-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
