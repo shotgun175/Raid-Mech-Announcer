@@ -53,7 +53,7 @@ node .github/scripts/check-tauri-pairs.mjs   # Tauri crate and npm versions agre
 
 ### Dependency updates
 
-Dependabot opens monthly version-update PRs for GitHub Actions, npm and Cargo (`.github/dependabot.yml`), waiting 7 days after a release. Minor and patch updates are grouped per ecosystem and majors come separately. Security updates still arrive right away.
+Dependabot opens monthly version-update PRs for GitHub Actions, npm and Cargo (`.github/dependabot.yml`), waiting 7 days after a release. Minor and patch updates are grouped per ecosystem and majors come separately, except the coupled frontend toolchain majors (vite, vitest, @sveltejs/*, svelte-check, typescript), which arrive together in one PR. Security updates still arrive right away.
 
 Tauri ships in two halves: the `tauri` crate pairs with `@tauri-apps/api`, and each `tauri-plugin-X` crate pairs with `@tauri-apps/plugin-X`. `tauri build` refuses to run when a pair differs in major.minor, so CI and the release workflow run `check-tauri-pairs.mjs` and fail early on a mismatch. Dependabot's `tauri` group bumps both halves in one PR. If a PR bumps only one half (a security update can), add the matching bump on the same branch until the check passes. `@tauri-apps/cli` and `tauri-build` are not pairs.
 
