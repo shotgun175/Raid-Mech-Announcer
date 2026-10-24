@@ -3307,7 +3307,7 @@ const LIBRARY: LibraryGate[] = [
         severity: "wipe",
         difficulties: ["Normal", "Hard", "Nightmare"],
         notes:
-          "After x75 he periodically teleports to the center for a stagger check: avoid the lines and the frontal laser, then stagger him. A failed stagger is raid-wipe-level damage. No trigger set: periodic after x75, no fixed HP line. (Maxroll calls this 'Stagger Check'.)"
+          "After x75 he periodically teleports to the center for a stagger check: avoid the lines and the frontal laser, then stagger him; supports apply shields and damage reduction. A failed stagger is raid-wipe-level damage. No trigger set: periodic after x75, no fixed HP line. (Maxroll calls this 'Stagger Check'.)"
       }
     ]
   },
