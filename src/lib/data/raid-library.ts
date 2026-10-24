@@ -74,7 +74,9 @@ export const bossHpMap: Record<string, number> = {
   "Witch of Agony, Serca": 300,
   "Corvus Tul Rak": 300,
   "Archbishop Arcenos": 200,
-  "Arcenos, Vanguard of Fanaticism": 200
+  "Arcenos, Vanguard of Fanaticism": 200,
+  "Belgardin, Arbiter of Death": 300,
+  "Phaetus An Kragma": 400
 };
 
 export interface LibraryMechanic {
@@ -3215,6 +3217,191 @@ const LIBRARY: LibraryGate[] = [
         difficulties: ["Stage 1", "Stage 2", "Stage 3"],
         notes:
           "After depleting the stagger bar, destroy the boss's bell to extend the damage phase. Stagger-driven — no trigger set."
+      }
+    ]
+  },
+  // ── Belgardin (releaseOrder 20) ─────────────────────────────────────────────
+  // Shadow Raid, 8 players: Normal 1750 / Hard 1770 / Nightmare 1780. Matching mode (1750) is
+  // listed as "Solo" with no Solo-tagged mechs, as for Serca. Source: Maxroll G1/G2 guides
+  // (updated 2026-10-22 / 2026-10-24), cross-checked with community guides. The Brawl (both
+  // gates) starts whenever the party depletes the purple stagger bar, so it has no entry.
+  // Not yet checked in a live capture: Npc.json also lists one-bar entities named like both
+  // bosses, which could fire a callout early or end the encounter early, and Brawl damage
+  // that carries HP past a line can play that line's callout during the Brawl.
+  {
+    encounterKey: "Belgardin G1",
+    source: "maxroll",
+    raid: "Belgardin",
+    gate: 1,
+    releaseOrder: 20,
+    availableDifficulties: ["Solo", "Normal", "Hard", "Nightmare"],
+    boss: "Belgardin, Arbiter of Death",
+    bossType: "HUMAN",
+    weakness: "Weak to Holy",
+    tauntable: false,
+    mechanics: [
+      {
+        key: "belgardin-g1-coffins-ghosts",
+        name: "Coffins & Ghosts",
+        hpBar: 270,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Purple plus-shaped puddles around him, then coffins drop: gather behind one coffin, stagger it and stay hidden behind it for the attack. Failing the stagger or not hiding stuns you; purify if CC'd. Returns enhanced with ghosts about 5 minutes into the fight (separate callout)."
+      },
+      {
+        key: "belgardin-g1-guard-lines",
+        name: "Guard & Lines",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Avoid the puddles, then Just Guard toward him 2 s after the yellow flash. Lines explode at 5, 7, 11, then 1 o'clock: move into an exploded slice. Then random lines wake coffins: Counter, Counter, Just Guard, Counter, and he repeats his 2 s guard just before the Just Guard coffin (Normal: two coffin counters only). A missed guard or a line hit adds a Chaos stack; a missed coffin counter is only damage. Chaos stacks kill at 10 on Hard, 6 on Nightmare. From here the outer edge adds Darkness stacks and damage; Mindreader checks start."
+      },
+      {
+        key: "belgardin-g1-time-attack",
+        name: "Time Attack",
+        hpBar: 195,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Coffin walls box the arena: hold skills until the orange DPS bar appears under him, then burn it before the timer runs out (raid wipe). Every hit stacks attack down and max stacks lift you out, so dodge everything. Loop: Set 1 (Waffle, Cross, Lines or Counter), Set 2 from a corner (Just Guard if he flashes yellow), Set 3 Cape Swipe (stand where the lines cross, then dash to the safe square). Hard: -5% attack per stack, max 15. Nightmare: -10%, max 7. Normal: no stacks. (Maxroll calls this 'Square DPS'.)"
+      },
+      {
+        key: "belgardin-g1-enhanced-coffins-ghosts",
+        name: "Enhanced Coffins & Ghosts",
+        timerSecs: 300,
+        triggerType: "timer",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "About 5 minutes in, the coffins return: go to your x3 position (four coffins at 3, 6, 9 and 12, two players each) and stagger all four. Random players get a line that turns red when locked on: aim it at the ghosts walking to the boss (lines come twice). A ghost that reaches him heals about 3 bars and explodes in a huge AoE with Chaos stacks: move to the arena edge or Time Stop it. Chaos stacks kill at 10 on Hard, 6 on Nightmare."
+      },
+      {
+        key: "belgardin-g1-three-coffins",
+        name: "Three Coffins",
+        hpBar: 120,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "He moves to the center and repeats the x240 lines (first slice at 9 o'clock): move into each exploded slice. Just Guard the expanding ground telegraph, then hug the back of one of the three coffins until the explosions stop; even slightly off, it can kill. Dodge the lines again, Just Guard the telegraph, then Just Guard his guard attack (Normal: no telegraph Just Guards). A missed guard or a line hit adds a Chaos stack. Chaos stacks kill at 10 on Hard, 6 on Nightmare."
+      },
+      {
+        key: "belgardin-g1-clone-stagger",
+        name: "Clone Stagger",
+        hpBar: 75,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Stagger Belgardin and both clones within roughly 5 to 8 s of each other or the gauges reset; out of time is a raid wipe. Party 1 at 11, Party 2 at 1, the 2 highest-stagger players at 6 (the real boss). Throw Corvus Tul Rak's Shadow or Phaetus An Kragma's Shadow into the center first. A failed counter resets the gauge (Hard/Nightmare: red counters are fake; Nightmare: 2-player co-op). Then orbs fly in: Just Guard one, move clockwise, Just Guard the next; an orb reaching him explodes map-wide."
+      },
+      {
+        key: "belgardin-g1-lasers-stagger",
+        name: "Lasers & Stagger",
+        triggerType: "timer",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "After x75 he periodically teleports to the center for a stagger check: avoid the lines and the frontal laser, then stagger him; supports apply shields and damage reduction. A failed stagger is raid-wipe-level damage. No trigger set: periodic after x75, no fixed HP line. (Maxroll calls this 'Stagger Check'.)"
+      }
+    ]
+  },
+  {
+    encounterKey: "Belgardin G2",
+    source: "maxroll",
+    raid: "Belgardin",
+    gate: 2,
+    releaseOrder: 20,
+    availableDifficulties: ["Solo", "Normal", "Hard", "Nightmare"],
+    boss: "Phaetus An Kragma",
+    bossType: "ANCIENT",
+    weakness: "Weak to Holy",
+    tauntable: false,
+    mechanics: [
+      {
+        key: "belgardin-g2-orb-destruction",
+        name: "Orb Destruction",
+        hpBar: 360,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "After the cutscene, destroy the 4 orange-HP targets at 12, 3, 6 and 9 before the timer runs out (raid wipe). Party 1 left (DPS the 9 target), party 2 right (DPS the 3). Counters at 7 and 1, then 11 and 5, then 7 and 1: guide the shapes onto targets (-20% each). Balls at 6 and 12, then 9 and 3, then 6 and 12: Just Guard facing the center, then again aimed at a target (-30%). Clean play ends it in 2 waves and staggers him for a long DPS window: save skills for it. Normal: the counter gives only the cone. (Maxroll calls this 'Four Targets'.)"
+      },
+      {
+        key: "belgardin-g2-stagger-dps",
+        name: "Stagger & DPS",
+        hpBar: 320,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "He teleports to 9, 12 or 3 with monsters: stagger him while dodging the pizzas (a hit silences; purify or Bard shield) to unlock them. Party 1 at 11, party 2 at 1: kill the small monsters (battle items help), then your big one; only 11 and 1 are needed. Then burn his orange bar before the timer; re-stagger whenever he teleports. Hard/Nightmare: leave a big monster's tether circle before the orange line expires or you are lifted 5 s. A clear earns the achievement for Phaetus An Kragma's Shadow."
+      },
+      {
+        key: "belgardin-g2-red-arena",
+        name: "Red Arena",
+        hpBar: 280,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "After an x300 cutscene in the middle he covers the arena in red; damage shrinks it. Stack for aggro (he is omnidirectional); his stagger is locked until a counter lands. Up to 3 cycles: Just Guard about 0.5 s after the yellow flash, then a counter. The counter fires a laser (about 5 s) over the remaining red that kills anyone in it. Default: supports Hyper Awaken on the first Just Guard, stack in the center, counter cycle 1, potion after about 4 s. Or counter cycle 3, in the center or from the edge safe spot."
+      },
+      {
+        key: "belgardin-g2-3-grabs",
+        name: "3 Grabs",
+        hpBar: 240,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Camera zooms out and he channels an energy ball: 3 grabs in a row, random order. Red arm = grab on that side: stand opposite. Both arms red, stabbing in front = 360 grab: get fully out (spacebar). Wait a little off his head or back. Wind pushes you; the outer ring breaks on the 2nd grab, so be off it. Lasers fire during the last grab. Grabbed = thrown off the map."
+      },
+      {
+        key: "belgardin-g2-2d-stagger",
+        name: "2D Stagger",
+        hpBar: 195,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "View shifts to the front and a stagger bar appears: stagger him to end it. Each time he moves, a red flash in one arm = grab on that side: move away. Green lines cut healing received. Always dodge the purple lines: each hit cuts your stagger 20% (stacks) and paralyzes; the big portal in the background shows where they come from. Good spot for Phaetus An Kragma's Shadow. (Maxroll calls this 'Side-scroller'.)"
+      },
+      {
+        key: "belgardin-g2-3-grabs-2",
+        name: "3 Grabs",
+        hpBar: 140,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal", "Hard", "Nightmare"],
+        notes:
+          "Repeat of x240, the last floor break: red arm = stand opposite, both arms = get fully out, be off the outer ring by the 2nd grab; grabbed = thrown off the map. From here his patterns are enhanced: the clockwise grab comes twice, Bulldozer and Squid Slam three times. A periodic flame field also starts: go to the side without flames (even support Hyper Awakening does not cover the burn) and aim his 3 cone shots away from the group; they push toward the edge."
+      },
+      {
+        key: "belgardin-g2-stagger",
+        name: "Stagger",
+        hpBar: 95,
+        triggerType: "hp",
+        severity: "major",
+        difficulties: ["Normal"],
+        notes:
+          "No slingshot on Normal: stagger him while dodging the pizza. Hard and Nightmare get Angry Birds here instead."
+      },
+      {
+        key: "belgardin-g2-angry-birds",
+        name: "Angry Birds",
+        hpBar: 95,
+        triggerType: "hp",
+        severity: "wipe",
+        difficulties: ["Hard", "Nightmare"],
+        notes:
+          "He teleports to 1 o'clock: dodge the puddles, then gather in the center. Launched: hold left mouse when the dial reaches the end, aim opposite him to land beside him, release when the 2nd dial ends. Stagger fast; one jump each usually does it. Not staggered: re-enter the center after the purple lasers (they imprison) for a 2nd try; failing that wipes the raid. (Maxroll calls this 'Slingshot'.)"
       }
     ]
   }
