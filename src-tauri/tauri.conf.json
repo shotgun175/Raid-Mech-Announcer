@@ -21,7 +21,7 @@
     "licenseFile": "../LICENSE"
   },
   "productName": "Raid Mech Announcer",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "identifier": "com.shotgun175.raid-mech-announcer",
   "app": {
     "windows": [

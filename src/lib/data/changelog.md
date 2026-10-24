@@ -10,21 +10,28 @@
 
 #### NEW FEATURES
 
-- Added the new Belgardin raid to the library: Gate 1 (Belgardin, Arbiter of Death) and Gate 2 (Phaetus An Kragma), with callouts for every HP-bar mechanic on Normal, Hard and Nightmare, built from Maxroll's guides. Gate 1 also calls out the enhanced coffins about 5 minutes into the fight. On Normal the x95 callout is a plain "Stagger", since Angry Birds only happens on Hard and Nightmare. Solo is selectable and stays silent, like Serca. If you already use the app, add it from Import Raids in the Raid Editor, or use Reset to Defaults > Everything to switch to the three newest raids (Belgardin, Horizon Cathedral and Serca); that replaces your current raid list.
-
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->
 
-<!-- @release v0.3.12 -->
+<!-- @release v0.3.13 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.12 - October 10th, 2026
+    v0.3.13 - October 24th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### NEW FEATURES
+
+- Added the new Belgardin raid to the library: Gate 1 (Belgardin, Arbiter of Death) and Gate 2 (Phaetus An Kragma), with callouts for every HP-bar mechanic on Normal, Hard and Nightmare, built from Maxroll's guides. Gate 1 also calls out the enhanced coffins about 5 minutes into the fight. On Normal the x95 callout is a plain "Stagger", since Angry Birds only happens on Hard and Nightmare. Solo is selectable and stays silent, like Serca. If you already use the app, add it from Import Raids in the Raid Editor, or use Reset to Defaults > Everything to switch to the three newest raids (Belgardin, Horizon Cathedral and Serca); that replaces your current raid list.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.12 -->
+### v0.3.12 - October 10th, 2026
 
 - Updated the app framework and installer; updates now close and reopen the app more reliably.
 
