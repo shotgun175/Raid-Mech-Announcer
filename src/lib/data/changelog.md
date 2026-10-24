@@ -10,6 +10,8 @@
 
 #### NEW FEATURES
 
+- Added the new Belgardin raid to the library: Gate 1 (Belgardin, Arbiter of Death) and Gate 2 (Phaetus An Kragma), with callouts for every HP-bar mechanic on Normal, Hard and Nightmare, built from Maxroll's guides. Gate 1 also calls out the enhanced coffins about 5 minutes into the fight. On Normal the x95 callout is a plain "Stagger", since Angry Birds only happens on Hard and Nightmare. Solo is selectable and stays silent, like Serca. If you already use the app, add it from Import Raids in the Raid Editor.
+
 #### BUG FIXES AND IMPROVEMENTS
 
 <!-- @release-end -->
