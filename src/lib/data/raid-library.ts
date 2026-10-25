@@ -117,7 +117,7 @@ export interface LibraryGate {
   // phase swap (keep the gate sticky for the follow-up boss) instead of an encounter end.
   swapsBoss?: boolean;
   // Default provenance for every mechanic in this gate (each mechanic can still
-  // override via LibraryMechanic.source). All 44 gates carry it; only override
+  // override via LibraryMechanic.source). Every gate carries it; only override
   // individual mechanics to "verified-in-fight"/"estimated" when actually known.
   source?: MechanicSource;
 }
