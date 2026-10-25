@@ -12,6 +12,8 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
+- Security update for the text formatter that shows the Changelog page and update notes: specially crafted text can no longer slow it to a crawl.
+
 <!-- @release-end -->
 
 <!-- @release v0.3.13 -->
