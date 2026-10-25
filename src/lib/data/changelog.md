@@ -12,19 +12,26 @@
 
 #### BUG FIXES AND IMPROVEMENTS
 
-- Security update for the text formatter that shows the Changelog page and update notes: specially crafted text can no longer slow it to a crawl.
-
 <!-- @release-end -->
 
-<!-- @release v0.3.13 -->
+<!-- @release v0.3.14 -->
 <div class="rounded-md flex space-x-2 items-center">
   <div class="text-lg font-semibold text-white">
-    v0.3.13 - October 24th, 2026
+    v0.3.14 - October 24th, 2026
   </div>
   <div class="bg-accent-500 px-2 font-medium rounded-md text-white">
     New
   </div>
 </div>
+
+#### BUG FIXES AND IMPROVEMENTS
+
+- Security update for the text formatter that shows the Changelog page and update notes: specially crafted text can no longer slow it to a crawl.
+
+<!-- @release-end -->
+
+<!-- @release v0.3.13 -->
+### v0.3.13 - October 24th, 2026
 
 #### NEW FEATURES
 
